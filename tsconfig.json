@@ -1,0 +1,18 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "baseUrl": "./src",
+    "paths": {
+        "api"           : ["api"],
+        "app-redux"     : ["app-redux"],
+        "asset"         : ["asset"],
+        "components"    : ["components"],
+        "feature"       : ["feature"],
+        "hook"          : ["hook"],
+        "navigation"    : ["navigation"],
+        "utility"       : ["utility"],
+    }
+  }
+}
