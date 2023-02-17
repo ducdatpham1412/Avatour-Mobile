@@ -8,8 +8,7 @@ import Alert from 'components/Alert';
 import AlertYesNo from 'components/AlerYesNo';
 import StylePicker from 'components/base/picker/StylePicker';
 import LoadingScreen from 'components/LoadingScreen';
-import {useInitApp} from 'hook';
-import Redux from 'hook/useRedux';
+import {useInitApp, useTheme} from 'hook';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {navigationRef} from 'navigation/NavigationService';
 import React from 'react';
@@ -26,7 +25,7 @@ const alertOption: StackNavigationOptions = {
 };
 
 const RootScreen = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const {loading, error, isInApp} = useInitApp();
 
   if (loading) {

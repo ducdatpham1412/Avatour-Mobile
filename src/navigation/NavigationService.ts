@@ -1,69 +1,74 @@
-import {StackActions} from '@react-navigation/native';
+import {
+  createNavigationContainerRef,
+  StackActions,
+} from '@react-navigation/native';
 import {StylePickerProps} from 'components/base/picker/StylePicker';
 import ROOT_SCREEN from 'navigation/config/routes';
-import React, {ReactNode, RefObject} from 'react';
+import {ReactNode} from 'react';
 import {I18Normalize} from 'utility/I18Next';
+import {AllRoutes, AppParamsList} from './config';
 
-export const navigationRef: RefObject<any> = React.createRef();
+export const navigationRef = createNavigationContainerRef();
 
-export const navigate = (name: string, params?: {}) => {
-    navigationRef.current.navigate(name, params);
+export const navigate = <T extends AllRoutes>(
+  name: T,
+  params?: T extends keyof AppParamsList ? AppParamsList[T] : undefined,
+) => {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name as never, params as never);
+  }
 };
 
 export const goBack = () => {
-    navigationRef.current.goBack();
+  if (navigationRef.isReady() && navigationRef.canGoBack()) {
+    navigationRef.goBack();
+  }
 };
 
 export const push = (name: string, params?: {}) => {
-    navigationRef.current.dispatch(StackActions.push(name, params));
+  navigationRef.dispatch(StackActions.push(name, params));
 };
 
 export const getCurrentRoute = () => {
-    return navigationRef.current.getCurrentRoute();
+  return navigationRef.getCurrentRoute();
 };
 
 interface TypeMoreChoiceAlert {
-    actionClickOk?: Function;
-    moreNotice?: string;
-    moreAction?(): void;
+  actionClickOk?: Function;
+  moreNotice?: string;
+  moreAction?(): void;
 }
 
 interface TypeAlertYesOrNo {
-    i18Title: I18Normalize;
-    agreeText?: I18Normalize;
-    refuseText?: I18Normalize;
-    i18Params?: object;
-    agreeChange(): void;
-    refuseChange(): void;
-    headerNode?: ReactNode;
-    displayButton?: boolean;
-    touchOutBack?: boolean;
-    agreeButtonOpacity?: number;
-}
-
-export interface TypeSwipeImages {
-    listImages: Array<{url: string}>;
-    initIndex?: number;
-    allowSaveImage?: boolean;
+  i18Title: I18Normalize;
+  agreeText?: I18Normalize;
+  refuseText?: I18Normalize;
+  i18Params?: object;
+  agreeChange(): void;
+  refuseChange(): void;
+  headerNode?: ReactNode;
+  displayButton?: boolean;
+  touchOutBack?: boolean;
+  agreeButtonOpacity?: number;
 }
 
 export const appAlert = (notice: any, more?: TypeMoreChoiceAlert) => {
-    navigate(ROOT_SCREEN.alert, {
-        notice: String(notice),
-        actionClickOk: more?.actionClickOk,
-        moreNotice: more?.moreNotice,
-        moreAction: more?.moreAction,
-    });
+  navigate(ROOT_SCREEN.alert, {
+    notice: String(notice),
+    actionClickOk: more?.actionClickOk,
+    moreNotice: more?.moreNotice,
+    moreAction: more?.moreAction,
+  });
 };
 
 export const appAlertYesNo = (params: TypeAlertYesOrNo) => {
-    navigate(ROOT_SCREEN.alertYesNo, params);
+  navigate(ROOT_SCREEN.alertYesNo, params);
 };
 
 export const showSwipeImages = (params: TypeSwipeImages) => {
-    navigate(ROOT_SCREEN.swipeImages, params);
+  navigate(ROOT_SCREEN.swipeImages, params);
 };
 
 export const popUpPicker = (params: StylePickerProps) => {
-    navigate(ROOT_SCREEN.picker, params);
+  navigate(ROOT_SCREEN.picker, params);
 };

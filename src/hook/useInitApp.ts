@@ -1,10 +1,17 @@
-import {apiGetPassport, apiGetResource} from 'api/module';
+import {apiGetPassport, apiGetResource} from 'api/discovery';
+import {
+  setIsLogOut,
+  setModeExp,
+  setNumberNewNotifications,
+  setToken,
+  updatePassport,
+  updateResource,
+} from 'app-redux/actions';
 import {useAppSelector} from 'app-redux/store';
 import {useEffect, useState} from 'react';
 import {chooseLanguageFromId, logger} from 'utility/assistant';
 import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
 import I18Next from 'utility/I18Next';
-import Redux from './useRedux';
 
 const useInitApp = () => {
   const {modeExp} = useAppSelector(state => state.accountSlice);
@@ -41,12 +48,16 @@ const useInitApp = () => {
           const passport = await apiGetPassport();
           const resource = await apiGetResource();
 
-          Redux.updatePassport(passport.data);
+          updatePassport({
+            profile: passport?.data?.profile,
+            information: passport?.data?.information,
+            setting: passport?.data?.setting,
+          });
           // passport must be above token to set in SocketProvider
-          Redux.setNumberNewNotifications(passport.data.numberNewNotifications);
-          Redux.setToken(activeUser.token);
-          Redux.setModeExp(false);
-          Redux.updateResource(resource.data);
+          setNumberNewNotifications(passport.data.numberNewNotifications);
+          setToken(activeUser.token);
+          setModeExp(false);
+          updateResource(resource.data);
           I18Next.changeLanguage(
             chooseLanguageFromId(passport.data.setting.language),
           );
@@ -68,7 +79,7 @@ const useInitApp = () => {
   useEffect(() => {
     if (isLogOut) {
       setLoading(false);
-      Redux.setIsLogOut(false);
+      setIsLogOut(false);
     }
   }, [isLogOut]);
 

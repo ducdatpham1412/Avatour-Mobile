@@ -14,6 +14,7 @@ import {
 import FindmeStore, {RootState, useAppSelector} from 'app-redux/store';
 import {THEME_TYPE} from 'asset/enum';
 import Theme from 'asset/theme/Theme';
+import dayjs from 'dayjs';
 import {useSelector} from 'react-redux';
 
 interface LoginType {
@@ -246,7 +247,7 @@ export const Redux = {
         ...current.information,
         ...newProfile.information,
         birthday: tempBirthday
-          ? new Date(tempBirthday)
+          ? String(dayjs(tempBirthday))
           : current.information.birthday,
       },
       setting: {...current.setting, ...newProfile.setting},
@@ -276,9 +277,6 @@ export const Redux = {
     Redux.updatePassport({
       information: passport.information,
       profile: passport.profile,
-      setting: {
-        display_avatar: passport.setting.display_avatar,
-      },
     });
     Redux.updateListChatTag([]);
     Redux.setIsLogOut(true);
