@@ -6,40 +6,40 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {I18Normalize} from 'utility/I18Next';
 
 interface StyleTextProps extends TextProps {
-    i18Text?: I18Normalize;
-    i18Params?: object;
-    originValue?: any;
-    customStyle?: StyleProp<TextStyle>;
-    children?: ReactNode;
+  i18Text?: I18Normalize;
+  i18Params?: Record<string, any>;
+  originValue?: any;
+  customStyle?: StyleProp<TextStyle>;
+  children?: ReactNode;
 }
 
 const StyleText = (props: StyleTextProps) => {
-    const {i18Text, i18Params, originValue, customStyle, children} = props;
-    const {t} = useTranslation();
+  const {i18Text, i18Params, originValue, customStyle, children} = props;
+  const {t} = useTranslation();
 
-    let valueText;
-    if (i18Text) {
-        valueText = t(i18Text, i18Params);
-    } else if (originValue !== undefined) {
-        valueText = originValue;
-    } else {
-        valueText = '';
-    }
+  let valueText;
+  if (i18Text) {
+    valueText = t(i18Text, i18Params || {});
+  } else if (originValue !== undefined) {
+    valueText = originValue;
+  } else {
+    valueText = '';
+  }
 
-    return (
-        <Text style={[styles.textDefaultStyle, customStyle]} {...props}>
-            {valueText}
-            {children}
-        </Text>
-    );
+  return (
+    <Text style={[styles.textDefaultStyle, customStyle]} {...props}>
+      {valueText}
+      {children}
+    </Text>
+  );
 };
 
 const styles = ScaledSheet.create({
-    textDefaultStyle: {
-        fontSize: '17@ms',
-        color: 'lightgreen',
-        fontFamily: FONT_FAMILY.openSans,
-    },
+  textDefaultStyle: {
+    fontSize: '17@ms',
+    color: 'lightgreen',
+    fontFamily: FONT_FAMILY.openSans,
+  },
 });
 
 export default StyleText;

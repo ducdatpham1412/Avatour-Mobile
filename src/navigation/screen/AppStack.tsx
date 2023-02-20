@@ -2,7 +2,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {TypeBubblePalace} from 'api/interface';
 import ModalPreviewLink from 'components/ModalPreviewLink';
 import SwipeImages from 'components/SwipeImages';
 import EditHistory from 'feature/common/EditHistory';
@@ -25,6 +24,7 @@ import ListFollows from 'feature/profile/ListFollows';
 import MyProfile from 'feature/profile/MyProfile';
 import OtherProfile from 'feature/profile/OtherProfile';
 import {useTheme} from 'hook';
+import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   MESS_ROUTE,
@@ -39,7 +39,7 @@ export const showPreviewLink = (item: TypeBubblePalace) => {
   modalPreviewLinkRef.current?.show(item);
 };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AppParamsList>();
 
 const AppStack = () => {
   const theme = useTheme();
@@ -59,7 +59,6 @@ const AppStack = () => {
       />
       <Stack.Screen name={ROOT_SCREEN.otherProfile} component={OtherProfile} />
       <Stack.Screen name={ROOT_SCREEN.listFollows} component={ListFollows} />
-
       <Stack.Screen name={ROOT_SCREEN.detailBubble} component={DetailBubble} />
       <Stack.Screen
         name={ROOT_SCREEN.detailGroupBuying}

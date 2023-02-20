@@ -1,6 +1,4 @@
 import {BlurView} from '@react-native-community/blur';
-import {TypeGroupBuying} from 'api/interface';
-import {TypeShowModalCommentOrLike} from 'api/interface/discovery';
 import {GROUP_BUYING_STATUS, RELATIONSHIP} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';

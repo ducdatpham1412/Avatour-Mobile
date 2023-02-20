@@ -1,4 +1,10 @@
 import {
+  apiDeleteMessage,
+  apiGetListConversations,
+  apiGetListMessages,
+} from 'api/conversation';
+import {apiGetListComments} from 'api/discovery';
+import {
   TypeChangeChatColor,
   TypeChangeGroupNameResponse,
   TypeChatMessageResponse,
@@ -12,13 +18,7 @@ import {
   TypeSocketCommentResponse,
   TypingResponse,
 } from 'api/interface';
-import {
-  apiDeleteMessage,
-  apiGetListComments,
-  apiGetListConversations,
-  apiGetListMessages,
-  apiGetListNotifications,
-} from 'api/module';
+import {apiGetListNotifications} from 'api/notification';
 import FindmeStore from 'app-redux/store';
 import {
   CONVERSATION_STATUS,
@@ -27,10 +27,10 @@ import {
   SOCKET_EVENT,
   TYPE_BUBBLE_PALACE_ACTION,
 } from 'asset/enum';
+import Config from 'asset/env';
 import {appAlert} from 'navigation/NavigationService';
 import React, {useEffect} from 'react';
 import {AppState, AppStateStatus} from 'react-native';
-import Config from 'asset/env';
 import {io, Socket} from 'socket.io-client';
 import {isIOS, reorderListChatTag} from 'utility/assistant';
 import {isTimeBefore} from 'utility/format';
