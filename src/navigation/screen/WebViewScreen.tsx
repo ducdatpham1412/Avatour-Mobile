@@ -1,27 +1,25 @@
 import StyleWebView from 'components/base/StyleWebView';
 import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import StyleHeader from 'navigation/components/StyleHeader';
+import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
 
 interface Props {
-    route: {
-        params: {
-            title: string;
-            linkWeb: string;
-        };
-    };
+  route: {
+    params: AppParamsList[ROOT_SCREEN.webView];
+  };
 }
 
 const WebViewScreen = ({route}: Props) => {
-    const {title, linkWeb} = route.params;
+  const {title, linkWeb} = route.params;
 
-    return (
-        <>
-            <ViewSafeTopPadding />
-            <StyleHeader title={title || ''} />
-            <StyleWebView source={{uri: linkWeb}} />
-        </>
-    );
+  return (
+    <>
+      <ViewSafeTopPadding />
+      <StyleHeader title={title || ''} />
+      <StyleWebView source={{uri: linkWeb}} />
+    </>
+  );
 };
 
 export default WebViewScreen;

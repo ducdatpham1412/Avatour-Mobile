@@ -9,6 +9,7 @@ import AlertYesNo from 'components/AlerYesNo';
 import StylePicker from 'components/base/picker/StylePicker';
 import LoadingScreen from 'components/LoadingScreen';
 import {useInitApp, useTheme} from 'hook';
+import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {navigationRef} from 'navigation/NavigationService';
 import React from 'react';
@@ -16,7 +17,7 @@ import AppStack from './AppStack';
 import LoginRoute from './LoginRoute';
 import WebViewScreen from './WebViewScreen';
 
-const RootStack = createStackNavigator();
+const RootStack = createStackNavigator<AppParamsList>();
 
 const alertOption: StackNavigationOptions = {
   animationEnabled: false,

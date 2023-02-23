@@ -2,7 +2,6 @@ import {
   createNavigationContainerRef,
   StackActions,
 } from '@react-navigation/native';
-import {StylePickerProps} from 'components/base/picker/StylePicker';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {ReactNode} from 'react';
 import {I18Normalize} from 'utility/I18Next';
@@ -34,8 +33,8 @@ export const getCurrentRoute = () => {
 };
 
 interface TypeMoreChoiceAlert {
-  actionClickOk?: Function;
-  moreNotice?: string;
+  actionClickOk?: () => void;
+  moreNotice?: I18Normalize;
   moreAction?(): void;
 }
 
@@ -52,9 +51,9 @@ interface TypeAlertYesOrNo {
   agreeButtonOpacity?: number;
 }
 
-export const appAlert = (notice: any, more?: TypeMoreChoiceAlert) => {
+export const appAlert = (notice: I18Normalize, more?: TypeMoreChoiceAlert) => {
   navigate(ROOT_SCREEN.alert, {
-    notice: String(notice),
+    notice,
     actionClickOk: more?.actionClickOk,
     moreNotice: more?.moreNotice,
     moreAction: more?.moreAction,
@@ -69,6 +68,6 @@ export const showSwipeImages = (params: TypeSwipeImages) => {
   navigate(ROOT_SCREEN.swipeImages, params);
 };
 
-export const popUpPicker = (params: StylePickerProps) => {
+export const popUpPicker = (params: AppParamsList[ROOT_SCREEN.picker]) => {
   navigate(ROOT_SCREEN.picker, params);
 };
