@@ -52,7 +52,11 @@ export type AppParamsList = {
     name: string;
     avatar: string;
   };
-  [ROOT_SCREEN.swipeImages]: TypeSwipeImages;
+  [ROOT_SCREEN.swipeImages]: {
+    listImages: Array<{url: string}>;
+    initIndex?: number;
+    allowSaveImage?: boolean;
+  };
   [ROOT_SCREEN.reportUser]: {
     idUser: number;
     nameUser?: string;

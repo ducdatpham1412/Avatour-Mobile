@@ -6,7 +6,7 @@ import {logger} from './assistant';
 
 I18Next.use(initReactI18next)
   .init({
-    compatibilityJSON: 'v4',
+    compatibilityJSON: 'v3',
     resources: {
       en: {
         translation: en,

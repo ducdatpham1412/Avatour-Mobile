@@ -21,36 +21,6 @@ interface LoginType {
   username?: string;
   password?: string;
 }
-export interface PassportType {
-  profile?: {
-    id?: number | null | string; // if modeExp -> string '__1", else number
-    account_type?: number;
-    name?: string;
-    anonymousName?: string;
-    description?: string;
-    avatar?: string;
-    cover?: string;
-    followers?: number;
-    followings?: number;
-    reputation?: number;
-    relationship?: number;
-    location?: string;
-  };
-  information?: {
-    facebook?: any;
-    email?: string;
-    phone?: string;
-    gender?: any;
-    birthday?: Date;
-  };
-  setting?: {
-    theme?: number;
-    language?: number;
-    display_avatar?: boolean;
-    bank_account?: string;
-    bank_code?: string;
-  };
-}
 
 interface ResourceType {
   imageBackground?: string;
@@ -209,10 +179,10 @@ export const Redux = {
     useSelector((state: RootState) => state.accountSlice.passport),
 
   getTheme: () => {
-    const temp = useSelector(
-      (state: RootState) => state.accountSlice.passport.setting.theme,
-    );
-    return temp === THEME_TYPE.darkTheme ? Theme.darkTheme : Theme.lightTheme;
+    return {
+      ...Theme.lightTheme,
+      ...Theme.newTheme,
+    };
   },
 
   getThemeKeyboard: () => {
@@ -237,11 +207,11 @@ export const Redux = {
   },
 
   // profile
-  updatePassport: (newProfile: PassportType) => {
+  updatePassport: (newProfile: Partial<TypeReduxPassport>) => {
     const current = FindmeStore.getState().accountSlice.passport;
     const tempBirthday = newProfile.information?.birthday;
 
-    const temp: PassportType = {
+    const temp: TypeReduxPassport = {
       profile: {...current.profile, ...newProfile.profile},
       information: {
         ...current.information,
@@ -257,7 +227,14 @@ export const Redux = {
   },
 
   setTheme: (updateTheme: number) => {
-    Redux.updatePassport({setting: {theme: updateTheme}});
+    Redux.updatePassport({
+      setting: {
+        theme: updateTheme,
+        // language: 0,
+        // bank_code: '',
+        // bank_account: '',
+      },
+    });
   },
 
   setModeExp: (value: boolean) => {

@@ -1,0 +1,33 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/asset/fonts/AvenirLTStd-Black.otf",
+      "sha1": "eb534ac4079db239cdd489df7a1aa2b874b5b599"
+    },
+    {
+      "path": "src/asset/fonts/AvenirLTStd-Book.otf",
+      "sha1": "db6bfde1c5f1f6d8129df5dce9484d88d3646f0d"
+    },
+    {
+      "path": "src/asset/fonts/AvenirLTStd-Roman.otf",
+      "sha1": "a614776d8ee6be9ed01ccc136ac5daed16ba604b"
+    },
+    {
+      "path": "src/asset/fonts/GT Super Display Regular.ttf",
+      "sha1": "63e82c7c81d823bececdc972d4a8647a59af695a"
+    },
+    {
+      "path": "src/asset/fonts/OpenSans-Bold.ttf",
+      "sha1": "c1691e8168b2596af8a00162bac60dbe605e9e36"
+    },
+    {
+      "path": "src/asset/fonts/OpenSans-Regular.ttf",
+      "sha1": "3564ed0b5363df5cf277c16e0c6bedc5a682217f"
+    },
+    {
+      "path": "src/asset/fonts/OpenSans-Semibold.ttf",
+      "sha1": "f1ee7a9c6d13ee2d642a806c09e737275e613792"
+    }
+  ]
+}

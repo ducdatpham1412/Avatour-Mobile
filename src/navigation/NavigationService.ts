@@ -51,9 +51,9 @@ interface TypeAlertYesOrNo {
   agreeButtonOpacity?: number;
 }
 
-export const appAlert = (notice: I18Normalize, more?: TypeMoreChoiceAlert) => {
+export const appAlert = (notice: any, more?: TypeMoreChoiceAlert) => {
   navigate(ROOT_SCREEN.alert, {
-    notice,
+    notice: notice as I18Normalize,
     actionClickOk: more?.actionClickOk,
     moreNotice: more?.moreNotice,
     moreAction: more?.moreAction,
@@ -64,7 +64,9 @@ export const appAlertYesNo = (params: TypeAlertYesOrNo) => {
   navigate(ROOT_SCREEN.alertYesNo, params);
 };
 
-export const showSwipeImages = (params: TypeSwipeImages) => {
+export const showSwipeImages = (
+  params: AppParamsList[ROOT_SCREEN.swipeImages],
+) => {
   navigate(ROOT_SCREEN.swipeImages, params);
 };
 

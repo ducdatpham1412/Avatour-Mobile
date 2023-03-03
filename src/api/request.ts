@@ -1,12 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-destructuring */
-import FindmeStore from 'app-redux/store';
+import Store from 'app-redux/store';
 import {ERROR_KEY_ENUM} from 'asset/enum';
 import Config from 'asset/env';
-import axios from 'axios';
+import axios, {InternalAxiosRequestConfig} from 'axios';
 import Redux from 'hook/useRedux';
 import {logger} from 'utility/assistant';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import AsyncStorage from 'utility/FindmeAsyncStorage';
 import AuthenticateService from 'utility/login/loginService';
 
 const baseURL = Config.API_URL;
@@ -38,14 +38,14 @@ const processQueue = (error: any, token: string | null | undefined = null) => {
 };
 
 request.interceptors.request.use(
-  async (config: any) => {
+  async (config: InternalAxiosRequestConfig) => {
     if (config?.headers?.Authorization) {
       return config;
     }
     // Do something before api is sent
-    let token: any = FindmeStore.getState().logicSlice.token;
+    let token: any = Store.getState().logicSlice.token;
     if (!token) {
-      token = (await FindmeAsyncStorage.getActiveUser()).token;
+      token = (await AsyncStorage.getActiveUser()).token;
     }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -72,6 +72,8 @@ request.interceptors.response.use(
     const {data} = response || {};
     const {errorMessage, errorKey} = data || {};
 
+    logger('Response error: ', response);
+
     if (errorKey === ERROR_KEY_ENUM.token_expired && !config.retry) {
       // if is refreshing token in other request
       if (isRefreshing) {
@@ -90,14 +92,14 @@ request.interceptors.response.use(
       config.retry = true;
       isRefreshing = true;
 
-      const {refreshToken} = await FindmeAsyncStorage.getActiveUser();
+      const {refreshToken} = await AsyncStorage.getActiveUser();
       try {
         const res = await axios.post(AUTH_URL_REFRESH_TOKEN, {
           refresh: refreshToken,
         });
         const newToken = res.data.data.access;
 
-        await FindmeAsyncStorage.updateActiveUser({token: newToken});
+        await AsyncStorage.updateActiveUser({token: newToken});
         Redux.setToken(newToken);
 
         config.headers.Authorization = `Bearer ${newToken}`;

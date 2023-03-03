@@ -64,3 +64,7 @@ yarn-error.log
 
 # Env chosen
 src/asset/env/env.chosen.ts
+
+# Secret
+GoogleService-Info.plist
+google-services.json

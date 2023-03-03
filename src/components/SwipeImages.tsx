@@ -1,5 +1,6 @@
 import {Metrics} from 'asset/metrics';
 import Redux from 'hook/useRedux';
+import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {goBack} from 'navigation/NavigationService';
 import React from 'react';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
@@ -8,11 +9,7 @@ import {StyleTouchable} from './base';
 import PanZoomImage from './PanZoomImage';
 import StyleTabView from './StyleTabView';
 
-interface Props {
-  route: {
-    params: TypeSwipeImages;
-  };
-}
+type Props = AppRouteParams<AppParamsList[ROOT_SCREEN.swipeImages]>;
 
 const SwipeImages = ({route}: Props) => {
   const {listImages, initIndex = 0} = route.params;
