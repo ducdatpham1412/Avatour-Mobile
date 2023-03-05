@@ -31,7 +31,7 @@ const LoginScreen = () => {
   const [isKeepSign, setIsKeepSign] = useState(false);
 
   return (
-    <StyleContainer containerStyle={$container}>
+    <View style={$container}>
       <View style={$inputView}>
         <InputBox
           i18Placeholder="login.loginScreen.username"
@@ -119,12 +119,12 @@ const LoginScreen = () => {
           deleteAcc={deleteSavedAccount}
         />
       )}
-    </StyleContainer>
+    </View>
   );
 };
 
 const $container: ViewStyle = {
-  backgroundColor: 'transparent',
+  flex: 1,
 };
 const $inputView: ViewStyle = {
   width: '100%',

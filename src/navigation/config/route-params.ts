@@ -129,7 +129,7 @@ export type AppParamsList = {
     agreeButtonOpacity?: number;
   };
   [ROOT_SCREEN.webView]: {
-    title: string;
+    title: I18Normalize;
     linkWeb: string;
   };
   [ROOT_SCREEN.picker]: {
@@ -140,5 +140,21 @@ export type AppParamsList = {
     onSetItemSelected: Function;
     initIndex?: number;
     onCancel?(): void;
+  };
+  [LOGIN_ROUTE.sendOTP]: {
+    paramsOTP: TypeRequestOTPRequest;
+  };
+  [LOGIN_ROUTE.confirmOpenAccount]: {
+    username: string;
+  };
+  [LOGIN_ROUTE.agreeTermOfService]: {
+    itemLoginSuccess: TypeItemLoginSuccess;
+  };
+  [LOGIN_ROUTE.editBasicInformation]: {
+    itemLoginSuccess: TypeItemLoginSuccess;
+    isLoginSocial?: boolean;
+  };
+  [LOGIN_ROUTE.forgetPasswordSend]: {
+    username: string;
   };
 };

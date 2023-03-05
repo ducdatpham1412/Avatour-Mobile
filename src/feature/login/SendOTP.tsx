@@ -5,19 +5,17 @@ import {
   apiRegister,
   apiRequestOTP,
 } from 'api/authentication';
-import {TypeRegisterReq, TypeRequestOTPRequest} from 'api/interface';
 import {TYPE_OTP} from 'asset/enum';
 import {standValue} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
 import {
   StyleButton,
   StyleContainer,
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import LoadingScreen from 'components/LoadingScreen';
+import {useLoading, useTheme} from 'hook';
 import useCountdown from 'hook/useCountdown';
-import Redux from 'hook/useRedux';
+import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -28,48 +26,24 @@ import {
   Cursor,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
 import {TypeItemLoginSuccess} from 'utility/login/loginService';
-import BackgroundAuthen from './components/BackgroundAuthen';
 
-interface ParamsType {
-  name: string;
-
-  // for reset password
-  isResetPassword?: boolean;
-  username?: string;
-
-  // for register
-  itemSignUp?: TypeRegisterReq; // transmitted from "SignUpForm"
-  paramsOTP: TypeRequestOTPRequest;
-
-  // for open account
-  isOpenAccount?: boolean;
-  // username?: string
-}
-
-const SendOTP = ({route}: any) => {
-  const params: ParamsType = route?.params;
-  const {
-    name,
-    isResetPassword,
-    username,
-    itemSignUp,
-    paramsOTP,
-    isOpenAccount,
-  } = params;
-
-  const insets = useSafeAreaInsets();
+const SendOTP = ({
+  route: {params},
+}: AppRouteParams<AppParamsList[LOGIN_ROUTE.sendOTP]>) => {
+  const {paramsOTP} = params;
+  const theme = useTheme();
   const isFocusedScreen = useIsFocused();
-  const isLoading = Redux.getIsLoading();
-  const [isAnimation, setIsAnimation] = useState(false);
-
+  const codeRef = useRef<TextInput>(null);
+  const {loading, setLoading} = useLoading();
   const {countdown, resetCountdown, clearCountdown} = useCountdown(
     standValue.COUNT_DOWN,
   );
-  const codeRef = useRef<TextInput>(null);
+
+  const [isAnimation, setIsAnimation] = useState(false);
   const [code, setCode] = useState('');
+
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
     setValue: setCode,
@@ -104,20 +78,20 @@ const SendOTP = ({route}: any) => {
     /**
      * Reset password
      */
-    if (isResetPassword && username) {
+    if (paramsOTP.type_otp === TYPE_OTP.resetPassword) {
       try {
-        Redux.setIsLoading(true);
+        setLoading(true);
         await apiCheckOTP({
-          username,
+          username: paramsOTP.username,
           code,
         });
         navigate(LOGIN_ROUTE.forgetPasswordForm, {
-          username,
+          username: paramsOTP.username,
         });
       } catch (err) {
         handleWrongOtp();
       } finally {
-        Redux.setIsLoading(false);
+        setLoading(false);
       }
       return;
     }
@@ -125,16 +99,18 @@ const SendOTP = ({route}: any) => {
     /**
      * Register
      */
-    if (itemSignUp) {
+    if (paramsOTP.type_otp === TYPE_OTP.register) {
       try {
-        Redux.setIsLoading(true);
+        setLoading(true);
         const res = await apiRegister({
-          ...itemSignUp,
+          username: paramsOTP.username,
+          password: paramsOTP?.password || '',
+          confirm_password: paramsOTP?.confirm_password || '',
           code,
         });
         const itemLoginSuccess: TypeItemLoginSuccess = {
-          username: itemSignUp.email || itemSignUp.phone,
-          password: itemSignUp.password,
+          username: paramsOTP.username,
+          password: paramsOTP.password,
           token: res.data.token,
           refreshToken: res.data.refreshToken,
         };
@@ -144,18 +120,18 @@ const SendOTP = ({route}: any) => {
       } catch (err) {
         handleWrongOtp();
       } finally {
-        Redux.setIsLoading(false);
+        setLoading(false);
       }
     }
 
     /**
      * Open account
      */
-    if (isOpenAccount && username) {
+    if (paramsOTP.type_otp === TYPE_OTP.requestOpenAccount) {
       try {
-        Redux.setIsLoading(true);
+        setLoading(true);
         await apiOpenAccount({
-          username,
+          username: paramsOTP.username,
           verifyCode: code,
         });
         appAlert('login.loginScreen.openAccountSuccess', {
@@ -165,27 +141,23 @@ const SendOTP = ({route}: any) => {
         handleWrongOtp();
         appAlert(err);
       } finally {
-        Redux.setIsLoading(false);
+        setLoading(false);
       }
     }
   };
 
   const onSendAgain = async () => {
     try {
+      setLoading(true);
       if (code.length) {
         setCode('');
       }
-      if (itemSignUp) {
-        resetCountdown();
-        await apiRequestOTP(paramsOTP);
-      } else if (isResetPassword && username) {
-        await apiRequestOTP({
-          username,
-          typeOTP: TYPE_OTP.resetPassword,
-        });
-      }
+      resetCountdown();
+      await apiRequestOTP(paramsOTP);
     } catch (err) {
       appAlert(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -198,33 +170,22 @@ const SendOTP = ({route}: any) => {
       : 'login.component.sendOTP.sendAgainNoCount';
   }, [countdown > 0]);
 
-  const RenderTextNotification = useMemo(() => {
-    return (
+  return (
+    <StyleContainer
+      customStyle={styles.container}
+      headerProps={{
+        title: 'login.component.sendOTP.header',
+      }}>
       <View style={styles.wrapTextNotification}>
         <StyleText
           i18Text="login.component.sendOTP.notiOTP"
           customStyle={styles.textNotification}
         />
-        <StyleText originValue={name} customStyle={[styles.textDestination]} />
+        <StyleText
+          originValue={params.paramsOTP.username}
+          customStyle={[styles.textDestination]}
+        />
       </View>
-    );
-  }, []);
-
-  return (
-    <StyleContainer
-      customStyle={styles.container}
-      containerStyle={{backgroundColor: Theme.darkTheme.backgroundColor}}
-      TopComponent={<BackgroundAuthen />}
-      headerProps={{
-        title: 'login.component.sendOTP.header',
-        containerStyle: {
-          marginTop: insets?.top || 0,
-          backgroundColor: 'transparent',
-        },
-        iconStyle: {color: Theme.common.white},
-        titleStyle: {color: Theme.common.white},
-      }}>
-      {RenderTextNotification}
 
       {/* OTP Code Field */}
       <Animatable.View
@@ -243,8 +204,8 @@ const SendOTP = ({route}: any) => {
             <View
               key={index}
               onLayout={getCellOnLayoutHandler(index)}
-              style={styles.codeInput}>
-              <Text style={styles.codeInputText}>
+              style={[styles.codeInput, {backgroundColor: theme.white}]}>
+              <Text style={[styles.codeInputText, {color: theme.p_800}]}>
                 {symbol || (isFocused ? <Cursor /> : null)}
               </Text>
             </View>
@@ -257,6 +218,7 @@ const SendOTP = ({route}: any) => {
         onPress={onPressConfirm}
         containerStyle={styles.confirmButton}
         disable={code.length !== standValue.OTP_LENGTH}
+        isLoading={loading}
       />
 
       <StyleTouchable
@@ -266,10 +228,9 @@ const SendOTP = ({route}: any) => {
         <StyleText
           i18Text={TextSendAgain}
           i18Params={{countdown}}
-          customStyle={[styles.titleSendAgain]}
+          customStyle={styles.titleSendAgain}
         />
       </StyleTouchable>
-      {isLoading && <LoadingScreen />}
     </StyleContainer>
   );
 };
@@ -283,14 +244,10 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   textNotification: {
-    fontSize: '17@ms',
     marginBottom: '2%',
-    color: Theme.common.white,
   },
   textDestination: {
-    fontSize: '13@ms',
     fontWeight: 'bold',
-    color: Theme.common.white,
   },
   enterCodeInputView: {
     width: '150@vs',
@@ -308,22 +265,18 @@ const styles = ScaledSheet.create({
     paddingHorizontal: '50@vs',
   },
   titleSendAgain: {
-    fontSize: '15@ms',
     fontWeight: 'bold',
     textDecorationLine: 'underline',
-    color: Theme.common.white,
   },
   codeInput: {
     width: '52@s',
     height: '52@s',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Theme.common.blueInput,
     borderRadius: '5@s',
   },
   codeInputText: {
-    fontSize: '32@ms0.3',
-    color: Theme.common.white,
+    fontSize: '32@ms',
   },
   otpInputBox: {
     width: '100%',
@@ -332,7 +285,7 @@ const styles = ScaledSheet.create({
     width: '100%',
     paddingHorizontal: '30@s',
     paddingVertical: '2@vs',
-    marginTop: '105@vs',
+    marginTop: '50@vs',
     marginBottom: '132@vs',
   },
 });

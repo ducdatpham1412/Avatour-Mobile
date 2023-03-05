@@ -1,3 +1,5 @@
+import {apiRequestOTP} from 'api/authentication';
+import {TYPE_OTP} from 'asset/enum';
 import {FONT_SIZE, standValue, TERMS_URL} from 'asset/standardValue';
 import {
   StyleButton,
@@ -7,19 +9,39 @@ import {
 } from 'components/base';
 import {InputBox} from 'components/common';
 import {useTheme} from 'hook';
-import ROOT_SCREEN from 'navigation/config/routes';
-import {navigate} from 'navigation/NavigationService';
-import React, {useMemo, useRef, useState} from 'react';
+import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
+import {appAlert, navigate} from 'navigation/NavigationService';
+import React, {Dispatch, SetStateAction, useRef, useState} from 'react';
 import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {I18Normalize} from 'utility/I18Next';
 import {ms, s, vs} from 'utility/scale';
 import {validateIsEmail, validatePassword} from 'utility/validate';
 
+const onSignUp = async (
+  data: TypeRegisterReq,
+  setLoading: Dispatch<SetStateAction<boolean>>,
+) => {
+  try {
+    const paramsOTP: TypeRequestOTPRequest = {
+      username: data.username,
+      password: data.password,
+      confirm_password: data.confirm_password,
+      type_otp: TYPE_OTP.register,
+    };
+    setLoading(true);
+    await apiRequestOTP(paramsOTP);
+    navigate(LOGIN_ROUTE.sendOTP, {
+      paramsOTP,
+    });
+  } catch (err) {
+    appAlert(err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 const SignUpForm = () => {
   const theme = useTheme();
-  const isEmail = useRef(true).current;
-  const isPhone = useRef(false).current;
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
 
@@ -27,6 +49,7 @@ const SignUpForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [haveAgreed, setHaveAgreed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isValidEmail = validateIsEmail(username);
   const isValidPassword = validatePassword(password);
@@ -34,21 +57,11 @@ const SignUpForm = () => {
   const isValidButton =
     isValidEmail && isValidPassword && isValidConfirmPw && haveAgreed;
 
-  const UserNameHolder = useMemo((): I18Normalize => {
-    if (isEmail) {
-      return 'login.signUp.form.enterEmail';
-    }
-    if (isPhone) {
-      return 'login.signUp.form.enterPhone';
-    }
-    return 'common.null';
-  }, [isEmail, isPhone]);
-
   return (
     <StyleContainer containerStyle={$container}>
       <View style={$inputView}>
         <InputBox
-          i18Placeholder={UserNameHolder}
+          i18Placeholder="login.email"
           onChangeText={value => setUsername(value)}
           onSubmitEditing={() => passwordRef.current?.focus()}
           isError={!!username && !isValidEmail}
@@ -56,7 +69,7 @@ const SignUpForm = () => {
         />
         <InputBox
           ref={passwordRef}
-          i18Placeholder="login.loginScreen.password"
+          i18Placeholder="login.password"
           onChangeText={value => setPassword(value)}
           onSubmitEditing={() => confirmPasswordRef.current?.focus()}
           maxLength={standValue.PASSWORD_MAX_LENGTH}
@@ -67,7 +80,7 @@ const SignUpForm = () => {
         />
         <InputBox
           ref={confirmPasswordRef}
-          i18Placeholder="login.signUp.form.confirmPass"
+          i18Placeholder="login.confirmPassword"
           onChangeText={value => setConfirmPassword(value)}
           maxLength={standValue.PASSWORD_MAX_LENGTH}
           isError={!!confirmPassword && confirmPassword !== password}
@@ -111,15 +124,25 @@ const SignUpForm = () => {
       <StyleButton
         title="login.signUp.form.confirmButton"
         containerStyle={$button}
-        onPress={() => null}
+        onPress={() =>
+          onSignUp(
+            {
+              username,
+              password,
+              confirm_password: confirmPassword,
+            },
+            setLoading,
+          )
+        }
         disable={!isValidButton}
+        isLoading={loading}
       />
     </StyleContainer>
   );
 };
 
 const $container: ViewStyle = {
-  backgroundColor: 'transparent',
+  paddingTop: 0,
 };
 const $inputView: ViewStyle = {
   width: '100%',

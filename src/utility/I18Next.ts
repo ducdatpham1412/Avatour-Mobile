@@ -16,7 +16,7 @@ I18Next.use(initReactI18next)
       },
     },
     lng: I18Next.language,
-    fallbackLng: 'en',
+    fallbackLng: 'vi',
     interpolation: {
       escapeValue: false,
     },

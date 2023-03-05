@@ -1,49 +1,37 @@
-import {yupResolver} from '@hookform/resolvers/yup';
 import {apiResetPassword} from 'api/authentication';
-import {standValue} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
-import {StyleButton, StyleContainer, StyleInputForm} from 'components/base';
-import LoadingScreen from 'components/LoadingScreen';
-import Redux from 'hook/useRedux';
+import {FONT_SIZE, standValue} from 'asset/standardValue';
+import {StyleButton, StyleContainer} from 'components/base';
+import {InputBox} from 'components/common';
+import {useLoading} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
-import React, {useRef} from 'react';
-import {FormProvider, useForm} from 'react-hook-form';
-import {TextInput} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import {yupValidate} from 'utility/validate';
-import * as yup from 'yup';
-import BackgroundAuthen from '../components/BackgroundAuthen';
+import React, {useRef, useState} from 'react';
+import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {ScaledSheet} from 'react-native-size-matters';
+import {vs} from 'utility/scale';
+import {validatePassword} from 'utility/validate';
 
 const ForgetPasswordForm = ({route}: any) => {
   const {username} = route.params;
-  const insets = useSafeAreaInsets();
-  const isLoading = Redux.getIsLoading();
+  const {loading, setLoading} = useLoading();
 
-  const newRef = useRef<TextInput>(null);
-  const confirmRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
 
-  const passwordSchema = yup.object().shape({
-    newPass: yupValidate.password(),
-    confirmPass: yupValidate.password('newPass'),
-  });
-  const form = useForm({
-    mode: 'all',
-    resolver: yupResolver(passwordSchema),
-  });
-  const {
-    handleSubmit,
-    formState: {isValid},
-  } = form;
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const submitChangePass = async (data: any) => {
+  const isValidPassword = validatePassword(password);
+  const isValidConfirmPw = confirmPassword === password;
+  const isValidButton = isValidPassword && isValidConfirmPw;
+
+  const submitChangePass = async () => {
     try {
-      Redux.setIsLoading(true);
+      setLoading(true);
       await apiResetPassword({
         username,
-        newPassword: data.newPass,
-        confirmPassword: data.confirmPass,
+        password,
+        confirm_password: confirmPassword,
       });
       appAlert('alert.successChangePass', {
         actionClickOk: () => navigate(LOGIN_ROUTE.loginScreen),
@@ -51,66 +39,63 @@ const ForgetPasswordForm = ({route}: any) => {
     } catch (err) {
       appAlert(err);
     } finally {
-      Redux.setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <StyleContainer
       customStyle={styles.container}
-      containerStyle={{backgroundColor: Theme.darkTheme.backgroundColor}}
-      TopComponent={<BackgroundAuthen />}
       headerProps={{
         title: 'login.forgetPassword.form.header',
-        containerStyle: {
-          marginTop: insets?.top || 0,
-          backgroundColor: 'transparent',
-        },
-        iconStyle: {color: Theme.common.white},
-        titleStyle: {color: Theme.common.white},
+        showIconBack: false,
       }}>
-      <FormProvider {...form}>
-        <StyleInputForm
-          name="username"
-          value={username}
-          containerStyle={[styles.inputForm, {marginTop: verticalScale(100)}]}
-          editable={false}
-        />
-
-        <StyleInputForm
-          ref={newRef}
-          name="newPass"
-          i18Placeholder="login.forgetPassword.form.newPass"
-          secureTextEntry={true}
-          containerStyle={styles.inputForm}
+      <View style={$inputView}>
+        <InputBox
+          ref={passwordRef}
+          i18Placeholder="login.newPassword"
+          onChangeText={value => setPassword(value)}
+          onSubmitEditing={() => confirmPasswordRef.current?.focus()}
           maxLength={standValue.PASSWORD_MAX_LENGTH}
-          onSubmitEditing={() => confirmRef.current?.focus()}
-          selectionColor={Theme.darkTheme.textHightLight}
+          isError={!!password && !isValidPassword}
+          textError="alert.regexPass"
+          secureTextEntry
         />
-
-        <StyleInputForm
-          ref={confirmRef}
-          name="confirmPass"
-          i18Placeholder="login.forgetPassword.form.confirmPass"
-          secureTextEntry={true}
-          containerStyle={styles.inputForm}
+        <InputBox
+          ref={confirmPasswordRef}
+          i18Placeholder="login.confirmPassword"
+          onChangeText={value => setConfirmPassword(value)}
           maxLength={standValue.PASSWORD_MAX_LENGTH}
-          selectionColor={Theme.darkTheme.textHightLight}
+          isError={!!confirmPassword && confirmPassword !== password}
+          textError="alert.passNotMatch"
+          style={$inputPassword}
+          secureTextEntry
         />
-      </FormProvider>
+      </View>
 
       <StyleButton
         title="login.forgetPassword.form.buttonDone"
         containerStyle={styles.buttonConfirm}
-        disable={!isValid}
-        onPress={handleSubmit(submitChangePass)}
+        disable={!isValidButton}
+        onPress={submitChangePass}
+        isLoading={loading}
       />
-
-      {isLoading && <LoadingScreen />}
     </StyleContainer>
   );
 };
-export default ForgetPasswordForm;
+
+const $headerTitle: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+  marginTop: vs(5),
+};
+const $inputView: ViewStyle = {
+  width: '100%',
+  marginTop: vs(30),
+};
+const $inputPassword: ViewStyle = {
+  marginTop: vs(15),
+};
 
 const styles = ScaledSheet.create({
   container: {
@@ -127,3 +112,5 @@ const styles = ScaledSheet.create({
     fontSize: 25,
   },
 });
+
+export default ForgetPasswordForm;

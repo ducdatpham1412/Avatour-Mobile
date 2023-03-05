@@ -3,5 +3,13 @@ import useInitApp from './useInitApp';
 import useApi from './useApi';
 import useNotification from './useNotification';
 import useCountdown from './useCountdown';
+import useLoading from './useLoading';
 
-export {useTheme, useInitApp, useApi, useNotification, useCountdown};
+export {
+  useTheme,
+  useInitApp,
+  useApi,
+  useNotification,
+  useCountdown,
+  useLoading,
+};

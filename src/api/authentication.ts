@@ -7,13 +7,13 @@ export const apiUpgradeAccount = (body: TypeUpgradeAccount) => {
 export const apiRequestOTP = (
   params: TypeRequestOTPRequest,
 ): Promise<TypeRequestOTPResponse> => {
-  return request.post('/auth/request-otp', params);
+  return request.post('/auth/otp', params);
 };
 
 export const apiCheckOTP = (
   params: TypeCheckOTPRequest,
 ): Promise<TypeCheckOTPResponse> => {
-  return request.post('/auth/check-otp', params);
+  return request.put('/auth/otp', params);
 };
 
 export const apiLogin = (

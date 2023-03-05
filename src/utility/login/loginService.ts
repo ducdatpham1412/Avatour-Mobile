@@ -1,10 +1,15 @@
 import {apiLogin, apiLoginSocial, apiLogOut} from 'api/authentication';
 import {apiGetPassport, apiGetResource} from 'api/discovery';
 import request from 'api/request';
-import {logOut, updatePassport, updateResource} from 'app-redux';
+import {
+  logOut,
+  setModeExp,
+  setToken,
+  updatePassport,
+  updateResource,
+} from 'app-redux';
 import FindmeStore from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
-import Redux from 'hook/useRedux';
 import {closeSocket} from 'hook/useSocketIO';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
@@ -25,13 +30,6 @@ interface requestLoginParams {
 interface RequestLoginSocialParams {
   tokenSocial: string | null;
   typeSocial: TYPE_SOCIAL_LOGIN;
-}
-
-export interface TypeItemLoginSuccess {
-  username?: string;
-  password?: string;
-  token: string;
-  refreshToken: string;
 }
 
 interface TypeParamsLoginSuccess {
@@ -67,12 +65,11 @@ const AuthenticateService = {
     updateResource(resource.data);
 
     // passport must be above token to set in SocketProvider
-    Redux.setToken(itemLoginSuccess.token);
-    Redux.setModeExp(false);
-    Redux.setTheme(passport.data.setting.theme);
-    const temp = chooseLanguageFromId(passport.data.setting.language);
-    I18Next.changeLanguage(temp);
-    await AsyncStorage.editLanguageModeExp(temp);
+    setToken(itemLoginSuccess.token);
+    setModeExp(false);
+    // const temp = chooseLanguageFromId(passport.data.setting.language);
+    I18Next.changeLanguage('vi');
+    // await AsyncStorage.editLanguageModeExp(temp);
 
     navigate(ROOT_SCREEN.mainScreen, {
       screen: DISCOVERY_ROUTE.discoveryScreen,
@@ -81,12 +78,8 @@ const AuthenticateService = {
 
   requestLogin: async (params: requestLoginParams) => {
     const {username, password, isKeepSign} = params;
-
     try {
-      Redux.setIsLoading(true);
-
       const res = await apiLogin({username, password});
-
       /**
        * Account is temporary locking
        */
@@ -114,8 +107,6 @@ const AuthenticateService = {
       }
     } catch (err) {
       appAlert('alert.loginFail');
-    } finally {
-      Redux.setIsLoading(false);
     }
   },
   requestLoginSocial: async (params: RequestLoginSocialParams) => {
@@ -165,7 +156,6 @@ const AuthenticateService = {
     callBack?(): void;
   }) => {
     try {
-      Redux.setIsLoading(true);
       const isModeExp = FindmeStore.getState().accountSlice.modeExp;
 
       // logout google
@@ -185,8 +175,6 @@ const AuthenticateService = {
       params?.callBack?.();
     } catch (err) {
       appAlert(err);
-    } finally {
-      Redux.setIsLoading(false);
     }
   },
 };

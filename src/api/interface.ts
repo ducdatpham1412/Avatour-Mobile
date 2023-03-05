@@ -57,13 +57,7 @@ export interface TypeLoginSocialRequest {
 }
 
 // 2. register
-export interface TypeRegisterReq {
-  email: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-  code: string;
-}
+
 export interface TypeRegisterRes {
   success: boolean;
   data: {

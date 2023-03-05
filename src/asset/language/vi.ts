@@ -56,8 +56,6 @@ const login = {
     },
     form: {
       header: 'Đặt lại mật khẩu',
-      newPass: 'Mật khẩu mới',
-      confirmPass: 'Xác nhận mật khẩu',
       buttonDone: 'Đã xong',
     },
   },
@@ -70,8 +68,6 @@ const login = {
     },
     form: {
       header: 'Đăng ký',
-      username: 'Tên đăng nhập',
-      password: 'Mật khẩu',
       confirmPass: 'Xác nhận mật khẩu',
       confirmButton: 'Xác nhận',
       enterEmail: 'Email',
@@ -106,18 +102,20 @@ const login = {
     continue: 'Tiếp tục',
     openAccountSuccess: 'Mở khoá tài khoản thành công!',
   },
-  agreeTermOfService: {
-    registerSuccess: 'Đăng ký thành công',
-    agreeTermOfService: 'Đi thôi',
-    contentSuggest:
-      'Đăng ký thành công! 🥰\nBây giờ chúng ta hãy bắt đầu chỉnh sửa hồ sơ của bạn',
-  },
   enjoy: 'Trải nghiệm',
   login: 'Đăng nhập',
   register: 'Đăng ký',
   enjoyModeNoAcc: 'Trải nghiệm app không dùng tài khoản',
   forgotPassword: 'Quên mật khẩu?',
   orSignIn: 'Đăng nhập với:',
+  contentSuggest:
+    'Đăng ký thành công! 🥰\nBây giờ chúng ta hãy bắt đầu chỉnh sửa một số thông tin nào',
+  letGo: 'Đi thôi',
+  emailPhone: 'Email/SDT',
+  email: 'Email',
+  password: 'Mật khẩu',
+  confirmPassword: 'Xác nhận mật khẩu',
+  newPassword: 'Mật khẩu mới',
 };
 
 // DISCOVERY ROUTE

@@ -167,10 +167,7 @@ export const Redux = {
     useSelector((state: RootState) => state.accountSlice.passport),
 
   getTheme: () => {
-    return {
-      ...Theme.lightTheme,
-      ...Theme.newTheme,
-    };
+    return Theme.newTheme;
   },
 
   getThemeKeyboard: () => {
