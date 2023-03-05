@@ -10,7 +10,7 @@ import {
 import {useAppSelector} from 'app-redux/store';
 import {useEffect, useState} from 'react';
 import {chooseLanguageFromId, logger} from 'utility/assistant';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import AsyncStorage from 'utility/asyncStore';
 import I18Next from 'utility/I18Next';
 
 const useInitApp = () => {
@@ -25,19 +25,19 @@ const useInitApp = () => {
   useEffect(() => {
     const initApp = async () => {
       try {
-        const activeUser = await FindmeAsyncStorage.getActiveUser();
+        const activeUser = await AsyncStorage.getActiveUser();
 
         const handleNotHaveActiveUser = async () => {
-          await FindmeAsyncStorage.logOut();
-          I18Next.changeLanguage(await FindmeAsyncStorage.getLanguageModeExp());
+          await AsyncStorage.logOut();
+          I18Next.changeLanguage(await AsyncStorage.getLanguageModeExp());
         };
 
         if (activeUser?.token) {
           // although activeUser still save in async from last login
           // but "index" not have -> handleNotHaveActiveUser and clear that user
-          const index = await FindmeAsyncStorage.getIndexNow();
+          const index = await AsyncStorage.getIndexNow();
           const isHavingSocialAccount =
-            await FindmeAsyncStorage.getIsHavingSocialAccount();
+            await AsyncStorage.getIsHavingSocialAccount();
 
           // If both username - password and socialLoginAccount not saved
           if (index === null && !isHavingSocialAccount) {

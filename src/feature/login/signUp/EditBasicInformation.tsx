@@ -16,8 +16,9 @@ import {appAlert, appAlertYesNo, goBack} from 'navigation/NavigationService';
 import React, {useRef, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import FindmeAsyncStorage from 'utility/asyncStore';
 import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
+import {I18Normalize} from 'utility/I18Next';
 import AuthenticateService, {
   TypeItemLoginSuccess,
 } from 'utility/login/loginService';
@@ -202,7 +203,7 @@ const EditBasicInformation = ({route}: Props) => {
                 hitSlop={20}
                 onPress={() => dateTimeRef.current?.show()}>
                 <StyleText
-                  i18Text={textBirthday}
+                  i18Text={textBirthday as I18Normalize}
                   customStyle={
                     birthday ? styles.textBirthday : styles.textChooseBirthday
                   }

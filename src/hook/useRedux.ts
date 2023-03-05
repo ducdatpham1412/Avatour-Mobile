@@ -7,9 +7,6 @@ import {
 import {
   logicSliceAction,
   ReduxPostCreatedHandle,
-  TypeHotLocation,
-  TypePriceResource,
-  TypePurchaseResource,
 } from 'app-redux/account/logicSlice';
 import FindmeStore, {RootState, useAppSelector} from 'app-redux/store';
 import {THEME_TYPE} from 'asset/enum';
@@ -20,15 +17,6 @@ import {useSelector} from 'react-redux';
 interface LoginType {
   username?: string;
   password?: string;
-}
-
-interface ResourceType {
-  imageBackground?: string;
-  gradients?: Array<string>;
-  banners?: Array<string>;
-  hotLocations?: Array<TypeHotLocation>;
-  listPrices?: Array<TypePriceResource>;
-  listPurchase?: Array<TypePurchaseResource>;
 }
 
 interface TypeBubblePalaceUpdate {
@@ -106,7 +94,7 @@ export const Redux = {
     FindmeStore.dispatch(logicSliceAction.setIsLoading(status));
   },
 
-  updateResource: (update: ResourceType) => {
+  updateResource: (update: TypeResourceResponse['data']) => {
     const newResource = {
       ...FindmeStore.getState().logicSlice.resource,
       ...update,
@@ -207,7 +195,7 @@ export const Redux = {
   },
 
   // profile
-  updatePassport: (newProfile: Partial<TypeReduxPassport>) => {
+  updatePassport: (newProfile: DeepPartial<TypeReduxPassport>) => {
     const current = FindmeStore.getState().accountSlice.passport;
     const tempBirthday = newProfile.information?.birthday;
 

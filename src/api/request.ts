@@ -6,7 +6,7 @@ import Config from 'asset/env';
 import axios, {InternalAxiosRequestConfig} from 'axios';
 import Redux from 'hook/useRedux';
 import {logger} from 'utility/assistant';
-import AsyncStorage from 'utility/FindmeAsyncStorage';
+import AsyncStorage from 'utility/asyncStore';
 import AuthenticateService from 'utility/login/loginService';
 
 const baseURL = Config.API_URL;

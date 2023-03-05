@@ -1,17 +1,32 @@
 import {apiGetIdEnjoyMode} from 'api/authentication';
 import {apiGetResource} from 'api/discovery';
+import {setModeExp, updatePassport, updateResource} from 'app-redux';
 import Images from 'asset/img/images';
 import {PRIVACY_URL, TERMS_URL} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
 import React, {useEffect, useRef} from 'react';
 import {Animated, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 
+const onGoToTermsOfUse = () => {
+  navigate(ROOT_SCREEN.webView, {
+    title: 'setting.aboutUs.termsOfUse',
+    linkWeb: TERMS_URL,
+  });
+};
+
+const onGoToPrivacyPolicy = () => {
+  navigate(ROOT_SCREEN.webView, {
+    title: 'setting.aboutUs.privacyPolicy',
+    linkWeb: PRIVACY_URL,
+  });
+};
+
 const ChoosingLoginOrEnjoy = () => {
+  const theme = useTheme();
   const win = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -27,33 +42,16 @@ const ChoosingLoginOrEnjoy = () => {
       const res = await apiGetIdEnjoyMode();
       const resource = await apiGetResource();
 
-      Redux.updatePassport({profile: {id: res.data}});
-      Redux.updateResource(resource.data);
-      Redux.setModeExp(true);
+      updatePassport({profile: {id: res.data}});
+      updateResource(resource.data);
+      setModeExp(true);
     } catch (err) {
       appAlert(err);
     }
   };
 
-  const onGoToTermsOfUse = () => {
-    navigate(ROOT_SCREEN.webView, {
-      title: 'setting.aboutUs.termsOfUse',
-      linkWeb: TERMS_URL,
-    });
-  };
-
-  const onGoToPrivacyPolicy = () => {
-    navigate(ROOT_SCREEN.webView, {
-      title: 'setting.aboutUs.privacyPolicy',
-      linkWeb: PRIVACY_URL,
-    });
-  };
-
-  /**
-   * Render view
-   */
-  const RenderLoginIcon = () => {
-    return (
+  return (
+    <View style={[styles.container]}>
       <Animated.View
         style={[
           styles.twoSideBox,
@@ -66,7 +64,7 @@ const ChoosingLoginOrEnjoy = () => {
           customStyle={styles.buttonChoose}>
           <StyleText
             i18Text="login.enjoyModeNoAcc"
-            customStyle={[styles.text, {color: Theme.common.white}]}
+            customStyle={[styles.text, {color: theme.black}]}
           />
           <StyleImage
             source={Images.images.squirrelLogin}
@@ -75,15 +73,11 @@ const ChoosingLoginOrEnjoy = () => {
           />
         </StyleTouchable>
       </Animated.View>
-    );
-  };
 
-  const RenderAgreeTerms = () => {
-    return (
       <View style={styles.ageeTermsView}>
         <StyleText
           i18Text="login.loginScreen.byLoginOrTappingEnjoy"
-          customStyle={[styles.textTermAndPolicy, {color: Theme.common.white}]}>
+          customStyle={[styles.textTermAndPolicy, {color: theme.gray_600}]}>
           {' '}
           <StyleText
             i18Text="login.loginScreen.termsOfUse"
@@ -91,16 +85,13 @@ const ChoosingLoginOrEnjoy = () => {
             customStyle={[
               styles.textTermAndPolicy,
               styles.textLink,
-              {color: Theme.common.white},
+              {color: theme.black},
             ]}
           />
           <StyleText
             i18Text="login.loginScreen.learnMore"
             onPress={onGoToTermsOfUse}
-            customStyle={[
-              styles.textTermAndPolicy,
-              {color: Theme.common.white},
-            ]}
+            customStyle={[styles.textTermAndPolicy, {color: theme.gray_600}]}
           />{' '}
           <StyleText
             i18Text="login.loginScreen.privacyPolicy"
@@ -108,19 +99,12 @@ const ChoosingLoginOrEnjoy = () => {
             customStyle={[
               styles.textTermAndPolicy,
               styles.textLink,
-              {color: Theme.common.white},
+              {color: theme.black},
             ]}
           />
           {'.'}
         </StyleText>
       </View>
-    );
-  };
-
-  return (
-    <View style={[styles.container]}>
-      {RenderLoginIcon()}
-      {RenderAgreeTerms()}
     </View>
   );
 };
@@ -128,11 +112,6 @@ const ChoosingLoginOrEnjoy = () => {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingTop: '30@vs',
-  },
-  choosingView: {
-    flexDirection: 'row',
-    marginTop: '40@vs',
   },
   twoSideBox: {
     alignItems: 'center',

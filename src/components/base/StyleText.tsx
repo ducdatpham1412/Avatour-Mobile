@@ -1,4 +1,6 @@
+import {FONT_SIZE} from 'asset';
 import {FONT_FAMILY} from 'asset/enum';
+import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, Text, TextProps, TextStyle} from 'react-native';
@@ -16,6 +18,7 @@ interface StyleTextProps extends TextProps {
 const StyleText = (props: StyleTextProps) => {
   const {i18Text, i18Params, originValue, customStyle, children} = props;
   const {t} = useTranslation();
+  const theme = useTheme();
 
   let valueText;
   if (i18Text) {
@@ -27,7 +30,9 @@ const StyleText = (props: StyleTextProps) => {
   }
 
   return (
-    <Text style={[styles.textDefaultStyle, customStyle]} {...props}>
+    <Text
+      style={[styles.textDefaultStyle, {color: theme.black}, customStyle]}
+      {...props}>
       {valueText}
       {children}
     </Text>
@@ -36,7 +41,7 @@ const StyleText = (props: StyleTextProps) => {
 
 const styles = ScaledSheet.create({
   textDefaultStyle: {
-    fontSize: '17@ms',
+    fontSize: FONT_SIZE.f2,
     color: 'lightgreen',
     fontFamily: FONT_FAMILY.openSans,
   },

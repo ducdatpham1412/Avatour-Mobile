@@ -11,7 +11,7 @@ import {appAlert, navigate} from 'navigation/NavigationService';
 import React, {useEffect, useRef, useState} from 'react';
 import {TextInput} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import AsyncStorage from 'utility/asyncStore';
 
 interface Props {
   route: {
@@ -35,7 +35,7 @@ const EnterPassword = ({route}: Props) => {
   }, []);
 
   const onConfirmPassword = async () => {
-    const activeUser = await FindmeAsyncStorage.getActiveUser();
+    const activeUser = await AsyncStorage.getActiveUser();
 
     if (activeUser.password !== password) {
       appAlert('setting.personalInfo.passwordNotTrue');

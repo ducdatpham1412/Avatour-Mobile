@@ -1,50 +1,52 @@
-import {FONT_SIZE} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
+import {useTheme} from 'hook';
 import React from 'react';
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
+import {I18Normalize} from 'utility/I18Next';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
 
 interface StyleTouchableProps {
-    title: string;
-    containerStyle?: StyleProp<ViewStyle>;
-    titleStyle?: StyleProp<TextStyle>;
-    disable?: boolean;
-    onPress?(): any;
+  title: I18Normalize;
+  containerStyle?: StyleProp<ViewStyle>;
+  titleStyle?: StyleProp<TextStyle>;
+  disable?: boolean;
+  onPress?: () => void;
 }
 
 const StyleButton = (props: StyleTouchableProps) => {
-    const {title, containerStyle, titleStyle, disable, onPress} = props;
+  const {title, containerStyle, titleStyle, disable, onPress} = props;
+  const theme = useTheme();
 
-    return (
-        <StyleTouchable
-            customStyle={[styles.container, containerStyle]}
-            onPress={onPress}
-            disable={disable}>
-            <StyleText
-                i18Text={title || 'Button'}
-                customStyle={[styles.title, titleStyle]}
-            />
-        </StyleTouchable>
-    );
+  return (
+    <StyleTouchable
+      customStyle={[
+        styles.container,
+        {backgroundColor: theme.p_700},
+        containerStyle,
+      ]}
+      onPress={onPress}
+      disable={disable}>
+      <StyleText
+        i18Text={title || 'common.done'}
+        customStyle={[styles.title, {color: theme.white}, titleStyle]}
+      />
+    </StyleTouchable>
+  );
 };
 
 const styles = ScaledSheet.create({
-    container: {
-        borderRadius: '8@vs',
-        paddingVertical: '10@vs',
-        paddingHorizontal: '60@vs',
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        backgroundColor: Theme.common.joinGroupChat,
-    },
-    title: {
-        fontSize: FONT_SIZE.normal,
-        fontWeight: 'bold',
-        color: Theme.common.white,
-    },
+  container: {
+    borderRadius: '8@vs',
+    paddingVertical: '10@vs',
+    paddingHorizontal: '60@s',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  title: {
+    fontWeight: 'bold',
+  },
 });
 
 export default StyleButton;

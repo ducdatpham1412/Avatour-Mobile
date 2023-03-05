@@ -3,7 +3,7 @@ import {accountSliceAction, initialAccountState} from '../account/accountSlice';
 import Store, {RootState} from '../store';
 import {setIsLogOut, setToken, updateListChatTag} from './logic';
 
-type PassportType = Partial<RootState['accountSlice']['passport']>;
+type PassportType = DeepPartial<RootState['accountSlice']['passport']>;
 
 export const updatePassport = (newProfile: PassportType) => {
   const current = Store.getState().accountSlice.passport;

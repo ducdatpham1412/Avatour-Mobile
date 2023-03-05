@@ -1,251 +1,161 @@
-import {appleAuth} from '@invertase/react-native-apple-authentication';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-import {useIsFocused} from '@react-navigation/native';
-import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
-import Images from 'asset/img/images';
-import Theme from 'asset/theme/Theme';
-import {
-  StyleButton,
-  StyleContainer,
-  StyleImage,
-  StyleText,
-} from 'components/base';
+import {FONT_SIZE} from 'asset';
+import {StyleButton, StyleContainer, StyleText} from 'components/base';
 import StyleTouchable from 'components/base/StyleTouchable';
 import InputBox from 'components/common/InputBox';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
-import React, {useEffect, useRef, useState} from 'react';
-import {View} from 'react-native';
+import {navigate} from 'navigation/NavigationService';
+import React, {useRef, useState} from 'react';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import {isIOS} from 'utility/assistant';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
-import AuthenticateService from 'utility/login/loginService';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {ms, s, vs} from 'utility/scale';
 import ListSaveAcc from './components/ListSaveAcc';
-import RemForPass from './components/RemForPass';
-
-const loginForm = __DEV__
-  ? {
-      username: 'ducdat@gmail.com',
-      password: 'ducdat123',
-    }
-  : {username: '', password: ''};
-
-const signInWithGoogle = async () => {
-  try {
-    Redux.setIsLoading(true);
-    await GoogleSignin.hasPlayServices({
-      showPlayServicesUpdateDialog: true,
-    });
-    const userInfo = await GoogleSignin.signIn();
-    AuthenticateService.requestLoginSocial({
-      tokenSocial: userInfo.idToken,
-      typeSocial: TYPE_SOCIAL_LOGIN.google,
-    });
-  } catch (error: any) {
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      // user cancelled the login flow
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      // operation (e.g. sign in) is in progress already
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      // play services not available or outdated
-    } else {
-      // some other error happened
-    }
-  } finally {
-    Redux.setIsLoading(false);
-  }
-};
-
-const onSignInWithApple = async () => {
-  try {
-    Redux.setIsLoading(true);
-    const res = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-    });
-
-    const tokenSocial = res.authorizationCode;
-    // console.log('token haha: ', res);
-    AuthenticateService.requestLoginSocial({
-      tokenSocial,
-      typeSocial: TYPE_SOCIAL_LOGIN.apple,
-    });
-  } catch (err) {
-    appAlert(err);
-  } finally {
-    Redux.setIsLoading(false);
-  }
-};
+import {useLogin} from './hooks';
 
 const LoginScreen = () => {
-  const [userRef, setUserRef] = useState(false);
-  const isFocused = useIsFocused();
-  const passRef = useRef<any>(null);
+  const {
+    states: {username, password, listSavedAccounts},
+    actions: {
+      setUsername,
+      setPassword,
+      selectSavedAccount,
+      deleteSavedAccount,
+      submitLogin,
+    },
+  } = useLogin();
+  const theme = useTheme();
 
-  const {username, password} = Redux.getLogin();
-  const [user, setUser] = useState(username || loginForm?.username);
-  const [pass, setPass] = useState(password || loginForm?.password);
+  const inputPasswordRef = useRef<any>(null);
+  const [userRef, setUserRef] = useState(false);
   const [isKeepSign, setIsKeepSign] = useState(false);
 
-  const getListAcc = async () => {
-    const res = await FindmeAsyncStorage.getStorageAcc();
-    setListSaveAcc(res);
-  };
+  return (
+    <StyleContainer containerStyle={$container}>
+      <View style={$inputView}>
+        <InputBox
+          i18Placeholder="login.loginScreen.username"
+          value={username}
+          onChangeText={value => setUsername(value)}
+          onFocus={() => setUserRef(true)}
+          onBlur={() => setUserRef(false)}
+          onSubmitEditing={() => inputPasswordRef.current.focus()}
+        />
 
-  useEffect(() => {
-    if (isFocused) {
-      getListAcc();
-    }
-  }, [isFocused]);
+        <InputBox
+          ref={inputPasswordRef}
+          i18Placeholder="login.loginScreen.password"
+          value={password}
+          onChangeText={value => setPassword(value)}
+          style={styles.inputForm}
+          returnKeyType="default"
+          secureTextEntry
+        />
 
-  /**
-   * For list acc saved
-   */
-  const [listSaveAcc, setListSaveAcc] = useState<Array<any>>([]);
-  const selectSaveAcc = (index: number) => {
-    setUser(listSaveAcc[index].username);
-    setPass(listSaveAcc[index].password);
-  };
+        <View style={$rememberView}>
+          <StyleTouchable
+            customStyle={[$rememberButton, {borderColor: theme.gray_600}]}
+            onPress={() => setIsKeepSign(!isKeepSign)}>
+            {isKeepSign && (
+              <AntDesign
+                name="check"
+                style={[$checkIcon, {color: theme.black}]}
+              />
+            )}
+          </StyleTouchable>
+          <StyleText
+            i18Text="login.loginScreen.keepSignIn"
+            style={{color: theme.gray_500}}
+          />
+        </View>
+      </View>
 
-  const deleteSaveAcc = async (index: number) => {
-    const tempt = listSaveAcc.slice();
-    tempt.splice(index, 1);
-    setListSaveAcc(tempt);
-    await FindmeAsyncStorage.deleteAccAtIndex(index);
-  };
+      <StyleButton
+        title="login.loginScreen.signIn"
+        containerStyle={styles.loginButton}
+        disable={!username || !password}
+        onPress={() => submitLogin(isKeepSign)}
+      />
 
-  // Click login
-  const onSubmitLogin = async () => {
-    await AuthenticateService.requestLogin({
-      username: user.trim(),
-      password: pass.trim(),
-      isKeepSign,
-    });
-  };
+      <StyleTouchable
+        customStyle={styles.forgotPasswordView}
+        onPress={() => navigate(LOGIN_ROUTE.forgetPasswordType)}>
+        <StyleText
+          i18Text="login.forgotPassword"
+          customStyle={[styles.forgotPasswordText, {color: theme.gray_500}]}
+        />
+      </StyleTouchable>
 
-  /**
-   * Render view
-   */
-  const SignInPlatforms = (
-    <View style={styles.signUpView}>
-      <StyleText i18Text="login.orSignIn" customStyle={styles.textOrSignIn} />
-      <View style={styles.signUpBox}>
-        {isIOS && (
-          <StyleTouchable onPress={onSignInWithApple}>
+      {/* <View style={styles.signUpView}>
+        <StyleText i18Text="login.orSignIn" customStyle={styles.textOrSignIn} />
+        <View style={styles.signUpBox}>
+          {isIOS && (
+            <StyleTouchable onPress={signInWithApple}>
+              <StyleImage
+                source={Images.icons.apple}
+                customStyle={styles.iconSignIn}
+              />
+            </StyleTouchable>
+          )}
+          <StyleTouchable onPress={() => null}>
             <StyleImage
-              source={Images.icons.apple}
+              source={Images.icons.facebook}
               customStyle={styles.iconSignIn}
             />
           </StyleTouchable>
-        )}
-
-        {/* <StyleTouchable
-                onPress={() => {
-                    navigate(LOGIN_ROUTE.signUpForm, {
-                        typeSignUp: SIGN_UP_TYPE.email,
-                    });
-                }}>
-                <StyleImage
-                    source={Images.icons.facebook}
-                    customStyle={styles.iconSignIn}
-                />
-            </StyleTouchable> */}
-
-        <StyleTouchable onPress={signInWithGoogle}>
-          <StyleImage
-            source={Images.icons.email}
-            customStyle={styles.iconSignIn}
-          />
-        </StyleTouchable>
-      </View>
-    </View>
-  );
-
-  return (
-    <View style={styles.container}>
-      <StyleContainer containerStyle={styles.body}>
-        <View style={styles.inputView}>
-          <InputBox
-            i18Placeholder="login.loginScreen.username"
-            value={user}
-            onChangeText={value => setUser(value)}
-            onFocus={() => setUserRef(true)}
-            onBlur={() => setUserRef(false)}
-            onSubmitEditing={() => passRef.current.focus()}
-            selectionColor={Theme.darkTheme.textHightLight}
-          />
-
-          <InputBox
-            ref={passRef}
-            i18Placeholder="login.loginScreen.password"
-            value={pass}
-            onChangeText={value => setPass(value)}
-            containerStyle={styles.inputForm}
-            returnKeyType="default"
-            secureTextEntry
-            selectionColor={Theme.darkTheme.textHightLight}
-          />
-
-          <RemForPass
-            isKeepSignIn={isKeepSign}
-            onClickKeepSignIn={() => setIsKeepSign(!isKeepSign)}
-          />
+          <StyleTouchable onPress={signInWithGoogle}>
+            <StyleImage
+              source={Images.icons.email}
+              customStyle={styles.iconSignIn}
+            />
+          </StyleTouchable>
         </View>
-        <StyleButton
-          title="login.loginScreen.signIn"
-          containerStyle={styles.loginButton}
-          disable={!user || !pass}
-          onPress={onSubmitLogin}
+      </View> */}
+
+      {userRef && !username && !!listSavedAccounts.length && (
+        <ListSaveAcc
+          listAcc={listSavedAccounts}
+          selectAcc={selectSavedAccount}
+          deleteAcc={deleteSavedAccount}
         />
-
-        <StyleTouchable
-          customStyle={styles.forgotPasswordView}
-          onPress={() => navigate(LOGIN_ROUTE.forgetPasswordType)}>
-          <StyleText
-            i18Text="login.forgotPassword"
-            customStyle={styles.forgotPasswordText}
-          />
-        </StyleTouchable>
-
-        {SignInPlatforms}
-
-        {userRef && !user && (
-          <ListSaveAcc
-            listAcc={listSaveAcc}
-            selectAcc={selectSaveAcc}
-            deleteAcc={deleteSaveAcc}
-          />
-        )}
-      </StyleContainer>
-    </View>
+      )}
+    </StyleContainer>
   );
 };
 
+const $container: ViewStyle = {
+  backgroundColor: 'transparent',
+};
+const $inputView: ViewStyle = {
+  width: '100%',
+  marginTop: vs(50),
+};
+const $rememberView: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginLeft: '10%',
+  marginTop: vs(20),
+};
+const $rememberButton: ViewStyle = {
+  width: vs(20),
+  height: vs(20),
+  borderWidth: ms(0.5),
+  borderRadius: ms(5),
+  marginRight: s(7),
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+const $checkIcon: TextStyle = {
+  fontSize: ms(20),
+};
+
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-  },
-  body: {
-    backgroundColor: 'transparent',
-  },
-  // input
-  inputView: {
-    width: '100%',
-    marginTop: '50@vs',
-  },
   inputForm: {
-    marginTop: '20@vs',
+    marginTop: '15@vs',
   },
   // button login
   loginButton: {
     marginTop: '30@vs',
-  },
-  loginText: {
-    fontSize: 25,
   },
   // forgot password
   forgotPasswordView: {
@@ -253,9 +163,8 @@ const styles = ScaledSheet.create({
     marginTop: '20@vs',
   },
   forgotPasswordText: {
-    fontSize: '13@ms',
+    fontSize: FONT_SIZE.f3,
     textDecorationLine: 'underline',
-    color: Theme.darkTheme.textHightLight,
   },
   // question sign up
   signUpView: {
@@ -264,9 +173,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   textOrSignIn: {
-    fontSize: '13@ms',
     fontWeight: 'bold',
-    color: Theme.common.white,
   },
   signUpBox: {
     flexDirection: 'row',
