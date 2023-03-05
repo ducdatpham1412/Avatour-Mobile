@@ -13,9 +13,7 @@ export const initialAccountState = {
     username: '',
     password: '',
   },
-  passport: <
-    Pick<TypeGetPassportResponse['data'], 'profile' | 'information' | 'setting'>
-  >{
+  passport: <TypeReduxPassport>{
     profile: {
       id: <any>null,
       account_type: 0,

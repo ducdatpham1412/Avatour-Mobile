@@ -7,6 +7,7 @@ import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
 import React from 'react';
 import {I18nextProvider} from 'react-i18next';
+import {StatusBar} from 'react-native';
 import {LogBox, ViewStyle} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -38,6 +39,7 @@ const App = () => {
             <TabBarProvider>
               <ReduxProvider store={FindmeStore}>
                 <SocketProvider>
+                  <StatusBar barStyle="dark-content" />
                   {/* App navigator */}
                   <RootScreen />
 

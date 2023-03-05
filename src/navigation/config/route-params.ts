@@ -1,3 +1,5 @@
+import {ReactNode} from 'react';
+import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   FAVORITE_ROUTE,
@@ -50,7 +52,11 @@ export type AppParamsList = {
     name: string;
     avatar: string;
   };
-  [ROOT_SCREEN.swipeImages]: TypeSwipeImages;
+  [ROOT_SCREEN.swipeImages]: {
+    listImages: Array<{url: string}>;
+    initIndex?: number;
+    allowSaveImage?: boolean;
+  };
   [ROOT_SCREEN.reportUser]: {
     idUser: number;
     nameUser?: string;
@@ -103,5 +109,36 @@ export type AppParamsList = {
   [DISCOVERY_ROUTE.searchScreen]: {
     topic?: number;
     search?: string;
+  };
+  [ROOT_SCREEN.alert]: {
+    notice: I18Normalize;
+    actionClickOk?(): void;
+    moreNotice?: I18Normalize;
+    moreAction?(): void;
+  };
+  [ROOT_SCREEN.alertYesNo]: {
+    i18Title: I18Normalize;
+    agreeText?: I18Normalize;
+    refuseText?: I18Normalize;
+    i18Params?: object;
+    agreeChange(): void;
+    refuseChange(): void;
+    headerNode?: ReactNode;
+    displayButton?: boolean;
+    touchOutBack?: boolean;
+    agreeButtonOpacity?: number;
+  };
+  [ROOT_SCREEN.webView]: {
+    title: string;
+    linkWeb: string;
+  };
+  [ROOT_SCREEN.picker]: {
+    data: Array<any>;
+    renderItem(item: any): ReactNode;
+    // itemHeight is calculated by style of each item in "renderItem"
+    itemHeight: number;
+    onSetItemSelected: Function;
+    initIndex?: number;
+    onCancel?(): void;
   };
 };

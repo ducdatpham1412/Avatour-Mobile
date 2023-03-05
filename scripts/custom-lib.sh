@@ -32,5 +32,11 @@ fi
 # For create chosen env
 if [ ! -f ../src/asset/env/env.chosen.ts ]; then
     echo 'Config env 👷'
-    cd ../src/asset/env && touch env.chosen.ts && : > env.chosen.ts && echo "export const ChosenEnv: 'dev' | 'staging' | 'pro' = 'dev';\n // Choose 1 of 3 env: 'dev' | 'staging' | 'pro" >> env.chosen.ts
+    cd ../src/asset/env && touch env.chosen.ts && : > env.chosen.ts && echo "export const ChosenEnv: 'dev' | 'staging' | 'pro' = 'dev';\n // Choose 1 of 3 env: 'dev' | 'staging' | 'pro" >> env.chosen.ts && touch config.dev.ts && config config.prod.ts 
+fi;
+if [ ! -f ../src/asset/env/config.dev.ts ]; then
+    touch config.dev.ts
+fi;
+if [ ! -f ../src/asset/env/config.prod.ts ]; then
+    touch config.prod.ts
 fi;

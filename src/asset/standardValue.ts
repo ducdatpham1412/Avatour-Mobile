@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 import {Platform} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
+import {moderateScale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
 import Config from './env';
 import Images from './img/images';
@@ -44,9 +45,9 @@ export const DEFAULT_IMAGE_BACKGROUND =
 
 export const TIMING_BUBBLE_FLY = 40000;
 
-export const SUPPORT_URL = 'https://www.doffy.xyz/about-us/support';
-export const PRIVACY_URL = 'https://www.doffy.xyz/about-us/policy';
-export const TERMS_URL = 'https://www.doffy.xyz/about-us/terms';
+export const SUPPORT_URL = 'http://www.avatour.life/about-us/support';
+export const PRIVACY_URL = 'http://www.avatour.life/about-us/policy';
+export const TERMS_URL = 'http://www.avatour.life/about-us/terms';
 export const FEEDBACK_URL =
   'https://docs.google.com/forms/d/1Yb-OzSMJbJxG_RZYtPwkKZGjw4AZOsC2IvJlac-1ydI/edit?usp=sharing';
 export const LANDING_PAGE_URL = 'https://www.doffy.xyz/';
@@ -182,12 +183,21 @@ export const LIST_POST_TYPES: Array<{
   },
 ];
 
-export enum FONT_SIZE {
-  big = '17@ms',
-  normal = '14@ms',
-  small = '11@ms',
-  tiny = '8@ms',
-}
+export const FONT_SIZE = {
+  big: '17@ms',
+  normal: '14@ms',
+  small: '11@ms',
+  tiny: '8@ms',
+
+  // new font
+  h1: moderateScale(34),
+  h2: moderateScale(22),
+  f1: moderateScale(16),
+  f2: moderateScale(14),
+  f3: moderateScale(12),
+  f4: moderateScale(10),
+};
+
 export const LINE_HEIGHT = {
   normal: Platform.select({
     ios: '17@ms',

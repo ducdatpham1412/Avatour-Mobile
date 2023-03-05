@@ -12,7 +12,7 @@ import ROOT_SCREEN, {
 } from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
 import {chooseLanguageFromId, isIOS} from 'utility/assistant';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import AsyncStorage from 'utility/asyncStore';
 import I18Next from 'utility/I18Next';
 
 const AUTH_URL_REFRESH_TOKEN = '/refreshToken';
@@ -43,16 +43,21 @@ interface TypeParamsLoginSuccess {
 const AuthenticateService = {
   loginSuccess: async (params: TypeParamsLoginSuccess) => {
     const {itemLoginSuccess, isKeepSign, isLoginSocial} = params;
-    await FindmeAsyncStorage.updateActiveUser(itemLoginSuccess);
+    await AsyncStorage.updateActiveUser(itemLoginSuccess);
 
-    if (isKeepSign && itemLoginSuccess.username && !isLoginSocial) {
-      await FindmeAsyncStorage.addStorageAcc({
+    if (
+      isKeepSign &&
+      itemLoginSuccess.username &&
+      itemLoginSuccess.password &&
+      !isLoginSocial
+    ) {
+      await AsyncStorage.addStorageAcc({
         username: itemLoginSuccess.username,
         password: itemLoginSuccess.password,
       });
     }
     if (isLoginSocial) {
-      await FindmeAsyncStorage.setIsHavingSocialAccount(true);
+      await AsyncStorage.setIsHavingSocialAccount(true);
     }
 
     const passport = await apiGetPassport();
@@ -67,7 +72,7 @@ const AuthenticateService = {
     Redux.setTheme(passport.data.setting.theme);
     const temp = chooseLanguageFromId(passport.data.setting.language);
     I18Next.changeLanguage(temp);
-    await FindmeAsyncStorage.editLanguageModeExp(temp);
+    await AsyncStorage.editLanguageModeExp(temp);
 
     navigate(ROOT_SCREEN.mainScreen, {
       screen: DISCOVERY_ROUTE.discoveryScreen,
@@ -171,10 +176,10 @@ const AuthenticateService = {
       // }
 
       if (!isModeExp && !params.hadRefreshTokenBlacked) {
-        const {refreshToken} = await FindmeAsyncStorage.getActiveUser();
+        const {refreshToken} = await AsyncStorage.getActiveUser();
         await apiLogOut(refreshToken || '');
       }
-      await FindmeAsyncStorage.logOut();
+      await AsyncStorage.logOut();
       logOut();
       closeSocket();
       params?.callBack?.();

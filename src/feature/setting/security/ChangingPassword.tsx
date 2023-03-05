@@ -9,7 +9,7 @@ import {FormProvider, useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {Animated, Platform} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import FindmeAsyncStorage from 'utility/asyncStore';
 import {yupValidate} from 'utility/validate';
 import * as yup from 'yup';
 

@@ -9,7 +9,7 @@ import React, {useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {chooseLanguageFromId} from 'utility/assistant';
-import FindmeAsyncStorage from 'utility/FindmeAsyncStorage';
+import FindmeAsyncStorage from 'utility/asyncStore';
 import I18Next from 'utility/I18Next';
 
 const LanguageSetting = () => {

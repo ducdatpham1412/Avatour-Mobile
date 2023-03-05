@@ -1,38 +1,96 @@
 import {FONT_SIZE} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
-import StyleInput, {StyleInputProps} from 'components/base/StyleInput';
+import {StyleText} from 'components/base';
+import {useTheme} from 'hook';
 import React, {forwardRef} from 'react';
-import {Platform} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {useTranslation} from 'react-i18next';
+import {View, ViewStyle} from 'react-native';
+import {
+  Platform,
+  StyleProp,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+} from 'react-native';
+import {I18Normalize} from 'utility/I18Next';
+import {ms, s, vs} from 'utility/scale';
 
-const InputBox = (props: StyleInputProps, ref: any) => {
-    return (
-        <StyleInput
-            ref={ref}
-            hasErrorBox={false}
-            hasUnderLine={false}
-            placeholderTextColor={Theme.common.blueInputHolder}
-            {...props}
-            inputStyle={[styles.input, props.inputStyle]}
-        />
-    );
+type Props = TextInputProps & {
+  i18Placeholder?: I18Normalize;
+  containerStyle?: StyleProp<ViewStyle>;
+  isError?: boolean;
+  textError?: I18Normalize;
 };
 
-const styles = ScaledSheet.create({
-    input: {
-        color: Theme.common.white,
-        backgroundColor: Theme.common.blueInput,
-        borderRadius: '5@ms',
-        fontSize: FONT_SIZE.normal,
-        paddingTop: Platform.select({
-            ios: '14@ms',
-            android: '8@ms',
-        }),
-        paddingBottom: Platform.select({
-            ios: '14@ms',
-            android: '8@ms',
-        }),
-    },
-});
+const InputBox = (
+  {i18Placeholder, containerStyle, isError, textError, ...rest}: Props,
+  ref: any,
+) => {
+  const theme = useTheme();
+  const {t} = useTranslation();
+
+  if (isError !== undefined) {
+    return (
+      <View style={[$container, containerStyle]}>
+        <TextInput
+          ref={ref}
+          placeholderTextColor={theme.gray_500}
+          selectionColor={theme.p_900}
+          {...rest}
+          placeholder={i18Placeholder ? t(i18Placeholder) : rest.placeholder}
+          style={[
+            $input,
+            {width: '100%', backgroundColor: theme.white, color: theme.black},
+            rest.style,
+          ]}
+        />
+        <StyleText
+          i18Text={isError ? textError : 'common.null'}
+          customStyle={[$textError, {color: theme.red}]}
+          numberOfLines={2}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <TextInput
+      ref={ref}
+      placeholderTextColor={theme.gray_500}
+      selectionColor={theme.p_900}
+      {...rest}
+      placeholder={i18Placeholder ? t(i18Placeholder) : rest.placeholder}
+      style={[
+        $input,
+        {backgroundColor: theme.white, color: theme.black},
+        rest.style,
+      ]}
+    />
+  );
+};
+
+const $container: ViewStyle = {
+  width: '80%',
+  alignSelf: 'center',
+};
+const $input: TextStyle = {
+  width: '80%',
+  borderRadius: 100,
+  fontSize: FONT_SIZE.f2,
+  paddingTop: Platform.select({
+    ios: vs(14),
+    android: vs(8),
+  }),
+  paddingBottom: Platform.select({
+    ios: vs(14),
+    android: vs(8),
+  }),
+  paddingHorizontal: s(15),
+  alignSelf: 'center',
+};
+const $textError: TextStyle = {
+  fontSize: FONT_SIZE.f4,
+  paddingHorizontal: s(15),
+  height: ms(30),
+};
 
 export default forwardRef(InputBox);
