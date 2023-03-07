@@ -12,76 +12,67 @@ import LanguageSetting from './LanguageSetting';
 import ThemeSetting from './ThemeSetting';
 
 const ExtendSetting = () => {
-    const theme = Redux.getTheme();
+  const theme = Redux.getTheme();
 
-    const [isSettingTheme, setIsSettingTheme] = useState(false);
-    const openCloseSettingTheme = () => setIsSettingTheme(!isSettingTheme);
+  const [isSettingTheme, setIsSettingTheme] = useState(false);
+  const openCloseSettingTheme = () => setIsSettingTheme(!isSettingTheme);
 
-    const [isSettingLanguage, setIsSettingLanguage] = useState(false);
-    const openCloseSettingLanguage = () =>
-        setIsSettingLanguage(!isSettingLanguage);
+  const [isSettingLanguage, setIsSettingLanguage] = useState(false);
+  const openCloseSettingLanguage = () =>
+    setIsSettingLanguage(!isSettingLanguage);
 
-    return (
-        <>
-            <StyleHeader title="setting.extendSetting.headerTitle" />
+  return (
+    <>
+      <StyleHeader title="setting.extendSetting.headerTitle" />
 
-            <StyleContainer scrollEnabled containerStyle={styles.container}>
-                <TypeDetailSetting
-                    title="setting.extendSetting.theme"
-                    onPress={openCloseSettingTheme}
-                    icon={
-                        <Ionicons
-                            name="color-palette-outline"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-                {isSettingTheme && <ThemeSetting />}
+      <StyleContainer scrollEnabled containerStyle={styles.container}>
+        <TypeDetailSetting
+          title="setting.extendSetting.theme"
+          onPress={openCloseSettingTheme}
+          icon={
+            <Ionicons
+              name="color-palette-outline"
+              style={[styles.stylesIcon, {color: theme.borderColor}]}
+            />
+          }
+        />
+        {isSettingTheme && <ThemeSetting />}
 
-                <TypeDetailSetting
-                    title="setting.extendSetting.language"
-                    onPress={openCloseSettingLanguage}
-                    icon={
-                        <FontAwesome
-                            name="language"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-                {isSettingLanguage && <LanguageSetting />}
+        <TypeDetailSetting
+          title="setting.extendSetting.language"
+          onPress={openCloseSettingLanguage}
+          icon={
+            <FontAwesome
+              name="language"
+              style={[styles.stylesIcon, {color: theme.borderColor}]}
+            />
+          }
+        />
+        {isSettingLanguage && <LanguageSetting />}
 
-                <TypeDetailSetting
-                    title="profile.updateBankAccount"
-                    onPress={() => navigate(ROOT_SCREEN.updateBankAccount)}
-                    icon={
-                        <FontAwesome
-                            name="credit-card"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-            </StyleContainer>
-        </>
-    );
+        <TypeDetailSetting
+          title="profile.updateBankAccount"
+          onPress={() => navigate(ROOT_SCREEN.updateBankAccount)}
+          icon={
+            <FontAwesome
+              name="credit-card"
+              style={[styles.stylesIcon, {color: theme.borderColor}]}
+            />
+          }
+        />
+      </StyleContainer>
+    </>
+  );
 };
 
 const styles = ScaledSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: '30@s',
-    },
-    stylesIcon: {
-        fontSize: '20@ms',
-    },
+  container: {
+    flex: 1,
+    paddingHorizontal: '30@s',
+  },
+  stylesIcon: {
+    fontSize: '20@ms',
+  },
 });
 
 export default ExtendSetting;

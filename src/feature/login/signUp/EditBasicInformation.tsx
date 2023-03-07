@@ -1,9 +1,10 @@
 import {apiChangeInformation} from 'api/setting';
 import {GENDER_TYPE} from 'asset/enum';
-import {Metrics} from 'asset/metrics';
+import {safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import {
+  SafeView,
   StyleButton,
   StyleContainer,
   StyleText,
@@ -12,34 +13,25 @@ import {
 import ClassDateTimePicker from 'components/base/picker/ClassDateTimePicker';
 import InputBox from 'components/common/InputBox';
 import Redux from 'hook/useRedux';
+import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
 import {appAlert, appAlertYesNo, goBack} from 'navigation/NavigationService';
 import React, {useRef, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import FindmeAsyncStorage from 'utility/asyncStore';
+import {isIOS} from 'utility/assistant';
+import AsyncStore from 'utility/asyncStore';
 import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
 import {I18Normalize} from 'utility/I18Next';
-import AuthenticateService, {
-  TypeItemLoginSuccess,
-} from 'utility/login/loginService';
-import BackgroundAuthen from '../components/BackgroundAuthen';
+import AuthenticateService from 'utility/login/loginService';
 import GenderSwipe from '../components/GenderSwipe';
-
-interface Props {
-  route: {
-    params: {
-      itemLoginSuccess: TypeItemLoginSuccess;
-      isLoginSocial?: boolean;
-    };
-  };
-}
 
 export const scrollItemHeight = verticalScale(140);
 const defaultDate = new Date(2000, 0, 1);
 
-const EditBasicInformation = ({route}: Props) => {
+const EditBasicInformation = ({
+  route,
+}: AppRouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
   const {isLoginSocial = false, itemLoginSuccess} = route.params;
-
   const scrollPickerRef = useRef<ScrollView>(null);
   const dateTimeRef = useRef<ClassDateTimePicker>(null);
 
@@ -60,7 +52,7 @@ const EditBasicInformation = ({route}: Props) => {
         goBack();
         try {
           Redux.setIsLoading(true);
-          await FindmeAsyncStorage.updateActiveUser(itemLoginSuccess);
+          await AsyncStore.updateActiveUser(itemLoginSuccess);
           const updateObject = {
             gender,
             name,
@@ -93,68 +85,6 @@ const EditBasicInformation = ({route}: Props) => {
     }
   };
 
-  /**
-   * Render views
-   */
-  const HeaderAndBackground = () => {
-    return (
-      <>
-        <BackgroundAuthen />
-        <View style={styles.spaceBackground} />
-        <StyleText
-          i18Text="login.detailInformation.title"
-          customStyle={styles.titleText}
-        />
-      </>
-    );
-  };
-
-  // const InformationPreview = () => {
-  //     return (
-  //         <View style={styles.previewView}>
-  //             <View style={styles.genderNameBox}>
-  //                 <View style={styles.genderTouch}>
-  //                     <StyleImage
-  //                         source={renderIconGender(gender)}
-  //                         customStyle={styles.iconGender}
-  //                     />
-  //                 </View>
-  //                 <View style={styles.nameTouch}>
-  //                     <StyleText
-  //                         originValue={name}
-  //                         customStyle={styles.nameText}
-  //                     />
-  //                 </View>
-  //             </View>
-
-  //             <View
-  //                 style={[
-  //                     styles.genderNameBox,
-  //                     {marginTop: verticalScale(10)},
-  //                 ]}>
-  //                 <View style={styles.genderTouch}>
-  //                     <StyleText
-  //                         originValue={birthday.getDate()}
-  //                         customStyle={styles.textBirthday}
-  //                     />
-  //                 </View>
-  //                 <View style={styles.genderTouch}>
-  //                     <StyleText
-  //                         originValue={birthday.getMonth() + 1}
-  //                         customStyle={styles.textBirthday}
-  //                     />
-  //                 </View>
-  //                 <View style={[styles.nameTouch, {flex: 0.85}]}>
-  //                     <StyleText
-  //                         originValue={birthday.getFullYear()}
-  //                         customStyle={styles.textBirthday}
-  //                     />
-  //                 </View>
-  //             </View>
-  //         </View>
-  //     );
-  // };
-
   const RenderPicker = () => {
     const textBirthday = birthday
       ? formatDateDayMonthYear(birthday)
@@ -173,24 +103,25 @@ const EditBasicInformation = ({route}: Props) => {
           <ScrollView
             ref={scrollPickerRef}
             snapToInterval={scrollItemHeight}
+            pagingEnabled
             indicatorStyle="white"
+            showsVerticalScrollIndicator={false}
             onMomentumScrollEnd={e => {
               const offSet = e.nativeEvent.contentOffset.y;
               setIndex(Math.round(offSet / scrollItemHeight));
-            }}>
+            }}
+            decelerationRate={isIOS ? 0 : 0.8}
+            scrollEventThrottle={40}>
             {/* Gender */}
             <GenderSwipe gender={gender} setGender={setGender} />
 
             {/* Name */}
             <View style={styles.pickerBox}>
-              <StyleText
-                i18Text="login.detailInformation.enterYourName"
-                customStyle={styles.title}
-              />
+              <StyleText i18Text="login.detailInformation.enterYourName" />
               <InputBox
                 value={name}
                 onChangeText={text => setName(text)}
-                containerStyle={{marginTop: verticalScale(30)}}
+                style={{marginTop: verticalScale(30)}}
                 i18Placeholder="profile.edit.name"
                 onSubmitEditing={onPressButton}
                 selectionColor={Theme.darkTheme.textHightLight}
@@ -224,9 +155,11 @@ const EditBasicInformation = ({route}: Props) => {
   };
 
   return (
-    <View style={styles.container}>
-      {HeaderAndBackground()}
-      {/* {InformationPreview()} */}
+    <SafeView>
+      <StyleText
+        i18Text="login.detailInformation.title"
+        customStyle={styles.titleText}
+      />
       {RenderPicker()}
 
       <ClassDateTimePicker
@@ -235,53 +168,16 @@ const EditBasicInformation = ({route}: Props) => {
         onChangeDateTime={value => setBirthday(value)}
         theme={Theme.lightTheme}
       />
-    </View>
+    </SafeView>
   );
 };
 
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Theme.darkTheme.backgroundColor,
-  },
-  spaceBackground: {
-    width: '100%',
-    height: Metrics.safeTopPadding + verticalScale(10),
-  },
   titleText: {
-    fontSize: FONT_SIZE.big,
-    color: Theme.common.white,
+    fontSize: FONT_SIZE.f1,
+    fontWeight: 'bold',
     alignSelf: 'center',
-  },
-  // preview
-  previewView: {
-    width: '100%',
-    paddingHorizontal: '20@s',
-    marginTop: '10@vs',
-  },
-  genderNameBox: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  genderTouch: {
-    width: '55@s',
-    height: '55@s',
-    backgroundColor: Theme.common.blueInput,
-    borderRadius: '8@ms',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconGender: {
-    width: '80%',
-    height: '80%',
-  },
-  nameTouch: {
-    flex: 0.95,
-    backgroundColor: Theme.common.blueInput,
-    borderRadius: '8@ms',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: safePaddingNotZero,
   },
   // picker
   pickerPart: {
@@ -300,21 +196,15 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: '15@ms',
-    color: Theme.common.white,
-  },
   nameText: {
     color: Theme.common.white,
   },
   textChooseBirthday: {
     textDecorationLine: 'underline',
-    color: Theme.common.white,
   },
   textBirthday: {
     fontSize: '40@ms',
     fontWeight: 'bold',
-    color: Theme.common.white,
   },
 });
 

@@ -11,6 +11,7 @@ import {
 } from 'components/base';
 import LoadingScreen from 'components/LoadingScreen';
 import Redux from 'hook/useRedux';
+import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
 import React from 'react';
@@ -18,15 +19,9 @@ import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import BackgroundAuthen from './components/BackgroundAuthen';
 
-interface Props {
-  route: {
-    params: {
-      username: string;
-    };
-  };
-}
-
-const ConfirmOpenAccount = ({route}: Props) => {
+const ConfirmOpenAccount = ({
+  route,
+}: AppRouteParams<AppParamsList[LOGIN_ROUTE.confirmOpenAccount]>) => {
   const isLoading = Redux.getIsLoading();
 
   const onOpenAccount = async () => {
@@ -34,12 +29,13 @@ const ConfirmOpenAccount = ({route}: Props) => {
       Redux.setIsLoading(true);
       await apiRequestOTP({
         username: route.params.username,
-        typeOTP: TYPE_OTP.requestOpenAccount,
+        type_otp: TYPE_OTP.requestOpenAccount,
       });
       navigate(LOGIN_ROUTE.sendOTP, {
-        name: route.params.username,
-        isOpenAccount: true,
-        username: route.params.username,
+        paramsOTP: {
+          username: route.params?.username,
+          type_otp: TYPE_OTP.requestOpenAccount,
+        },
       });
     } catch (err) {
       appAlert(err);

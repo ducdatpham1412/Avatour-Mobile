@@ -3,20 +3,17 @@ import {TYPE_OTP} from 'asset/enum';
 import Theme from 'asset/theme/Theme';
 import {StyleButton, StyleContainer} from 'components/base';
 import InputBox from 'components/common/InputBox';
-import LoadingScreen from 'components/LoadingScreen';
-import Redux from 'hook/useRedux';
+import {useLoading} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
 import React, {useEffect, useRef, useState} from 'react';
 import {TextInput, View} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
-import BackgroundAuthen from '../components/BackgroundAuthen';
 
-const EnterUsername = () => {
+const ForgetPasswordType = () => {
   const usernameRef = useRef<TextInput>(null);
-
+  const {loading, setLoading} = useLoading();
   const [username, setUsername] = useState('');
   const trimUsername = username.trim();
 
@@ -29,62 +26,46 @@ const EnterUsername = () => {
 
   const onRequestOTP = async () => {
     try {
-      Redux.setIsLoading(true);
+      setLoading(true);
       await apiRequestOTP({
         username: trimUsername,
-        typeOTP: TYPE_OTP.resetPassword,
+        type_otp: TYPE_OTP.resetPassword,
       });
       navigate(LOGIN_ROUTE.sendOTP, {
-        name: trimUsername,
-        isResetPassword: true,
-        username: trimUsername,
+        paramsOTP: {
+          username: trimUsername,
+          type_otp: TYPE_OTP.resetPassword,
+        },
       });
     } catch (err) {
       appAlert(err);
     } finally {
-      Redux.setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <View style={styles.contentView}>
-      <InputBox
-        i18Placeholder="login.forgetPassword.type.username"
-        value={username}
-        onChangeText={text => setUsername(text)}
-        selectionColor={Theme.darkTheme.textHightLight}
-      />
-
-      <StyleButton
-        title="login.forgetPassword.type.continue"
-        containerStyle={styles.btnSendBox}
-        onPress={onRequestOTP}
-        disable={disable}
-      />
-    </View>
-  );
-};
-
-const ForgetPasswordType = () => {
-  const insets = useSafeAreaInsets();
-  const isLoading = Redux.getIsLoading();
-
-  return (
     <StyleContainer
       customStyle={styles.container}
-      containerStyle={{backgroundColor: Theme.darkTheme.backgroundColor}}
-      TopComponent={<BackgroundAuthen />}
       headerProps={{
         title: 'login.forgetPassword.type.header',
-        containerStyle: {
-          marginTop: insets?.top || 0,
-          backgroundColor: 'transparent',
-        },
-        iconStyle: {color: Theme.common.white},
-        titleStyle: {color: Theme.common.white},
       }}>
-      {<EnterUsername />}
-      {isLoading && <LoadingScreen />}
+      <View style={styles.contentView}>
+        <InputBox
+          ref={usernameRef}
+          i18Placeholder="login.forgetPassword.type.username"
+          value={username}
+          onChangeText={text => setUsername(text)}
+        />
+
+        <StyleButton
+          title="login.forgetPassword.type.continue"
+          containerStyle={styles.btnSendBox}
+          onPress={onRequestOTP}
+          disable={disable}
+          isLoading={loading}
+        />
+      </View>
     </StyleContainer>
   );
 };

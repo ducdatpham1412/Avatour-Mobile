@@ -57,8 +57,6 @@ const login = {
     },
     form: {
       header: 'Set up password',
-      newPass: 'New password',
-      confirmPass: 'Confirm password',
       buttonDone: 'Done',
     },
   },
@@ -70,8 +68,6 @@ const login = {
     },
     form: {
       header: 'Sign up',
-      username: 'Username',
-      password: 'Password',
       confirmPass: 'Confirm password',
       confirmButton: 'Confirm',
       enterEmail: 'Email',
@@ -105,18 +101,20 @@ const login = {
     continue: 'Continue',
     openAccountSuccess: 'Open account successfully!',
   },
-  agreeTermOfService: {
-    registerSuccess: 'Register successfully',
-    agreeTermOfService: "Let's go",
-    contentSuggest:
-      'Register successfully! 🥰\nNow let’s go editting your profile',
-  },
   enjoy: 'Enjoy',
   login: 'Login',
   register: 'Sign up',
   enjoyModeNoAcc: 'Enjoy app without account',
   forgotPassword: 'Forgot password?',
   orSignIn: 'Sign in with:',
+  contentSuggest:
+    'Register successfully! 🥰\nNow let’s go editting your profile',
+  letGo: "Let's go",
+  emailPhone: 'Email/Phone',
+  email: 'Email',
+  password: 'Password',
+  confirmPassword: 'Confirm password',
+  newPassword: 'New password',
 };
 
 // DISCOVERY ROUTE

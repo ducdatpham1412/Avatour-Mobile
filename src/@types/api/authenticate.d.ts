@@ -1,12 +1,10 @@
 // OTP
 interface TypeRequestOTPRequest {
   username: string;
-  typeOTP: number;
+  type_otp: number;
   // only for register
   password?: string;
-  confirmPassword?: string;
-  // targetInfo for both register and changeInfo
-  targetInfo?: number;
+  confirm_password?: string;
 }
 
 interface TypeRequestOTPResponse {
@@ -33,10 +31,17 @@ interface TypeLoginResponse {
     token?: string;
     refreshToken?: string;
     // for account temporary locking
-    username?: number;
+    username?: string;
     isLocking?: boolean;
   };
   [key: string]: any;
+}
+
+interface TypeItemLoginSuccess {
+  username?: string;
+  password?: string;
+  token: string;
+  refreshToken: string;
 }
 
 interface TypeLoginSocialRequest {
@@ -45,11 +50,10 @@ interface TypeLoginSocialRequest {
 }
 
 interface TypeRegisterReq {
-  email: string;
-  phone: string;
+  username: string;
   password: string;
-  confirmPassword: string;
-  code: string;
+  confirm_password: string;
+  code?: string;
 }
 interface TypeRegisterRes {
   success: boolean;
@@ -61,8 +65,8 @@ interface TypeRegisterRes {
 
 interface TypeResetPasswordRequest {
   username: string;
-  newPassword: string;
-  confirmPassword: string;
+  password: string;
+  confirm_password: string;
 }
 interface TypeResetPasswordResponse {
   success: boolean;

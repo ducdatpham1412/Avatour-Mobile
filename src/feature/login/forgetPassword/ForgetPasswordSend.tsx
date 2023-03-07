@@ -3,6 +3,7 @@ import {SIGN_UP_TYPE, TYPE_OTP} from 'asset/enum';
 import Images from 'asset/img/images';
 import {StyleContainer, StyleText} from 'components/base';
 import Redux from 'hook/useRedux';
+import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
 import React from 'react';
@@ -11,26 +12,20 @@ import {ScaledSheet} from 'react-native-size-matters';
 import HeaderLogo from '../components/HeaderLogo';
 import IconType from '../components/IconType';
 
-interface ForgetPasswordProps {
-  route: {
-    params: {
-      username: string;
-    };
-  };
-}
-
-const ForgetPasswordSend = ({route}: ForgetPasswordProps) => {
+const ForgetPasswordSend = ({
+  route,
+}: AppRouteParams<AppParamsList[LOGIN_ROUTE.forgetPasswordSend]>) => {
   const theme = Redux.getTheme();
   const {username} = route.params;
 
   const onRequestOTP = async (targetInfo: number) => {
     try {
       Redux.setIsLoading(true);
-      const res = await apiRequestOTP({
+      const paramsOTP: TypeRequestOTPRequest = {
         username,
-        targetInfo,
-        typeOTP: TYPE_OTP.resetPassword,
-      });
+        type_otp: TYPE_OTP.resetPassword,
+      };
+      const res = await apiRequestOTP(paramsOTP);
 
       let name = '';
       if (targetInfo === SIGN_UP_TYPE.email) {
@@ -39,9 +34,7 @@ const ForgetPasswordSend = ({route}: ForgetPasswordProps) => {
         name = res.data.phone;
       }
       navigate(LOGIN_ROUTE.sendOTP, {
-        name,
-        isResetPassword: true,
-        username,
+        paramsOTP,
       });
     } catch (err) {
       appAlert(err);
