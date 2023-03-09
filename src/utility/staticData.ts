@@ -496,3 +496,32 @@ export const fakeDataListGroupJoinedForSupplier: Array<any> = [
     created: '2022-11-15 08:36:20.524000',
   },
 ];
+
+export const fakeListTour: Array<TypeFavoriteTour> = [
+  {
+    id: 0,
+    transport: null,
+    hotel: null,
+    creator: 0,
+    creator_name: 'Phong Nguyen',
+    creator_avatar:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzrh9aVfAHSoi35pssE0gBNgR2b5YyoVsH9FHpOL1yjIQWVTsCi2nGRzBSKOhKhjfwlmE&usqp=CAU',
+    location: 'Ha Noi',
+    start_location: 'Hai Duong',
+    start_time: '',
+    end_time: '',
+    start_price: 1000000,
+    end_price: 9000000,
+    number_people: 3,
+    schedule: [
+      [
+        'https://cdn.tgdd.vn/Files/2022/03/24/1422279/cam-nang-kinh-nghiem-du-lich-cot-co-lung-cu-ha-giang-202203242305100745.jpg',
+        'https://cdn.tgdd.vn/Files/2022/03/24/1422279/cam-nang-kinh-nghiem-du-lich-cot-co-lung-cu-ha-giang-202203242305100745.jpg',
+        'https://cdn.tgdd.vn/Files/2022/03/24/1422279/cam-nang-kinh-nghiem-du-lich-cot-co-lung-cu-ha-giang-202203242305100745.jpg',
+        'https://cdn.tgdd.vn/Files/2022/03/24/1422279/cam-nang-kinh-nghiem-du-lich-cot-co-lung-cu-ha-giang-202203242305100745.jpg',
+        'https://cdn.tgdd.vn/Files/2022/03/24/1422279/cam-nang-kinh-nghiem-du-lich-cot-co-lung-cu-ha-giang-202203242305100745.jpg',
+        'https://cdn.tgdd.vn/Files/2022/03/24/1422279/cam-nang-kinh-nghiem-du-lich-cot-co-lung-cu-ha-giang-202203242305100745.jpg',
+      ],
+    ],
+  },
+];

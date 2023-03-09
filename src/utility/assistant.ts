@@ -21,6 +21,7 @@ import {
   LIST_TOPICS,
   PRIVATE_AVATAR,
 } from 'asset/standardValue';
+import Theme from 'asset/theme/Theme';
 import Redux from 'hook/useRedux';
 import ROOT_SCREEN, {
   LOGIN_ROUTE,
@@ -29,7 +30,12 @@ import ROOT_SCREEN, {
 } from 'navigation/config/routes';
 import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
 import {useState} from 'react';
-import {DevSettings, NativeScrollEvent, Platform} from 'react-native';
+import {
+  DevSettings,
+  NativeScrollEvent,
+  Platform,
+  ViewStyle,
+} from 'react-native';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
 import ImageUploader, {ImagePickerParamsType} from './ImageUploader';
@@ -358,6 +364,15 @@ export const isScrollCloseToBottom = ({
     layoutMeasurement.height + contentOffset.y >=
     contentSize.height - paddingBottomCheckScroll
   );
+};
+
+export const $styleDropShadow: ViewStyle = {
+  shadowColor: Theme.newTheme.gray_600,
+  shadowOpacity: 0.1,
+  shadowOffset: {
+    width: 0,
+    height: 4,
+  },
 };
 
 export const chooseIconFeeling = (feeling: number) => {

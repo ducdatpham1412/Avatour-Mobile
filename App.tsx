@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import FindmeStore from 'app-redux/store';
 import Config from 'asset/env';
@@ -7,12 +8,16 @@ import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
 import React from 'react';
 import {I18nextProvider} from 'react-i18next';
-import {StatusBar} from 'react-native';
-import {LogBox, ViewStyle} from 'react-native';
+import {
+  DevSettings,
+  LogBox,
+  NativeModules,
+  StatusBar,
+  ViewStyle,
+} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Provider as ReduxProvider} from 'react-redux';
-import {addMenuClearAsyncStorage} from 'utility/assistant';
 import {LanguageProvider} from 'utility/format';
 import I18Next from 'utility/I18Next';
 
@@ -23,7 +28,13 @@ if (__DEV__) {
     'VirtualizedLists should never be nested',
     'source.uri should not be an empty string',
   ]);
-  addMenuClearAsyncStorage();
+  DevSettings.addMenuItem('Clear AsyncStorage', () => {
+    AsyncStorage.clear();
+    DevSettings.reload();
+  });
+  DevSettings.addMenuItem('Debug with Chrome', () => {
+    NativeModules.DevSettings.setIsDebuggingRemotely(true);
+  });
 }
 
 GoogleSignin.configure({

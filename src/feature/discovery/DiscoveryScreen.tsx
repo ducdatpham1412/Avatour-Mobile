@@ -1,250 +1,212 @@
-/* eslint-disable no-shadow */
-import {useIsFocused} from '@react-navigation/native';
-import {apiGetListBubbleActive} from 'api/discovery';
-import {apiLikePost, apiUnLikePost} from 'api/profile';
-import {POST_TYPE, REACT, TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
-import StyleList from 'components/base/StyleList';
-import StyleActionSheet from 'components/common/StyleActionSheet';
-import usePaging from 'hook/usePaging';
-import Redux from 'hook/useRedux';
-import ROOT_SCREEN, {DISCOVERY_ROUTE} from 'navigation/config/routes';
-import {appAlert, goBack, navigate} from 'navigation/NavigationService';
-import {showCommentDiscovery} from 'navigation/screen/MainTabs';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {FlatList, Vibration, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
-import {onGoToSignUp} from 'utility/assistant';
-import BannerTopGb from './components/BannerTopGb';
-import BubbleGroupBuying, {ParamsLikeGB} from './components/BubbleGroupBuying';
-import HeaderDoffy from './components/HeaderDoffy';
-
-export interface TypeMoreOptionsMe {
-  postModal: TypeBubblePalace | TypeGroupBuying;
-}
-
-let modalOptions: TypeBubblePalace | TypeGroupBuying;
-
-const onGoToSignUpFromAlert = () => {
-  goBack();
-  onGoToSignUp();
-};
+import {useAppSelector} from 'app-redux/store';
+import {BORDER_RADIUS, FONT_SIZE, listTravelCategories} from 'asset';
+import Images from 'asset/img/images';
+import {safePaddingNotZero} from 'asset/metrics';
+import {ItemTour} from 'components';
+import {
+  SafeView,
+  StyleIcon,
+  StyleImage,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
+import {useTheme} from 'hook';
+import {DISCOVERY_ROUTE} from 'navigation/config';
+import {navigate} from 'navigation/NavigationService';
+import React from 'react';
+import {ImageStyle, ScrollView, TextStyle, View, ViewStyle} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {HeaderDiscovery, ItemHotLocation} from './components';
 
 const DiscoveryScreen = () => {
-  const isFocused = useIsFocused();
-
-  const listRef = useRef<FlatList>(null);
-  const optionsRef = useRef<any>(null);
-  const headerRef = useRef<HeaderDoffy>(null);
-
-  const theme = Redux.getTheme();
-  const token = Redux.getToken();
-  const isModeExp = Redux.getModeExp();
-  const bubblePalace = Redux.getBubblePalaceAction();
-  const {profile} = Redux.getPassport();
-  const numberNewMessages = Redux.getNumberNewMessages();
-
-  const hadLogan = token && !isModeExp;
-
-  const [postIdFocusing, setPostIdFocusing] = useState('');
-
-  const {list, setList, onLoadMore, refreshing, onRefresh} = usePaging({
-    request: apiGetListBubbleActive,
-    params: {
-      take: 30,
-      topics: undefined,
-      postTypes: `[${String([POST_TYPE.groupBuying])}]`,
-    },
-  });
-
-  useEffect(() => {
-    if (
-      bubblePalace.action === TYPE_BUBBLE_PALACE_ACTION.scrollToTopDiscovery
-    ) {
-      listRef.current?.scrollToOffset({
-        offset: 0,
-        animated: true,
-      });
-      Redux.setBubblePalaceAction({
-        action: TYPE_BUBBLE_PALACE_ACTION.null,
-        payload: null,
-      });
-    }
-  }, [bubblePalace.action]);
-
-  useEffect(() => {
-    if (isFocused) {
-      Redux.setScrollMainAndChatEnable(true);
-    } else {
-      Redux.setScrollMainAndChatEnable(false);
-    }
-  }, [isFocused]);
-
-  /**
-   * Functions
-   */
-  const onShowModalComment = useCallback(
-    (
-      post: TypeBubblePalace | TypeGroupBuying,
-      type: TypeShowModalCommentOrLike,
-    ) => {
-      if (!hadLogan) {
-        Vibration.vibrate([0.1], false);
-        appAlert('discovery.bubble.goToSignUp', {
-          moreNotice: 'common.letGo',
-          moreAction: onGoToSignUpFromAlert,
-        });
-      } else {
-        showCommentDiscovery({
-          post,
-          setList,
-          type,
-        });
-      }
-    },
-    [hadLogan],
-  );
-
-  const onShowOptions = useCallback((params: TypeMoreOptionsMe) => {
-    modalOptions = params.postModal;
-    optionsRef.current?.show();
-  }, []);
-
-  /**
-   * Render views
-   */
-  const onHandleLikeGB = useCallback(
-    async (params: ParamsLikeGB) => {
-      const {isLiked, setIsLiked, totalLikes, setTotalLikes, postId} = params;
-
-      if (hadLogan) {
-        const currentLike = isLiked;
-        const currentNumberLikes = totalLikes;
-        try {
-          setIsLiked(!currentLike);
-          setTotalLikes(currentNumberLikes + (currentLike ? -1 : 1));
-          if (currentLike) {
-            await apiUnLikePost({
-              type: REACT.post,
-              reactedId: postId,
-            });
-          } else {
-            await apiLikePost({
-              type: REACT.post,
-              reactedId: postId,
-            });
-          }
-
-          setList((preValue: Array<TypeGroupBuying>) => {
-            return preValue.map(value => {
-              if (value.id !== postId) {
-                return value;
-              }
-              return {
-                ...value,
-                isLiked: !currentLike,
-                totalLikes: value.totalLikes + (currentLike ? -1 : 1),
-              };
-            });
-          });
-        } catch (err) {
-          setIsLiked(currentLike);
-          setTotalLikes(currentNumberLikes);
-          appAlert(err);
-        }
-      } else {
-        appAlert('discovery.bubble.goToSignUp', {
-          moreNotice: 'common.letGo',
-          moreAction: () => {
-            goBack();
-            onGoToSignUp();
-          },
-        });
-      }
-    },
-    [hadLogan],
-  );
-
-  const RenderItemBubble = useCallback(
-    (item: TypeBubblePalace & TypeGroupBuying) => {
-      if (item.postType === POST_TYPE.groupBuying) {
-        return (
-          <BubbleGroupBuying
-            item={item}
-            onGoToDetailGroupBuying={value =>
-              navigate(DISCOVERY_ROUTE.detailGroupBuying, {
-                item: value,
-                setList,
-              })
-            }
-            onShowMoreOption={onShowOptions}
-            onHandleLike={onHandleLikeGB}
-            onShowModalComment={(post, type) => onShowModalComment(post, type)}
-            onChangePostIdFocusing={postId => setPostIdFocusing(postId)}
-            detailGroupTarget={DISCOVERY_ROUTE.detailGroupBuying}
-          />
-        );
-      }
-      return null;
-    },
-    [postIdFocusing],
+  const theme = useTheme();
+  const {banners, hot_locations, favorite_tours} = useAppSelector(
+    state => state.logicSlice.resource,
   );
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      <HeaderDoffy
-        ref={headerRef}
-        theme={theme}
-        profile={profile}
-        numberNewMessages={numberNewMessages}
-      />
+    <SafeView style={$container}>
+      <ScrollView contentContainerStyle={$contentContainer}>
+        <HeaderDiscovery />
 
-      <View style={{flex: 1, overflow: 'hidden'}}>
-        <StyleList
-          ref={listRef}
-          data={list}
-          renderItem={({item}) => RenderItemBubble(item)}
-          keyExtractor={(_, index) => String(index)}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          onLoadMore={onLoadMore}
-          ListHeaderComponent={BannerTopGb}
-          ListEmptyComponent={null}
-          maxToRenderPerBatch={20}
-          directionalLockEnabled
-          contentContainerStyle={{
-            paddingBottom: 40,
-          }}
-        />
-      </View>
+        <StyleTouchable
+          customStyle={[
+            $buttonSearch,
+            {backgroundColor: theme.white, borderColor: theme.gray_300},
+          ]}
+          onPress={() => navigate(DISCOVERY_ROUTE.searchScreen)}>
+          <AntDesign
+            name="search1"
+            style={[$iconSearch, {color: theme.gray_500}]}
+          />
+          <StyleText
+            i18Text="discovery.searchAround"
+            customStyle={[$textSearch, {color: theme.gray_500}]}
+          />
+        </StyleTouchable>
 
-      <StyleActionSheet
-        ref={optionsRef}
-        listTextAndAction={[
-          {
-            text: 'discovery.report.title',
-            action: () => {
-              if (hadLogan && modalOptions) {
-                navigate(ROOT_SCREEN.reportUser, {
-                  idUser: modalOptions.creator,
-                  nameUser: modalOptions.creatorName,
-                });
-              }
-            },
-          },
-          {
-            text: 'common.cancel',
-            action: () => null,
-          },
-        ]}
-      />
-    </View>
+        <View style={$bannerView}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={$contentBanner}>
+            {banners.map(url => (
+              <StyleTouchable key={url} customStyle={$itemBannerView}>
+                <StyleImage
+                  source={{uri: url}}
+                  customStyle={$image}
+                  defaultSource={Images.images.defaultImage}
+                />
+              </StyleTouchable>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View
+          style={[
+            $categoryView,
+            $styleDropShadow,
+            {backgroundColor: theme.white, shadowColor: theme.gray_600},
+          ]}>
+          {listTravelCategories.map(item => (
+            <StyleTouchable key={item.title} customStyle={$itemCategory}>
+              <StyleIcon source={item.icon} size={45} />
+              <StyleText
+                i18Text={item.title}
+                customStyle={[$titleCategory, {color: theme.black}]}
+              />
+            </StyleTouchable>
+          ))}
+        </View>
+
+        <View
+          style={[
+            $favoriteTourView,
+            $styleDropShadow,
+            {backgroundColor: theme.white, shadowColor: theme.gray_600},
+          ]}>
+          <StyleText
+            i18Text="discovery.favoriteTour"
+            customStyle={$titleCard}
+          />
+          <ScrollView
+            horizontal
+            style={$listTourView}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={$listTourContent}>
+            {favorite_tours.map(tour => (
+              <ItemTour
+                key={tour.id}
+                item={tour}
+                containerStyle={$itemTourBox}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        <View
+          style={[
+            $favoriteTourView,
+            $styleDropShadow,
+            {backgroundColor: theme.white, shadowColor: theme.gray_600},
+          ]}>
+          <StyleText i18Text="discovery.hotLocation" customStyle={$titleCard} />
+          <View style={$locationView}>
+            {hot_locations.map((location, index) => (
+              <ItemHotLocation
+                item={location}
+                isLast={index === hot_locations?.length - 1}
+              />
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeView>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+const $container: ViewStyle = {
+  alignItems: 'center',
+};
+const $contentContainer: ViewStyle = {
+  alignItems: 'center',
+  paddingBottom: safePaddingNotZero,
+};
+const $buttonSearch: ViewStyle = {
+  width: scale(307),
+  height: verticalScale(40),
+  marginTop: verticalScale(16),
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: borderWidthTiny,
+  borderRadius: 100,
+  paddingHorizontal: scale(13),
+};
+const $iconSearch: TextStyle = {
+  fontSize: moderateScale(23),
+};
+const $textSearch: TextStyle = {
+  marginLeft: scale(8),
+};
+const $bannerView: ViewStyle = {
+  width: '100%',
+  height: scale(138),
+  marginTop: verticalScale(16),
+};
+const $contentBanner: ViewStyle = {
+  paddingRight: scale(12),
+};
+const $itemBannerView: ViewStyle = {
+  width: scale(315),
+  height: scale(138),
+  marginLeft: scale(12),
+};
+const $image: ImageStyle = {
+  width: '100%',
+  height: '100%',
+  borderRadius: BORDER_RADIUS.f2,
+};
+const $categoryView: ViewStyle = {
+  width: scale(351),
+  paddingVertical: verticalScale(12),
+  marginTop: verticalScale(16),
+  borderRadius: BORDER_RADIUS.f2,
+  flexDirection: 'row',
+};
+const $itemCategory: ViewStyle = {
+  flex: 1,
+  alignItems: 'center',
+};
+const $titleCategory: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  marginTop: verticalScale(8),
+};
+const $favoriteTourView: ViewStyle = {
+  width: scale(351),
+  paddingVertical: verticalScale(12),
+  marginTop: verticalScale(16),
+  borderRadius: BORDER_RADIUS.f2,
+};
+const $titleCard: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+  marginLeft: scale(12),
+};
+const $listTourView: ViewStyle = {
+  marginTop: verticalScale(12),
+};
+const $listTourContent: ViewStyle = {
+  paddingLeft: scale(12),
+};
+const $locationView: ViewStyle = {
+  width: '100%',
+  paddingHorizontal: scale(12),
+  marginTop: verticalScale(12),
+};
+const $itemTourBox: ViewStyle = {
+  marginRight: scale(8),
+};
 
 export default DiscoveryScreen;

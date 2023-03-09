@@ -52,11 +52,11 @@ export const apiGetListEditHistory = ({params}: TypeParamsPaging) => {
 };
 
 export const apiGetPassport = (): Promise<TypeGetPassportResponse> => {
-  return request.get('/common/get-passport');
+  return request.get('/common/passport');
 };
 
 export const apiGetResource = (): Promise<TypeResourceResponse> => {
-  return request.get('/common/get-resource');
+  return request.get('/common/resource');
 };
 
 export const apiUploadFile = (params: {

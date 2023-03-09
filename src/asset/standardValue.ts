@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import {Platform} from 'react-native';
+import {ImageSourcePropType, Platform} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
@@ -198,6 +198,11 @@ export const FONT_SIZE = {
   f4: moderateScale(10),
 };
 
+export const BORDER_RADIUS = {
+  f2: moderateScale(16),
+  f3: moderateScale(12),
+};
+
 export const LINE_HEIGHT = {
   normal: Platform.select({
     ios: '17@ms',
@@ -206,3 +211,26 @@ export const LINE_HEIGHT = {
 };
 
 export const ratioImageGroupBuying = 1; // height / width
+
+type TypeTravelCategory = {
+  icon: ImageSourcePropType;
+  title: I18Normalize;
+};
+export const listTravelCategories: Array<TypeTravelCategory> = [
+  {
+    icon: Images.images.travelFood,
+    title: 'discovery.travelFood',
+  },
+  {
+    icon: Images.images.travelCamping,
+    title: 'discovery.travelCamping',
+  },
+  {
+    icon: Images.images.travelGreen,
+    title: 'discovery.travelBackpacking',
+  },
+  {
+    icon: Images.images.travelTeamBuilding,
+    title: 'discovery.travelTeamBuilding',
+  },
+];

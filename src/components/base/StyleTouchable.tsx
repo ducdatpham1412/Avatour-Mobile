@@ -6,6 +6,7 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
+import {moderateScale} from 'utility/scale';
 
 export interface StyleTouchableProps extends PressableProps {
   customStyle?: StyleProp<ViewStyle>;
@@ -47,7 +48,7 @@ export default class StyleTouchable extends Component<StyleTouchableProps> {
         disabled={disable}
         onPress={onPress}
         onLongPress={onLongPress}
-        hitSlop={10}
+        hitSlop={moderateScale(10)}
         {...rest}>
         {children}
       </Pressable>
