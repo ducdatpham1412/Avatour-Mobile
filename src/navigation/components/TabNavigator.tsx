@@ -1,56 +1,44 @@
+import {useAppSelector} from 'app-redux/store';
 import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import Images from 'asset/img/images';
-import {Metrics} from 'asset/metrics';
+import {safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
+import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
 import {MAIN_SCREEN, PROFILE_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
-import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import React, {useMemo} from 'react';
+import {Animated, TextStyle, View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   moderateScale,
   ScaledSheet,
   verticalScale,
 } from 'react-native-size-matters';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
-const tabBarHeight = moderateScale(50);
-const addMoreHeight = moderateScale(3);
-const checkBottom = Metrics.safeBottomPadding - verticalScale(10);
-const indicatorHeight = moderateScale(45);
-const safeBottomHeight = checkBottom <= 0 ? 0 : checkBottom;
-export const tabBarViewHeight = tabBarHeight + safeBottomHeight + addMoreHeight;
+import {borderWidthTiny} from 'utility/assistant';
 
 const TabNavigator = (props: any) => {
-  const theme = Redux.getTheme();
-  const numberNewNotifications = Redux.getNumberNewNotifications();
+  const theme = useTheme();
+  const {bottom} = useSafeAreaInsets();
+  const {numberNewNotifications} = useAppSelector(state => state.logicSlice);
 
-  // for indicator
   const tabIndexFocus = props.state.index;
-  const [indicatorWidth, setIndicatorWidth] = useState(0);
-  const indicatorTranslateX = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    Animated.spring(indicatorTranslateX, {
-      toValue: indicatorWidth * tabIndexFocus,
-      useNativeDriver: true,
-    }).start();
-  }, [tabIndexFocus]);
+  const isFocusDiscovery = tabIndexFocus === 0;
+  const isFocusHeart = tabIndexFocus === 1;
+  const isFocusNotification = tabIndexFocus === 2;
+  const isFocusProfile = tabIndexFocus === 3;
 
   /**
    * Render view
    */
-  const DiscoveryButton = () => {
-    const isFocus = tabIndexFocus === 0;
-    const tintColor = isFocus ? Theme.common.white : theme.tabBarIconColor;
+  const DiscoveryButton = useMemo(() => {
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
         onPress={() => {
-          if (!isFocus) {
+          if (!isFocusDiscovery) {
             navigate(MAIN_SCREEN.discoveryRoute);
           } else {
             Redux.setBubblePalaceAction({
@@ -58,69 +46,47 @@ const TabNavigator = (props: any) => {
               payload: null,
             });
           }
-        }}
-        onLayout={e => {
-          if (!indicatorWidth) {
-            setIndicatorWidth(e.nativeEvent.layout.width);
-          }
         }}>
-        <StyleImage
-          source={Images.icons.home}
-          customStyle={[styles.iconTabBar, {tintColor}]}
+        <StyleIcon
+          source={isFocusDiscovery ? Images.icons.homeFocus : Images.icons.home}
+          size={32}
+          customStyle={[
+            {tintColor: isFocusDiscovery ? theme.p_700 : theme.gray_500},
+          ]}
         />
         <StyleText
           i18Text="discovery.home"
-          customStyle={[styles.textTitle, {color: tintColor}]}
+          customStyle={[$textTitle, {color: theme.black}]}
         />
       </StyleTouchable>
     );
-  };
+  }, [isFocusDiscovery]);
 
-  const MessageButton = () => {
-    const isFocus = tabIndexFocus === 1;
-    const tintColor = isFocus ? Theme.common.white : theme.tabBarIconColor;
+  const FavoriteButton = useMemo(() => {
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
         onPress={() => navigate(MAIN_SCREEN.favorite)}>
-        <FontAwesome
-          name="heart-o"
-          style={[styles.profile, {color: tintColor}]}
+        <StyleIcon
+          source={isFocusHeart ? Images.icons.heartFocus : Images.icons.heart}
+          size={32}
+          customStyle={[
+            {tintColor: isFocusHeart ? theme.pink : theme.gray_500},
+          ]}
         />
         <StyleText
           i18Text="profile.favorite"
-          customStyle={[styles.textTitle, {color: tintColor}]}
+          customStyle={[$textTitle, {color: theme.black}]}
         />
       </StyleTouchable>
     );
-  };
+  }, [isFocusHeart]);
 
-  const ReviewCommunityButton = () => {
-    const isFocus = tabIndexFocus === 2;
-    const tintColor = isFocus ? Theme.common.white : theme.tabBarIconColor;
-    return (
-      <StyleTouchable
-        customStyle={styles.buttonView}
-        onPress={() => navigate(MAIN_SCREEN.reputation)}>
-        <StyleImage
-          source={Images.icons.reputation}
-          customStyle={[styles.iconTabBar, {tintColor}]}
-        />
-        <StyleText
-          i18Text="reputation.community"
-          customStyle={[styles.textTitle, {color: tintColor}]}
-        />
-      </StyleTouchable>
-    );
-  };
-
-  const ProfileButton = () => {
-    const isFocus = tabIndexFocus === 4;
-    const tintColor = isFocus ? Theme.common.white : theme.tabBarIconColor;
+  const ProfileButton = useMemo(() => {
     return (
       <StyleTouchable
         onPress={() => {
-          if (isFocus) {
+          if (isFocusProfile) {
             navigate(MAIN_SCREEN.profileRoute, {
               screen: PROFILE_ROUTE.myProfile,
             });
@@ -133,21 +99,24 @@ const TabNavigator = (props: any) => {
           }
         }}
         customStyle={styles.buttonView}>
-        <FontAwesome
-          name="user-o"
-          style={[styles.profile, {color: tintColor}]}
+        <StyleIcon
+          source={
+            isFocusProfile ? Images.icons.profileFocus : Images.icons.profile
+          }
+          size={32}
+          customStyle={[
+            {tintColor: isFocusProfile ? theme.p_700 : theme.gray_500},
+          ]}
         />
         <StyleText
           i18Text="profile.title"
-          customStyle={[styles.textTitle, {color: tintColor}]}
+          customStyle={[$textTitle, {color: theme.black}]}
         />
       </StyleTouchable>
     );
-  };
+  }, [isFocusProfile]);
 
-  const NotificationButton = () => {
-    const tintColor =
-      tabIndexFocus === 3 ? Theme.common.white : theme.tabBarIconColor;
+  const NotificationButton = useMemo(() => {
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
@@ -156,9 +125,16 @@ const TabNavigator = (props: any) => {
           navigate(MAIN_SCREEN.notificationRoute);
         }}>
         <View>
-          <StyleImage
-            source={Images.icons.notification}
-            customStyle={[styles.iconTabBar, {tintColor}]}
+          <StyleIcon
+            source={
+              isFocusNotification
+                ? Images.icons.notificationFocus
+                : Images.icons.notification
+            }
+            size={32}
+            customStyle={[
+              {tintColor: isFocusNotification ? theme.blue : theme.gray_500},
+            ]}
           />
           {numberNewNotifications > 0 && (
             <View style={styles.newNotificationBox}>
@@ -173,79 +149,28 @@ const TabNavigator = (props: any) => {
         </View>
         <StyleText
           i18Text="notification.title"
-          customStyle={[styles.textTitle, {color: tintColor}]}
+          customStyle={[$textTitle, {color: theme.black}]}
         />
       </StyleTouchable>
     );
-  };
-
-  const TabBarIndicator = () => {
-    return (
-      <Animated.View
-        style={[
-          styles.indicatorView,
-          {
-            width: indicatorWidth,
-            height: indicatorHeight,
-            transform: [
-              {
-                translateX: indicatorTranslateX,
-              },
-              {
-                scale,
-              },
-            ],
-          },
-        ]}>
-        <LinearGradient
-          colors={[Theme.common.gradientTabBar1, Theme.common.gradientTabBar2]}
-          style={styles.gradientBox}
-        />
-      </Animated.View>
-    );
-  };
+  }, [isFocusNotification]);
 
   return (
-    <>
-      <View
-        style={[
-          styles.addMoreView,
-          {
-            backgroundColor: theme.backgroundColor,
-            borderTopColor: theme.holderColor,
-          },
-        ]}>
-        {/* <AnimatedLinear
-                    colors={[
-                        Theme.common.gradientTabBar1,
-                        Theme.common.gradientTabBar2,
-                    ]}
-                    style={[
-                        styles.addMoreGradient,
-                        {
-                            width: addMoreWidth,
-                        },
-                    ]}
-                /> */}
-      </View>
-      <Animated.View
-        style={[
-          styles.tabBarDown,
-          {
-            height: tabBarHeight,
-          },
-        ]}>
-        {TabBarIndicator()}
-        {DiscoveryButton()}
-        {MessageButton()}
-        {ReviewCommunityButton()}
-        {NotificationButton()}
-        {ProfileButton()}
-      </Animated.View>
-      <View
-        style={[styles.safeBottom, {backgroundColor: theme.backgroundColor}]}
-      />
-    </>
+    <Animated.View
+      style={[
+        styles.tabBarDown,
+        {
+          paddingBottom: bottom || safePaddingNotZero,
+          paddingTop: verticalScale(8),
+          backgroundColor: theme.white,
+          borderTopColor: theme.gray_200,
+        },
+      ]}>
+      {DiscoveryButton}
+      {FavoriteButton}
+      {NotificationButton}
+      {ProfileButton}
+    </Animated.View>
   );
 };
 
@@ -258,20 +183,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Theme.common.red,
-    top: '-3@ms',
-    right: '-5@ms',
-  },
-  profile: {
-    fontSize: '22@ms',
-  },
-  addMoreView: {
-    width: '100%',
-    height: addMoreHeight,
-    alignItems: 'center',
-    borderTopWidth: '0.25@ms',
-  },
-  addMoreGradient: {
-    height: '100%',
+    top: '0@ms',
+    right: '0@ms',
   },
   // Tab bar down
   tabBarDown: {
@@ -279,6 +192,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     overflow: 'hidden',
     paddingHorizontal: '5@s',
+    borderTopWidth: borderWidthTiny,
   },
   buttonView: {
     flex: 1,
@@ -299,30 +213,15 @@ const styles = ScaledSheet.create({
     color: Theme.common.white,
   },
   textNewMessages: {
-    fontSize: '8@ms',
+    fontSize: '10@ms',
     color: 'white',
-  },
-  // tabBar indicator
-  indicatorView: {
-    position: 'absolute',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    left: '5@s',
-  },
-  gradientBox: {
-    width: '75%',
-    height: '90%',
-    borderRadius: '20@ms',
-  },
-  safeBottom: {
-    width: '100%',
-    height: safeBottomHeight,
-  },
-  textTitle: {
-    fontSize: '7@ms',
+    fontFamily: undefined,
   },
 });
+
+const $textTitle: TextStyle = {
+  fontSize: moderateScale(10),
+  marginTop: verticalScale(4),
+};
 
 export default TabNavigator;

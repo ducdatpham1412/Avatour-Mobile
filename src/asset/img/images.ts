@@ -22,9 +22,11 @@ const Images = {
     // tabBar
     zoomPhoto: require('./ic_zoom_photo.png'),
     home: require('./ic_home.png'),
+    homeFocus: require('./ic_home_focus.png'),
     chat: require('./ic_chat.png'),
     createGroup: require('./ic_create_group.png'),
     notification: require('./ic_notification.png'),
+    notificationFocus: require('./ic_notification_focus.png'),
     // discovery
     chatNow: require('./ic_chat_now.png'),
     comment: require('./ic_comment.png'),
@@ -48,6 +50,11 @@ const Images = {
     star: require('./ic_star.png'),
     loading: require('./ic_loading.json'),
     location: require('./ic_location.png'),
+    heart: require('./ic_heart.png'),
+    heartFocus: require('./ic_heart_focus.png'),
+    profile: require('./ic_profile.png'),
+    profileFocus: require('./ic_profile_focus.png'),
+    filter: require('./ic_filter.png'),
   },
   images: {
     logo: require('./img_logo.png'),

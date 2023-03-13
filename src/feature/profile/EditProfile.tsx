@@ -1,8 +1,10 @@
 import {apiEditProfile} from 'api/profile';
-import FindmeStore from 'app-redux/store';
+import {updatePassport} from 'app-redux';
+import FindmeStore, {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {AVATAR_SIZE, FONT_SIZE} from 'asset/standardValue';
 import {
+  SafeView,
   StyleButton,
   StyleContainer,
   StyleImage,
@@ -11,9 +13,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import StyleActionSheet from 'components/common/StyleActionSheet';
-import LoadingScreen from 'components/LoadingScreen';
-import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
-import Redux from 'hook/useRedux';
+import {useLoading, useTheme} from 'hook';
 import StyleHeader from 'navigation/components/StyleHeader';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
@@ -35,9 +35,11 @@ import ImageUploader from 'utility/ImageUploader';
 import BtnPenEdit from './components/BtnPenEdit';
 
 const EditProfile = () => {
-  const {profile, setting} = Redux.getPassport();
-  const theme = Redux.getTheme();
-  const isLoading = Redux.getIsLoading();
+  const {profile, setting} = useAppSelector(
+    state => state.accountSlice.passport,
+  );
+  const theme = useTheme();
+  const {loading, setLoading} = useLoading();
   const {t} = useTranslation();
 
   const inputDescriptionRef = useRef<TextInput>(null);
@@ -102,7 +104,7 @@ const EditProfile = () => {
 
   const onSaveChange = async () => {
     try {
-      Redux.setIsLoading(true);
+      setLoading(true);
       const {modeExp} = FindmeStore.getState().accountSlice;
       const {token} = FindmeStore.getState().logicSlice;
 
@@ -130,7 +132,7 @@ const EditProfile = () => {
         });
       }
 
-      Redux.updatePassport({
+      updatePassport({
         profile: {avatar: avatar || '', name, description, location},
       });
 
@@ -140,13 +142,12 @@ const EditProfile = () => {
     } catch (err) {
       appAlert(err);
     } finally {
-      Redux.setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      <ViewSafeTopPadding />
+    <SafeView>
       <StyleHeader title="profile.component.infoProfile.editProfile" />
 
       <StyleContainer scrollEnabled customStyle={styles.container}>
@@ -285,11 +286,10 @@ const EditProfile = () => {
         <StyleButton
           title="profile.edit.confirmButton"
           containerStyle={styles.saveBtnView}
-          onPress={() => onSaveChange()}
+          onPress={onSaveChange}
           disable={disableButton}
+          isLoading={loading}
         />
-
-        {isLoading && <LoadingScreen />}
       </StyleContainer>
 
       <StyleActionSheet
@@ -305,7 +305,7 @@ const EditProfile = () => {
           },
         ]}
       />
-    </>
+    </SafeView>
   );
 };
 

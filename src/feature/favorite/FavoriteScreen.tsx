@@ -9,7 +9,7 @@ import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
 import {FAVORITE_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
-import {showCommentDiscovery} from 'navigation/screen/MainTabs';
+import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {useCallback} from 'react';
 import {Platform, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -58,13 +58,13 @@ const FavoriteAccount = () => {
         }}
         onShowMoreOption={() => null}
         onHandleLike={() => null}
-        onShowModalComment={(post, type) =>
-          showCommentDiscovery({
+        onShowModalComment={(post, type) => {
+          modalCommentLikeAllAppRef.current?.show({
             post,
             type,
             setList,
-          })
-        }
+          });
+        }}
         onChangePostIdFocusing={() => null}
         detailGroupTarget={FAVORITE_ROUTE.detailGroupBuying}
         containerWidth={width * 0.93}

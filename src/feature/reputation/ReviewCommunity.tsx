@@ -15,7 +15,7 @@ import {
   goBack,
   navigate,
 } from 'navigation/NavigationService';
-import {showCommentDiscovery} from 'navigation/screen/MainTabs';
+import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {useCallback, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -78,13 +78,13 @@ const ReviewCommunity = () => {
           <Bubble
             item={item}
             onShowMoreOption={params => onShowModalOption(params.postModal)}
-            onShowModalComment={(post, type) =>
-              showCommentDiscovery({
+            onShowModalComment={(post, type) => {
+              modalCommentLikeAllAppRef.current?.show({
                 post,
                 type,
                 setList,
-              })
-            }
+              });
+            }}
             isFocusing={postIdFocusing === item.id}
             onChangePostIdFocusing={postId => setPostIdFocusing(postId)}
           />
@@ -151,7 +151,7 @@ const ReviewCommunity = () => {
             action: () => {
               if (modalOptions) {
                 navigate(PROFILE_ROUTE.createPostPreview, {
-                  itemEdit: modalOptions,
+                  itemEdit: modalOptions as TypeBubblePalace,
                 });
               }
             },

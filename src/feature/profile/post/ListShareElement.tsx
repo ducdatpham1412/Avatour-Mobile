@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import {apiDeletePost} from 'api/profile';
-import {apiLikePost, apiUnLikePost} from 'api/profile';
+import {apiDeletePost, apiLikePost, apiUnLikePost} from 'api/profile';
 import FindmeStore from 'app-redux/store';
 import {POST_TYPE, REACT} from 'asset/enum';
 import {Metrics} from 'asset/metrics';
@@ -12,16 +11,15 @@ import Bubble from 'feature/discovery/components/Bubble';
 import BubbleGroupBuying, {
   ParamsLikeGB,
 } from 'feature/discovery/components/BubbleGroupBuying';
-import {TypeMoreOptionsMe} from 'feature/discovery/DiscoveryScreen';
 import StyleHeader from 'navigation/components/StyleHeader';
-import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
+import {PROFILE_ROUTE} from 'navigation/config/routes';
 import {
   appAlert,
   appAlertYesNo,
   goBack,
   navigate,
 } from 'navigation/NavigationService';
-import {showCommentDiscovery} from 'navigation/screen/MainTabs';
+import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {Component} from 'react';
 import {
   Animated,
@@ -33,6 +31,7 @@ import {
 import {ScaledSheet} from 'react-native-size-matters';
 import {DefaultTransitionSpec} from 'utility/animation';
 import {logger} from 'utility/assistant';
+import {I18Normalize} from 'utility/I18Next';
 
 interface Props {
   title: string;
@@ -57,7 +56,7 @@ let postModal: TypeBubblePalace | TypeGroupBuying;
 const onGoToEditPost = () => {
   if (postModal) {
     navigate(PROFILE_ROUTE.createPostPreview, {
-      itemEdit: postModal,
+      itemEdit: postModal as TypeBubblePalace,
     });
   }
 };
@@ -90,7 +89,9 @@ export default class ListShareElement extends Component<Props, States> {
   private enableHearingScrollEvent = true;
 
   isShowing() {
-    return this.scaleX._value === 1 && this.scaleY._value === 1;
+    const tempX: any = this.scaleX;
+    const tempY: any = this.scaleY;
+    return tempX._value === 1 && tempY._value === 1;
   }
 
   show(params: TypeShow) {
@@ -198,7 +199,7 @@ export default class ListShareElement extends Component<Props, States> {
         type,
       });
     } else {
-      showCommentDiscovery({
+      modalCommentLikeAllAppRef.current?.show({
         post,
         setList: this.props.listPaging.setList,
         type,
@@ -284,81 +285,6 @@ export default class ListShareElement extends Component<Props, States> {
   render() {
     const {listPaging, containerStyle, title, isSaveTop} = this.props;
 
-    const MyModalOption = () => {
-      return (
-        <StyleActionSheet
-          ref={this.myOptionRef}
-          listTextAndAction={[
-            {
-              text: 'profile.post.edit',
-              action: onGoToEditPost,
-            },
-            {
-              text: 'profile.post.delete',
-              action: () => {
-                if (postModal) {
-                  this.onDeletePost(postModal.id);
-                }
-              },
-            },
-            {
-              text: 'common.cancel',
-              action: () => null,
-            },
-          ]}
-        />
-      );
-    };
-
-    const DraftOption = () => {
-      return (
-        <StyleActionSheet
-          ref={this.draftOptionRef}
-          listTextAndAction={[
-            {
-              text: 'profile.post.edit',
-              action: onGoToEditPost,
-            },
-            {
-              text: 'profile.post.delete',
-              action: () => {
-                if (postModal?.id) {
-                  this.onDeletePost(postModal.id);
-                }
-              },
-            },
-            {
-              text: 'common.cancel',
-              action: () => null,
-            },
-          ]}
-        />
-      );
-    };
-
-    const FriendModalOptions = () => {
-      return (
-        <StyleActionSheet
-          ref={this.friendOptionRef}
-          listTextAndAction={[
-            {
-              text: 'discovery.report.title',
-              action: () => {
-                navigate(ROOT_SCREEN.reportUser, {
-                  idUser: postModal.creator,
-                  nameUser: postModal.creatorName,
-                });
-              },
-            },
-            {
-              text: 'common.cancel',
-              action: () => null,
-            },
-          ]}
-        />
-      );
-    };
-
     return (
       <>
         <Animated.View
@@ -375,7 +301,10 @@ export default class ListShareElement extends Component<Props, States> {
             containerStyle,
           ]}>
           {!!isSaveTop && <ViewSafeTopPadding />}
-          <StyleHeader onGoBack={() => this.hide()} title={title} />
+          <StyleHeader
+            onGoBack={() => this.hide()}
+            title={title as I18Normalize}
+          />
           <StyleList
             ref={this.listRef}
             data={listPaging.list}
@@ -401,9 +330,71 @@ export default class ListShareElement extends Component<Props, States> {
           />
         </Animated.View>
 
-        {MyModalOption()}
-        {DraftOption()}
-        {FriendModalOptions()}
+        <StyleActionSheet
+          ref={this.myOptionRef}
+          listTextAndAction={[
+            {
+              text: 'profile.post.edit',
+              action: onGoToEditPost,
+            },
+            {
+              text: 'profile.post.delete',
+              action: () => {
+                if (postModal) {
+                  this.onDeletePost(postModal.id);
+                }
+              },
+            },
+            {
+              text: 'common.cancel',
+              action: () => null,
+            },
+          ]}
+        />
+
+        <StyleActionSheet
+          ref={this.draftOptionRef}
+          listTextAndAction={[
+            {
+              text: 'profile.post.edit',
+              action: onGoToEditPost,
+            },
+            {
+              text: 'profile.post.delete',
+              action: () => {
+                if (postModal?.id) {
+                  this.onDeletePost(postModal.id);
+                }
+              },
+            },
+            {
+              text: 'common.cancel',
+              action: () => null,
+            },
+          ]}
+        />
+
+        <StyleActionSheet
+          ref={this.draftOptionRef}
+          listTextAndAction={[
+            {
+              text: 'profile.post.edit',
+              action: onGoToEditPost,
+            },
+            {
+              text: 'profile.post.delete',
+              action: () => {
+                if (postModal?.id) {
+                  this.onDeletePost(postModal.id);
+                }
+              },
+            },
+            {
+              text: 'common.cancel',
+              action: () => null,
+            },
+          ]}
+        />
       </>
     );
   }
