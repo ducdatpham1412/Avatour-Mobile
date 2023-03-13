@@ -1,15 +1,21 @@
 interface TypeGetProfileResponse {
   id: number;
-  account_type: number;
-  name: string;
-  location: string;
-  anonymousName: string;
-  description: string;
   avatar: string;
-  cover: string;
+  account_type: number;
+  services: Array<number>;
+  name: string;
+  description: string;
   followers: number;
   followings: number;
-  reputations: number;
+  gender: number;
+  location: string;
+  lat: number;
+  lng: number;
+  min_cost: number;
+  max_cost: number;
+  duration: number;
+  total_ratings: number;
+  average_stars: number;
   relationship: number;
 }
 

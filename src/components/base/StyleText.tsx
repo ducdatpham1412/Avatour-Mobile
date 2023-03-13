@@ -4,7 +4,6 @@ import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, Text, TextProps, TextStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
 import {I18Normalize} from 'utility/I18Next';
 
 interface StyleTextProps extends TextProps {
@@ -30,21 +29,16 @@ const StyleText = (props: StyleTextProps) => {
   }
 
   return (
-    <Text
-      style={[styles.textDefaultStyle, {color: theme.black}, customStyle]}
-      {...props}>
+    <Text style={[$textDefault, {color: theme.black}, customStyle]} {...props}>
       {valueText}
       {children}
     </Text>
   );
 };
 
-const styles = ScaledSheet.create({
-  textDefaultStyle: {
-    fontSize: FONT_SIZE.f2,
-    color: 'lightgreen',
-    fontFamily: FONT_FAMILY.openSans,
-  },
-});
+const $textDefault: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  fontFamily: FONT_FAMILY.openSans,
+};
 
 export default StyleText;

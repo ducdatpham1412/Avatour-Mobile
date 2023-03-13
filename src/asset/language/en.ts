@@ -200,6 +200,7 @@ const discovery = {
   travelCulture: 'Culture travel',
   travelGreen: 'Green travel',
   travelSightSeeing: 'Sightseeing',
+  travelBackpacking: 'Backpacking',
   travelAll: 'All',
   searchAround: 'Search people or destination',
   category: 'Categories ({{value}})',
@@ -220,6 +221,8 @@ const discovery = {
   historyEdit: 'Editing history',
   viewReply: 'View replies ({{value}})',
   hide: 'Hide',
+  favoriteTour: '🚌 Favorite tours',
+  pricePeople: 'vnd/person | {{value}} people',
 };
 
 // REPUTATION

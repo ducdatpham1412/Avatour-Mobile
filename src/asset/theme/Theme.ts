@@ -78,7 +78,7 @@ const Theme = {
     p_700: '#FAB900',
     p_800: '#F9A000',
     p_900: '#F87400',
-    background: '#F5F5F5',
+    background: '#F5F6F8',
     white: '#FFFFFF',
     black: '#110B0B',
     // gray_900: '#1e1e1e',
@@ -92,6 +92,8 @@ const Theme = {
     // gray_100: '#f4f4f4',
     green: '#3CDF21',
     red: '#F34119',
+    white02: 'rgba(255, 255, 255, 0.2)',
+    black05: 'rgba(0, 0, 0, 0.5)',
   },
 };
 

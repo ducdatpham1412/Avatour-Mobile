@@ -35,8 +35,8 @@ if [ ! -f ../src/asset/env/env.chosen.ts ]; then
     cd ../src/asset/env && touch env.chosen.ts && : > env.chosen.ts && echo "export const ChosenEnv: 'dev' | 'staging' | 'pro' = 'dev';\n // Choose 1 of 3 env: 'dev' | 'staging' | 'pro" >> env.chosen.ts && touch config.dev.ts && config config.prod.ts 
 fi;
 if [ ! -f ../src/asset/env/config.dev.ts ]; then
-    touch config.dev.ts
+    touch config.dev.ts && cat config.template.ts > config.dev.ts
 fi;
 if [ ! -f ../src/asset/env/config.prod.ts ]; then
-    touch config.prod.ts
+    touch config.prod.ts && cat config.template.ts > config.prod.ts
 fi;

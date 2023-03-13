@@ -195,7 +195,7 @@ const discovery = {
   titleDeposit: 'Bạn cần đặt cọc một khoản tiền cho người bán',
   theMoneyIs: 'Số tiền đặt cọc là: ',
   goToDeposit: 'Đi tới đặt cọc',
-  hotLocation: '🔥 Địa điểm hot',
+  hotLocation: '🔥 Địa điểm nổi bật',
   travelCamping: 'Trải nghiệm',
   travelVolunteer: 'Tình nguyện',
   travelTeamBuilding: 'Team building',
@@ -203,6 +203,7 @@ const discovery = {
   travelCulture: 'Du lịch văn hoá',
   travelGreen: 'Du lịch xanh',
   travelSightSeeing: 'Tham quan',
+  travelBackpacking: 'Đi phượt',
   travelAll: 'Tất cả',
   searchAround: 'Tìm kiếm mọi người hoặc nơi đến',
   category: 'Loại hình ({{value}})',
@@ -223,6 +224,8 @@ const discovery = {
   historyEdit: 'Lịch sử chỉnh sửa',
   viewReply: 'Phản hồi ({{value}})',
   hide: 'Ẩn',
+  favoriteTour: '🚌 Tour được yêu thích',
+  pricePeople: 'vnd/người | {{value}} người',
 };
 
 // REPUTATION

@@ -89,3 +89,20 @@ interface TypeGetTopReviewerResponse {
   list: Array<TypeItemTopReviewer>;
   myIndex: number;
 }
+
+interface TourDetail {
+  id: number;
+  transport: null;
+  hotel: null;
+  schedule: Array<Array<TypeGetProfileResponse>>;
+  location: string;
+  start_location: string;
+  number_people: number;
+  start_time: string;
+  end_time: string;
+  start_price: number;
+  end_price: number;
+  creator: number;
+  creator_name: string;
+  creator_avatar: string;
+}

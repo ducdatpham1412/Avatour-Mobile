@@ -60,16 +60,29 @@ interface TypeGroupBuying {
     prices: Array<TypePrice>;
   } | null; // only for apiGetDetail to check is requesting update price
 }
+
+interface TypeHotLocation {
+  id: number;
+  name: string;
+  avatar: string;
+  description: string;
+}
+
+interface TypeFavoriteTour extends Exclude<TourDetail, 'schedule'> {
+  schedule: Array<Array<string>>; // array of avatar supplier
+}
+
 interface TypeResourceResponse {
   success: boolean;
   data: {
-    imageBackground: string;
+    background: string;
     gradients: TypeGradient;
     banners: Array<string>;
-    hotLocations: Array<any>;
-    listPrices: Array<TypePriceResource>;
-    listPurchases: Array<TypePurchaseResource>;
-    topGroupBookings: Array<TypeGroupBuying>;
+    favorite_tours: Array<TypeFavoriteTour>;
+    hot_locations: Array<TypeHotLocation>;
+    // listPrices: Array<TypePriceResource>;
+    // listPurchases: Array<TypePurchaseResource>;
+    // topGroupBookings: Array<TypeGroupBuying>;
   };
 }
 
