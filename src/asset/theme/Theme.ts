@@ -94,6 +94,8 @@ const Theme = {
     red: '#F34119',
     white02: 'rgba(255, 255, 255, 0.2)',
     black05: 'rgba(0, 0, 0, 0.5)',
+    pink: '#EF5DA8',
+    blue: '#54B3E9',
   },
 };
 

@@ -27,10 +27,9 @@ import BubbleGroupBuying, {
 } from 'feature/discovery/components/BubbleGroupBuying';
 import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
-import {tabBarViewHeight} from 'navigation/components/TabNavigator';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
-import {showCommentDiscovery} from 'navigation/screen/MainTabs';
+import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
@@ -123,8 +122,7 @@ const ProfileEnjoy = () => {
  */
 const safeLoadMoreStyle: any = {
   overflow: 'hidden',
-  height:
-    Metrics.height - tabBarViewHeight - toolProfileHeight - searchSettingHeight, // check to remove this
+  height: Metrics.height - toolProfileHeight - searchSettingHeight,
 };
 
 let modalBubbleOption: TypeBubblePalace | TypeGroupBuying;
@@ -365,7 +363,7 @@ const ProfileAccount = () => {
           onHandleLike={params => onHandleLike(params, gbJoinedPaging.setList)}
           onShowModalComment={(post, type) => {
             if (isInTabProfile) {
-              showCommentDiscovery({
+              modalCommentLikeAllAppRef.current?.show({
                 post,
                 type,
                 setList: gbJoinedPaging.setList,
@@ -404,7 +402,7 @@ const ProfileAccount = () => {
             onHandleLike={params => onHandleLike(params, setList)}
             onShowModalComment={(post, type) => {
               if (isInTabProfile) {
-                showCommentDiscovery({
+                modalCommentLikeAllAppRef.current?.show({
                   post,
                   type,
                   setList,
@@ -435,7 +433,7 @@ const ProfileAccount = () => {
             }}
             onShowModalComment={(post, type) => {
               if (isInTabProfile) {
-                showCommentDiscovery({
+                modalCommentLikeAllAppRef.current?.show({
                   post,
                   type,
                   setList: postReviewPaging.setList,
@@ -491,7 +489,7 @@ const ProfileAccount = () => {
           }}
           onShowModalComment={(post, type) => {
             if (isInTabProfile) {
-              showCommentDiscovery({
+              modalCommentLikeAllAppRef.current?.show({
                 post,
                 type,
                 setList: postReviewPaging.setList,

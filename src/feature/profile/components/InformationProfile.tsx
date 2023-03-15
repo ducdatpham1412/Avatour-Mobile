@@ -59,7 +59,7 @@ const InformationProfile = (props: Props) => {
             ]}
             onPress={() => {
               if (isInTabProfile) {
-                navigate(PROFILE_ROUTE.editProfile);
+                navigate(ROOT_SCREEN.editProfile);
               } else {
                 navigate(ROOT_SCREEN.editProfile);
               }

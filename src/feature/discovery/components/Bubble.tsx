@@ -43,7 +43,6 @@ import {
   onGoToSignUp,
 } from 'utility/assistant';
 import {formatFromNow} from 'utility/format';
-import {TypeMoreOptionsMe} from '../DiscoveryScreen';
 
 interface Props {
   item: TypeBubblePalace;

@@ -55,7 +55,7 @@ import {
   goBack,
   navigate,
 } from 'navigation/NavigationService';
-import {showCommentDiscovery} from 'navigation/screen/MainTabs';
+import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Platform,
@@ -484,7 +484,7 @@ const DetailGroupBuying = ({route}: Props) => {
         setList,
       });
     } else {
-      showCommentDiscovery({
+      modalCommentLikeAllAppRef.current?.show({
         post: item,
         type,
         setList,

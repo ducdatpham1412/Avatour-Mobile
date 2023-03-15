@@ -30,3 +30,12 @@ export const updateResource = (update: ResourceType) => {
 export const updateListChatTag = (newList: any) => {
   Store.dispatch(logicSliceAction.setListChatTag(newList));
 };
+
+export const updateBubbleFocusing = (value: Partial<TypeBubblePalace>) => {
+  Store.dispatch(
+    logicSliceAction.setBubbleFocusing({
+      ...Store.getState().logicSlice.bubbleFocusing,
+      ...value,
+    }),
+  );
+};

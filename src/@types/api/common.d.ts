@@ -150,3 +150,7 @@ type TypeGradient = {
   fashion: Array<string>;
   other: Array<string>;
 };
+
+interface TypeMoreOptionsMe {
+  postModal: TypeBubblePalace | TypeGroupBuying;
+}

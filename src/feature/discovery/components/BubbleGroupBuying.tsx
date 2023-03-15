@@ -24,7 +24,6 @@ import {SharedElement} from 'react-navigation-shared-element';
 import {chosenBlurType, isIOS, onGoToProfile} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 import {checkIsVideo} from 'utility/validate';
-import {TypeMoreOptionsMe} from '../DiscoveryScreen';
 
 export interface ParamsLikeGB {
   isLiked: boolean;

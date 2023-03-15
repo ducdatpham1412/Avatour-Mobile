@@ -45,12 +45,6 @@ import ModalFeeling from './post/ModalFeeling';
 import ModalPickStars from './post/ModalPickStars';
 import ModalTopic from './post/ModalTopic';
 
-interface Props {
-  route: {
-    params: AppParamsList[PROFILE_ROUTE.createPostPreview];
-  };
-}
-
 const IconStar = () => (
   <AntDesign
     name="star"
@@ -87,7 +81,9 @@ const IconCheckIn = () => (
 const screenWidth = Metrics.width;
 let shouldShowToolHorizontal = false;
 
-const CreatePostPreview = ({route}: Props) => {
+const CreatePostPreview = ({
+  route,
+}: AppRouteParams<AppParamsList[PROFILE_ROUTE.createPostPreview]>) => {
   const itemNew = route.params?.itemNew;
   const itemEdit = route.params?.itemEdit;
   const itemError = route.params?.itemError;
@@ -390,74 +386,72 @@ const CreatePostPreview = ({route}: Props) => {
   /**
    * Render views
    */
-  const Header = () => {
-    return (
-      <View style={[styles.headerView, {borderBottomColor: theme.borderColor}]}>
-        <StyleTouchable customStyle={styles.iconCloseView} onPress={onGoBack}>
-          <Ionicons
-            name="chevron-back"
-            style={[styles.iconClose, {color: theme.textColor}]}
+  const Header = (
+    <View style={[styles.headerView, {borderBottomColor: theme.borderColor}]}>
+      <StyleTouchable customStyle={styles.iconCloseView} onPress={onGoBack}>
+        <Ionicons
+          name="chevron-back"
+          style={[styles.iconClose, {color: theme.textColor}]}
+        />
+      </StyleTouchable>
+
+      {!!initValue.userReviewed && (
+        <StyleImage
+          source={{uri: initValue.userReviewed.avatar}}
+          customStyle={styles.avatarHeader}
+        />
+      )}
+
+      {(itemNew || itemError || itemDraft) && (
+        <StyleTouchable
+          customStyle={[
+            styles.postBox,
+            {
+              borderColor: theme.highlightColor,
+            },
+          ]}
+          onPress={() => {
+            if (itemDraft) {
+              onEditPost();
+            } else {
+              onConfirmPost(false);
+            }
+          }}>
+          <StyleText
+            i18Text="profile.post.post"
+            customStyle={[styles.textPost, {color: theme.highlightColor}]}
           />
         </StyleTouchable>
+      )}
 
-        {!!initValue.userReviewed && (
-          <StyleImage
-            source={{uri: initValue.userReviewed.avatar}}
-            customStyle={styles.avatarHeader}
+      {(itemNew || itemError) && (
+        <StyleTouchable
+          customStyle={[
+            styles.draftBox,
+            {
+              borderColor: theme.borderColor,
+            },
+          ]}
+          onPress={() => onConfirmPost(true)}>
+          <StyleText
+            i18Text="profile.post.draft"
+            customStyle={[styles.textDraft, {color: theme.borderColor}]}
           />
-        )}
+        </StyleTouchable>
+      )}
 
-        {(itemNew || itemError || itemDraft) && (
-          <StyleTouchable
-            customStyle={[
-              styles.postBox,
-              {
-                borderColor: theme.highlightColor,
-              },
-            ]}
-            onPress={() => {
-              if (itemDraft) {
-                onEditPost();
-              } else {
-                onConfirmPost(false);
-              }
-            }}>
-            <StyleText
-              i18Text="profile.post.post"
-              customStyle={[styles.textPost, {color: theme.highlightColor}]}
-            />
-          </StyleTouchable>
-        )}
-
-        {(itemNew || itemError) && (
-          <StyleTouchable
-            customStyle={[
-              styles.draftBox,
-              {
-                borderColor: theme.borderColor,
-              },
-            ]}
-            onPress={() => onConfirmPost(true)}>
-            <StyleText
-              i18Text="profile.post.draft"
-              customStyle={[styles.textDraft, {color: theme.borderColor}]}
-            />
-          </StyleTouchable>
-        )}
-
-        {itemEdit && (
-          <StyleTouchable
-            customStyle={[styles.postBox, {borderColor: theme.highlightColor}]}
-            onPress={onEditPost}>
-            <StyleText
-              i18Text="profile.post.edit"
-              customStyle={[styles.textPost, {color: theme.highlightColor}]}
-            />
-          </StyleTouchable>
-        )}
-      </View>
-    );
-  };
+      {itemEdit && (
+        <StyleTouchable
+          customStyle={[styles.postBox, {borderColor: theme.highlightColor}]}
+          onPress={onEditPost}>
+          <StyleText
+            i18Text="profile.post.edit"
+            customStyle={[styles.textPost, {color: theme.highlightColor}]}
+          />
+        </StyleTouchable>
+      )}
+    </View>
+  );
 
   const FeelingTopicLocation = () => {
     const chooseFeeling = LIST_FEELINGS.find(item => item.id === feeling);
@@ -618,8 +612,57 @@ const CreatePostPreview = ({route}: Props) => {
     );
   };
 
-  const ToolHorizontal = () => {
-    return (
+  return (
+    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
+      {Header}
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
+        {FeelingTopicLocation()}
+        <View style={styles.captionView}>
+          <TextInput
+            style={[styles.captionInputBox, {color: theme.textHightLight}]}
+            multiline
+            placeholder={t('common.writeSomething')}
+            placeholderTextColor={theme.holderColorLighter}
+            defaultValue={initValue.content}
+            onChangeText={text => setContent(text)}
+            onFocus={() => {
+              shouldShowToolHorizontal = true;
+            }}
+          />
+        </View>
+
+        {ImagePreview}
+
+        {StarLink()}
+
+        <View
+          style={[
+            styles.modalVerticalView,
+            {
+              backgroundColor: theme.backgroundColor,
+              shadowColor: theme.textColor,
+            },
+          ]}>
+          <ItemToolCreatePost
+            icon={IconEmotion()}
+            title="profile.post.feeling"
+            onPress={onFeeling}
+          />
+          <ItemToolCreatePost
+            icon={IconTag()}
+            title="profile.post.topic"
+            onPress={onTopic}
+          />
+          <ItemToolCreatePost
+            icon={IconCheckIn()}
+            title="profile.post.checkIn"
+            onPress={onCheckIn}
+          />
+        </View>
+
+        {isLoading && <LoadingScreen />}
+      </ScrollView>
+
       <Animated.View
         style={[
           styles.toolHorizontalView,
@@ -658,66 +701,6 @@ const CreatePostPreview = ({route}: Props) => {
           </StyleTouchable>
         </View>
       </Animated.View>
-    );
-  };
-
-  const ModalVertical = () => {
-    return (
-      <View
-        style={[
-          styles.modalVerticalView,
-          {
-            backgroundColor: theme.backgroundColor,
-            shadowColor: theme.textColor,
-          },
-        ]}>
-        <ItemToolCreatePost
-          icon={IconEmotion()}
-          title="profile.post.feeling"
-          onPress={onFeeling}
-        />
-        <ItemToolCreatePost
-          icon={IconTag()}
-          title="profile.post.topic"
-          onPress={onTopic}
-        />
-        <ItemToolCreatePost
-          icon={IconCheckIn()}
-          title="profile.post.checkIn"
-          onPress={onCheckIn}
-        />
-      </View>
-    );
-  };
-
-  return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      {Header()}
-
-      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-        {FeelingTopicLocation()}
-        <View style={styles.captionView}>
-          <TextInput
-            style={[styles.captionInputBox, {color: theme.textHightLight}]}
-            multiline
-            placeholder={t('common.writeSomething')}
-            placeholderTextColor={theme.holderColorLighter}
-            defaultValue={initValue.content}
-            onChangeText={text => setContent(text)}
-            onFocus={() => {
-              shouldShowToolHorizontal = true;
-            }}
-          />
-        </View>
-
-        {ImagePreview}
-
-        {StarLink()}
-        {ModalVertical()}
-        {isLoading && <LoadingScreen />}
-      </ScrollView>
-
-      {ToolHorizontal()}
 
       {/* Modalize */}
       <ModalPickStars
