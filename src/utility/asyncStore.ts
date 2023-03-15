@@ -1,22 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ASYNC_TYPE} from '../asset/enum';
-
-// THINK TO SAVE TO ASYNC
-// 0. firstTimeOpenApp
-// 1. storageAcc = []: {
-//     username,
-//     password,
-//     theme: 0,
-//     language: 'vi',
-// };
-// 2. user :{
-//    - username
-//    - password
-//    - token
-//    - refreshToken
-//    }
-// 3. index
-// 4. language: this is for no Account Mode in order to keep language even not sign in, it will change follow {account.language}
+import {LIST_TOPICS, LIST_TRANSPORTS} from 'asset';
+import dayjs from 'dayjs';
+import {ASYNC_TYPE, TOPIC} from '../asset/enum';
+import {formatUTCDate} from './format';
 
 interface ActiveUserType {
   username?: string;
@@ -24,19 +10,7 @@ interface ActiveUserType {
   token?: string;
   refreshToken?: string;
 }
-export default class FindmeAsyncStorage {
-  /**
-   * First time open app
-   */
-  static isFirstTimeOpenApp = async () => {
-    const tempt = await AsyncStorage.getItem(ASYNC_TYPE.firstTimeOpenApp);
-    if (tempt === null) {
-      await AsyncStorage.setItem(ASYNC_TYPE.firstTimeOpenApp, 'true');
-      return true;
-    }
-    return false;
-  };
-
+export default class AppAsyncStorage {
   /**
    *  GET, ADD, DELETE OR EDIT LIST STORAGE ACCOUNT
    */
@@ -62,14 +36,14 @@ export default class FindmeAsyncStorage {
     // remember switch from string to date
   };
   static addStorageAcc = async (account: AccountSavedAsync) => {
-    let tempt = await FindmeAsyncStorage.getStorageAcc();
+    let tempt = await AppAsyncStorage.getStorageAcc();
     /**
      * If this account have been saved in storage,
      * only need to set "index" and return
      */
     for (let i = 0; i < tempt.length; i++) {
       if (tempt[i].username === account.username) {
-        FindmeAsyncStorage.setIndexNow(i);
+        AppAsyncStorage.setIndexNow(i);
         return;
       }
     }
@@ -78,16 +52,16 @@ export default class FindmeAsyncStorage {
     tempt.forEach(item => result.push(JSON.stringify(item)));
     result.push(JSON.stringify(account));
     await AsyncStorage.setItem(ASYNC_TYPE.storageAcc, result.toString());
-    await FindmeAsyncStorage.setIndexNow(result.length - 1);
+    await AppAsyncStorage.setIndexNow(result.length - 1);
   };
 
   static editIndexNowAccount = async (newInfo: Partial<AccountSavedAsync>) => {
-    const indexNow = await FindmeAsyncStorage.getIndexNow();
+    const indexNow = await AppAsyncStorage.getIndexNow();
     if (indexNow === null) {
       return;
     }
 
-    const listAccount = await FindmeAsyncStorage.getStorageAcc();
+    const listAccount = await AppAsyncStorage.getStorageAcc();
     listAccount[indexNow] = {...listAccount[indexNow], ...newInfo};
     let result: Array<any> = [];
     listAccount.forEach(item => result.push(JSON.stringify(item)));
@@ -95,7 +69,7 @@ export default class FindmeAsyncStorage {
   };
 
   static deleteAccAtIndex = async (index: number) => {
-    const listAccount = await FindmeAsyncStorage.getStorageAcc();
+    const listAccount = await AppAsyncStorage.getStorageAcc();
     listAccount.splice(index, 1);
 
     const result: Array<any> = [];
@@ -175,6 +149,27 @@ export default class FindmeAsyncStorage {
   static setIsHavingSocialAccount = async (value: boolean) => {
     await AsyncStorage.setItem(ASYNC_TYPE.socialLoginAccount, String(value));
   };
+
+  /**
+   * Search params
+   */
+  static getSearchParams = async (): Promise<TypeSearchParams> => {
+    const res: TypeSearchRequest = JSON.parse(
+      (await AsyncStorage.getItem(ASYNC_TYPE.searchParams)) || '{}',
+    );
+    return {
+      location: '',
+      start_location: res?.start_location || 'Ha Noi',
+      number_people: res?.number_people || 2,
+      services: res?.services || LIST_TOPICS.map(item => item.id),
+      transports: res?.transports || LIST_TRANSPORTS.map(item => item.id),
+      start_time: formatUTCDate(dayjs()),
+      end_time: formatUTCDate(dayjs().add(2, 'days')),
+      start_price: res?.start_price || 0,
+      end_price: res?.end_price || 5000000,
+    };
+  };
+
   /**
    * ---------------------------------------------
    */

@@ -1,3 +1,8 @@
+interface TemplateApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+
 interface TypeGetPassportResponse {
   success: boolean;
   data: {
@@ -21,42 +26,51 @@ interface TypeGetPassportResponse {
 
 interface TypePriceResource {
   id: number;
-  value: null | Array<number | string>;
-  text: null | string;
+  value: number[];
 }
 interface TypePurchaseResource {
   product_id: string;
   value: number;
 }
+
+interface TypeDeposit {
+  deposit: string | null;
+  amount: number | null;
+  note: string | null;
+}
+
+interface TypeGroupJoin {
+  id: number;
+  created: string;
+  members: Array<{
+    id: number;
+    creator: number;
+    creator_name: string;
+    creator_avatar: string;
+  }>;
+}
+
 interface TypeGroupBuying {
-  id: string;
-  postType: number;
-  topic: Array<number>;
+  id: number;
+  post_type: number;
   content: string;
   images: Array<string>;
-  retailPrice: string;
   prices: Array<TypePrice>;
-  deposit: string | null; // string  when status = joining / joined
-  amount: number | null; // number when status = joining / joined
-  note: string | null;
-  totalLikes: number;
-  totalComments: number;
-  totalGroups: number;
-  totalPersonals: number;
+  total_likes: number;
+  total_comments: number;
+  total_members: number;
+  groups: Array<TypeGroupJoin>;
   creator: number;
-  creatorName: string;
-  creatorAvatar: string;
-  creatorLocation: string;
+  creator_name: string;
+  creator_avatar: string;
+  creator_location: string;
   created: string;
-  isLiked: boolean;
-  isDraft: boolean;
+  is_liked: boolean;
   status: number;
-  postStatus: number;
-  relationship: number;
+  deposits: Array<TypeDeposit>;
   // other field follow on situation
   joinId?: string; // in get_list_gb_joining and joined
   requestUpdatePrice: {
-    retailPrice: string;
     prices: Array<TypePrice>;
   } | null; // only for apiGetDetail to check is requesting update price
 }
@@ -68,30 +82,25 @@ interface TypeHotLocation {
   description: string;
 }
 
-interface TypeFavoriteTour extends Exclude<TourDetail, 'schedule'> {
-  schedule: Array<Array<string>>; // array of avatar supplier
-}
-
 interface TypeResourceResponse {
   success: boolean;
   data: {
     background: string;
     gradients: TypeGradient;
     banners: Array<string>;
-    favorite_tours: Array<TypeFavoriteTour>;
+    favorite_tours: Array<Tour>;
     hot_locations: Array<TypeHotLocation>;
-    // listPrices: Array<TypePriceResource>;
+    prices: Array<TypePriceResource>;
     // listPurchases: Array<TypePurchaseResource>;
     // topGroupBookings: Array<TypeGroupBuying>;
   };
 }
 
-interface TypeParamsPaging {
+interface TypeParamsPaging<T = any> {
   params: {
     pageIndex: number;
     take: number;
-    [key: string]: any;
-  };
+  } & T;
   [key: string]: any;
 }
 

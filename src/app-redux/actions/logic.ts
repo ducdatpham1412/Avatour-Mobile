@@ -39,3 +39,14 @@ export const updateBubbleFocusing = (value: Partial<TypeBubblePalace>) => {
     }),
   );
 };
+
+export const setGestureHandle = (
+  key: keyof RootState['logicSlice']['gestureHandle'],
+  value: boolean,
+) => {
+  const newGestureHandle = {
+    ...Store.getState().logicSlice.gestureHandle,
+    [key]: value,
+  };
+  Store.dispatch(logicSliceAction.setGestureHandle(newGestureHandle));
+};

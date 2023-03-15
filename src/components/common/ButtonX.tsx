@@ -1,51 +1,42 @@
 import {StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import React from 'react';
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
+import {moderateScale} from 'utility/scale';
 
 interface Props {
-    containerStyle?: StyleProp<ViewStyle>;
-    iconStyle?: StyleProp<TextStyle>;
-    onPress?(): void;
+  containerStyle?: StyleProp<ViewStyle>;
+  iconStyle?: StyleProp<TextStyle>;
+  onPress?(): void;
 }
 
 const ButtonX = ({containerStyle, onPress, iconStyle}: Props) => {
-    const theme = Redux.getTheme();
+  const theme = useTheme();
 
-    return (
-        <StyleTouchable
-            customStyle={[
-                styles.container,
-                {backgroundColor: theme.textColor},
-                containerStyle,
-            ]}
-            onPress={onPress}
-            hitSlop={10}>
-            <Feather
-                name="x"
-                style={[
-                    styles.iconX,
-                    {color: theme.backgroundColor},
-                    iconStyle,
-                ]}
-            />
-        </StyleTouchable>
-    );
+  return (
+    <StyleTouchable
+      customStyle={[
+        $container,
+        {backgroundColor: theme.gray_200},
+        containerStyle,
+      ]}
+      onPress={onPress}
+      hitSlop={10}>
+      <Feather name="x" style={[$iconX, {color: theme.black}, iconStyle]} />
+    </StyleTouchable>
+  );
 };
 
-const styles = ScaledSheet.create({
-    container: {
-        position: 'absolute',
-        top: '-5@ms',
-        right: 0,
-        padding: '5@ms',
-        borderRadius: '10@s',
-    },
-    iconX: {
-        fontSize: '10@ms',
-    },
-});
+const $container: ViewStyle = {
+  position: 'absolute',
+  top: moderateScale(5),
+  right: moderateScale(5),
+  padding: moderateScale(5),
+  borderRadius: 20,
+};
+const $iconX: TextStyle = {
+  fontSize: moderateScale(10),
+};
 
 export default ButtonX;

@@ -7,7 +7,7 @@ interface TypeEditPriceHistory {
 
 interface TypeReactRequest {
   type: number;
-  reactedId: string;
+  reactedId: number | string;
 }
 
 type TypeCreateGroupBuying = {
@@ -90,11 +90,25 @@ interface TypeGetTopReviewerResponse {
   myIndex: number;
 }
 
+interface TypeSearchRequest {
+  post_search: number;
+  location?: string;
+  start_location?: string;
+  number_people?: number;
+  services?: Array<number>;
+  transports?: Array<number>;
+  start_time?: string; // utc format
+  end_time?: string; // utc format
+  start_price?: number;
+  end_price?: number;
+}
+
+type TypeSearchParams = Omit<TypeSearchRequest, 'post_search'>;
+
 interface TourDetail {
   id: number;
   transport: null;
   hotel: null;
-  schedule: Array<Array<TypeGetProfileResponse>>;
   location: string;
   start_location: string;
   number_people: number;
@@ -105,4 +119,21 @@ interface TourDetail {
   creator: number;
   creator_name: string;
   creator_avatar: string;
+  schedule: Array<Array<TypeGetProfileResponse>>;
 }
+
+type Tour = Pick<
+  TourDetail,
+  | 'id'
+  | 'location'
+  | 'number_people'
+  | 'start_price'
+  | 'end_price'
+  | 'creator'
+  | 'creator_name'
+  | 'creator_avatar'
+> & {
+  schedule: string[][];
+};
+
+type TypeSearchResponse = TemplateApiResponse<Tour[]>;

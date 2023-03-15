@@ -2,6 +2,7 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
+import {useAppSelector} from 'app-redux/store';
 import ModalPreviewLink from 'components/ModalPreviewLink';
 import SwipeImages from 'components/SwipeImages';
 import EditHistory from 'feature/common/EditHistory';
@@ -43,6 +44,7 @@ const Stack = createStackNavigator<AppParamsList>();
 
 const AppStack = () => {
   const theme = useTheme();
+  const {gestureHandle} = useAppSelector(state => state.logicSlice);
 
   const cardStyle = {
     backgroundColor: theme.backgroundColor,
@@ -156,6 +158,7 @@ const AppStack = () => {
         component={SearchScreen}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          gestureEnabled: gestureHandle.searchScreen,
         }}
       />
     </Stack.Navigator>

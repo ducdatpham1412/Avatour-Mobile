@@ -8,14 +8,18 @@ export const apiUnSavePost = (postId: string) => {
   return request.put(`/profile/un-save-post/${postId}`);
 };
 
-export const apiLikePost = (param: TypeReactRequest) => {
-  return request.put(`/profile/like-post/${param.reactedId}`, {
-    type: param.type,
-  });
+export const apiLikePost = (params: TypeReactRequest) => {
+  return request.post(
+    `/profile/like/${params.reactedId}`,
+    {},
+    {params: {type: params.type}},
+  );
 };
 export const apiUnLikePost = (params: TypeReactRequest) => {
-  return request.put(`/profile/unlike-post/${params.reactedId}`, {
-    type: params.type,
+  return request.delete(`/profile/like/${params.reactedId}`, {
+    params: {
+      type: params.type,
+    },
   });
 };
 

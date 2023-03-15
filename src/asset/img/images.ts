@@ -55,6 +55,7 @@ const Images = {
     profile: require('./ic_profile.png'),
     profileFocus: require('./ic_profile_focus.png'),
     filter: require('./ic_filter.png'),
+    price: require('./ic_price.png'),
   },
   images: {
     logo: require('./img_logo.png'),

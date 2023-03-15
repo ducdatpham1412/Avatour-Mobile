@@ -1,5 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
-import {BORDER_RADIUS, FONT_SIZE, listTravelCategories} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS} from 'asset';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
@@ -10,6 +10,7 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
+import {CardInformation} from 'components/common';
 import {useTheme} from 'hook';
 import {DISCOVERY_ROUTE} from 'navigation/config';
 import {navigate} from 'navigation/NavigationService';
@@ -70,27 +71,31 @@ const DiscoveryScreen = () => {
             $styleDropShadow,
             {backgroundColor: theme.white, shadowColor: theme.gray_600},
           ]}>
-          {listTravelCategories.map(item => (
-            <StyleTouchable key={item.title} customStyle={$itemCategory}>
-              <StyleIcon source={item.icon} size={45} />
+          {LIST_TOPICS.map(item => (
+            <StyleTouchable
+              key={item.id}
+              customStyle={$itemCategory}
+              onPress={() =>
+                navigate(DISCOVERY_ROUTE.searchScreen, {
+                  services: item.id,
+                })
+              }>
+              <StyleIcon
+                source={item.icon}
+                size={45}
+                defaultSource={Images.images.defaultImage}
+              />
               <StyleText
-                i18Text={item.title}
+                i18Text={item.text}
                 customStyle={[$titleCategory, {color: theme.black}]}
               />
             </StyleTouchable>
           ))}
         </View>
 
-        <View
-          style={[
-            $favoriteTourView,
-            $styleDropShadow,
-            {backgroundColor: theme.white, shadowColor: theme.gray_600},
-          ]}>
-          <StyleText
-            i18Text="discovery.favoriteTour"
-            customStyle={$titleCard}
-          />
+        <CardInformation
+          title="discovery.favoriteTour"
+          containerStyle={$favoriteTourView}>
           <ScrollView
             horizontal
             style={$listTourView}
@@ -104,15 +109,11 @@ const DiscoveryScreen = () => {
               />
             ))}
           </ScrollView>
-        </View>
+        </CardInformation>
 
-        <View
-          style={[
-            $favoriteTourView,
-            $styleDropShadow,
-            {backgroundColor: theme.white, shadowColor: theme.gray_600},
-          ]}>
-          <StyleText i18Text="discovery.hotLocation" customStyle={$titleCard} />
+        <CardInformation
+          title="discovery.hotLocation"
+          containerStyle={$favoriteTourView}>
           <View style={$locationView}>
             {hot_locations.map((location, index) => (
               <ItemHotLocation
@@ -121,7 +122,7 @@ const DiscoveryScreen = () => {
               />
             ))}
           </View>
-        </View>
+        </CardInformation>
       </ScrollView>
     </SafeView>
   );
@@ -184,10 +185,7 @@ const $titleCategory: TextStyle = {
   marginTop: verticalScale(8),
 };
 const $favoriteTourView: ViewStyle = {
-  width: scale(351),
-  paddingVertical: verticalScale(12),
   marginTop: verticalScale(16),
-  borderRadius: BORDER_RADIUS.f2,
 };
 const $titleCard: TextStyle = {
   fontSize: FONT_SIZE.f1,

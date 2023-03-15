@@ -1,5 +1,5 @@
 import {SESSION} from 'asset/enum';
-import dayjs from 'dayjs';
+import dayjs, {Dayjs} from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -8,6 +8,7 @@ import en from 'dayjs/locale/en';
 import {useTranslation} from 'react-i18next';
 import {useEffect} from 'react';
 import I18Next from './I18Next';
+import {registerTranslation} from 'react-native-paper-dates';
 
 dayjs.extend(relativeTime);
 dayjs.locale(vi);
@@ -22,9 +23,8 @@ export const requireLength = (min: number, max: number) => {
   return () => I18Next.t('alert.minLength', {min, max});
 };
 
-export const formatUTCDate = (date: string | Date = new Date()) => {
+export const formatUTCDate = (date: string | Date | Dayjs = new Date()) => {
   return dayjs(date).utc().format();
-  // dayjs(date).utc().format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const formatDateDayMonthYear = (date: string | Date) => {
@@ -117,7 +117,7 @@ export const getSessionOfDay = () => {
 };
 
 export const addDate = (
-  date: Date | string,
+  date: Dayjs | string,
   params: {
     value: number;
     unit: dayjs.ManipulateType;
@@ -142,7 +142,29 @@ export const LanguageProvider = ({children}: any) => {
         dayjs.locale(vi);
         break;
     }
+    registerTranslation('en', {
+      save: 'Save',
+      selectSingle: 'Select date',
+      selectMultiple: 'Select dates',
+      selectRange: 'Select period',
+      notAccordingToDateFormat: inputFormat =>
+        `Date format must be ${inputFormat}`,
+      mustBeHigherThan: date => `Must be later then ${date}`,
+      mustBeLowerThan: date => `Must be earlier then ${date}`,
+      mustBeBetween: (startDate, endDate) =>
+        `Must be between ${startDate} - ${endDate}`,
+      dateIsDisabled: 'Day is not allowed',
+      previous: 'Previous',
+      next: 'Next',
+      typeInDate: 'Type in date',
+      pickDateFromCalendar: 'Pick date from calendar',
+      close: 'Close',
+    });
   }, [language]);
 
   return children;
+};
+
+export const formatDDMMMM = (value: string | Dayjs) => {
+  return dayjs(value).format('DD MMMM');
 };

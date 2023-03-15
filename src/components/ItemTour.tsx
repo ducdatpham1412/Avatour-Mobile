@@ -1,8 +1,9 @@
-import {FONT_SIZE} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, ratioImageTour} from 'asset';
 import Images from 'asset/img/images';
 import Theme from 'asset/theme/Theme';
 import {useTheme} from 'hook';
-import React from 'react';
+import React, {memo} from 'react';
+import isEqual from 'react-fast-compare';
 import {
   ImageBackground,
   ImageStyle,
@@ -17,14 +18,14 @@ import {moderateScale, scale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 
 interface Props {
-  item: TypeFavoriteTour;
+  item: Tour;
   containerStyle?: StyleProp<ViewStyle>;
 }
 
 const ItemTour = ({item, containerStyle}: Props) => {
   const theme = useTheme();
   const listImages: Array<string> = [];
-  item.schedule.forEach(item => listImages.push(...item));
+  item?.schedule?.forEach(item => listImages.push(...item));
   const addOn = listImages.length - 4;
 
   return (
@@ -50,7 +51,11 @@ const ItemTour = ({item, containerStyle}: Props) => {
                   style={$imageLocation}
                 />
                 {index === 4 && addOn > 0 && (
-                  <View style={[$addOnBox, {backgroundColor: theme.black05}]}>
+                  <View
+                    style={[
+                      $addOnBox,
+                      {backgroundColor: theme.black_opacity(0.5)},
+                    ]}>
                     <StyleText
                       originValue={`+${addOn}`}
                       customStyle={{color: theme.white}}
@@ -65,7 +70,7 @@ const ItemTour = ({item, containerStyle}: Props) => {
         <View style={$infoView}>
           <StyleText
             originValue={formatLocaleNumber(
-              String(item.start_price / item?.number_people),
+              String(item?.start_price / item?.number_people),
             )}
             customStyle={[$textInfo, {color: theme.white, fontWeight: 'bold'}]}
             numberOfLines={1}>
@@ -97,9 +102,9 @@ const ItemTour = ({item, containerStyle}: Props) => {
 
         <View style={$infoView}>
           <StyleIcon
-            source={{uri: item.creator_avatar}}
+            source={{uri: item?.creator_avatar}}
             size={20}
-            customStyle={[$iconAvatar, {tintColor: theme.gray_200}]}
+            customStyle={$iconAvatar}
           />
           <StyleText
             originValue={item?.creator_name}
@@ -114,8 +119,8 @@ const ItemTour = ({item, containerStyle}: Props) => {
 
 const $container: ViewStyle = {
   width: scale(200),
-  height: scale(185),
-  borderRadius: moderateScale(16),
+  height: scale(200) * ratioImageTour,
+  borderRadius: BORDER_RADIUS.f2,
   overflow: 'hidden',
 };
 const $gradient: ViewStyle = {
@@ -172,4 +177,9 @@ const $iconAvatar: ImageStyle = {
   marginRight: scale(4),
 };
 
-export default ItemTour;
+export default memo(ItemTour, (pre: Props, next: Props) => {
+  if (!isEqual(pre.item, next.item)) {
+    return false;
+  }
+  return true;
+});

@@ -125,44 +125,38 @@ export const LIST_TOPICS: Array<{
   icon: any;
 }> = [
   {
+    id: TOPIC.food,
+    text: 'discovery.travelFood',
+    icon: Images.images.travelFood,
+  },
+  {
     id: TOPIC.camping,
     text: 'discovery.travelCamping',
     icon: Images.images.travelCamping,
   },
   {
     id: TOPIC.volunteer,
-    text: 'discovery.travelVolunteer',
-    icon: Images.images.travelVolunteer,
-  },
-  {
-    id: TOPIC.teamBuilding,
-    text: 'discovery.travelTeamBuilding',
-    icon: Images.images.travelTeamBuilding,
-  },
-  {
-    id: TOPIC.food,
-    text: 'discovery.travelFood',
-    icon: Images.images.travelFood,
-  },
-  {
-    id: TOPIC.culture,
-    text: 'discovery.travelCulture',
-    icon: Images.images.travelCulture,
-  },
-  {
-    id: TOPIC.green,
-    text: 'discovery.travelGreen',
+    text: 'discovery.travelBackpacking',
     icon: Images.images.travelGreen,
   },
   {
-    id: TOPIC.sightseeing,
-    text: 'discovery.travelSightSeeing',
-    icon: Images.images.travelVisit,
+    id: TOPIC.team_building,
+    text: 'discovery.travelTeamBuilding',
+    icon: Images.images.travelTeamBuilding,
+  },
+];
+
+export const LIST_TRANSPORTS: Array<{
+  id: number;
+  text: I18Normalize;
+}> = [
+  {
+    id: TOPIC.transport_motorbike,
+    text: 'discovery.motorbike',
   },
   {
-    id: TOPIC.all,
-    text: 'discovery.travelAll',
-    icon: Images.images.travelAll,
+    id: TOPIC.transport_car,
+    text: 'discovery.car',
   },
 ];
 
@@ -211,26 +205,5 @@ export const LINE_HEIGHT = {
 };
 
 export const ratioImageGroupBuying = 1; // height / width
-
-type TypeTravelCategory = {
-  icon: ImageSourcePropType;
-  title: I18Normalize;
-};
-export const listTravelCategories: Array<TypeTravelCategory> = [
-  {
-    icon: Images.images.travelFood,
-    title: 'discovery.travelFood',
-  },
-  {
-    icon: Images.images.travelCamping,
-    title: 'discovery.travelCamping',
-  },
-  {
-    icon: Images.images.travelGreen,
-    title: 'discovery.travelBackpacking',
-  },
-  {
-    icon: Images.images.travelTeamBuilding,
-    title: 'discovery.travelTeamBuilding',
-  },
-];
+export const ratioImageTour = 180 / 200;
+export const ratioImageSale = 232 / 319;

@@ -33,7 +33,11 @@ const HeaderDiscovery = () => {
   return (
     <View style={$container}>
       <View style={$leftView}>
-        <StyleIcon source={{uri: profile.avatar}} size={48} />
+        <StyleIcon
+          source={{uri: profile.avatar}}
+          size={48}
+          customStyle={{tintColor: theme.white}}
+        />
         <View style={$sessionBox}>
           <StyleText
             i18Text={textSession}

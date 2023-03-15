@@ -33,4 +33,4 @@ const ModalCommentLikeAllApp = () => {
   );
 };
 
-export default ModalCommentLikeAllApp;
+export default Object.assign(ModalCommentLikeAllApp);

@@ -93,7 +93,7 @@ const Theme = {
     green: '#3CDF21',
     red: '#F34119',
     white02: 'rgba(255, 255, 255, 0.2)',
-    black05: 'rgba(0, 0, 0, 0.5)',
+    black_opacity: (value = 0.6) => `rgba(0, 0, 0, ${value})`,
     pink: '#EF5DA8',
     blue: '#54B3E9',
   },
