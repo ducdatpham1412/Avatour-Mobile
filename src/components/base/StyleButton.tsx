@@ -3,7 +3,7 @@ import React from 'react';
 import {ActivityIndicator, StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {I18Normalize} from 'utility/I18Next';
-import {s, vs} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
 
@@ -45,8 +45,8 @@ const StyleButton = (props: StyleTouchableProps) => {
 
 const styles = ScaledSheet.create({
   container: {
-    width: s(200),
-    height: vs(40),
+    width: scale(200),
+    height: verticalScale(40),
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',

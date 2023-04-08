@@ -55,6 +55,10 @@ export const initialLogicState = {
     status: 'done',
   },
 
+  gestureHandle: {
+    searchScreen: true,
+  },
+
   resource: <TypeResourceResponse['data']>{},
 };
 
@@ -106,6 +110,9 @@ const logicSlice = createSlice({
     },
     setScrollMainAndChatEnable: (state, action) => {
       state.scrollMainAndChatEnable = action.payload;
+    },
+    setGestureHandle: (state, action) => {
+      state.gestureHandle = action.payload;
     },
   },
 });

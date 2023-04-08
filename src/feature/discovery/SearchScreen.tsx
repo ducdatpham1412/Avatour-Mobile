@@ -1,395 +1,396 @@
-import {apiGetListBubbleActive} from 'api/discovery';
-import {POST_TYPE, TOPIC} from 'asset/enum';
+import {setGestureHandle} from 'app-redux';
 import Images from 'asset/img/images';
-import {Metrics} from 'asset/metrics';
-import {FONT_SIZE, LIST_TOPICS} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
+import {FONT_SIZE} from 'asset/standardValue';
+import {StyleTabView} from 'components';
 import {SafeView, StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
-import StyleList from 'components/base/StyleList';
-import LoadingScreen from 'components/LoadingScreen';
-import ModalCommentLike from 'components/ModalCommentLike';
-import StyleTabView from 'components/StyleTabView';
 import {useTheme} from 'hook';
-import usePaging from 'hook/usePaging';
 import {AppParamsList} from 'navigation/config';
-import ROOT_SCREEN, {DISCOVERY_ROUTE} from 'navigation/config/routes';
-import {goBack, navigate} from 'navigation/NavigationService';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {DISCOVERY_ROUTE} from 'navigation/config/routes';
+import {goBack} from 'navigation/NavigationService';
+import React, {ElementRef, useEffect, useRef, useState} from 'react';
+import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
-import {TextInput, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import {
+  Animated,
+  ScrollView,
+  TextInput,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {borderWidthTiny, fakeGroupBuying} from 'utility/assistant';
-import {verticalScale} from 'utility/scale';
-import BubbleGroupBuying from './components/BubbleGroupBuying';
+import {useUpdateEffect} from 'react-use';
+import {borderWidthTiny, chooseTextTopic} from 'utility/assistant';
+import {formatLocaleNumber} from 'utility/format';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {ModalSearchFilter} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
-import HeaderFilterPrice from './HeaderFilterPrice';
-import HeaderFilterTopic from './HeaderFilterTopic';
+import {SearchListGroupBuying, SearchListTour} from './screens';
 
-interface Props {
-  route: {
-    params: AppParamsList[DISCOVERY_ROUTE.searchScreen];
-  };
-}
-
-const SearchScreen = ({route}: Props) => {
+const SearchScreen = ({
+  route,
+}: AppRouteParams<AppParamsList[DISCOVERY_ROUTE.searchScreen]>) => {
   const theme = useTheme();
-
-  const topicRoute = useRef(route.params?.topic).current;
-  const searchRoute = useRef(route.params?.search).current;
-  const inputRef = useRef<TextInput>(null);
-  const categoryRef = useRef<HeaderFilterTopic>(null);
-  const priceRef = useRef<HeaderFilterPrice>(null);
-  const modalRef = useRef<ModalCommentLike>(null);
-
-  //   const {listPrices} = Redux.getResource();
   const {t} = useTranslation();
 
-  //   const [price, setPrice] = useState(listPrices[0]);
-  const [topics, setTopics] = useState(
-    topicRoute !== undefined && topicRoute !== TOPIC.all
-      ? [topicRoute]
-      : LIST_TOPICS.map(item => item.id),
-  );
-  const [bubbleFocusing, setBubbleFocusing] = useState(fakeGroupBuying);
-  const [search, setSearch] = useState(searchRoute || '');
-  const [hadLoadMore, setHadLoadMore] = useState(
-    !(topicRoute === undefined && searchRoute === undefined),
-  );
-  const [displayHint, setDisplayHint] = useState(
-    topicRoute === undefined && searchRoute === undefined,
-  );
+  const servicesRoute = useRef(route.params?.services).current;
+  const searchRoute = useRef(route.params?.search).current;
+  const isRouteParamsNull = useRef(
+    servicesRoute === undefined && searchRoute === undefined,
+  ).current;
+  const initSearchParams = useRef(
+    servicesRoute ? {services: [servicesRoute]} : {},
+  ).current;
 
-  const {list, setList, setParams, onLoadMore, refreshing, onRefresh, loading} =
-    usePaging({
-      request: apiGetListBubbleActive,
-      params: {
-        topics: `[${String(topics)}]`,
-        search,
-        postTypes: `[${String([POST_TYPE.groupBuying])}]`,
-      },
-      isInitNotRunRequest:
-        topicRoute === undefined && searchRoute === undefined,
-    });
+  const modalFilterRef = useRef<ElementRef<typeof ModalSearchFilter>>(null);
+  const inputRef = useRef<TextInput>(null);
+  const checkShouldSetShowResultByTrue = useRef(!isRouteParamsNull);
+
+  const [displayHint, setDisplayHint] = useState(isRouteParamsNull);
+  const [showResult, setShowResult] = useState(!isRouteParamsNull);
+
+  const [location, setLocation] = useState(searchRoute || '');
+  const [searchParams, setSearchParams] =
+    useState<TypeSearchParams>(initSearchParams);
+
+  const [indexFocus, setIndexFocus] = useState(0);
+  const translateIndicatorX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (topicRoute === undefined && searchRoute === undefined) {
+    if (isRouteParamsNull) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 300);
     }
   }, []);
 
-  useEffect(() => {
-    setParams(preValue => ({
-      ...preValue,
-      topics: `[${String(topics)}]`,
-    }));
-  }, [topics]);
+  useUpdateEffect(() => {
+    if (!isEqual(searchParams, {})) {
+      if (checkShouldSetShowResultByTrue.current) {
+        setShowResult(true);
+      } else {
+        checkShouldSetShowResultByTrue.current = true;
+      }
+      setDisplayHint(false);
+    }
+  }, [searchParams]);
 
-  //   useEffect(() => {
-  //     setParams(preValue => ({
-  //       ...preValue,
-  //       prices: price.value ? `[${String(price.value)}]` : undefined,
-  //     }));
-  //   }, [price]);
-
-  const RenderItem = useCallback(
-    (item: TypeGroupBuying) => {
-      return (
-        <BubbleGroupBuying
-          item={item}
-          onGoToDetailGroupBuying={() => {
-            navigate(ROOT_SCREEN.detailGroupBuying, {
-              item,
-              setList,
-            });
-          }}
-          detailGroupTarget={ROOT_SCREEN.detailGroupBuying}
-          onShowMoreOption={() => null}
-          onHandleLike={() => null}
-          onShowModalComment={(post, type) => {
-            if (inputRef.current?.isFocused()) {
-              inputRef.current.blur();
-            }
-            modalRef.current?.show({
-              post,
-              type,
-            });
-          }}
-          onChangePostIdFocusing={() => null}
-          containerStyle={styles.itemView}
+  const SearchBox = (
+    <View style={[$searchView, {borderBottomColor: theme.gray_200}]}>
+      <StyleTouchable customStyle={$backView} onPress={goBack}>
+        <Ionicons
+          name="arrow-back"
+          style={[$iconBack, {color: theme.gray_500}]}
         />
-      );
-    },
-    [bubbleFocusing],
-  );
-
-  return (
-    <SafeView style={{backgroundColor: theme.white}}>
-      <View style={[styles.searchView, {borderBottomColor: theme.gray_300}]}>
-        <StyleTouchable customStyle={styles.backView} onPress={goBack}>
-          <Ionicons
-            name="arrow-back"
-            style={[styles.iconBack, {color: theme.gray_500}]}
-          />
-        </StyleTouchable>
-        <AppInput
-          ref={inputRef}
-          style={[styles.input, {color: theme.black}]}
-          placeholder={t('discovery.searchAround')}
-          value={search}
-          onChangeText={text => setSearch(text)}
-          defaultValue={searchRoute}
-          returnKeyType="search"
-          onSubmitEditing={() => {
-            if (!hadLoadMore) {
-              setHadLoadMore(true);
-              onLoadMore();
-            }
-            setParams(preValue => ({
-              ...preValue,
-              search,
-            }));
-          }}
-          placeholderTextColor={theme.gray_500}
-          onFocus={() => setDisplayHint(true)}
-          onBlur={() => setDisplayHint(false)}
-        />
-        {!!search && (
-          <StyleTouchable
-            onPress={() => {
-              setSearch('');
-            }}
-            customStyle={styles.backView}>
-            <Feather
-              name="x"
-              style={[styles.iconClear, {color: theme.gray_600}]}
-            />
-          </StyleTouchable>
-        )}
-        <StyleTouchable customStyle={styles.backView}>
-          <StyleIcon
-            source={Images.icons.filter}
-            size={17}
-            customStyle={{tintColor: theme.gray_500}}
-          />
-        </StyleTouchable>
-      </View>
-
-      <View style={styles.toolView}>
-        <StyleTouchable
-          customStyle={[styles.toolBox, {borderColor: theme.textHightLight}]}
-          onPress={() => {
-            inputRef.current?.blur();
-            priceRef.current?.show();
-          }}>
-          <StyleIcon source={Images.icons.dollar} size={11} />
-          <StyleText
-            i18Text="profile.price"
-            customStyle={[styles.textTool, {color: theme.textHightLight}]}>
-            {/* {!!price.value && (
-              <StyleText
-                originValue={` (${1})`}
-                customStyle={[styles.textTool, {color: theme.textHightLight}]}
-              />
-            )} */}
-          </StyleText>
-          <AntDesign
-            name="down"
-            style={[styles.iconDown, {color: theme.textHightLight}]}
-          />
-        </StyleTouchable>
-        <StyleTouchable
-          customStyle={[
-            styles.toolBox,
-            {marginLeft: 15, borderColor: theme.textHightLight},
-          ]}
-          onPress={() => {
-            inputRef.current?.blur();
-            categoryRef.current?.show();
-          }}>
-          <StyleIcon
-            source={Images.icons.category}
-            size={11}
-            customStyle={{tintColor: Theme.common.gradientTabBar1}}
-          />
-          <StyleText
-            i18Text="discovery.category"
-            i18Params={{
-              value: topics.length,
-            }}
-            customStyle={[styles.textTool, {color: theme.textHightLight}]}
-          />
-          <AntDesign
-            name="down"
-            style={[styles.iconDown, {color: theme.textHightLight}]}
-          />
-        </StyleTouchable>
-      </View>
-
-      <View style={{flex: 1}}>
-        <StyleTabView containerStyle={styles.tabViewContainer}>
-          <View style={styles.elementView}>
-            <StyleList
-              data={list}
-              renderItem={({item}) => RenderItem(item)}
-              keyExtractor={item => item.id}
-              keyboardDismissMode="on-drag"
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              onLoadMore={onLoadMore}
-              contentContainerStyle={{
-                paddingBottom: 20,
-              }}
-            />
-
-            {loading && !displayHint && <LoadingScreen />}
-          </View>
-        </StyleTabView>
-
-        {displayHint && (
-          <SearchSuggestions
-            onTouchBackground={() => inputRef.current?.blur()}
-            onSearch={text => {
-              inputRef.current?.blur();
-              setSearch(text);
-              if (!hadLoadMore) {
-                setHadLoadMore(true);
-                onLoadMore();
-              }
-              setParams(preValue => ({
-                ...preValue,
-                search: text,
-              }));
-            }}
-          />
-        )}
-      </View>
-
-      <ModalCommentLike
-        ref={modalRef}
-        theme={theme}
-        bubbleFocusing={bubbleFocusing}
-        updateBubbleFocusing={value =>
-          setBubbleFocusing((preValue: any) => ({
-            ...preValue,
-            ...value,
-          }))
-        }
-        setTotalComments={value => {
-          setBubbleFocusing(preValue => {
-            if (preValue) {
-              return {
-                ...preValue,
-                totalComments: value,
-              };
-            }
-            return preValue;
-          });
+      </StyleTouchable>
+      <AppInput
+        ref={inputRef}
+        style={[$input, {color: theme.black}]}
+        placeholder={t('discovery.searchAround')}
+        onChangeText={text => setLocation(text)}
+        defaultValue={searchRoute}
+        returnKeyType="search"
+        onSubmitEditing={() => {
+          setSearchParams(pre => ({
+            ...pre,
+            location,
+          }));
         }}
-        increaseTotalComments={value => {
-          setBubbleFocusing(preValue => {
-            if (preValue) {
-              return {
-                ...preValue,
-                totalComments: preValue.totalComments + value,
-              };
-            }
-            return preValue;
-          });
-        }}
-      />
-
-      <HeaderFilterTopic
-        ref={categoryRef}
-        listTopics={topics}
-        theme={theme}
-        onChangeTopic={value => setTopics(value)}
-      />
-      {/* <HeaderFilterPrice
-        ref={priceRef}
-        price={price}
-        listPrices={listPrices}
-        onChangePrice={value => {
-          const temp = listPrices.find(item => item.id === value.id);
-          if (temp) {
-            setPrice(temp);
+        placeholderTextColor={theme.gray_500}
+        onFocus={() => setDisplayHint(true)}
+        onBlur={() => {
+          if (showResult) {
+            setDisplayHint(false);
           }
         }}
-        theme={theme}
-      /> */}
-    </SafeView>
+      />
+      {!!location && (
+        <StyleTouchable
+          onPress={() => {
+            setLocation('');
+            inputRef.current?.clear();
+          }}
+          customStyle={$backView}>
+          <Feather name="x" style={[$iconClear, {color: theme.gray_600}]} />
+        </StyleTouchable>
+      )}
+      <StyleTouchable
+        customStyle={$backView}
+        onPress={() => modalFilterRef.current?.show()}>
+        <StyleIcon
+          source={Images.icons.filter}
+          size={17}
+          customStyle={{tintColor: theme.gray_500}}
+        />
+      </StyleTouchable>
+    </View>
+  );
+
+  let ToolBox = null;
+  if (!isEqual(searchParams, {})) {
+    ToolBox = (
+      <View style={$toolView}>
+        <ScrollView
+          horizontal
+          contentContainerStyle={$contentToolView}
+          showsHorizontalScrollIndicator={false}>
+          <StyleTouchable
+            customStyle={[$toolBox, {borderColor: theme.gray_600}]}
+            onPress={() => {
+              inputRef.current?.blur();
+              modalFilterRef.current?.show();
+            }}>
+            <StyleIcon
+              source={Images.icons.location}
+              size={11}
+              customStyle={{tintColor: theme.gray_600}}
+            />
+            <StyleText
+              originValue={searchParams?.location || 'Ha Noi'}
+              customStyle={[$textTool, {color: theme.gray_600}]}
+            />
+          </StyleTouchable>
+
+          {searchParams.number_people && (
+            <StyleTouchable
+              customStyle={[
+                $toolBox,
+                {borderColor: theme.gray_600, marginLeft: scale(8)},
+              ]}
+              onPress={() => {
+                inputRef.current?.blur();
+                modalFilterRef.current?.show();
+              }}>
+              <StyleIcon
+                source={Images.icons.username}
+                size={11}
+                customStyle={{tintColor: theme.gray_600}}
+              />
+              <StyleText
+                i18Text="discovery.valuePeople"
+                i18Params={{
+                  value: searchParams.number_people,
+                }}
+                customStyle={[$textTool, {color: theme.gray_600}]}
+              />
+            </StyleTouchable>
+          )}
+
+          {!!searchParams.start_price && !!searchParams.end_price && (
+            <StyleTouchable
+              customStyle={[
+                $toolBox,
+                {marginLeft: scale(8), borderColor: theme.gray_600},
+              ]}
+              onPress={() => {
+                inputRef.current?.blur();
+                modalFilterRef.current?.show();
+              }}>
+              <StyleIcon
+                source={Images.icons.price}
+                size={11}
+                customStyle={{tintColor: theme.gray_600}}
+              />
+              <StyleText
+                originValue={`${formatLocaleNumber(
+                  String(searchParams.start_price),
+                )} - ${formatLocaleNumber(String(searchParams.end_price))} vnd`}
+                customStyle={[$textTool, {color: theme.gray_600}]}
+              />
+            </StyleTouchable>
+          )}
+
+          {searchParams?.services?.length && (
+            <StyleTouchable
+              customStyle={[
+                $toolBox,
+                {marginLeft: scale(8), borderColor: theme.gray_600},
+              ]}
+              onPress={() => {
+                inputRef.current?.blur();
+                modalFilterRef.current?.show();
+              }}>
+              <StyleIcon
+                source={Images.icons.category}
+                size={11}
+                customStyle={{tintColor: theme.gray_600}}
+              />
+              {searchParams?.services?.map(item => {
+                return (
+                  <StyleText
+                    key={item}
+                    i18Text={chooseTextTopic(item)}
+                    customStyle={[$textTool, {color: theme.gray_600}]}
+                  />
+                );
+              })}
+            </StyleTouchable>
+          )}
+        </ScrollView>
+
+        {showResult && (
+          <View style={$toolPostSearch}>
+            <View style={$postSearchBox}>
+              <StyleTouchable customStyle={$searchTab}>
+                <StyleText
+                  i18Text="discovery.tour"
+                  customStyle={[
+                    $textSearchTab,
+                    {color: indexFocus === 0 ? theme.p_900 : theme.gray_500},
+                  ]}
+                />
+              </StyleTouchable>
+              <View style={{width: indicatorTabWidth}} />
+              <StyleTouchable customStyle={$searchTab}>
+                <StyleText
+                  i18Text="discovery.groupBuying"
+                  customStyle={[
+                    $textSearchTab,
+                    {color: indexFocus === 1 ? theme.p_900 : theme.gray_500},
+                  ]}
+                />
+              </StyleTouchable>
+            </View>
+            <Animated.View
+              style={[
+                $indicatorTab,
+                {
+                  backgroundColor: theme.p_900,
+                  transform: [{translateX: translateIndicatorX}],
+                },
+              ]}
+            />
+          </View>
+        )}
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <SafeView style={{backgroundColor: theme.background}}>
+        {SearchBox}
+        {ToolBox}
+        <View style={$resultView}>
+          {showResult && (
+            <StyleTabView
+              containerStyle={$resultView}
+              onChangeTabIndex={index => {
+                setIndexFocus(index);
+                if (index === 0) {
+                  setGestureHandle('searchScreen', true);
+                } else {
+                  setGestureHandle('searchScreen', false);
+                }
+              }}
+              onScroll={e =>
+                translateIndicatorX.setValue(
+                  2 * indicatorWidth * e.position +
+                    2 * indicatorTabWidth * e.position,
+                )
+              }>
+              <SearchListTour searchParams={searchParams} />
+              <SearchListGroupBuying searchParams={searchParams} />
+            </StyleTabView>
+          )}
+
+          {displayHint && (
+            <SearchSuggestions
+              onTouchBackground={() => inputRef.current?.blur()}
+              onSearch={text => {
+                inputRef.current?.blur();
+                setLocation(text);
+                setSearchParams(pre => ({
+                  ...pre,
+                  location: text,
+                }));
+              }}
+            />
+          )}
+        </View>
+      </SafeView>
+
+      <ModalSearchFilter
+        ref={modalFilterRef}
+        onChangeSearch={value => setSearchParams({...value, location})}
+        initSearchParams={initSearchParams}
+      />
+    </>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-  },
-  backView: {
-    width: verticalScale(40),
-    height: verticalScale(40),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  searchView: {
-    width: '100%',
-    height: verticalScale(40),
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: '5@vs',
-    paddingBottom: '5@vs',
-    borderBottomWidth: borderWidthTiny,
-  },
-  iconBack: {
-    fontSize: '22@ms',
-  },
-  input: {
-    flex: 1,
-    fontSize: FONT_SIZE.f1,
-  },
-  iconClear: {
-    fontSize: '20@ms',
-  },
-  tabViewContainer: {
-    height: '100%',
-  },
-  elementView: {
-    width: Metrics.width,
-    height: '100%',
-  },
-  // tool
-  toolView: {
-    width: '100%',
-    flexDirection: 'row',
-    paddingHorizontal: '10@s',
-    paddingVertical: '7@vs',
-    alignItems: 'center',
-  },
-  toolBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: '2@vs',
-    borderWidth: borderWidthTiny,
-    paddingHorizontal: '8@s',
-    borderRadius: '20@ms',
-  },
-  textTool: {
-    fontSize: FONT_SIZE.small,
-    marginLeft: '7@s',
-  },
-  iconDown: {
-    fontSize: '10@ms',
-    marginLeft: '7@s',
-  },
-  itemView: {
-    marginTop: 0,
-    marginBottom: '10@vs',
-  },
-});
+const indicatorWidth = moderateScale(120);
+const indicatorTabWidth = moderateScale(10);
+const $backView: ViewStyle = {
+  width: verticalScale(40),
+  height: verticalScale(40),
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+const $searchView: ViewStyle = {
+  width: '100%',
+  height: verticalScale(40),
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: verticalScale(5),
+  borderBottomWidth: borderWidthTiny,
+};
+const $iconBack: TextStyle = {
+  fontSize: moderateScale(22),
+};
+const $input: TextStyle = {
+  flex: 1,
+  fontSize: FONT_SIZE.f1,
+};
+const $iconClear: TextStyle = {
+  fontSize: moderateScale(20),
+};
+const $toolView: ViewStyle = {
+  width: '100%',
+  paddingTop: verticalScale(8),
+  paddingBottom: verticalScale(8),
+};
+const $contentToolView: ViewStyle = {
+  paddingHorizontal: scale(12),
+};
+const $toolBox: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: verticalScale(2),
+  borderWidth: borderWidthTiny,
+  paddingHorizontal: scale(8),
+  borderRadius: 30,
+};
+const $textTool: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  marginLeft: scale(7),
+};
+const $resultView: ViewStyle = {
+  flex: 1,
+};
+const $toolPostSearch: ViewStyle = {
+  width: 2 * indicatorWidth,
+  alignSelf: 'center',
+  marginTop: verticalScale(4),
+};
+const $postSearchBox: ViewStyle = {
+  flexDirection: 'row',
+};
+const $searchTab: ViewStyle = {
+  width: indicatorWidth,
+  paddingVertical: verticalScale(8),
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+const $textSearchTab: TextStyle = {
+  fontWeight: '500',
+};
+const $indicatorTab: ViewStyle = {
+  width: indicatorWidth,
+  height: moderateScale(1.25),
+  borderRadius: 10,
+};
 
 export default SearchScreen;

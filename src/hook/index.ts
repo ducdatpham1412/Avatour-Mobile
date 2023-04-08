@@ -4,6 +4,7 @@ import useApi from './useApi';
 import useNotification from './useNotification';
 import useCountdown from './useCountdown';
 import useLoading from './useLoading';
+export {default as usePaging} from './usePaging';
 
 export {
   useTheme,

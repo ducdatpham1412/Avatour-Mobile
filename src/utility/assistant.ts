@@ -496,3 +496,7 @@ export const chosenBlurType: any = Platform.select({
   ios: 'ultraThinMaterialLight',
   android: 'xlight',
 });
+
+export type TypeObjectAny = {
+  [key: string]: any;
+};

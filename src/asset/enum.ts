@@ -45,6 +45,7 @@ export enum ASYNC_TYPE {
   // logged = 'logged',
   language = 'language',
   socialLoginAccount = 'socialLoginAccount',
+  searchParams = 'search_params',
 }
 
 // authentication
@@ -183,20 +184,21 @@ export enum FEELING {
 }
 
 export enum TOPIC {
-  camping = 0,
-  volunteer = 1,
-  teamBuilding = 2,
-  food = 3,
-  culture = 4,
-  green = 5,
-  sightseeing = 6,
-  all = 7,
+  transport_motorbike = 6,
+  transport_car = 7,
+  hotel = 1,
+  food = 2,
+  camping = 3,
+  volunteer = 4,
+  team_building = 5,
 }
 
 export enum REACT {
   post = 0,
   comment = 1,
   message = 2,
+  tour = 3,
+  sale = 4,
 }
 
 export enum STATUS {
@@ -328,4 +330,9 @@ export enum ERROR_MESSAGE_ENUM {
   // chat
   not_have_permission_delete_message = 'not_have_permission_delete_message',
   conversation_not_existed = 'conversation_not_existed',
+}
+
+export enum POST_SEARCH {
+  tour = 0,
+  group_buying = 1,
 }

@@ -14,152 +14,149 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {checkIsVideo} from 'utility/validate';
 
 interface Props {
-    item: TypeHotLocation;
-    syncWidth: number;
-    containerStyle?: StyleProp<ViewStyle>;
+  item: TypeHotLocation;
+  syncWidth: number;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 const ItemHotLocation = (props: Props) => {
-    const {item, syncWidth, containerStyle} = props;
-    const theme = Redux.getTheme();
+  const {item, syncWidth, containerStyle} = props;
+  const theme = Redux.getTheme();
 
-    const [images, setImages] = useState<Array<string>>([]);
+  const [images, setImages] = useState<Array<string>>([]);
 
-    useEffect(() => {
-        const temp = [...item.images];
-        while (temp.length < 4) {
-            temp.push('');
-        }
-        setImages(temp);
-    }, []);
+  useEffect(() => {
+    const temp = [...item.images];
+    while (temp.length < 4) {
+      temp.push('');
+    }
+    setImages(temp);
+  }, []);
 
-    return (
-        <StyleTouchable
-            style={[
-                styles.container,
-                containerStyle,
-                {
-                    width: syncWidth,
-                    borderColor: theme.holderColor,
-                },
-            ]}
-            onPress={() =>
-                navigate(DISCOVERY_ROUTE.searchScreen, {
-                    search: item.location,
-                })
-            }>
-            <View
-                style={[
-                    styles.imageView,
-                    {
-                        width: syncWidth,
-                        height: syncWidth,
-                    },
-                ]}>
-                {images.map((url, index) => {
-                    const isVideo = checkIsVideo(url);
+  return (
+    <StyleTouchable
+      style={[
+        styles.container,
+        containerStyle,
+        {
+          width: syncWidth,
+          borderColor: theme.holderColor,
+        },
+      ]}
+      onPress={() =>
+        navigate(DISCOVERY_ROUTE.searchScreen, {
+          search: item.location,
+        })
+      }>
+      <View
+        style={[
+          styles.imageView,
+          {
+            width: syncWidth,
+            height: syncWidth,
+          },
+        ]}>
+        {images.map((url, index) => {
+          const isVideo = checkIsVideo(url);
 
-                    return (
-                        <View key={index} style={styles.imageBox}>
-                            {isVideo ? (
-                                <StyleVideo
-                                    source={{uri: url}}
-                                    style={styles.image}
-                                    isOverlay
-                                    onPressOverlay={() => {
-                                        navigate(DISCOVERY_ROUTE.searchScreen, {
-                                            search: item.location,
-                                        });
-                                    }}
-                                    paused
-                                    currentTime={2}
-                                />
-                            ) : (
-                                <StyleImage
-                                    source={{uri: url}}
-                                    customStyle={styles.image}
-                                    defaultSource={Images.images.defaultImage}
-                                />
-                            )}
-
-                            {index === 3 && item.total_posts > 4 && (
-                                <View style={styles.totalPostsBox}>
-                                    <StyleText
-                                        originValue={`+${item.total_posts}`}
-                                        customStyle={styles.textTotalPosts}
-                                    />
-                                </View>
-                            )}
-                        </View>
-                    );
-                })}
-            </View>
-            <View style={styles.contentView}>
-                <AntDesign
-                    name="search1"
-                    style={[styles.iconSearch, {color: theme.borderColor}]}
+          return (
+            <View key={index} style={styles.imageBox}>
+              {isVideo ? (
+                <StyleVideo
+                  source={{uri: url}}
+                  style={styles.image}
+                  isOverlay
+                  onPressOverlay={() => {
+                    navigate(DISCOVERY_ROUTE.searchScreen, {
+                      search: item.location,
+                    });
+                  }}
+                  paused
+                  currentTime={2}
                 />
-                <StyleText
-                    originValue={item.location}
-                    customStyle={[
-                        styles.textLocation,
-                        {color: theme.textHightLight},
-                    ]}
+              ) : (
+                <StyleImage
+                  source={{uri: url}}
+                  customStyle={styles.image}
+                  defaultSource={Images.images.defaultImage}
                 />
+              )}
+
+              {index === 3 && item.total_posts > 4 && (
+                <View style={styles.totalPostsBox}>
+                  <StyleText
+                    originValue={`+${item.total_posts}`}
+                    customStyle={styles.textTotalPosts}
+                  />
+                </View>
+              )}
             </View>
-        </StyleTouchable>
-    );
+          );
+        })}
+      </View>
+      <View style={styles.contentView}>
+        <AntDesign
+          name="search1"
+          style={[styles.iconSearch, {color: theme.borderColor}]}
+        />
+        <StyleText
+          originValue={item.location}
+          customStyle={[styles.textLocation, {color: theme.textHightLight}]}
+        />
+      </View>
+    </StyleTouchable>
+  );
 };
 
 const styles = ScaledSheet.create({
-    container: {
-        borderWidth: Platform.select({
-            ios: '0.25@ms',
-            android: '0.5@ms',
-        }),
-        borderRadius: '5@ms',
-    },
-    imageView: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        borderTopLeftRadius: '5@ms',
-        borderTopRightRadius: '5@ms',
-        overflow: 'hidden',
-    },
-    imageBox: {
-        width: '50%',
-        height: '50%',
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-    },
-    contentView: {
-        width: '100%',
-        paddingVertical: '10@vs',
-        flexDirection: 'row',
-        paddingHorizontal: '5%',
-        alignItems: 'center',
-    },
-    textLocation: {
-        fontSize: FONT_SIZE.small,
-        marginLeft: '5@s',
-    },
-    iconSearch: {
-        fontSize: '15@ms',
-    },
-    totalPostsBox: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Theme.darkTheme.backgroundOpacity(0.4),
-    },
-    textTotalPosts: {
-        fontSize: FONT_SIZE.big,
-        color: Theme.common.white,
-    },
+  container: {
+    borderWidth: Platform.select({
+      ios: '0.25@ms',
+      android: '0.5@ms',
+    }),
+    borderRadius: '5@ms',
+  },
+  imageView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderTopLeftRadius: '5@ms',
+    borderTopRightRadius: '5@ms',
+    overflow: 'hidden',
+  },
+  imageBox: {
+    width: '50%',
+    height: '50%',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  contentView: {
+    width: '100%',
+    paddingVertical: '10@vs',
+    flexDirection: 'row',
+    paddingHorizontal: '5%',
+    alignItems: 'center',
+  },
+  textLocation: {
+    fontSize: FONT_SIZE.small,
+    marginLeft: '5@s',
+  },
+  iconSearch: {
+    fontSize: '15@ms',
+  },
+  totalPostsBox: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Theme.darkTheme.backgroundOpacity(0.4),
+  },
+  textTotalPosts: {
+    fontSize: FONT_SIZE.big,
+    color: Theme.common.white,
+  },
 });
 
 export default ItemHotLocation;

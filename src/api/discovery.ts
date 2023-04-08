@@ -80,8 +80,8 @@ export const apiReportUser = (params: {
 
 export const apiGetListBubbleActive = ({
   params,
-}: TypeParamsPaging): Promise<TypeBubblePalace> => {
-  return request.get('/common/get-list-bubble-profile', {
+}: TypeParamsPaging): Promise<TypeSearchResponse> => {
+  return request.get('/common/search', {
     params,
   });
 };
@@ -125,4 +125,12 @@ export const apiGetTopReviewers = (): Promise<{
   data: TypeGetTopReviewerResponse;
 }> => {
   return request.get('/common/get-top-reputations');
+};
+
+export const apiSearch = ({
+  params,
+}: TypeParamsPaging<TypeSearchRequest>): Promise<TypeSearchResponse> => {
+  return request.get('/common/search', {
+    params,
+  });
 };

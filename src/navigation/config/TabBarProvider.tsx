@@ -1,24 +1,27 @@
 import React, {createContext, useContext, useState} from 'react';
 
-export const TabBarContext = createContext<any>(0);
+export const TabBarContext = createContext<TabBarType>({
+  showTabBar: true,
+  setShowTabBar: () => null,
+});
 
 const TabBarProvider = ({children}: any) => {
-    const [showTabBar, setShowTabBar] = useState(true);
+  const [showTabBar, setShowTabBar] = useState(true);
 
-    return (
-        <TabBarContext.Provider
-            value={{
-                showTabBar,
-                setShowTabBar,
-            }}>
-            {children}
-        </TabBarContext.Provider>
-    );
+  return (
+    <TabBarContext.Provider
+      value={{
+        showTabBar,
+        setShowTabBar,
+      }}>
+      {children}
+    </TabBarContext.Provider>
+  );
 };
 
 interface TabBarType {
-    showTabBar: boolean;
-    setShowTabBar: any;
+  showTabBar: boolean;
+  setShowTabBar: any;
 }
 export const useTabBar = (): TabBarType => useContext(TabBarContext);
 

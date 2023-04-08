@@ -107,7 +107,7 @@ export type AppParamsList = {
     postId: string;
   };
   [DISCOVERY_ROUTE.searchScreen]: {
-    topic?: number;
+    services?: number;
     search?: string;
   };
   [ROOT_SCREEN.alert]: {
