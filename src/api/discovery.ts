@@ -1,14 +1,13 @@
 import request from './request';
 
-export const apiJoinGroupBuying = (
-  params: TypeJoinGroupBookingRequest,
-): Promise<TypeJoinGbResponse> => {
-  return request.put(`/profile/join-group-buying/${params.postId}`, {
-    money: params.money,
+export const apiJoinSale = (
+  params: TypeJoinRequest,
+): Promise<TypeJoinResponse> => {
+  return request.put(`/profile/sales/join/${params.saleId}`, {
+    deposit: params.deposit,
     amount: params.amount,
     time_will_buy: params.time_will_buy,
     note: params.note,
-    is_retail: params.is_retail,
   });
 };
 

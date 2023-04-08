@@ -76,8 +76,8 @@ const StyleList = (props: StyleListProps, ref: any) => {
         <RefreshControl
           refreshing={!!refreshing}
           onRefresh={handleRefresh}
-          tintColor={theme.p_800}
-          colors={[theme.p_800]}
+          tintColor={theme.p_600}
+          colors={[theme.p_600]}
         />
       }
       onEndReached={handleLoadMore}

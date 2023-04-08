@@ -1,4 +1,8 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationState,
+  PartialState,
+} from '@react-navigation/native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
@@ -25,6 +29,18 @@ const alertOption: StackNavigationOptions = {
   headerShown: false,
 };
 
+const trackActiveRoute = (
+  s?: NavigationState | PartialState<NavigationState>,
+  level = 0,
+) => {
+  if (__DEV__) {
+    if (s?.index === undefined) return;
+    const {name, params, state} = s.routes[s.index];
+    console.info(' '.repeat(level), level ? '⎿' : '', name, params || '');
+    trackActiveRoute(state, level + 1);
+  }
+};
+
 const RootScreen = () => {
   const theme = useTheme();
   const {loading, error, isInApp} = useInitApp();
@@ -39,7 +55,7 @@ const RootScreen = () => {
   const ChooseRoute = isInApp ? AppStack : LoginRoute;
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} onStateChange={trackActiveRoute}>
       <RootStack.Navigator
         screenOptions={{
           headerShown: false,

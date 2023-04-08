@@ -31,7 +31,7 @@ import {SearchListGroupBuying, SearchListTour} from './screens';
 
 const SearchScreen = ({
   route,
-}: AppRouteParams<AppParamsList[DISCOVERY_ROUTE.searchScreen]>) => {
+}: RouteParams<AppParamsList[DISCOVERY_ROUTE.searchScreen]>) => {
   const theme = useTheme();
   const {t} = useTranslation();
 

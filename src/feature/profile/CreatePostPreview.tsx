@@ -83,7 +83,7 @@ let shouldShowToolHorizontal = false;
 
 const CreatePostPreview = ({
   route,
-}: AppRouteParams<AppParamsList[PROFILE_ROUTE.createPostPreview]>) => {
+}: RouteParams<AppParamsList[PROFILE_ROUTE.createPostPreview]>) => {
   const itemNew = route.params?.itemNew;
   const itemEdit = route.params?.itemEdit;
   const itemError = route.params?.itemError;

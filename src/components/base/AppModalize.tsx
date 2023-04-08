@@ -1,22 +1,35 @@
-import {safePaddingNotZero} from 'asset/metrics';
 import {useTheme} from 'hook';
 import React, {
   ForwardedRef,
+  ReactNode,
   forwardRef,
-  ForwardRefExoticComponent,
-  RefObject,
   useImperativeHandle,
   useRef,
 } from 'react';
-import {View, ViewStyle} from 'react-native';
-import {Modalize, ModalizeProps} from 'react-native-modalize';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {StyleProp, View, ViewStyle} from 'react-native';
+import {Modalize} from 'react-native-modalize';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
+type Props = {
+  containerStyle?: StyleProp<ViewStyle>;
+  children?: ReactNode;
+  modalHeight?: number;
+  panGestureEnabled?: boolean;
+  onOpen?: () => void;
+};
+
 const AppModalize = forwardRef(
-  (props: ModalizeProps, ref: ForwardedRef<TypeShowModalize>) => {
+  (
+    {
+      containerStyle,
+      children,
+      modalHeight,
+      panGestureEnabled = true,
+      onOpen,
+    }: Props,
+    ref: ForwardedRef<TypeShowModalize>,
+  ) => {
     const theme = useTheme();
-    const {bottom} = useSafeAreaInsets();
     const modalRef = useRef<Modalize>(null);
 
     useImperativeHandle(
@@ -37,18 +50,21 @@ const AppModalize = forwardRef(
           nestedScrollEnabled: true,
         }}
         handlePosition="inside"
-        {...props}
         modalStyle={$modalStyle}
-        overlayStyle={{backgroundColor: theme.black_opacity(0.3)}}>
+        overlayStyle={{backgroundColor: theme.black_opacity(0.3)}}
+        closeOnOverlayTap={panGestureEnabled}
+        panGestureEnabled={panGestureEnabled}
+        onOpen={onOpen}>
         <View
           style={[
             $container,
             {
               backgroundColor: theme.white,
-              paddingBottom: bottom || safePaddingNotZero,
+              height: modalHeight,
             },
+            containerStyle,
           ]}>
-          {props?.children}
+          {children}
         </View>
       </Modalize>
     );
@@ -63,7 +79,7 @@ const $container: ViewStyle = {
   borderTopLeftRadius: moderateScale(16),
   borderTopRightRadius: moderateScale(16),
   paddingTop: verticalScale(16),
-  paddingHorizontal: scale(16),
+  paddingHorizontal: scale(12),
   overflow: 'hidden',
 };
 

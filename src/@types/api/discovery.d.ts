@@ -19,26 +19,16 @@ type TypeCreateGroupBuying = {
   isDraft: boolean;
 };
 
-type TypePeopleJoinedResponse = {
-  id: string;
-  deposit: string | null;
-  amount: number | null;
-  timeWillBuy: string | null;
-  note: string | null;
-  creator: number;
-  creatorName: string;
-  creatorAvatar: string;
-  creatorPhone: string;
+type TypeMeJoinResponse = {
+  id: number;
+  sale_id: number;
+  group_id: number;
+  deposit: number;
+  amount: number;
+  time_will_buy: string;
+  note: string;
   created: string;
-  status: number | null;
-  relationship: number | null;
-};
-
-type TypeGroupPeopleJoined = {
-  id: string;
-  totalMembers: number;
-  listPeople: Array<TypePeopleJoinedResponse>;
-  created: string;
+  status: number;
 };
 
 type TypeEditGroupBooking = {
@@ -56,19 +46,17 @@ type TypeEditGroupBooking = {
   };
 };
 
-type TypeJoinGroupBookingRequest = {
-  postId: string;
-  money: string;
+type TypeJoinRequest = {
+  deposit: number;
   amount: number;
   time_will_buy: string;
   note: string;
-  is_retail: boolean;
-  productId: string;
+  saleId: number;
 };
 
-type TypeJoinGbResponse = {
-  groupId: string | null;
-  joinId: string;
+type TypeJoinResponse = {
+  group_id: number;
+  personal_id: number;
 };
 
 interface TypeReactRequest {

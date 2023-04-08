@@ -56,6 +56,7 @@ const Images = {
     profileFocus: require('./ic_profile_focus.png'),
     filter: require('./ic_filter.png'),
     price: require('./ic_price.png'),
+    calendarBorder: require('./ic_calendar_border.png'),
   },
   images: {
     logo: require('./img_logo.png'),

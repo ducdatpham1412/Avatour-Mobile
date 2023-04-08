@@ -19,10 +19,19 @@ interface Props {
   title?: I18Normalize;
   onSave?: () => void;
   onPressClose?: () => void;
+  loading?: boolean;
+  disable?: boolean;
 }
 
 const ModalEdit = (
-  {children, title, onSave, onPressClose}: Props,
+  {
+    children,
+    title,
+    onSave,
+    onPressClose,
+    loading = false,
+    disable = false,
+  }: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const theme = useTheme();
@@ -57,9 +66,10 @@ const ModalEdit = (
             containerStyle={$buttonConfirm}
             title="common.save"
             onPress={() => {
-              setVisible(false);
               onSave?.();
             }}
+            isLoading={loading}
+            disable={disable}
           />
         </View>
       </View>

@@ -10,7 +10,7 @@ import {ScaledSheet} from 'react-native-size-matters';
 
 const AgreeTermOfService = ({
   route,
-}: AppRouteParams<AppParamsList[LOGIN_ROUTE.agreeTermOfService]>) => {
+}: RouteParams<AppParamsList[LOGIN_ROUTE.agreeTermOfService]>) => {
   const {itemLoginSuccess} = route.params;
 
   const onGoToEditInformation = async () => {

@@ -1,7 +1,10 @@
-import {TypePurchaseResource} from 'app-redux/account/logicSlice';
+import {apiChangeInformation} from 'api/setting';
+import {updatePassport} from 'app-redux';
+import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
-import {Metrics} from 'asset/metrics';
+import {safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
+import {AppModalize} from 'components';
 import {
   StyleButton,
   StyleIcon,
@@ -9,66 +12,78 @@ import {
   StyleTouchable,
 } from 'components/base';
 import AppInput from 'components/base/AppInput';
-import ClassDateTimePicker from 'components/base/picker/ClassDateTimePicker';
-import Redux from 'hook/useRedux';
-import React, {useEffect, useRef, useState} from 'react';
+import dayjs from 'dayjs';
+import {useTheme} from 'hook';
+import {ModalDatePicker, ModalInputEdit} from 'navigation/screen/modals';
+import React, {
+  ElementRef,
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
 import {Modalize} from 'react-native-modalize';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {borderWidthTiny} from 'utility/assistant';
-import {
-  addDate,
-  formatDayGroupBuying,
-  formatLocaleNumber,
-  formatUTCDate,
-} from 'utility/format';
+import {addDate, formatDayGroupBuying, formatUTCDate} from 'utility/format';
+import {validateIsPhone} from 'utility/validate';
 import AddPhone from './AddPhone';
 
 interface Props {
-  onConfirm(params: TypeJoinGroupBookingRequest): void;
-  retailPrice: string;
-  prices: Array<TypePrice>;
+  onConfirm(params: Omit<TypeJoinRequest, 'saleId'>): void;
 }
 
-const ModalConfirmJoinGb = (props: Props) => {
-  const {onConfirm, retailPrice, prices} = props;
+const onAddPhone = () => {
+  ModalInputEdit.show({
+    onSave: async value => {
+      await apiChangeInformation({
+        phone: value,
+      });
+      updatePassport({profile: {information: {phone: value}}});
+    },
+    keyboardType: 'numeric',
+    placeholder: 'profile.phoneNumber',
+    checkValid: value => validateIsPhone(value),
+  });
+};
+
+const ModalConfirmJoinGb = (
+  {onConfirm}: Props,
+  ref: ForwardedRef<TypeShowModalize>,
+) => {
+  const {bottom} = useSafeAreaInsets();
   const {t} = useTranslation();
-  const theme = Redux.getTheme();
-  const {phone} = Redux.getPassport().information;
-  const {listPurchases} = Redux.getResource();
+  const theme = useTheme();
+  const {phone} = useAppSelector(
+    state => state.accountSlice.passport.profile.information,
+  );
 
-  const modalizeRef = useRef<Modalize>(null);
-  const modalTimeRef = useRef<Modalize>(null);
+  const modalizeRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalAddPhoneRef = useRef<Modalize>(null);
-  const datetimeRef = useRef<ClassDateTimePicker>(null);
-  const moneyStandard = useRef(listPurchases[0].value);
-
-  const [amount, setAmount] = useState(1);
-  const [timeWillJoin, setTimeWillJoin] = useState(
-    addDate(new Date(), {
+  const minimumDayJoin = useRef(
+    addDate(dayjs(), {
       value: 1,
       unit: 'day',
     }),
   );
+
+  const [amount, setAmount] = useState(1);
+  const [timeWillJoin, setTimeWillJoin] = useState(minimumDayJoin.current);
   const [note, setNote] = useState('');
 
-  const [isRetail, setIsRetail] = useState(false);
-  const [chosenDeposit, setChosenDeposit] = useState<TypePurchaseResource>();
-
-  useEffect(() => {
-    if (prices.length && retailPrice) {
-      moneyStandard.current = isRetail
-        ? Number(retailPrice) * 0.2
-        : Number(prices[prices.length - 1].value) * 0.2;
-      const temp =
-        listPurchases.find(item => item.value > moneyStandard.current) ||
-        listPurchases[listPurchases.length - 1];
-      setChosenDeposit(temp);
-      setAmount(1);
-    }
-  }, [isRetail, prices, retailPrice]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      show: () => modalizeRef.current?.show(),
+      hide: () => modalizeRef.current?.hide(),
+    }),
+    [],
+  );
 
   const onChangeAmount = (value: number) => {
     const nextAmount = amount + value;
@@ -76,259 +91,168 @@ const ModalConfirmJoinGb = (props: Props) => {
       return;
     }
     setAmount(nextAmount);
-    const nextMoney = moneyStandard.current * nextAmount;
-    const temp =
-      listPurchases.find(item => item.value > nextMoney) ||
-      listPurchases[listPurchases.length - 1];
-    setChosenDeposit(temp);
   };
 
-  const showModal = (params: {isRetail: boolean}) => {
-    setIsRetail(params.isRetail);
-    modalizeRef.current?.open();
-  };
-
-  const hideModal = () => {
-    modalizeRef.current?.close();
-  };
-
-  const jsx = () => {
-    return (
-      <>
-        <Modalize
-          ref={modalizeRef}
-          adjustToContentHeight
-          withHandle={false}
-          modalStyle={{
-            backgroundColor: theme.backgroundColor,
-          }}
-          childrenStyle={styles.childrenContainer}>
-          <StyleText
-            i18Text={
-              isRetail ? 'discovery.buySeparately' : 'discovery.joinGroupBuying'
-            }
-            customStyle={[
-              styles.textHeader,
-              {
-                color: theme.textColor,
-              },
-            ]}
-          />
-          <StyleIcon
-            source={Images.images.squirrelLogin}
-            size={50}
-            customStyle={styles.icon}
-          />
-          <StyleText
-            i18Text="discovery.titleDeposit"
-            customStyle={[styles.textTitle, {color: theme.textColor}]}
-          />
-          <StyleText
-            i18Text="discovery.theMoneyIs"
-            customStyle={[styles.textTitle, {color: theme.textColor}]}>
-            {!!chosenDeposit && (
-              <StyleText
-                originValue={`${formatLocaleNumber(
-                  String(chosenDeposit.value),
-                )}vnd`}
-                customStyle={[styles.textMoney, {color: theme.highlightColor}]}
-              />
-            )}
-          </StyleText>
-
-          <View style={styles.enterInfoView}>
+  return (
+    <>
+      <AppModalize
+        ref={modalizeRef}
+        containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
+        <StyleText
+          i18Text="discovery.joinGroupBuying"
+          customStyle={styles.textHeader}
+        />
+        <StyleIcon
+          source={Images.images.squirrelLogin}
+          size={50}
+          customStyle={styles.icon}
+        />
+        {/* <StyleText
+          i18Text="discovery.titleDeposit"
+          customStyle={styles.textTitle}
+        />
+        <StyleText
+          i18Text="discovery.theMoneyIs"
+          customStyle={[styles.textTitle, {color: theme.textColor}]}>
+          {!!chosenDeposit && (
             <StyleText
-              i18Text="discovery.amount"
-              customStyle={[
-                styles.textTitleEnterInfo,
-                {color: theme.textHightLight},
-              ]}
+              originValue={`${formatLocaleNumber(
+                String(chosenDeposit.value),
+              )}vnd`}
+              customStyle={[styles.textMoney, {color: theme.highlightColor}]}
             />
-            <View style={styles.minusPlusBox}>
-              <StyleTouchable onPress={() => onChangeAmount(-1)} hitSlop={10}>
-                <AntDesign
-                  name="minussquareo"
-                  style={[styles.iconMinusPlus, {color: theme.borderColor}]}
-                />
-              </StyleTouchable>
-              <StyleText
-                originValue={amount}
-                customStyle={[styles.textAmount, {color: theme.borderColor}]}
+          )}
+        </StyleText> */}
+
+        <View style={styles.enterInfoView}>
+          <StyleText
+            i18Text="discovery.amount"
+            customStyle={styles.textTitleEnterInfo}
+          />
+          <View style={styles.minusPlusBox}>
+            <StyleTouchable onPress={() => onChangeAmount(-1)} hitSlop={10}>
+              <AntDesign
+                name="minussquareo"
+                style={[styles.iconMinusPlus, {color: theme.gray_500}]}
               />
-              <StyleTouchable onPress={() => onChangeAmount(1)} hitSlop={10}>
-                <AntDesign
-                  name="plussquareo"
-                  style={[styles.iconMinusPlus, {color: theme.borderColor}]}
-                />
-              </StyleTouchable>
-            </View>
+            </StyleTouchable>
+            <StyleText originValue={amount} customStyle={styles.textAmount} />
+            <StyleTouchable onPress={() => onChangeAmount(1)} hitSlop={10}>
+              <AntDesign
+                name="plussquareo"
+                style={[styles.iconMinusPlus, {color: theme.gray_500}]}
+              />
+            </StyleTouchable>
           </View>
+        </View>
 
-          <View style={styles.enterInfoView}>
+        <View style={styles.enterInfoView}>
+          <StyleText
+            i18Text="discovery.arrivalTime"
+            customStyle={styles.textTitleEnterInfo}
+          />
+          <View style={styles.minusPlusBox}>
+            <StyleTouchable
+              onPress={() => {
+                ModalDatePicker.show({
+                  date: timeWillJoin,
+                  onChangeRange: value => {
+                    setTimeWillJoin(formatUTCDate(dayjs(value.date)));
+                  },
+                  validRange: {
+                    startDate: new Date(minimumDayJoin.current),
+                  },
+                });
+              }}>
+              <StyleText
+                originValue={`${formatDayGroupBuying(timeWillJoin)}`}
+                customStyle={styles.textJoinDate}
+              />
+            </StyleTouchable>
+          </View>
+        </View>
+
+        <View style={styles.enterInfoView}>
+          <StyleText
+            i18Text="login.signUp.type.phone"
+            customStyle={styles.textTitleEnterInfo}>
             <StyleText
-              i18Text="discovery.arrivalTime"
-              customStyle={[
-                styles.textTitleEnterInfo,
-                {color: theme.textHightLight},
-              ]}
+              originValue=":"
+              customStyle={styles.textTitleEnterInfo}
             />
-            <View style={styles.minusPlusBox}>
-              <StyleTouchable
-                onPress={() => {
-                  modalTimeRef.current?.open();
-                  setTimeout(() => {
-                    datetimeRef.current?.show();
-                  }, 500);
-                }}
-                hitSlop={{
-                  top: 10,
-                  bottom: 10,
-                }}>
+          </StyleText>
+          <View style={styles.minusPlusBox}>
+            <StyleTouchable
+              onPress={onAddPhone}
+              disable={!!phone}
+              disableOpacity={1}>
+              {phone ? (
                 <StyleText
-                  originValue={`${formatDayGroupBuying(timeWillJoin)}`}
+                  originValue={phone}
                   customStyle={[
                     styles.textJoinDate,
                     {
-                      color: theme.borderColor,
+                      textDecorationLine: 'none',
                     },
                   ]}
                 />
-              </StyleTouchable>
-            </View>
+              ) : (
+                <StyleText
+                  i18Text="discovery.addPhoneNumber"
+                  customStyle={[
+                    styles.textJoinDate,
+                    {
+                      color: theme.red,
+                    },
+                  ]}
+                />
+              )}
+            </StyleTouchable>
           </View>
+        </View>
 
-          <View style={styles.enterInfoView}>
-            <StyleText
-              i18Text="login.signUp.type.phone"
-              customStyle={[
-                styles.textTitleEnterInfo,
-                {color: theme.textHightLight},
-              ]}>
-              <StyleText
-                originValue=":"
-                customStyle={[
-                  styles.textTitleEnterInfo,
-                  {color: theme.textHightLight},
-                ]}
-              />
-            </StyleText>
-            <View style={styles.minusPlusBox}>
-              <StyleTouchable
-                onPress={() => {
-                  modalAddPhoneRef.current?.open();
-                }}
-                disable={!!phone}
-                disableOpacity={1}
-                hitSlop={{
-                  top: 10,
-                  bottom: 10,
-                }}>
-                {phone ? (
-                  <StyleText
-                    originValue={phone}
-                    customStyle={[
-                      styles.textJoinDate,
-                      {
-                        color: theme.borderColor,
-                        textDecorationLine: 'none',
-                      },
-                    ]}
-                  />
-                ) : (
-                  <StyleText
-                    i18Text="discovery.addPhoneNumber"
-                    customStyle={[
-                      styles.textJoinDate,
-                      {
-                        color: theme.highlightColor,
-                      },
-                    ]}
-                  />
-                )}
-              </StyleTouchable>
-            </View>
-          </View>
+        <AppInput
+          value={note}
+          onChangeText={text => setNote(text)}
+          style={[
+            styles.inputNote,
+            {
+              borderColor: theme.gray_300,
+            },
+          ]}
+          placeholder={t('discovery.noteForMerchant')}
+          multiline
+        />
 
-          <AppInput
-            value={note}
-            onChangeText={text => setNote(text)}
-            style={[
-              styles.inputNote,
-              {
-                borderColor: theme.borderColor,
-                color: theme.textHightLight,
-              },
-            ]}
-            placeholder={t('discovery.noteForMerchant')}
-            placeholderTextColor={theme.holderColorLighter}
-            textAlignVertical="top"
-            multiline
-          />
+        <StyleButton
+          title="discovery.goToDeposit"
+          containerStyle={styles.button}
+          onPress={() => {
+            onConfirm({
+              deposit: 0,
+              amount,
+              time_will_buy: timeWillJoin,
+              note,
+            });
+          }}
+          disable={!phone}
+        />
+      </AppModalize>
 
-          <StyleButton
-            title="discovery.goToDeposit"
-            containerStyle={styles.button}
-            onPress={() => {
-              if (chosenDeposit) {
-                onConfirm({
-                  postId: '',
-                  money: String(chosenDeposit.value),
-                  amount,
-                  time_will_buy: formatUTCDate(timeWillJoin),
-                  note,
-                  is_retail: isRetail,
-                  productId: chosenDeposit.product_id,
-                });
-              }
-            }}
-            disable={!phone}
-          />
-        </Modalize>
-
-        <Modalize
-          ref={modalTimeRef}
-          withHandle={false}
-          modalStyle={{
-            backgroundColor: 'transparent',
-          }}>
-          <ClassDateTimePicker
-            ref={datetimeRef}
-            initDate={new Date(timeWillJoin)}
-            minimumDate={new Date()}
-            onChangeDateTime={value => {
-              setTimeWillJoin(String(value));
-              modalTimeRef.current?.close();
-            }}
-            onCancel={() => modalTimeRef.current?.close()}
-            theme={theme}
-          />
-        </Modalize>
-
-        <Modalize
-          ref={modalAddPhoneRef}
-          adjustToContentHeight
-          withHandle={false}
-          modalStyle={{
-            backgroundColor: 'transparent',
-          }}>
-          <AddPhone onCloseModal={() => modalAddPhoneRef.current?.close()} />
-        </Modalize>
-      </>
-    );
-  };
-
-  return {
-    jsx,
-    showModal,
-    hideModal,
-  };
+      <Modalize
+        ref={modalAddPhoneRef}
+        adjustToContentHeight
+        withHandle={false}
+        modalStyle={{
+          backgroundColor: 'transparent',
+        }}>
+        <AddPhone onCloseModal={() => modalAddPhoneRef.current?.close()} />
+      </Modalize>
+    </>
+  );
 };
 
 const styles = ScaledSheet.create({
-  childrenContainer: {
-    paddingHorizontal: '20@s',
-    paddingBottom: Metrics.safeBottomPadding,
-  },
   textHeader: {
     fontSize: FONT_SIZE.normal,
     marginTop: '5@vs',
@@ -395,4 +319,4 @@ const styles = ScaledSheet.create({
   },
 });
 
-export default ModalConfirmJoinGb;
+export default forwardRef(ModalConfirmJoinGb);

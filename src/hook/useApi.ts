@@ -3,14 +3,17 @@ import useSWR, {SWRConfiguration} from 'swr';
 
 interface TypeParamsApi {
   path: string;
-  params: Record<string, any>;
-  config: SWRConfiguration;
+  params?: Record<string, any>;
+  config?: SWRConfiguration;
 }
 
 const useApi = <T>({path, params, config}: TypeParamsApi) => {
   const {data, error, isLoading, mutate} = useSWR<T, Error>(
     path,
-    url => request.get(url, params),
+    async () => {
+      const res = await request.get(path, params);
+      return res?.data;
+    },
     {
       revalidateOnFocus: false,
       shouldRetryOnError: false,

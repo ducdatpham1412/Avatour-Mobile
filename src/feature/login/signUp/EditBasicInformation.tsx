@@ -30,7 +30,7 @@ const defaultDate = new Date(2000, 0, 1);
 
 const EditBasicInformation = ({
   route,
-}: AppRouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
+}: RouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
   const {isLoginSocial = false, itemLoginSuccess} = route.params;
   const scrollPickerRef = useRef<ScrollView>(null);
   const dateTimeRef = useRef<ClassDateTimePicker>(null);

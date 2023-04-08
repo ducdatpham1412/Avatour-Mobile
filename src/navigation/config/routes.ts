@@ -22,6 +22,8 @@ enum ROOT_SCREEN {
   upgradeAccount = '@ROOT_SCREEN/upgradeAccount',
   editHistory = '@ROOT_SCREEN/editHistory',
   updateBankAccount = '@ROOT_SCREEN/updateBankAccount',
+  detailSale = '@ROOT_SCREEN/detailSale',
+  detailMeJoin = '@ROOT_SCREEN/detailMeJoin',
 }
 /**
  * ||

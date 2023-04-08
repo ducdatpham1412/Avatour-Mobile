@@ -5,6 +5,7 @@ import {
 import {useAppSelector} from 'app-redux/store';
 import ModalPreviewLink from 'components/ModalPreviewLink';
 import SwipeImages from 'components/SwipeImages';
+import {DetailMeJoin, DetailSale} from 'feature/common';
 import EditHistory from 'feature/common/EditHistory';
 import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
@@ -159,6 +160,20 @@ const AppStack = () => {
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           gestureEnabled: gestureHandle.searchScreen,
+        }}
+      />
+      <Stack.Screen
+        name={ROOT_SCREEN.detailSale}
+        component={DetailSale}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ROOT_SCREEN.detailMeJoin}
+        component={DetailMeJoin}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
     </Stack.Navigator>

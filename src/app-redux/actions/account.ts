@@ -5,20 +5,22 @@ import {setIsLogOut, setToken, updateListChatTag} from './logic';
 
 type PassportType = DeepPartial<RootState['accountSlice']['passport']>;
 
-export const updatePassport = (newProfile: PassportType) => {
+export const updatePassport = (newPassport: PassportType) => {
   const current = Store.getState().accountSlice.passport;
-  const tempBirthday = newProfile.information?.birthday;
+  const tempBirthday = newPassport.profile?.birthday;
 
   const temp: PassportType = {
-    profile: {...current.profile, ...newProfile.profile},
-    information: {
-      ...current.information,
-      ...newProfile.information,
+    profile: {
+      ...current.profile,
+      ...newPassport.profile,
+      information: {
+        ...current.profile.information,
+        ...newPassport?.profile?.information,
+      },
       birthday: tempBirthday
         ? String(dayjs(tempBirthday))
-        : current.information.birthday,
+        : current.profile.birthday,
     },
-    setting: {...current.setting, ...newProfile.setting},
   };
 
   Store.dispatch(accountSliceAction.updatePassport(temp));
@@ -39,7 +41,6 @@ export const logOut = () => {
   setToken(null);
   setModeExp(false);
   updatePassport({
-    information: passport.information,
     profile: passport.profile,
   });
   updateListChatTag([]);

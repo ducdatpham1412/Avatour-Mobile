@@ -48,23 +48,18 @@ const useInitApp = () => {
           const {data: passport} = await apiGetPassport();
           const resource = await apiGetResource();
 
-          updatePassport({
-            profile: passport?.profile,
-            information: passport?.information,
-            setting: passport?.setting,
-          });
+          updatePassport(passport);
           // passport must be above token to set in SocketProvider
           setNumberNewNotifications(passport?.numberNewNotifications);
           setToken(activeUser?.token);
           setModeExp(false);
           updateResource(resource?.data);
           I18Next.changeLanguage(
-            chooseLanguageFromId(passport?.setting?.language),
+            chooseLanguageFromId(passport?.profile?.language),
           );
         } else {
           await handleNotHaveActiveUser();
         }
-
         setLoading(false);
       } catch (err) {
         setError(true);
