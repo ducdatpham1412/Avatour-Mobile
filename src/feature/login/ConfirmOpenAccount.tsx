@@ -21,7 +21,7 @@ import BackgroundAuthen from './components/BackgroundAuthen';
 
 const ConfirmOpenAccount = ({
   route,
-}: AppRouteParams<AppParamsList[LOGIN_ROUTE.confirmOpenAccount]>) => {
+}: RouteParams<AppParamsList[LOGIN_ROUTE.confirmOpenAccount]>) => {
   const isLoading = Redux.getIsLoading();
 
   const onOpenAccount = async () => {

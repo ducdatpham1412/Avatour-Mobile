@@ -223,9 +223,10 @@ export enum ACCOUNT {
 
 export enum GROUP_BUYING_STATUS {
   deleted = 0,
-  notJoined = 1,
-  joinedNotBought = 2,
-  bought = 3,
+  notBought = 1,
+  notBoughtButOvertime = 2,
+  requestBought = 3,
+  bought = 4,
 }
 
 export enum FONT_FAMILY {

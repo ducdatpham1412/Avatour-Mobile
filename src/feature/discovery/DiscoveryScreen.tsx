@@ -12,7 +12,7 @@ import {
 } from 'components/base';
 import {CardInformation} from 'components/common';
 import {useTheme} from 'hook';
-import {DISCOVERY_ROUTE} from 'navigation/config';
+import {DISCOVERY_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {navigate} from 'navigation/NavigationService';
 import React from 'react';
 import {ImageStyle, ScrollView, TextStyle, View, ViewStyle} from 'react-native';
@@ -29,7 +29,9 @@ const DiscoveryScreen = () => {
 
   return (
     <SafeView style={$container}>
-      <ScrollView contentContainerStyle={$contentContainer}>
+      <ScrollView
+        contentContainerStyle={$contentContainer}
+        showsVerticalScrollIndicator={false}>
         <HeaderDiscovery />
 
         <StyleTouchable
@@ -75,11 +77,11 @@ const DiscoveryScreen = () => {
             <StyleTouchable
               key={item.id}
               customStyle={$itemCategory}
-              onPress={() =>
+              onPress={() => {
                 navigate(DISCOVERY_ROUTE.searchScreen, {
                   services: item.id,
-                })
-              }>
+                });
+              }}>
               <StyleIcon
                 source={item.icon}
                 size={45}
@@ -95,10 +97,10 @@ const DiscoveryScreen = () => {
 
         <CardInformation
           title="discovery.favoriteTour"
-          containerStyle={$favoriteTourView}>
+          containerStyle={$favoriteTourView}
+          contentContainerStyle={$listTourView}>
           <ScrollView
             horizontal
-            style={$listTourView}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={$listTourContent}>
             {favorite_tours.map(tour => (
@@ -113,7 +115,8 @@ const DiscoveryScreen = () => {
 
         <CardInformation
           title="discovery.hotLocation"
-          containerStyle={$favoriteTourView}>
+          containerStyle={$favoriteTourView}
+          overflow="hidden">
           <View style={$locationView}>
             {hot_locations.map((location, index) => (
               <ItemHotLocation
@@ -196,7 +199,8 @@ const $listTourView: ViewStyle = {
   marginTop: verticalScale(12),
 };
 const $listTourContent: ViewStyle = {
-  paddingLeft: scale(12),
+  paddingLeft: scale(24),
+  paddingRight: scale(12),
 };
 const $locationView: ViewStyle = {
   width: '100%',

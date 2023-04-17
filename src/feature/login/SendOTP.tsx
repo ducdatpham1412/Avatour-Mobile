@@ -31,7 +31,7 @@ import {TypeItemLoginSuccess} from 'utility/login/loginService';
 
 const SendOTP = ({
   route: {params},
-}: AppRouteParams<AppParamsList[LOGIN_ROUTE.sendOTP]>) => {
+}: RouteParams<AppParamsList[LOGIN_ROUTE.sendOTP]>) => {
   const {paramsOTP} = params;
   const theme = useTheme();
   const isFocusedScreen = useIsFocused();

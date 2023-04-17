@@ -14,7 +14,7 @@ import IconType from '../components/IconType';
 
 const ForgetPasswordSend = ({
   route,
-}: AppRouteParams<AppParamsList[LOGIN_ROUTE.forgetPasswordSend]>) => {
+}: RouteParams<AppParamsList[LOGIN_ROUTE.forgetPasswordSend]>) => {
   const theme = Redux.getTheme();
   const {username} = route.params;
 

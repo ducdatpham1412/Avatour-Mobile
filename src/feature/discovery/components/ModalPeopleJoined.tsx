@@ -56,8 +56,7 @@ const ModalPeopleJoined = (props: Props, ref: any) => {
 
   useEffect(() => {
     const temp = listPaging.list.find(
-      (joinGroup: TypeGroupPeopleJoined) =>
-        joinGroup.id === groupIdFocusing.current,
+      (joinGroup: TypeGroupJoin) => joinGroup.id === groupIdFocusing.current,
     );
     if (temp) {
       setListPeopleJoin(temp.listPeople);
@@ -69,7 +68,7 @@ const ModalPeopleJoined = (props: Props, ref: any) => {
     try {
       if (!isMyBubble) {
         if (item.relationship === RELATIONSHIP.notFollowing) {
-          listPaging.setList((preValue: Array<TypeGroupPeopleJoined>) => {
+          listPaging.setList((preValue: Array<TypeGroupJoin>) => {
             return preValue.map(value => {
               if (value.id !== groupIdFocusing.current) {
                 return value;
@@ -93,7 +92,7 @@ const ModalPeopleJoined = (props: Props, ref: any) => {
       }
       if (isMyBubble) {
         if (item.status === GROUP_BUYING_STATUS.joinedNotBought) {
-          listPaging.setList((preValue: Array<TypeGroupPeopleJoined>) => {
+          listPaging.setList((preValue: Array<TypeGroupJoin>) => {
             return preValue.map(value => {
               if (value.id !== groupIdFocusing.current) {
                 return value;
@@ -299,7 +298,7 @@ const ModalPeopleJoined = (props: Props, ref: any) => {
   );
 
   const RenderItemGroup = useCallback(
-    (item: TypeGroupPeopleJoined) => {
+    (item: TypeGroupJoin) => {
       const isBiggerThanSix = item.listPeople.length > 6;
       const displayPeople = isBiggerThanSix
         ? item.listPeople.slice(0, 6)

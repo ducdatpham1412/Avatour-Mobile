@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BORDER_RADIUS, LIST_TOPICS, LIST_TRANSPORTS} from 'asset';
 import {ASYNC_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
-import {Metrics} from 'asset/metrics';
+import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {
   AppInput,
@@ -37,6 +37,7 @@ import {formatDDMMMM, formatUTCDate} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
@@ -76,6 +77,7 @@ const ModalSearchFilter = (
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const {t} = useTranslation();
+  const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
 
   const modalEditPriceRef = useRef<ElementRef<typeof ModalEdit>>(null);
@@ -114,8 +116,9 @@ const ModalSearchFilter = (
     <>
       <AppModalize
         ref={ref}
-        closeOnOverlayTap={closeOnOverlayEnable}
-        onOpen={() => Keyboard.dismiss()}>
+        panGestureEnabled={closeOnOverlayEnable}
+        onOpen={() => Keyboard.dismiss()}
+        containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
         <InputSearch
           placeholder={t('discovery.startLocation')}
           onFocus={() => setCloseOnOverlayEnable(false)}
@@ -278,7 +281,10 @@ const ModalSearchFilter = (
       <ModalEdit
         title="discovery.price"
         ref={modalEditPriceRef}
-        onSave={() => onSavePrice(Number(startPrice), Number(endPrice))}>
+        onSave={() => {
+          onSavePrice(Number(startPrice), Number(endPrice));
+          modalEditPriceRef.current?.hide();
+        }}>
         <View style={[$inputPriceView, {marginTop: 0}]}>
           <AppInput
             ref={startPriceRef}

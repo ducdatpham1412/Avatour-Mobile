@@ -1,13 +1,16 @@
-import {View, Text, ViewStyle, ImageStyle, TextStyle} from 'react-native';
+import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
+import Images from 'asset/img/images';
+import {Metrics} from 'asset/metrics';
+import {useTheme} from 'hook';
+import {ROOT_SCREEN} from 'navigation/config';
+import {navigate} from 'navigation/NavigationService';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
-import {useTheme} from 'hook';
-import {Metrics} from 'asset/metrics';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
-import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
-import Images from 'asset/img/images';
+import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {$styleDropShadow} from 'utility/assistant';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
+import {IconLiked, IconNotLiked} from './common';
 
 interface Props {
   item: TypeGroupBuying;
@@ -96,18 +99,25 @@ const ItemSale = ({item, onReact}: Props) => {
   }
 
   return (
-    <View
-      style={[$container, $styleDropShadow, {backgroundColor: theme.white}]}>
+    <StyleTouchable
+      customStyle={[
+        $container,
+        $styleDropShadow,
+        {backgroundColor: theme.white},
+      ]}
+      onPress={() =>
+        navigate(ROOT_SCREEN.detailSale, {
+          sale: item,
+        })
+      }>
       <View style={$imageView}>
         <StyleImage
           source={{uri: item?.images?.[0]}}
           defaultImageSource="image"
           customStyle={$image}
         />
-        <StyleTouchable
-          customStyle={[$heartBox, {backgroundColor: theme.white}]}
-          onPress={() => onReact({postId: item?.id, isLiked: item?.is_liked})}>
-          <StyleIcon
+        <View style={[$heartBox, {backgroundColor: theme.white}]}>
+          {/* <StyleIcon
             source={
               !!item?.is_liked ? Images.icons.heartFocus : Images.icons.heart
             }
@@ -115,8 +125,23 @@ const ItemSale = ({item, onReact}: Props) => {
             customStyle={{
               tintColor: item?.is_liked ? theme.pink : theme.black,
             }}
-          />
-        </StyleTouchable>
+          /> */}
+          {!!item?.is_liked ? (
+            <IconLiked
+              customStyle={$iconLike}
+              onPress={() =>
+                onReact({postId: item?.id, isLiked: item?.is_liked})
+              }
+            />
+          ) : (
+            <IconNotLiked
+              customStyle={$iconLike}
+              onPress={() =>
+                onReact({postId: item?.id, isLiked: item?.is_liked})
+              }
+            />
+          )}
+        </View>
       </View>
 
       <View style={[$informationView, {marginTop: verticalScale(12)}]}>
@@ -150,7 +175,7 @@ const ItemSale = ({item, onReact}: Props) => {
           customStyle={[$textPrice, {color: theme.red}]}
         />
       </View>
-    </View>
+    </StyleTouchable>
   );
 };
 
@@ -197,6 +222,9 @@ const $textInfo: TextStyle = {
 };
 const $textPrice: TextStyle = {
   fontWeight: 'bold',
+};
+const $iconLike: TextStyle = {
+  fontSize: moderateScale(27),
 };
 
 export default memo(ItemSale, (pre: Props, next: Props) => {

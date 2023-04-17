@@ -40,7 +40,7 @@ const ModalPeopleRetail = (props: Props, ref: any) => {
     const oldList = [...listPaging.list];
     try {
       if (item.status === GROUP_BUYING_STATUS.joinedNotBought) {
-        listPaging.setList((preValue: Array<TypeGroupPeopleJoined>) => {
+        listPaging.setList((preValue: Array<TypeGroupJoin>) => {
           return preValue.map(value => {
             return {
               ...value,

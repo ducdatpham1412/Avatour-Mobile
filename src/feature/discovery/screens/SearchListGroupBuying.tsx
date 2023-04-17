@@ -47,17 +47,6 @@ const SearchListGroupBuying = ({searchParams}: Props) => {
 
   const onReact = async ({postId, isLiked}: TypeParamsLikePost) => {
     try {
-      if (!isLiked) {
-        await apiLikePost({
-          type: REACT.sale,
-          reactedId: postId,
-        });
-      } else {
-        await apiUnLikePost({
-          type: REACT.sale,
-          reactedId: postId,
-        });
-      }
       setList(pre => {
         return pre.map(item => {
           if (item?.id !== postId) {
@@ -69,8 +58,30 @@ const SearchListGroupBuying = ({searchParams}: Props) => {
           };
         });
       });
+      if (!isLiked) {
+        await apiLikePost({
+          type: REACT.sale,
+          reactedId: postId,
+        });
+      } else {
+        await apiUnLikePost({
+          type: REACT.sale,
+          reactedId: postId,
+        });
+      }
     } catch (err) {
       appAlert(err);
+      setList(pre => {
+        return pre.map(item => {
+          if (item?.id !== postId) {
+            return item;
+          }
+          return {
+            ...item,
+            is_liked: isLiked,
+          };
+        });
+      });
     }
   };
 

@@ -6,19 +6,17 @@ interface TemplateApiResponse<T> {
 interface TypeGetPassportResponse {
   success: boolean;
   data: {
-    profile: TypeGetProfileResponse;
-    information: {
-      facebook: any;
-      email: string;
-      phone: string;
-      gender: any;
-      birthday: string;
-    };
-    setting: {
+    profile: TypeGetProfileResponse & {
       theme: number;
       language: number;
-      bank_account: string;
-      bank_code: string;
+      birthday: string;
+      information: {
+        facebook: any;
+        email: string;
+        phone: string;
+        bank_account: string;
+        bank_code: string;
+      };
     };
     numberNewNotifications: number;
   };
@@ -39,15 +37,17 @@ interface TypeDeposit {
   note: string | null;
 }
 
+interface TypePersonalJoin {
+  id: number;
+  creator: number;
+  creator_name: string;
+  creator_avatar: string;
+}
+
 interface TypeGroupJoin {
   id: number;
   created: string;
-  members: Array<{
-    id: number;
-    creator: number;
-    creator_name: string;
-    creator_avatar: string;
-  }>;
+  members: TypePersonalJoin[];
 }
 
 interface TypeGroupBuying {

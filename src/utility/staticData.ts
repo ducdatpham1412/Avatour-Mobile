@@ -1,6 +1,6 @@
-export const fakeDataListGroupsJoined: Array<TypeGroupPeopleJoined> = [
+export const fakeDataListGroupsJoined: Array<TypeGroupJoin> = [
   {
-    id: '1',
+    id: 1,
     totalMembers: 9,
     created: '2022-10-08 07:46:03.148000',
     listPeople: [
@@ -142,7 +142,7 @@ export const fakeDataListGroupsJoined: Array<TypeGroupPeopleJoined> = [
     ],
   },
   {
-    id: '2',
+    id: 2,
     totalMembers: 9,
     created: '2022-10-08 07:46:03.148000',
     listPeople: [
@@ -520,3 +520,59 @@ export const fakeListTour: Array<Tour> = [
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzrh9aVfAHSoi35pssE0gBNgR2b5YyoVsH9FHpOL1yjIQWVTsCi2nGRzBSKOhKhjfwlmE&usqp=CAU',
   },
 ];
+
+export const fakeSale: TypeGroupBuying = {
+  id: 1,
+  post_type: 1,
+  content: 'update content group buying',
+  images: [
+    'https://doffy.s3.ap-southeast-1.amazonaws.com/image/21662089977320.jpeg',
+  ],
+  prices: [
+    {
+      number_people: 5,
+      price: 30000,
+    },
+    {
+      number_people: 10,
+      price: 20000,
+    },
+    {
+      number_people: 15,
+      price: 1000,
+    },
+  ],
+  total_likes: 0,
+  total_comments: 0,
+  total_members: 0,
+  groups: [
+    {
+      id: 1,
+      created: '2023-04-03 17:03:03.311628+00:00',
+      members: [
+        {
+          id: 1,
+          creator: 1,
+          creator_name: 'Đức Đạt Phạm',
+          creator_avatar:
+            'https://doffy.s3.ap-southeast-1.amazonaws.com/image/11662951596188.jpeg',
+        },
+        {
+          id: 2,
+          creator: 1,
+          creator_name: 'Đức Đạt Phạm',
+          creator_avatar:
+            'https://doffy.s3.ap-southeast-1.amazonaws.com/image/11662951596188.jpeg',
+        },
+      ],
+    },
+  ],
+  creator: 1,
+  creator_name: 'Đức Đạt Phạm',
+  creator_avatar:
+    'https://doffy.s3.ap-southeast-1.amazonaws.com/image/11662951596188.jpeg',
+  creator_location: '',
+  created: '2023-03-23 17:26:12.747394+00:00',
+  status: 1,
+  is_liked: false,
+};

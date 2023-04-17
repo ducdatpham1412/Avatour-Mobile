@@ -1,4 +1,4 @@
-type AppRouteParams<T> = {
+type RouteParams<T> = {
   route: {
     params: T;
   };

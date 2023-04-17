@@ -168,3 +168,9 @@ export const LanguageProvider = ({children}: any) => {
 export const formatDDMMMM = (value: string | Dayjs) => {
   return dayjs(value).format('DD MMMM');
 };
+export const formatDDMMMMYY = (value: string | Dayjs) => {
+  return dayjs(value).format('DD MMMM YYYY');
+};
+export const formatddddDDMMYYYY = (value: string | Dayjs) => {
+  return dayjs(value).format('dddd, DD/MM/YYYY');
+};

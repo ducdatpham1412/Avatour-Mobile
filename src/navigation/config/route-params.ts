@@ -157,4 +157,12 @@ export type AppParamsList = {
   [LOGIN_ROUTE.forgetPasswordSend]: {
     username: string;
   };
+  [ROOT_SCREEN.detailSale]: {
+    saleId?: number;
+    sale?: TypeGroupBuying;
+  };
+  [ROOT_SCREEN.detailMeJoin]: {
+    itemJoin: TypeJoinRequest;
+    mode: 'confirm-join' | 'see-detail';
+  };
 };

@@ -156,12 +156,12 @@ const discovery = {
   groupBuyingPrice: 'Bảng giá mua chung',
   numberPeople: '{{value}} người',
   joinNow: 'Tham gia ngay',
-  joinGroupBuying: 'Mua theo nhóm',
+  joinGroupBuying: 'Tham gia mua chung',
   buySeparately: 'Mua riêng',
   continueJoin: 'Tiếp tục tham gia',
   joined: 'Đã tham gia',
   deposited: 'Đã đặt cọc',
-  numberGroupJoined: '{{value}} nhóm đã tham gia',
+  numberGroupJoined: '{{value}} người đã tham gia',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',
   confirmBought: 'Xác nhận thanh toán đủ',
@@ -240,6 +240,7 @@ const discovery = {
   valuePeopleJoined: '{{value}} người đã tham gia',
   tour: 'Tour',
   groupBuying: 'Đơn mua chung',
+  groupDay: 'Nhóm ngày {{value}}',
 };
 
 // REPUTATION
@@ -353,6 +354,7 @@ const profile = {
   favorite: 'Yêu thích',
   rating: 'Đánh giá',
   joining: 'Đang tham gia',
+  waitingConfirm: 'Đang chờ xác nhận',
   joinedSuccess: 'Tham gia thành công',
   gbOrder: 'Đơn mua chung',
   editProfile: 'Chỉnh sửa',

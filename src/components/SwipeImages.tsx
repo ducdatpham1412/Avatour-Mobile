@@ -9,7 +9,7 @@ import {StyleTouchable} from './base';
 import PanZoomImage from './PanZoomImage';
 import StyleTabView from './StyleTabView';
 
-type Props = AppRouteParams<AppParamsList[ROOT_SCREEN.swipeImages]>;
+type Props = RouteParams<AppParamsList[ROOT_SCREEN.swipeImages]>;
 
 const SwipeImages = ({route}: Props) => {
   const {listImages, initIndex = 0} = route.params;

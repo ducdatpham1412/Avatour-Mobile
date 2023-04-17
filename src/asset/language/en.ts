@@ -154,12 +154,12 @@ const discovery = {
   groupBuyingPrice: 'Group prices',
   numberPeople: '{{value}} people',
   joinNow: 'Join now',
-  joinGroupBuying: 'Group buying',
+  joinGroupBuying: 'Join group buying',
   buySeparately: 'Buy separately',
   continueJoin: 'Continue joining',
   joined: 'Joined',
   deposited: 'Deposited',
-  numberGroupJoined: '{{value}} groups joined',
+  numberGroupJoined: '{{value}} people joined',
   beTheFirstJoin: 'Join group buying',
   bought: 'Full payment',
   confirmBought: 'Full payment confirm',
@@ -237,6 +237,7 @@ const discovery = {
   valuePeopleJoined: '{{value}} people joined',
   tour: 'Tour',
   groupBuying: 'Group buying',
+  groupDay: 'Group in {{value}}',
 };
 
 // REPUTATION
@@ -379,6 +380,7 @@ const profile = {
   favorite: 'Favorite',
   rating: 'Rating',
   joining: 'Joining',
+  waitingConfirm: 'Waiting for confirmation',
   joinedSuccess: 'Joined successfully',
   gbOrder: 'Group booking orders',
   editProfile: 'Edit profile',
