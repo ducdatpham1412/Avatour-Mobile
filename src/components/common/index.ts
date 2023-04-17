@@ -4,3 +4,4 @@ export {default as InputSearch} from './InputSearch';
 export {default as IconLiked} from './IconLiked';
 export {default as IconNotLiked} from './IconNotLiked';
 export {default as ScrollSyncSizeImage} from './ScrollSyncSizeImage';
+export {default as ButtonX} from './ButtonX';

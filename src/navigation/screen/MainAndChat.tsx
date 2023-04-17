@@ -8,15 +8,13 @@ import MessRoute from './tabs/MessRoute';
 const Tab = createMaterialTopTabNavigator();
 
 const MainAndChat = () => {
-  const swipeEnable = useAppSelector(
-    state => state.logicSlice.scrollMainAndChatEnable,
-  );
+  const {scrollMainAndChatEnable} = useAppSelector(state => state.logicSlice);
 
   return (
     <Tab.Navigator
       tabBar={() => null}
       screenOptions={{
-        swipeEnabled: swipeEnable,
+        swipeEnabled: scrollMainAndChatEnable,
       }}>
       <Tab.Screen name={ROOT_SCREEN.mainScreen} component={MainTabs} />
       <Tab.Screen name={ROOT_SCREEN.chatRoute} component={MessRoute} />

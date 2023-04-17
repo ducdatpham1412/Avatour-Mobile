@@ -1,7 +1,6 @@
 import {BORDER_RADIUS} from 'asset';
 import {AppInput, ModalEdit} from 'components/base';
 import {useLoading, useTheme} from 'hook';
-import {appAlert} from 'navigation/NavigationService';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -14,6 +13,7 @@ import React, {
 import {useTranslation} from 'react-i18next';
 import {KeyboardTypeOptions, TextStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
+import {logger} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface TypeShow {
@@ -71,7 +71,7 @@ const ModalInputEdit = forwardRef(
         modalRef.current?.hide();
         setValue('');
       } catch (err) {
-        appAlert(err);
+        logger('Error save: ', err);
       } finally {
         setLoading(false);
       }

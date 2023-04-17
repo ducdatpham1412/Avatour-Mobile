@@ -6,6 +6,7 @@ import {
   ModalDatePicker,
   ModalDateRangePicker,
   ModalInputEdit,
+  ModalScanQr,
 } from './modals';
 
 const AppModal = () => {
@@ -17,6 +18,7 @@ const AppModal = () => {
       <ModalDateRangePicker />
       <ModalDatePicker />
       <ModalCommentLike />
+      <ModalScanQr />
     </>
   );
 };

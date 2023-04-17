@@ -6,3 +6,4 @@ export {
 export {default as ModalDatePicker} from './ModalDatePicker';
 export {default as ModalDateRangePicker} from './ModalDateRangePicker';
 export {default as ModalInputEdit} from './ModalInputEdit';
+export {default as ModalScanQr} from './ModalScanQr';

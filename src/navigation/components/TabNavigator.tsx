@@ -1,3 +1,4 @@
+import {setBubblePalaceAction, setNumberNewNotifications} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import Images from 'asset/img/images';
@@ -5,10 +6,10 @@ import {safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import Redux from 'hook/useRedux';
 import {MAIN_SCREEN, PROFILE_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
-import React, {useMemo} from 'react';
+import {ModalScanQr} from 'navigation/screen/modals';
+import React, {useMemo, useRef} from 'react';
 import {Animated, TextStyle, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -17,6 +18,8 @@ import {
   verticalScale,
 } from 'react-native-size-matters';
 import {borderWidthTiny} from 'utility/assistant';
+
+const iconSize = 27;
 
 const TabNavigator = (props: any) => {
   const theme = useTheme();
@@ -34,6 +37,7 @@ const TabNavigator = (props: any) => {
    * Render view
    */
   const DiscoveryButton = useMemo(() => {
+    const tintColor = isFocusDiscovery ? theme.p_700 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
@@ -41,7 +45,7 @@ const TabNavigator = (props: any) => {
           if (!isFocusDiscovery) {
             navigate(MAIN_SCREEN.discoveryRoute);
           } else {
-            Redux.setBubblePalaceAction({
+            setBubblePalaceAction({
               action: TYPE_BUBBLE_PALACE_ACTION.scrollToTopDiscovery,
               payload: null,
             });
@@ -49,79 +53,51 @@ const TabNavigator = (props: any) => {
         }}>
         <StyleIcon
           source={isFocusDiscovery ? Images.icons.homeFocus : Images.icons.home}
-          size={32}
-          customStyle={[
-            {tintColor: isFocusDiscovery ? theme.p_700 : theme.gray_500},
-          ]}
+          size={iconSize}
+          customStyle={{tintColor}}
         />
         <StyleText
           i18Text="discovery.home"
-          customStyle={[$textTitle, {color: theme.black}]}
+          customStyle={[$textTitle, {color: tintColor}]}
         />
       </StyleTouchable>
     );
   }, [isFocusDiscovery]);
 
   const FavoriteButton = useMemo(() => {
+    const tintColor = isFocusHeart ? theme.pink : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
         onPress={() => navigate(MAIN_SCREEN.favorite)}>
         <StyleIcon
           source={isFocusHeart ? Images.icons.heartFocus : Images.icons.heart}
-          size={32}
-          customStyle={[
-            {tintColor: isFocusHeart ? theme.pink : theme.gray_500},
-          ]}
+          size={iconSize}
+          customStyle={{tintColor}}
         />
         <StyleText
           i18Text="profile.favorite"
-          customStyle={[$textTitle, {color: theme.black}]}
+          customStyle={[$textTitle, {color: tintColor}]}
         />
       </StyleTouchable>
     );
   }, [isFocusHeart]);
 
-  const ProfileButton = useMemo(() => {
-    return (
-      <StyleTouchable
-        onPress={() => {
-          if (isFocusProfile) {
-            navigate(MAIN_SCREEN.profileRoute, {
-              screen: PROFILE_ROUTE.myProfile,
-            });
-            Redux.setBubblePalaceAction({
-              action: TYPE_BUBBLE_PALACE_ACTION.scrollToTopMyProfile,
-              payload: null,
-            });
-          } else {
-            navigate(MAIN_SCREEN.profileRoute);
-          }
-        }}
-        customStyle={styles.buttonView}>
-        <StyleIcon
-          source={
-            isFocusProfile ? Images.icons.profileFocus : Images.icons.profile
-          }
-          size={32}
-          customStyle={[
-            {tintColor: isFocusProfile ? theme.p_700 : theme.gray_500},
-          ]}
-        />
-        <StyleText
-          i18Text="profile.title"
-          customStyle={[$textTitle, {color: theme.black}]}
-        />
-      </StyleTouchable>
-    );
-  }, [isFocusProfile]);
+  const ScanButton = useRef(() => (
+    <StyleTouchable
+      customStyle={[styles.buttonView, {justifyContent: 'flex-start'}]}
+      onPress={ModalScanQr.show}>
+      <StyleIcon source={Images.icons.scan} size={30} />
+    </StyleTouchable>
+  ));
 
   const NotificationButton = useMemo(() => {
+    const tintColor = isFocusNotification ? theme.p_700 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
         onPress={() => {
-          Redux.setNumberNewNotifications(0);
+          setNumberNewNotifications(0);
           navigate(MAIN_SCREEN.notificationRoute);
         }}>
         <View>
@@ -131,10 +107,8 @@ const TabNavigator = (props: any) => {
                 ? Images.icons.notificationFocus
                 : Images.icons.notification
             }
-            size={32}
-            customStyle={[
-              {tintColor: isFocusNotification ? theme.blue : theme.gray_500},
-            ]}
+            size={25}
+            customStyle={{tintColor}}
           />
           {numberNewNotifications > 0 && (
             <View style={styles.newNotificationBox}>
@@ -149,11 +123,44 @@ const TabNavigator = (props: any) => {
         </View>
         <StyleText
           i18Text="notification.title"
-          customStyle={[$textTitle, {color: theme.black}]}
+          customStyle={[$textTitle, {color: tintColor}]}
         />
       </StyleTouchable>
     );
   }, [isFocusNotification]);
+
+  const ProfileButton = useMemo(() => {
+    const tintColor = isFocusProfile ? theme.p_700 : theme.gray_500;
+    return (
+      <StyleTouchable
+        onPress={() => {
+          if (isFocusProfile) {
+            navigate(MAIN_SCREEN.profileRoute, {
+              screen: PROFILE_ROUTE.myProfile,
+            });
+            setBubblePalaceAction({
+              action: TYPE_BUBBLE_PALACE_ACTION.scrollToTopMyProfile,
+              payload: null,
+            });
+          } else {
+            navigate(MAIN_SCREEN.profileRoute);
+          }
+        }}
+        customStyle={styles.buttonView}>
+        <StyleIcon
+          source={
+            isFocusProfile ? Images.icons.profileFocus : Images.icons.profile
+          }
+          size={iconSize}
+          customStyle={{tintColor}}
+        />
+        <StyleText
+          i18Text="profile.title"
+          customStyle={[$textTitle, {color: tintColor}]}
+        />
+      </StyleTouchable>
+    );
+  }, [isFocusProfile]);
 
   return (
     <Animated.View
@@ -168,6 +175,7 @@ const TabNavigator = (props: any) => {
       ]}>
       {DiscoveryButton}
       {FavoriteButton}
+      {ScanButton.current()}
       {NotificationButton}
       {ProfileButton}
     </Animated.View>

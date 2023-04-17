@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import FindmeStore from 'app-redux/store';
+import Store from 'app-redux/store';
 import Config from 'asset/env';
 import {SocketProvider} from 'hook/useSocketIO';
 import TabBarProvider from 'navigation/config/TabBarProvider';
@@ -16,7 +16,10 @@ import {
   ViewStyle,
 } from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+} from 'react-native-safe-area-context';
 import {Provider as ReduxProvider} from 'react-redux';
 import {LanguageProvider} from 'utility/format';
 import I18Next from 'utility/I18Next';
@@ -44,11 +47,11 @@ GoogleSignin.configure({
 const App = () => {
   return (
     <GestureHandlerRootView style={$container}>
-      <SafeAreaProvider>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <I18nextProvider i18n={I18Next}>
           <LanguageProvider>
             <TabBarProvider>
-              <ReduxProvider store={FindmeStore}>
+              <ReduxProvider store={Store}>
                 <SocketProvider>
                   <StatusBar barStyle="dark-content" />
                   {/* App navigator */}

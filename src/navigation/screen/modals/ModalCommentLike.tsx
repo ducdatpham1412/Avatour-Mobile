@@ -1,5 +1,5 @@
-import {View, Text} from 'react-native';
 import React, {forwardRef, memo, useState} from 'react';
+import {View} from 'react-native';
 
 interface Props {
   postId: number;
@@ -17,11 +17,7 @@ const ModalCommentLikeInstance = forwardRef(
 
 const ModalCommentLike = () => {
   const [listPostIds, setListPostIds] = useState([]);
-  return (
-    <View>
-      <Text>ModalCommentLike</Text>
-    </View>
-  );
+  return null;
 };
 
 export default ModalCommentLike;

@@ -13,3 +13,8 @@ type TypeParamsLikePost = {
   postId: number | string;
   isLiked: boolean;
 };
+
+interface TypeBubblePalaceAction {
+  action: number;
+  payload: any;
+}

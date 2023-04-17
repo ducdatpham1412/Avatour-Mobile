@@ -65,15 +65,14 @@ const ModalConfirmJoinGb = (
 
   const modalizeRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalAddPhoneRef = useRef<Modalize>(null);
-  const minimumDayJoin = useRef(
+
+  const [amount, setAmount] = useState(1);
+  const [timeWillJoin, setTimeWillJoin] = useState(
     addDate(dayjs(), {
       value: 1,
       unit: 'day',
     }),
   );
-
-  const [amount, setAmount] = useState(1);
-  const [timeWillJoin, setTimeWillJoin] = useState(minimumDayJoin.current);
   const [note, setNote] = useState('');
 
   useImperativeHandle(
@@ -160,7 +159,7 @@ const ModalConfirmJoinGb = (
                     setTimeWillJoin(formatUTCDate(dayjs(value.date)));
                   },
                   validRange: {
-                    startDate: new Date(minimumDayJoin.current),
+                    startDate: new Date(),
                   },
                 });
               }}>

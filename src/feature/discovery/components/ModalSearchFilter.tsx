@@ -33,11 +33,12 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {borderWidthTiny} from 'utility/assistant';
-import {formatDDMMMM, formatUTCDate} from 'utility/format';
+import {addDate, formatDDMMMM, formatUTCDate} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import dayjs from 'dayjs';
 
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
@@ -197,6 +198,9 @@ const ModalSearchFilter = (
                       start_time: formatUTCDate(value.startDate),
                       end_time: formatUTCDate(value.endDate),
                     }));
+                  },
+                  validRange: {
+                    startDate: new Date(),
                   },
                 })
               }>
