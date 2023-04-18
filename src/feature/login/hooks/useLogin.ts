@@ -92,11 +92,13 @@ const useLogin = () => {
   }).current;
 
   const submitLogin = async (isKeepSign: boolean) => {
+    setLoading(true);
     await AuthenticateService.requestLogin({
       username: username.trim(),
       password: password.trim(),
       isKeepSign,
     });
+    setLoading(false);
   };
 
   const selectSavedAccount = (index: number) => {
@@ -111,14 +113,9 @@ const useLogin = () => {
     await AsyncStorage.deleteAccAtIndex(index);
   };
 
-  return {
-    states: {
-      username,
-      password,
-      listSavedAccounts,
-      loading,
-    },
-    actions: {
+  return [
+    {username, password, listSavedAccounts, loading},
+    {
       setUsername,
       setPassword,
       signInWithGoogle,
@@ -127,7 +124,7 @@ const useLogin = () => {
       selectSavedAccount,
       deleteSavedAccount,
     },
-  };
+  ] as const;
 };
 
 export default useLogin;

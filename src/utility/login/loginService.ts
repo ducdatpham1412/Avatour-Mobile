@@ -8,7 +8,7 @@ import {
   updatePassport,
   updateResource,
 } from 'app-redux';
-import FindmeStore from 'app-redux/store';
+import Store from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
 import {closeSocket} from 'hook/useSocketIO';
 import ROOT_SCREEN, {
@@ -156,7 +156,7 @@ const AuthenticateService = {
     callBack?(): void;
   }) => {
     try {
-      const isModeExp = FindmeStore.getState().accountSlice.modeExp;
+      const isModeExp = Store.getState().accountSlice.modeExp;
 
       // logout google
       // const isGoogleSignedIn = await GoogleSignin.isSignedIn();

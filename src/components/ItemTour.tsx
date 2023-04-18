@@ -42,7 +42,8 @@ const ItemTour = ({item, containerStyle}: Props) => {
 
       <StyleTouchable customStyle={$body}>
         <View style={$scheduleView}>
-          <View style={[$scheduleBox, {backgroundColor: theme.white02}]}>
+          <View
+            style={[$scheduleBox, {backgroundColor: theme.white_opacity(0.2)}]}>
             {listImages.slice(0, 5).map((image, index) => (
               <View style={$itemLocationView}>
                 <StyleImage

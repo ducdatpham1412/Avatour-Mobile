@@ -14,7 +14,6 @@ import {
   ImageStyle,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   TextStyle,
   View,
   ViewStyle,
@@ -27,6 +26,7 @@ import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
+import {ModalActionSheet} from 'navigation/screen/modals';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -329,17 +329,59 @@ const DetailSale = ({
       </ScrollView>
 
       <StyleTouchable
-        customStyle={[$iconBackView, {top: top + verticalScale(5)}]}
+        customStyle={[
+          $iconBackView,
+          {
+            top: top + verticalScale(5),
+            backgroundColor: theme.white_opacity(0.8),
+          },
+        ]}
         onPress={goBack}>
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: theme.white_opacity(0.8),
-            },
-          ]}
+        <Ionicons
+          name="arrow-back"
+          style={$iconBack}
+          customStyle={{tintColor: theme.black}}
         />
-        <Ionicons name="arrow-back" style={$iconBack} />
+      </StyleTouchable>
+
+      <StyleTouchable
+        customStyle={[
+          $iconOptionView,
+          {
+            top: top + verticalScale(5),
+            backgroundColor: theme.white_opacity(0.8),
+          },
+        ]}
+        onPress={() =>
+          ModalActionSheet.show({
+            options: [
+              {
+                title: 'discovery.buyingHistory',
+                onPress: () => {
+                  if (data) {
+                    console.log('got to see history');
+                  }
+                },
+              },
+              {
+                title: 'discovery.report.title',
+                onPress: () => {
+                  if (data) {
+                    navigate(ROOT_SCREEN.reportUser, {
+                      idUser: data?.creator,
+                      nameUser: data?.creator_name,
+                    });
+                  }
+                },
+              },
+            ],
+          })
+        }>
+        <StyleIcon
+          source={Images.icons.more}
+          size={15}
+          customStyle={{tintColor: theme.black}}
+        />
       </StyleTouchable>
 
       <ModalGroup
@@ -359,6 +401,10 @@ const DetailSale = ({
                 saleId: data?.id,
               },
               mode: 'confirm-join',
+              onSuccess: () => {
+                modalConfirmJoinRef.current?.hide();
+                goBack();
+              },
             });
           }
         }}
@@ -373,6 +419,12 @@ const $containerImage: ViewStyle = {
 const $iconBackView: ViewStyle = {
   position: 'absolute',
   left: scale(10),
+  padding: moderateScale(5),
+  borderRadius: 30,
+};
+const $iconOptionView: ViewStyle = {
+  position: 'absolute',
+  right: scale(10),
   padding: moderateScale(5),
   borderRadius: 30,
 };

@@ -1,4 +1,4 @@
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import {useTabBar} from 'navigation/config/TabBarProvider';
 import React, {forwardRef, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
-import {scale, ScaledSheet} from 'react-native-size-matters';
+import {ScaledSheet, scale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {I18Normalize} from 'utility/I18Next';
 import StyleText from './StyleText';
@@ -29,7 +29,7 @@ export interface StyleInputProps extends TextInputProps {
 }
 
 const StyleInput = (props: StyleInputProps, ref: any) => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const {t} = useTranslation();
   const {
     containerStyle,
@@ -113,7 +113,6 @@ const StyleInput = (props: StyleInputProps, ref: any) => {
         autoCapitalize="none"
         placeholder={i18Placeholder ? t(i18Placeholder) : ''}
         returnKeyType="next"
-        keyboardAppearance={Redux.getThemeKeyboard()}
         textContentType="oneTimeCode"
         onFocus={onFocus}
         onBlur={onBlur}

@@ -79,6 +79,12 @@ const ItemMeJoin = ({item}: Props) => {
         <StyleText i18Text="discovery.deposited" customStyle={$title} />
         <StyleText originValue={`: ${item?.deposit} vnd`} />
       </StyleText>
+
+      <StyleText
+        originValue={item?.note}
+        numberOfLines={1}
+        customStyle={[$textInfo, {color: theme.gray_600}]}
+      />
     </StyleTouchable>
   );
 };
@@ -89,6 +95,7 @@ const $itemMeJoin: ViewStyle = {
   paddingVertical: verticalScale(8),
   paddingHorizontal: scale(8),
   marginLeft: scale(8),
+  maxWidth: scale(300),
 };
 const $title: TextStyle = {
   fontWeight: 'bold',

@@ -48,7 +48,7 @@ export const interactBubble = (params: TypeInteractBubble) => {
 
 export const choosePrivateAvatar = (_gender?: number) => {
   const gender =
-    _gender || FindmeStore.getState().accountSlice.passport.information.gender;
+    _gender || FindmeStore.getState().accountSlice.passport.profile.gender;
 
   switch (gender) {
     case GENDER_TYPE.man:
@@ -177,7 +177,7 @@ export const modalizeGoToChatTagFromGroup = (params: {chatTagId: string}) => {
 export const renderIconGender = (_gender?: number) => {
   const gender =
     _gender === undefined
-      ? FindmeStore.getState().accountSlice.passport.information.gender
+      ? FindmeStore.getState().accountSlice.passport.profile.gender
       : _gender;
 
   if (gender === GENDER_TYPE.man) {
