@@ -19,7 +19,6 @@ const SearchListTour = ({searchParams}: Props) => {
   const {bottom} = useSafeAreaInsets();
   const {
     list,
-    setList,
     setParams,
     onLoadMore,
     refreshing,

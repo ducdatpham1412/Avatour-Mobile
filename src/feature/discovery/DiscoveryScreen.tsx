@@ -1,3 +1,5 @@
+import {useIsFocused} from '@react-navigation/native';
+import {setScrollMainAndChatEnable} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS} from 'asset';
 import Images from 'asset/img/images';
@@ -12,20 +14,30 @@ import {
 } from 'components/base';
 import {CardInformation} from 'components/common';
 import {useTheme} from 'hook';
-import {DISCOVERY_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {navigate} from 'navigation/NavigationService';
+import {DISCOVERY_ROUTE} from 'navigation/config';
 import React from 'react';
 import {ImageStyle, ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useUpdateEffect} from 'react-use';
 import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {HeaderDiscovery, ItemHotLocation} from './components';
 
 const DiscoveryScreen = () => {
+  const isFocused = useIsFocused();
   const theme = useTheme();
   const {banners, hot_locations, favorite_tours} = useAppSelector(
     state => state.logicSlice.resource,
   );
+
+  useUpdateEffect(() => {
+    if (isFocused) {
+      setScrollMainAndChatEnable(true);
+    } else {
+      setScrollMainAndChatEnable(false);
+    }
+  }, [isFocused]);
 
   return (
     <SafeView style={$container}>

@@ -50,3 +50,15 @@ export const setGestureHandle = (
   };
   Store.dispatch(logicSliceAction.setGestureHandle(newGestureHandle));
 };
+
+export const setBubblePalaceAction = (newBubble: TypeBubblePalaceAction) => {
+  Store.dispatch(logicSliceAction.setBubblePalace(newBubble));
+};
+
+export const setBorderMessRoute = (color: string) => {
+  Store.dispatch(logicSliceAction.setBorderMessRoute(color));
+};
+
+export const setScrollMainAndChatEnable = (value: boolean) => {
+  Store.dispatch(logicSliceAction.setScrollMainAndChatEnable(value));
+};

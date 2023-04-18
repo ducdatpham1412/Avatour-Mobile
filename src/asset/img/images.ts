@@ -57,6 +57,8 @@ const Images = {
     filter: require('./ic_filter.png'),
     price: require('./ic_price.png'),
     calendarBorder: require('./ic_calendar_border.png'),
+    scan: require('./ic_scan.png'),
+    fingerScan: require('./ic_finger_scan.png'),
   },
   images: {
     logo: require('./img_logo.png'),

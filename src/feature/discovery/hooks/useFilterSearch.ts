@@ -88,8 +88,6 @@ const useFilterSearch = ({onChangeSearch, initSearchParams}: Params) => {
     }));
   };
 
-  const onSave = async () => null;
-
   return {
     searchParams,
     setSearchParams,
@@ -98,7 +96,6 @@ const useFilterSearch = ({onChangeSearch, initSearchParams}: Params) => {
       onPressService,
       onChangeNumberPeople,
       onSavePrice,
-      onSave,
     },
   };
 };

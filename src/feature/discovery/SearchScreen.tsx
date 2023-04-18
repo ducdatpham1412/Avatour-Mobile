@@ -47,6 +47,7 @@ const SearchScreen = ({
   const modalFilterRef = useRef<ElementRef<typeof ModalSearchFilter>>(null);
   const inputRef = useRef<TextInput>(null);
   const checkShouldSetShowResultByTrue = useRef(!isRouteParamsNull);
+  const tabViewRef = useRef<StyleTabView>(null);
 
   const [displayHint, setDisplayHint] = useState(isRouteParamsNull);
   const [showResult, setShowResult] = useState(!isRouteParamsNull);
@@ -128,9 +129,11 @@ const SearchScreen = ({
     </View>
   );
 
-  let ToolBox = null;
-  if (!isEqual(searchParams, {})) {
-    ToolBox = (
+  const renderToolBox = () => {
+    if (isEqual(searchParams, {})) {
+      return null;
+    }
+    return (
       <View style={$toolView}>
         <ScrollView
           horizontal
@@ -178,7 +181,7 @@ const SearchScreen = ({
             </StyleTouchable>
           )}
 
-          {!!searchParams.start_price && !!searchParams.end_price && (
+          {(!!searchParams.start_price || !!searchParams.end_price) && (
             <StyleTouchable
               customStyle={[
                 $toolBox,
@@ -233,22 +236,26 @@ const SearchScreen = ({
         {showResult && (
           <View style={$toolPostSearch}>
             <View style={$postSearchBox}>
-              <StyleTouchable customStyle={$searchTab}>
+              <StyleTouchable
+                customStyle={$searchTab}
+                onPress={() => tabViewRef.current?.navigateToIndex(0)}>
                 <StyleText
                   i18Text="discovery.tour"
                   customStyle={[
                     $textSearchTab,
-                    {color: indexFocus === 0 ? theme.p_900 : theme.gray_500},
+                    {color: indexFocus === 0 ? theme.p_800 : theme.gray_500},
                   ]}
                 />
               </StyleTouchable>
               <View style={{width: indicatorTabWidth}} />
-              <StyleTouchable customStyle={$searchTab}>
+              <StyleTouchable
+                customStyle={$searchTab}
+                onPress={() => tabViewRef.current?.navigateToIndex(1)}>
                 <StyleText
                   i18Text="discovery.groupBuying"
                   customStyle={[
                     $textSearchTab,
-                    {color: indexFocus === 1 ? theme.p_900 : theme.gray_500},
+                    {color: indexFocus === 1 ? theme.p_800 : theme.gray_500},
                   ]}
                 />
               </StyleTouchable>
@@ -257,7 +264,7 @@ const SearchScreen = ({
               style={[
                 $indicatorTab,
                 {
-                  backgroundColor: theme.p_900,
+                  backgroundColor: theme.p_800,
                   transform: [{translateX: translateIndicatorX}],
                 },
               ]}
@@ -266,16 +273,17 @@ const SearchScreen = ({
         )}
       </View>
     );
-  }
+  };
 
   return (
     <>
       <SafeView style={{backgroundColor: theme.background}}>
         {SearchBox}
-        {ToolBox}
+        {renderToolBox()}
         <View style={$resultView}>
           {showResult && (
             <StyleTabView
+              ref={tabViewRef}
               containerStyle={$resultView}
               onChangeTabIndex={index => {
                 setIndexFocus(index);

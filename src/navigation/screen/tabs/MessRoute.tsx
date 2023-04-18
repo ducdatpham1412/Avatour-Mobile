@@ -3,27 +3,28 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
+import {setBorderMessRoute, setScrollMainAndChatEnable} from 'app-redux';
 import {Metrics} from 'asset/metrics';
 import MessScreen from 'feature/mess/MessScreen';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import {MESS_ROUTE} from 'navigation/config/routes';
 import React, {useEffect, useRef} from 'react';
 
 const MessStack = createStackNavigator();
 
 const MessRoute = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const isFocused = useIsFocused();
   const timeOut = useRef<any>();
 
   useEffect(() => {
-    Redux.setBorderMessRoute(theme.borderColor);
+    setBorderMessRoute(theme.borderColor);
   }, []);
 
   useEffect(() => {
     if (isFocused) {
       timeOut.current = setTimeout(() => {
-        Redux.setScrollMainAndChatEnable(true);
+        setScrollMainAndChatEnable(true);
       }, 100);
     }
 
