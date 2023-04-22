@@ -337,3 +337,11 @@ export enum POST_SEARCH {
   tour = 0,
   group_buying = 1,
 }
+
+export enum TYPE_SALE_SEARCH {
+  joining = 0,
+  joined = 1,
+  favorite = 2,
+  review = 3,
+  list = 4,
+}

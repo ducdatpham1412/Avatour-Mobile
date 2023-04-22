@@ -392,6 +392,7 @@ const profile = {
   maxGroups: 'Maximum number of groups',
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
+  postGroupBuying: 'Create group buying',
 };
 
 // SETTING ROUTE

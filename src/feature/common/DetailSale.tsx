@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
 import {STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
@@ -27,6 +27,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
 import {ModalActionSheet} from 'navigation/screen/modals';
+import {renderPersonalJoinsFromGroups} from 'utility/assistant';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -215,20 +216,10 @@ const DetailSale = ({
   };
 
   const renderJoins = () => {
-    const listPersonalJoins: TypePersonalJoin[] = [];
-    data?.groups?.every?.(group => {
-      group?.members?.every?.((join: any) => {
-        if (listPersonalJoins.length < 6) {
-          listPersonalJoins.push(join);
-          return true;
-        }
-        return false;
-      });
-      if (listPersonalJoins.length < 6) {
-        return true;
-      }
-      return false;
-    });
+    const listPersonalJoins = renderPersonalJoinsFromGroups(
+      data?.groups || [],
+      {maxNumber: 6},
+    );
 
     return (
       <View style={$informationView}>
@@ -319,7 +310,7 @@ const DetailSale = ({
           images={data?.images || []}
           syncWidth={Metrics.width}
           containerStyle={$containerImage}
-          defaultRatio={0.5}
+          defaultRatio={ratioImageSale}
         />
 
         {renderInformation()}

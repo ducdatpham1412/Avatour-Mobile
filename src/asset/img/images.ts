@@ -59,6 +59,11 @@ const Images = {
     calendarBorder: require('./ic_calendar_border.png'),
     scan: require('./ic_scan.png'),
     fingerScan: require('./ic_finger_scan.png'),
+    shop: require('./ic_shop.png'),
+    bag: require('./ic_bag.png'),
+    review: require('./ic_review.png'),
+    heartBold: require('./ic_heart_bold.png'),
+    tour: require('./ic_tour.png'),
   },
   images: {
     logo: require('./img_logo.png'),

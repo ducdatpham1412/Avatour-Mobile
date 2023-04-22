@@ -101,6 +101,7 @@ android {
         versionCode 1
         versionName "1.0"
         missingDimensionStrategy "store", "play"
+        missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
 
     splits {

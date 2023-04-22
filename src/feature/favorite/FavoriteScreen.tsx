@@ -1,4 +1,4 @@
-import {apiGetListPostsLiked} from 'api/profile';
+import {apiGetListSalesLiked} from 'api/profile';
 import {POST_TYPE} from 'asset/enum';
 import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
@@ -40,7 +40,7 @@ const FavoriteAccount = () => {
   const theme = Redux.getTheme();
 
   const {list, setList, refreshing, onRefresh, onLoadMore} = usePaging({
-    request: apiGetListPostsLiked,
+    request: apiGetListSalesLiked,
     params: {
       post_types: `[${POST_TYPE.groupBuying}]`,
     },

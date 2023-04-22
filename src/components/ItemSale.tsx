@@ -1,13 +1,16 @@
 import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
 import Images from 'asset/img/images';
-import {Metrics} from 'asset/metrics';
 import {useTheme} from 'hook';
-import {ROOT_SCREEN} from 'navigation/config';
 import {navigate} from 'navigation/NavigationService';
+import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
-import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
-import {$styleDropShadow} from 'utility/assistant';
+import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  $styleDropShadow,
+  borderWidthTiny,
+  renderPersonalJoinsFromGroups,
+} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 import {IconLiked, IconNotLiked} from './common';
@@ -15,9 +18,11 @@ import {IconLiked, IconNotLiked} from './common';
 interface Props {
   item: TypeGroupBuying;
   onReact: (params: TypeParamsLikePost) => Promise<void>;
+  containerStyle?: StyleProp<ViewStyle>;
+  hidingElements?: Array<'name' | 'location'>;
 }
 
-const ItemSale = ({item, onReact}: Props) => {
+const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
   const theme = useTheme();
 
   const startPrice = item?.prices?.[item?.prices?.length - 1]?.price;
@@ -31,33 +36,24 @@ const ItemSale = ({item, onReact}: Props) => {
     textPrice = `${temp}vnd`;
   }
 
-  const avatarJoined: string[] = [];
-  item?.groups?.every?.(group => {
-    if (avatarJoined.length > 3) {
-      return false;
-    }
-    group?.members?.forEach?.(mem => {
-      if (avatarJoined.length > 3) {
-        return false;
-      }
-      avatarJoined.push(mem?.creator_avatar);
-    });
+  const listPersonalJoins = renderPersonalJoinsFromGroups(item?.groups, {
+    maxNumber: 3,
   });
 
   let RenderPeopleJoined = null;
-  if (!avatarJoined.length) {
+  if (!listPersonalJoins.length) {
     RenderPeopleJoined = (
       <>
-        <StyleIcon source={Images.images.defaultAvatar} size={20} />
+        <StyleIcon source={Images.images.defaultAvatar} size={15} />
         <StyleIcon
           source={Images.images.defaultAvatar}
-          size={20}
-          customStyle={{left: -scale(5)}}
+          size={15}
+          customStyle={{left: -scale(3)}}
         />
         <StyleIcon
           source={Images.images.defaultAvatar}
-          size={20}
-          customStyle={{left: -scale(10)}}
+          size={15}
+          customStyle={{left: -scale(6)}}
         />
         <StyleText
           i18Text="discovery.beTheFirstJoin"
@@ -71,24 +67,27 @@ const ItemSale = ({item, onReact}: Props) => {
   } else {
     RenderPeopleJoined = (
       <>
-        {avatarJoined.map((avatar, index) => {
-          let marginLeft = 0;
+        {listPersonalJoins.map((personal, index) => {
+          let left = 0;
           if (index === 1) {
-            marginLeft = -scale(5);
+            left = -scale(3);
           } else if (index === 2) {
-            marginLeft = -scale(10);
+            left = -scale(6);
           }
           return (
             <StyleIcon
               key={index}
-              source={{uri: avatar}}
-              size={20}
-              customStyle={{left: marginLeft}}
+              source={{uri: personal?.creator_avatar}}
+              size={15}
+              customStyle={{left}}
             />
           );
         })}
         <StyleText
-          i18Text="discovery.beTheFirstJoin"
+          i18Text="discovery.numberGroupJoined"
+          i18Params={{
+            value: item?.total_members,
+          }}
           customStyle={[
             $textInfo,
             {color: theme.gray_500, marginLeft: -scale(2)},
@@ -103,7 +102,8 @@ const ItemSale = ({item, onReact}: Props) => {
       customStyle={[
         $container,
         $styleDropShadow,
-        {backgroundColor: theme.white},
+        {backgroundColor: theme.white, borderColor: theme.gray_300},
+        containerStyle,
       ]}
       onPress={() =>
         navigate(ROOT_SCREEN.detailSale, {
@@ -116,7 +116,7 @@ const ItemSale = ({item, onReact}: Props) => {
           defaultImageSource="image"
           customStyle={$image}
         />
-        <View style={[$heartBox, {backgroundColor: theme.white}]}>
+        <View style={[$heartBox, {backgroundColor: theme.white_opacity(0.8)}]}>
           {/* <StyleIcon
             source={
               !!item?.is_liked ? Images.icons.heartFocus : Images.icons.heart
@@ -144,22 +144,26 @@ const ItemSale = ({item, onReact}: Props) => {
         </View>
       </View>
 
-      <View style={[$informationView, {marginTop: verticalScale(12)}]}>
-        <StyleIcon source={{uri: item?.creator_avatar}} size={25} />
-        <StyleText originValue={item?.creator_name} customStyle={$textName} />
-      </View>
+      {!hidingElements?.includes('name') && (
+        <View style={$informationView}>
+          <StyleIcon source={{uri: item?.creator_avatar}} size={17} />
+          <StyleText originValue={item?.creator_name} customStyle={$textName} />
+        </View>
+      )}
 
-      <View style={$informationView}>
-        <StyleIcon
-          source={Images.icons.location}
-          size={15}
-          customStyle={{tintColor: theme.gray_500}}
-        />
-        <StyleText
-          originValue={item?.creator_location}
-          customStyle={[$textInfo, {color: theme.gray_500}]}
-        />
-      </View>
+      {!hidingElements?.includes('location') && (
+        <View style={$informationView}>
+          <StyleIcon
+            source={Images.icons.location}
+            size={10}
+            customStyle={{tintColor: theme.gray_500}}
+          />
+          <StyleText
+            originValue={item?.creator_location}
+            customStyle={[$textInfo, {color: theme.gray_500}]}
+          />
+        </View>
+      )}
 
       <View style={$informationView}>
         {RenderPeopleJoined}
@@ -179,17 +183,17 @@ const ItemSale = ({item, onReact}: Props) => {
   );
 };
 
+const defaultWidth = scale(172);
 const $container: ViewStyle = {
-  width: Metrics.width - scale(24),
-  padding: scale(12),
-  borderRadius: BORDER_RADIUS.f2,
-  marginBottom: verticalScale(12),
+  width: defaultWidth,
+  paddingBottom: scale(8),
+  borderRadius: BORDER_RADIUS.f4,
+  marginTop: scale(7),
+  borderWidth: borderWidthTiny,
 };
-const imageWidth = Metrics.width - scale(24) - scale(24);
 const $imageView: ViewStyle = {
-  width: imageWidth,
-  height: imageWidth * ratioImageSale,
-  borderRadius: BORDER_RADIUS.f2,
+  width: defaultWidth,
+  height: defaultWidth * ratioImageSale,
   overflow: 'hidden',
 };
 const $image: ImageStyle = {
@@ -198,19 +202,23 @@ const $image: ImageStyle = {
 };
 const $heartBox: ViewStyle = {
   position: 'absolute',
-  width: moderateScale(38),
-  height: moderateScale(38),
+  width: moderateScale(30),
+  height: moderateScale(30),
   alignItems: 'center',
   justifyContent: 'center',
-  right: scale(12),
-  top: scale(12),
+  right: scale(8),
+  top: scale(8),
   borderRadius: 100,
+};
+const $iconLike: TextStyle = {
+  fontSize: moderateScale(20),
 };
 const $informationView: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   alignItems: 'center',
   marginTop: verticalScale(4),
+  paddingHorizontal: scale(4),
 };
 const $textName: TextStyle = {
   marginLeft: scale(8),
@@ -222,9 +230,6 @@ const $textInfo: TextStyle = {
 };
 const $textPrice: TextStyle = {
   fontWeight: 'bold',
-};
-const $iconLike: TextStyle = {
-  fontSize: moderateScale(27),
 };
 
 export default memo(ItemSale, (pre: Props, next: Props) => {

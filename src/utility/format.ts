@@ -178,3 +178,13 @@ export const formatDDMMMMYY = (value: string | Dayjs) => {
 export const formatddddDDMMYYYY = (value: string | Dayjs) => {
   return dayjs(value).format('dddd, DD/MM/YYYY');
 };
+
+type FormatMoneyOptions = {
+  unit: 'vnd';
+};
+export const formatMoney = (value: number, options?: FormatMoneyOptions) => {
+  if (options?.unit === 'vnd') {
+    return `${formatLocaleNumber(String(value || '0'))} (vnd)`;
+  }
+  return `${formatLocaleNumber(String(value || '0'))} (vnd)`;
+};

@@ -76,7 +76,6 @@ import appPurchase from 'utility/appPurchase';
 import {
   borderWidthTiny,
   chosenBlurType,
-  fakeGroupBuying,
   isIOS,
   logger,
   modeExpUsePaging,
@@ -85,7 +84,7 @@ import {
 } from 'utility/assistant';
 import {formatFromNow, formatLocaleNumber} from 'utility/format';
 import {I18Normalize} from 'utility/I18Next';
-import {fakeDataListGroupsJoined} from 'utility/staticData';
+import {fakeDataListGroupsJoined, fakeGroupBuying} from 'utility/staticData';
 import ModalPeopleJoined from './components/ModalPeopleJoined';
 import ModalPeopleRetail from './components/ModalPeopleRetail';
 

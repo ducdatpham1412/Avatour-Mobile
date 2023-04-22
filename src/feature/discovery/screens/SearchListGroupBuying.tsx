@@ -1,15 +1,14 @@
 import {apiSearch} from 'api/discovery';
-import {apiLikePost, apiUnLikePost} from 'api/profile';
-import {POST_SEARCH, REACT} from 'asset/enum';
+import {POST_SEARCH} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging} from 'hook';
-import {appAlert} from 'navigation/NavigationService';
 import React, {useEffect} from 'react';
 import isEqual from 'react-fast-compare';
 import {View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {onReactSale} from 'utility/assistant';
 import {scale} from 'utility/scale';
 
 interface Props {
@@ -45,51 +44,22 @@ const SearchListGroupBuying = ({searchParams}: Props) => {
     }
   }, [searchParams]);
 
-  const onReact = async ({postId, isLiked}: TypeParamsLikePost) => {
-    try {
-      setList(pre => {
-        return pre.map(item => {
-          if (item?.id !== postId) {
-            return item;
-          }
-          return {
-            ...item,
-            is_liked: !isLiked,
-          };
-        });
-      });
-      if (!isLiked) {
-        await apiLikePost({
-          type: REACT.sale,
-          reactedId: postId,
-        });
-      } else {
-        await apiUnLikePost({
-          type: REACT.sale,
-          reactedId: postId,
-        });
-      }
-    } catch (err) {
-      appAlert(err);
-      setList(pre => {
-        return pre.map(item => {
-          if (item?.id !== postId) {
-            return item;
-          }
-          return {
-            ...item,
-            is_liked: isLiked,
-          };
-        });
-      });
-    }
-  };
-
   return (
     <View style={$container}>
       <StyleList
         data={list}
-        renderItem={({item}) => <ItemSale item={item} onReact={onReact} />}
+        renderItem={({item, index}) => (
+          <ItemSale
+            item={item}
+            onReact={value =>
+              onReactSale(value.postId as number, {
+                isLiked: value.isLiked,
+                setList,
+              })
+            }
+            containerStyle={{marginLeft: index % 2 !== 0 ? scale(7) : 0}}
+          />
+        )}
         keyExtractor={item => String(item.id)}
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -97,6 +67,7 @@ const SearchListGroupBuying = ({searchParams}: Props) => {
         loadingMore={loadingMore}
         contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
         ListEmptyComponent={null}
+        numColumns={2}
       />
     </View>
   );

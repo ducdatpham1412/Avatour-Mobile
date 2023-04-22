@@ -67,12 +67,7 @@ interface TypeGroupBuying {
   created: string;
   is_liked: boolean;
   status: number;
-  deposits: Array<TypeDeposit>;
-  // other field follow on situation
-  joinId?: string; // in get_list_gb_joining and joined
-  requestUpdatePrice: {
-    prices: Array<TypePrice>;
-  } | null; // only for apiGetDetail to check is requesting update price
+  // check to add request update price in here
 }
 
 interface TypeHotLocation {

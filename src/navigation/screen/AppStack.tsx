@@ -18,13 +18,15 @@ import SearchScreen from 'feature/discovery/SearchScreen';
 import ChatDetail from 'feature/mess/ChatDetail';
 import ChatDetailSetting from 'feature/mess/ChatDetailSetting';
 import DetailBubble from 'feature/notification/DetailBubble';
-import CreateGroupBuying from 'feature/profile/CreateGroupBuying';
-import CreatePostPickImage from 'feature/profile/CreatePostPickImage';
-import CreatePostPreview from 'feature/profile/CreatePostPreview';
-import EditProfile from 'feature/profile/EditProfile';
-import ListFollows from 'feature/profile/ListFollows';
-import MyProfile from 'feature/profile/MyProfile';
-import OtherProfile from 'feature/profile/OtherProfile';
+import {
+  CreateGroupBuying,
+  CreatePostPickImage,
+  CreatePostPreview,
+  MyProfile,
+  EditProfile,
+  OtherProfile,
+  ListFollows,
+} from 'feature/profile';
 import {useTheme} from 'hook';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {

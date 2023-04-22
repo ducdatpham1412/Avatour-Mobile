@@ -5,8 +5,11 @@ import {
   FlatList,
   FlatListProps,
   RefreshControl,
+  TextStyle,
   View,
+  ViewStyle,
 } from 'react-native';
+import {moderateScale, verticalScale} from 'utility/scale';
 import StyleText from './StyleText';
 
 interface StyleListProps extends FlatListProps<any> {
@@ -18,10 +21,12 @@ interface StyleListProps extends FlatListProps<any> {
   refreshing?: boolean;
   onRefresh?: () => void;
   onLoadMore?: () => void;
+  initLoading?: boolean;
 }
 
 const StyleList = (props: StyleListProps, ref: any) => {
-  const {refreshing, onRefresh, onLoadMore, loadingMore} = props;
+  const {refreshing, onRefresh, onLoadMore, loadingMore, initLoading, loading} =
+    props;
   const theme = useTheme();
 
   const listRef = useRef<FlatList>(null);
@@ -37,16 +42,20 @@ const StyleList = (props: StyleListProps, ref: any) => {
     }
   };
 
+  if (initLoading) {
+    return (
+      <View style={$loadingMore}>
+        <ActivityIndicator size="small" color={theme.p_700} />
+      </View>
+    );
+  }
+
   // render_view
   const renderFooterView = () => {
     if (loadingMore) {
       return (
-        <View
-          style={{
-            width: '100%',
-            marginVertical: 20,
-          }}>
-          <ActivityIndicator size="small" color={theme.p_800} />
+        <View style={$loadingMore}>
+          <ActivityIndicator size="small" color={theme.p_700} />
         </View>
       );
     }
@@ -56,12 +65,7 @@ const StyleList = (props: StyleListProps, ref: any) => {
     return (
       <StyleText
         originValue="----"
-        customStyle={{
-          fontSize: 17,
-          color: theme.gray_500,
-          alignSelf: 'center',
-          marginTop: 40,
-        }}
+        customStyle={[$textEmpty, {color: theme.p_700}]}
       />
     );
   };
@@ -74,10 +78,10 @@ const StyleList = (props: StyleListProps, ref: any) => {
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
-          refreshing={!!refreshing}
+          refreshing={!!refreshing || !!loading}
           onRefresh={handleRefresh}
-          tintColor={theme.p_600}
-          colors={[theme.p_600]}
+          tintColor={theme.p_700}
+          colors={[theme.p_700]}
         />
       }
       onEndReached={handleLoadMore}
@@ -87,6 +91,16 @@ const StyleList = (props: StyleListProps, ref: any) => {
       {...props}
     />
   );
+};
+
+const $loadingMore: ViewStyle = {
+  width: '100%',
+  marginVertical: verticalScale(20),
+};
+const $textEmpty: TextStyle = {
+  fontSize: moderateScale(17),
+  alignSelf: 'center',
+  marginTop: verticalScale(40),
 };
 
 export default forwardRef(StyleList);

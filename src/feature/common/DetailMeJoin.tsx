@@ -14,7 +14,7 @@ import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {borderWidthTiny} from 'utility/assistant';
-import {formatLocaleNumber, formatddddDDMMYYYY} from 'utility/format';
+import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
 import {verticalScale} from 'utility/scale';
 import {useDetailSale} from './hooks';
 
@@ -88,9 +88,7 @@ const ConfirmJoinScreen = ({
           },
           {
             title: 'discovery.deposit',
-            content: `${formatLocaleNumber(
-              String(itemJoin?.deposit || '0'),
-            )} (vnd)`,
+            content: formatMoney(itemJoin?.deposit),
           },
           <View style={{width: '100%'}}>
             <StyleText

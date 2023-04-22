@@ -164,7 +164,7 @@ const discovery = {
   joined: 'Đã tham gia',
   deposited: 'Đã đặt cọc',
   deposit: 'Đặt cọc:',
-  numberGroupJoined: '{{value}} người đã tham gia',
+  numberGroupJoined: '{{value}} lượt tham gia',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',
   confirmBought: 'Xác nhận thanh toán đủ',
@@ -361,11 +361,12 @@ const profile = {
   joining: 'Đang tham gia',
   waitingConfirm: 'Chờ cửa hàng xác nhận',
   joinedSuccess: 'Tham gia thành công',
-  gbOrder: 'Đơn mua chung',
+  gbOrder: 'Đơn hàng',
   editProfile: 'Chỉnh sửa',
   maxGroups: 'Số lượng nhóm tối đa',
   sendRequestChangePrice: 'Yêu cầu thay đổi giá',
   updateBankAccount: 'Tài khoản nhận tiền',
+  postGroupBuying: 'Tạo đơn',
 };
 
 // MESS ROUTE

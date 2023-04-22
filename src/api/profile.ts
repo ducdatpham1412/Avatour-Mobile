@@ -1,3 +1,4 @@
+import {TYPE_SALE_SEARCH} from 'asset/enum';
 import request from './request';
 
 export const apiSavePost = (postId: string) => {
@@ -23,11 +24,15 @@ export const apiUnLikePost = (params: TypeReactRequest) => {
   });
 };
 
-export const apiGetListGroupBuying = ({params}: TypeParamsPaging) => {
-  return request.get(`/profile/list-group-buying/${params.userId}`, {
+export const apiGetListGroupBuying = ({
+  params,
+}: TypeParamsPaging<{userId: number}>) => {
+  return request.get(`/profile/sales`, {
     params: {
-      pageIndex: params.pageIndex,
+      user_id: params.userId,
+      page_index: params.pageIndex,
       take: params.take,
+      type: TYPE_SALE_SEARCH.list,
     },
   });
 };
@@ -97,14 +102,13 @@ export const apiDeletePost = (idPost: string) => {
   return request.put(`/profile/delete-post/${idPost}`);
 };
 
-export const apiGetListPostsLiked = ({
-  params,
-}: TypeParamsPaging): Promise<{
-  success: boolean;
-  data: Array<TypeBubblePalace>;
-}> => {
-  return request.get('/profile/list-posts-liked', {
-    params,
+export const apiGetListSalesLiked = ({params}: TypeParamsPaging) => {
+  return request.get('/profile/sales', {
+    params: {
+      page_index: params.pageIndex,
+      take: params.take,
+      type: TYPE_SALE_SEARCH.favorite,
+    },
   });
 };
 
@@ -114,15 +118,25 @@ export const apiGetListPostsArchived = ({params}: TypeParamsPaging) => {
   });
 };
 
-export const apiGetListGbJoining = ({params}: TypeParamsPaging) => {
-  return request.get('/profile/list-gb-joining', {
-    params,
+export const apiGetListGbJoining = ({
+  params,
+}: TypeParamsPaging<{userId: number}>) => {
+  return request.get('/profile/sales', {
+    params: {
+      page_index: params.pageIndex,
+      take: params.take,
+      type: TYPE_SALE_SEARCH.joining,
+    },
   });
 };
 
 export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
-  return request.get('/profile/list-gb-joined', {
-    params,
+  return request.get('/profile/sales', {
+    params: {
+      page_index: params.pageIndex,
+      take: params.take,
+      type: TYPE_SALE_SEARCH.joined,
+    },
   });
 };
 

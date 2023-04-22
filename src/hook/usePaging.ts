@@ -3,7 +3,6 @@ import {SIZE_LOADING_LIMIT} from 'asset/standardValue';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {useUpdateEffect} from 'react-use';
-import {TypeObjectAny} from 'utility/assistant';
 
 const {CancelToken} = axios;
 
@@ -21,6 +20,9 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
 
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [initLoading, setInitLoading] = useState(
+    !paramsPaging?.isInitNotRunRequest,
+  );
 
   const [pageIndex, setPageIndex] = useState(
     paramsPaging?.isInitNotRunRequest ? 0 : 1,
@@ -48,6 +50,7 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
     setNoMore(pageIndex >= resData?.totalPages);
     setRefreshing(false);
     setLoadingMore(false);
+    setInitLoading(false);
 
     paramsPaging?.onSuccess?.(data, cbParams);
   };
@@ -69,8 +72,8 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
     umiRequest.run({
       params: {
         pageIndex: requestPageIndex,
-        take: params?.take || SIZE_LOADING_LIMIT,
         ...otherParams,
+        take: params?.take || SIZE_LOADING_LIMIT,
       },
       cancelToken: source.token,
     });
@@ -80,11 +83,13 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
    * Actions
    */
   const onRefresh = () => {
-    setRefreshing(true);
+    if (!umiRequest.loading) {
+      setRefreshing(true);
+    }
   };
 
   const onLoadMore = () => {
-    if (!noMore) {
+    if (!noMore && !umiRequest.loading) {
       setLoadingMore(true);
       setPageIndex(pageIndex + 1);
     }
@@ -140,6 +145,7 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
     onRefresh,
     onLoadMore,
     setParams,
+    initLoading,
   };
 };
 
