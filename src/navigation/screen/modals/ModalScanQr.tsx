@@ -72,7 +72,13 @@ const ModalScanQr = forwardRef(
           />
 
           <ButtonX
-            containerStyle={[$iconX, {top: top + verticalScale(5)}]}
+            containerStyle={[
+              $iconX,
+              {
+                top: top + verticalScale(5),
+                backgroundColor: theme.white_opacity(0.6),
+              },
+            ]}
             iconStyle={$icon}
             onPress={() => setVisible(false)}
           />

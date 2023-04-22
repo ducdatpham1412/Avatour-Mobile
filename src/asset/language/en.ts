@@ -28,6 +28,8 @@ const common = {
   search: 'Search',
   change: 'Change',
   error: 'Error',
+  confirm: 'Confirm',
+  ok: 'Ok',
 };
 
 const login = {
@@ -159,6 +161,7 @@ const discovery = {
   continueJoin: 'Continue joining',
   joined: 'Joined',
   deposited: 'Deposited',
+  deposit: 'Deposit:',
   numberGroupJoined: '{{value}} people joined',
   beTheFirstJoin: 'Join group buying',
   bought: 'Full payment',
@@ -238,6 +241,8 @@ const discovery = {
   tour: 'Tour',
   groupBuying: 'Group buying',
   groupDay: 'Group in {{value}}',
+  confirmJoining: 'Confirm joining group buying',
+  buyingHistory: 'Buying history',
 };
 
 // REPUTATION
@@ -380,7 +385,7 @@ const profile = {
   favorite: 'Favorite',
   rating: 'Rating',
   joining: 'Joining',
-  waitingConfirm: 'Waiting for confirmation',
+  waitingConfirm: "Waiting for supplier's confirmation",
   joinedSuccess: 'Joined successfully',
   gbOrder: 'Group booking orders',
   editProfile: 'Edit profile',

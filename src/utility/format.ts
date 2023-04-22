@@ -27,6 +27,10 @@ export const formatUTCDate = (date: string | Date | Dayjs = new Date()) => {
   return dayjs(date).utc().format();
 };
 
+export const getDateTimeNow = () => {
+  return formatUTCDate(dayjs());
+};
+
 export const formatDateDayMonthYear = (date: string | Date) => {
   return dayjs(date).locale('en').format('DD - MM - YYYY');
 };

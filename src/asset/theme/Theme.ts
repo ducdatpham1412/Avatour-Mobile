@@ -93,7 +93,6 @@ const Theme = {
     gray_50: '#f9f9f9',
     green: '#3CDF21',
     red: '#F34119',
-    white02: 'rgba(255, 255, 255, 0.2)',
     black_opacity: (value = 0.6) => `rgba(0, 0, 0, ${value})`,
     white_opacity: (value = 0.6) => `rgba(255, 255, 255, ${value})`,
     pink: '#f94b68',

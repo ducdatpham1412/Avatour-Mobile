@@ -1,10 +1,10 @@
 import {FONT_SIZE} from 'asset';
-import {StyleButton, StyleContainer, StyleText} from 'components/base';
+import {StyleButton, StyleText} from 'components/base';
 import StyleTouchable from 'components/base/StyleTouchable';
 import InputBox from 'components/common/InputBox';
 import {useTheme} from 'hook';
-import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
+import {LOGIN_ROUTE} from 'navigation/config/routes';
 import React, {useRef, useState} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -14,16 +14,16 @@ import ListSaveAcc from './components/ListSaveAcc';
 import {useLogin} from './hooks';
 
 const LoginScreen = () => {
-  const {
-    states: {username, password, listSavedAccounts},
-    actions: {
+  const [
+    {username, password, listSavedAccounts, loading},
+    {
       setUsername,
       setPassword,
       selectSavedAccount,
       deleteSavedAccount,
       submitLogin,
     },
-  } = useLogin();
+  ] = useLogin();
   const theme = useTheme();
 
   const inputPasswordRef = useRef<any>(null);
@@ -73,7 +73,7 @@ const LoginScreen = () => {
       <StyleButton
         title="login.loginScreen.signIn"
         containerStyle={styles.loginButton}
-        disable={!username || !password}
+        isLoading={loading}
         onPress={() => submitLogin(isKeepSign)}
       />
 

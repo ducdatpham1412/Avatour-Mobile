@@ -27,6 +27,8 @@ const common = {
   null: '',
   search: 'Tìm kiếm',
   change: 'Thay đổi',
+  confirm: 'Xác nhận',
+  ok: 'Ok',
 };
 
 const login = {
@@ -161,6 +163,7 @@ const discovery = {
   continueJoin: 'Tiếp tục tham gia',
   joined: 'Đã tham gia',
   deposited: 'Đã đặt cọc',
+  deposit: 'Đặt cọc:',
   numberGroupJoined: '{{value}} người đã tham gia',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',
@@ -241,6 +244,8 @@ const discovery = {
   tour: 'Tour',
   groupBuying: 'Đơn mua chung',
   groupDay: 'Nhóm ngày {{value}}',
+  confirmJoining: 'Xác nhận tham gia mua chung',
+  buyingHistory: 'Lịch sử mua chung',
 };
 
 // REPUTATION
@@ -354,7 +359,7 @@ const profile = {
   favorite: 'Yêu thích',
   rating: 'Đánh giá',
   joining: 'Đang tham gia',
-  waitingConfirm: 'Đang chờ xác nhận',
+  waitingConfirm: 'Chờ cửa hàng xác nhận',
   joinedSuccess: 'Tham gia thành công',
   gbOrder: 'Đơn mua chung',
   editProfile: 'Chỉnh sửa',

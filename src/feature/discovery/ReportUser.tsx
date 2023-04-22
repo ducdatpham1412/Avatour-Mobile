@@ -8,9 +8,8 @@ import {
   StyleTouchable,
 } from 'components/base';
 import RowPickImages from 'components/common/RowPickImages';
-import LoadingScreen from 'components/LoadingScreen';
 import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
@@ -30,9 +29,7 @@ interface Props {
 
 const ReportUser = ({route}: Props) => {
   const {idUser, nameUser = ''} = route.params;
-
-  const theme = Redux.getTheme();
-  const isLoading = Redux.getIsLoading();
+  const theme = useTheme();
   const inputDescriptionRef = useRef<TextInput>(null);
 
   const [reasonReport, setReasonReport] = useState<{
@@ -65,8 +62,6 @@ const ReportUser = ({route}: Props) => {
   const onSubmitReport = async () => {
     if (reasonReport) {
       try {
-        Redux.setIsLoading(true);
-
         let nameImages: Array<string> = [];
         if (images.length) {
           nameImages = await ImageUploader.upLoadManyImg(images);
@@ -88,8 +83,6 @@ const ReportUser = ({route}: Props) => {
         });
       } catch (err) {
         appAlert(err);
-      } finally {
-        Redux.setIsLoading(false);
       }
     }
   };
@@ -177,8 +170,6 @@ const ReportUser = ({route}: Props) => {
           disable={!reasonReport}
           onPress={onSubmitReport}
         />
-
-        {isLoading && <LoadingScreen />}
       </StyleContainer>
     </>
   );

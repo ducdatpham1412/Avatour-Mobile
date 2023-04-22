@@ -137,7 +137,6 @@ const InteractBubble = ({route}: Props) => {
               multiline
               placeholder="Xin chao!"
               placeholderTextColor={theme.holderColorLighter}
-              keyboardAppearance={Redux.getThemeKeyboard()}
               hasErrorBox={false}
               hasUnderLine={false}
               isEffectTabBar

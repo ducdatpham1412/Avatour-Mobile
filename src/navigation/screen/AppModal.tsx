@@ -1,6 +1,7 @@
 import StatusPostCreated from 'navigation/components/StatusPostCreated';
 import React from 'react';
 import {
+  ModalActionSheet,
   ModalCommentLike,
   ModalCommentLikeAllApp,
   ModalDatePicker,
@@ -19,6 +20,7 @@ const AppModal = () => {
       <ModalDatePicker />
       <ModalCommentLike />
       <ModalScanQr />
+      <ModalActionSheet />
     </>
   );
 };

@@ -164,5 +164,6 @@ export type AppParamsList = {
   [ROOT_SCREEN.detailMeJoin]: {
     itemJoin: TypeJoinRequest;
     mode: 'confirm-join' | 'see-detail';
+    onSuccess?: () => void;
   };
 };
