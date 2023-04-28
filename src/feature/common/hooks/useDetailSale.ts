@@ -23,7 +23,7 @@ const useDetailSale = ({saleId, sale}: Params) => {
   const {data, mutate, loading} = useApiImmutable<TypeGroupBuying>({
     path: `/profile/sales/${saleId ?? sale?.id}`,
     // config: {
-    //   revalidateOnMount: !sale,
+    //   revalidateOnMount: !sale, // check to should un comment this
     // },
   });
   const dataMeJoined = useApiImmutable<TypeMeJoinResponse[]>({

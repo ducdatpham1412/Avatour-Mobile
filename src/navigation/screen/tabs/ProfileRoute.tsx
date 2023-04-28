@@ -1,5 +1,5 @@
 import DetailGroupBuying from 'feature/discovery/DetailGroupBuying';
-import MyProfile from 'feature/profile/MyProfile';
+import {MyProfile} from 'feature/profile';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
 import React from 'react';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';

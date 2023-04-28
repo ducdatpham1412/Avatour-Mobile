@@ -18,3 +18,7 @@ interface TypeBubblePalaceAction {
   action: number;
   payload: any;
 }
+
+type TypeObjectAny = {
+  [key: string]: any;
+};

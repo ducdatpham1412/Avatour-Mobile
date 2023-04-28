@@ -29,6 +29,12 @@ type TypeMeJoinResponse = {
   note: string;
   created: string;
   status: number;
+  sale: {
+    images: string[];
+    creator: number;
+    name: string;
+    avatar: string;
+  };
 };
 
 type TypeEditGroupBooking = {

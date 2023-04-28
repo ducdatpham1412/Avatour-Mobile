@@ -2,16 +2,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   TypeBubblePalace,
-  TypeCreateGroupResponse,
   TypeInteractBubble,
   TypeMemberInListChatTag,
 } from 'api/interface';
+import {apiLikePost, apiUnLikePost} from 'api/profile';
 import FindmeStore from 'app-redux/store';
 import {
   FEELING,
   GENDER_TYPE,
   LANGUAGE_TYPE,
-  RELATIONSHIP,
+  REACT,
   SIGN_UP_TYPE,
   TYPE_COLOR,
 } from 'asset/enum';
@@ -23,13 +23,18 @@ import {
 } from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import Redux from 'hook/useRedux';
+import {
+  appAlert,
+  navigate,
+  push,
+  showSwipeImages,
+} from 'navigation/NavigationService';
 import ROOT_SCREEN, {
   LOGIN_ROUTE,
   PROFILE_ROUTE,
   SETTING_ROUTE,
 } from 'navigation/config/routes';
-import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
-import {useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 import {
   DevSettings,
   NativeScrollEvent,
@@ -427,35 +432,6 @@ export const fakeBubbleFocusing: TypeBubblePalace = {
   relationship: 0,
 };
 
-export const fakeGroupBuying: TypeGroupBuying = {
-  id: '',
-  postType: 1,
-  topic: [],
-  content: '',
-  images: [],
-  retailPrice: '',
-  prices: [],
-  deposit: null,
-  amount: null,
-  note: null,
-  totalLikes: 0,
-  totalComments: 0,
-  totalGroups: 0,
-  totalPersonals: 0,
-  creator: 0,
-  creatorName: '',
-  creatorAvatar: '',
-  creatorLocation: '',
-  created: '',
-  isLiked: false,
-  isDraft: false,
-  status: 1,
-  postStatus: 1,
-  relationship: RELATIONSHIP.notKnow,
-  joinId: '',
-  requestUpdatePrice: null,
-};
-
 export const onGoToProfile = (userId: number, params = {}) => {
   const isModeExp = FindmeStore.getState().accountSlice.modeExp;
   if (isModeExp) {
@@ -497,6 +473,110 @@ export const chosenBlurType: any = Platform.select({
   android: 'xlight',
 });
 
-export type TypeObjectAny = {
-  [key: string]: any;
+type RenderPersonalOptions = {
+  maxNumber: number;
+};
+
+export const renderPersonalJoinsFromGroups = (
+  listGroups: TypeGroupBuying['groups'],
+  options: RenderPersonalOptions,
+) => {
+  const listPersonalJoins: TypePersonalJoin[] = [];
+  listGroups?.every?.(group => {
+    group?.members?.every?.((join: any) => {
+      if (listPersonalJoins.length < options.maxNumber) {
+        listPersonalJoins.push(join);
+        return true;
+      }
+      return false;
+    });
+    if (listPersonalJoins.length < options.maxNumber) {
+      return true;
+    }
+    return false;
+  });
+  return listPersonalJoins;
+};
+
+type TypeReactPost = {
+  isLiked: boolean;
+  setList: Dispatch<SetStateAction<TypeGroupBuying[]>>;
+};
+export const onReactSale = async (
+  postId: number,
+  {isLiked, setList}: TypeReactPost,
+) => {
+  let currentTotalLikes = 0;
+  try {
+    setList(pre => {
+      return pre.map(item => {
+        if (item?.id !== postId) {
+          return item;
+        }
+        currentTotalLikes = item?.total_likes;
+        return {
+          ...item,
+          is_liked: !isLiked,
+          total_likes: currentTotalLikes + (isLiked ? -1 : 1),
+        };
+      });
+    });
+    if (!isLiked) {
+      await apiLikePost({
+        type: REACT.sale,
+        reactedId: postId,
+      });
+    } else {
+      await apiUnLikePost({
+        type: REACT.sale,
+        reactedId: postId,
+      });
+    }
+  } catch (err) {
+    appAlert(err);
+    setList(pre => {
+      return pre.map(item => {
+        if (item?.id !== postId) {
+          return item;
+        }
+        return {
+          ...item,
+          is_liked: isLiked,
+          total_likes: currentTotalLikes,
+        };
+      });
+    });
+  }
+};
+
+export const isDict = (v: any) =>
+  typeof v === 'object' &&
+  v !== null &&
+  !(v instanceof Array) &&
+  !(v instanceof Date);
+
+export const detectFromStyle = (style: any, keySearch: string) => {
+  let res: number | null | string = null;
+
+  if (style instanceof Array) {
+    const testStyle = [...style];
+    testStyle.reverse();
+    testStyle.every(element => {
+      const width = detectFromStyle(element, keySearch);
+      if (width !== null) {
+        res = width;
+        return false;
+      }
+      return true;
+    });
+  } else if (isDict(style)) {
+    for (const [key, value] of Object.entries(style as object)) {
+      if (key === keySearch) {
+        res = value;
+        break;
+      }
+    }
+  }
+
+  return res;
 };

@@ -1,9 +1,8 @@
 /* eslint-disable no-shadow */
-import {ImageSourcePropType, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {moderateScale} from 'utility/scale';
+import {moderateScale, scale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
-import Config from './env';
 import Images from './img/images';
 
 export const standValue = {
@@ -77,8 +76,8 @@ export const REPORT_REASONS = [
 export const DELAY_LONG_PRESS = 150;
 
 export const DYNAMIC_LINK_SHARE = 'https://doffy.page.link';
-export const DYNAMIC_LINK_IOS = Config.IOS_APP_ID;
-export const DYNAMIC_LINK_ANDROID = Config.ANDROID_APP_ID;
+export const DYNAMIC_LINK_IOS = '';
+export const DYNAMIC_LINK_ANDROID = '';
 
 export const ANDROID_APP_LINK =
   'https://play.google.com/store/apps/details?id=com.doffy.android.production';
@@ -195,6 +194,7 @@ export const FONT_SIZE = {
 export const BORDER_RADIUS = {
   f2: moderateScale(16),
   f3: moderateScale(12),
+  f4: moderateScale(8),
 };
 
 export const LINE_HEIGHT = {
@@ -203,6 +203,8 @@ export const LINE_HEIGHT = {
     android: '17@ms',
   }),
 };
+
+export const HORIZONTAL_PADDING = scale(12);
 
 export const ratioImageGroupBuying = 1; // height / width
 export const ratioImageTour = 180 / 200;

@@ -25,7 +25,15 @@ if [ ./react-native-video-controls/assets/img/no_volume@3x.png ]; then
 fi
 
 if [ ./react-native-size-matters/scaling-utils.js ]; then
-  cp ./react-native-size-matters/scaling-utils.js ../node_modules/./react-native-size-matters/lib/scaling-utils.js
+  cp ./react-native-size-matters/scaling-utils.js ../node_modules/react-native-size-matters/lib/scaling-utils.js
+fi
+
+# React-native-tab-view
+if [ ./react-native-tab-view ]; then
+    cp ./react-native-tab-view/lib/typescript/src/TabView.d.ts ../node_modules/react-native-tab-view/lib/typescript/src/TabView.d.ts;
+    cp ./react-native-tab-view/src/PageViewAdapter.tsx ../node_modules/react-native-tab-view/src/PageViewAdapter.tsx;
+    cp ./react-native-tab-view/src/PanResponderAdapter.tsx ../node_modules/react-native-tab-view/src/PanResponderAdapter.tsx;
+    cp ./react-native-tab-view/src/TabView.tsx ../node_modules/react-native-tab-view/src/TabView.tsx;
 fi
 
 
