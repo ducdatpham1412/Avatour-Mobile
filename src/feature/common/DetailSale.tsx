@@ -6,8 +6,9 @@ import {AppModalize} from 'components';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {IconLiked, IconNotLiked, ScrollSyncSizeImage} from 'components/common';
 import {useTheme} from 'hook';
-import {goBack, navigate} from 'navigation/NavigationService';
+import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
+import {ModalActionSheet} from 'navigation/screen/modals';
 import React, {ElementRef, ReactNode, useRef} from 'react';
 import {
   ImageSourcePropType,
@@ -22,12 +23,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {I18Normalize} from 'utility/I18Next';
+import {renderPersonalJoinsFromGroups} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
-import {ModalActionSheet} from 'navigation/screen/modals';
-import {renderPersonalJoinsFromGroups} from 'utility/assistant';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -223,6 +223,28 @@ const DetailSale = ({
 
     return (
       <View style={$informationView}>
+        {!!meJoins?.length && (
+          <View style={$meJoinView}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {meJoins.map(join => {
+                return (
+                  <ItemMeJoin
+                    item={join}
+                    key={join?.id}
+                    onPress={() => {
+                      push(ROOT_SCREEN.detailMeJoin, {
+                        saleId: join.sale_id,
+                        itemJoin: join,
+                        mode: 'see-detail-from-sale',
+                      });
+                    }}
+                  />
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
+
         <LinearGradient
           colors={[theme.p_800, theme.p_600]}
           style={$interactView}>
@@ -241,7 +263,7 @@ const DetailSale = ({
           </StyleTouchable>
         </LinearGradient>
 
-        {!!listPersonalJoins.length && (
+        {!!data?.total_members && (
           <>
             <StyleText
               i18Text="discovery.numberGroupJoined"
@@ -253,28 +275,18 @@ const DetailSale = ({
             <StyleTouchable
               customStyle={$listPeopleView}
               onPress={() => modalJoinedRef.current?.show()}>
-              {listPersonalJoins.map((member, index) => {
+              {listPersonalJoins.map(member => {
                 return (
                   <StyleIcon
-                    key={index}
+                    key={member.id}
                     source={{uri: member?.creator_avatar}}
-                    size={40}
-                    customStyle={[$avatarJoin, {left: -index * 10}]}
+                    size={30}
+                    customStyle={$avatarJoin}
                   />
                 );
               })}
             </StyleTouchable>
           </>
-        )}
-
-        {!!meJoins?.length && (
-          <View style={$meJoinView}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {meJoins.map(join => {
-                return <ItemMeJoin item={join} key={join?.id} />;
-              })}
-            </ScrollView>
-          </View>
         )}
 
         <View style={[$divider, {backgroundColor: theme.gray_200}]} />
@@ -387,7 +399,8 @@ const DetailSale = ({
         onConfirm={value => {
           if (data) {
             navigate(ROOT_SCREEN.detailMeJoin, {
-              itemJoin: {
+              saleId: data?.id,
+              itemJoinRequest: {
                 ...value,
                 saleId: data?.id,
               },
@@ -510,7 +523,7 @@ const $listPeopleView: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(4),
 };
 const $avatarJoin: ImageStyle = {
   borderRadius: 50,

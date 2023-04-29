@@ -19,7 +19,7 @@ interface IconTabBarProps {
 const IconTabBar = ({icon, title}: IconTabBarProps) => {
   return (
     <>
-      <StyleIcon source={icon} size={20} />
+      <StyleIcon source={icon} size={15} />
       <StyleText i18Text={title} customStyle={$title} />
     </>
   );

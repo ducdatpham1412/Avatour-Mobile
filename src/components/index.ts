@@ -1,4 +1,5 @@
 export {default as BoxInformation} from './BoxInformation';
+export {default as BoxView} from './BoxView';
 export {default as ItemSale} from './ItemSale';
 export {default as ItemTour} from './ItemTour';
 export {default as StyleTabView} from './StyleTabView';

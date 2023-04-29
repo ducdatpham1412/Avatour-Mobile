@@ -345,3 +345,7 @@ export enum TYPE_SALE_SEARCH {
   review = 3,
   list = 4,
 }
+
+export enum APP_EVENT {
+  requestBoughtJoin = 'request-bought-join',
+}

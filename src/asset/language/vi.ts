@@ -246,6 +246,9 @@ const discovery = {
   groupDay: 'Nhóm ngày {{value}}',
   confirmJoining: 'Xác nhận tham gia mua chung',
   buyingHistory: 'Lịch sử mua chung',
+  arrivalTimePassed: 'Đã quá thời gian đến.\n',
+  please: 'Bạn vui lòng ',
+  confirmJoinSuccess: ' để xác nhận tham gia thành công nha.',
 };
 
 // REPUTATION
@@ -367,6 +370,7 @@ const profile = {
   sendRequestChangePrice: 'Yêu cầu thay đổi giá',
   updateBankAccount: 'Tài khoản nhận tiền',
   postGroupBuying: 'Tạo đơn',
+  confirmWithVendor: 'Xác nhận với người bán',
 };
 
 // MESS ROUTE

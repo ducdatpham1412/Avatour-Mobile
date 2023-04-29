@@ -243,6 +243,9 @@ const discovery = {
   groupDay: 'Group in {{value}}',
   confirmJoining: 'Confirm joining group buying',
   buyingHistory: 'Buying history',
+  arrivalTimePassed: 'The arrival time has passed.\n',
+  please: 'Please ',
+  confirmJoinSuccess: ' to confirm successful participation.',
 };
 
 // REPUTATION
@@ -393,6 +396,7 @@ const profile = {
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
   postGroupBuying: 'Create group buying',
+  confirmWithVendor: 'Confirm with vendor',
 };
 
 // SETTING ROUTE

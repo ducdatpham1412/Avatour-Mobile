@@ -1,16 +1,15 @@
-import {BORDER_RADIUS} from 'asset';
 import {useTheme} from 'hook';
 import React, {isValidElement} from 'react';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
-import {scale} from 'utility/scale';
+import {borderWidthTiny} from 'utility/assistant';
+import BoxView from './BoxView';
 import {StyleText} from './base';
+import {verticalScale} from 'utility/scale';
 
 type TypeInfoContent = {
   title: I18Normalize;
   content: string;
-  flexDirection?: 'row' | 'column';
 };
 
 interface Props {
@@ -22,13 +21,7 @@ const BoxInformation = ({listInformation, containerStyle}: Props) => {
   const theme = useTheme();
 
   return (
-    <View
-      style={[
-        $container,
-        $styleDropShadow,
-        {backgroundColor: theme.white, shadowColor: theme.gray_400},
-        containerStyle,
-      ]}>
+    <BoxView containerStyle={[$container, containerStyle]}>
       {listInformation.map((item, index) => {
         const isLatest = index === listInformation.length - 1;
         if (isValidElement(item)) {
@@ -56,25 +49,23 @@ const BoxInformation = ({listInformation, containerStyle}: Props) => {
           </View>
         );
       })}
-    </View>
+    </BoxView>
   );
 };
 
 const $container: ViewStyle = {
-  width: '100%',
-  borderRadius: BORDER_RADIUS.f2,
-  paddingHorizontal: scale(16),
+  paddingVertical: 0,
 };
 const $boxContainer: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  paddingVertical: 12,
+  paddingVertical: verticalScale(12),
 };
 const $boxContainerColumn: ViewStyle = {
   width: '100%',
-  paddingVertical: 12,
+  paddingVertical: verticalScale(12),
 };
 const $textTitle: TextStyle = {
   flex: 1,

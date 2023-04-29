@@ -1,12 +1,13 @@
 import {apiGetListGBJoined, apiGetListGbJoining} from 'api/profile';
+import {FONT_SIZE, HORIZONTAL_PADDING} from 'asset';
+import {APP_EVENT, GROUP_BUYING_STATUS} from 'asset/enum';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {StyleList, StyleText} from 'components/base';
-import {usePaging} from 'hook';
+import {useAppEvent, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
 import {ItemJoinProfile} from '../components';
-import {FONT_SIZE, HORIZONTAL_PADDING} from 'asset';
 
 const ListJoiningAndJoined = () => {
   const dataJoining = usePaging<TypeMeJoinResponse>({
@@ -16,6 +17,20 @@ const ListJoiningAndJoined = () => {
     usePaging({
       request: apiGetListGBJoined,
     });
+
+  useAppEvent(APP_EVENT.requestBoughtJoin, data => {
+    dataJoining.setList(pre => {
+      return pre.map(join => {
+        if (join.id !== data?.joinId) {
+          return join;
+        }
+        return {
+          ...join,
+          status: GROUP_BUYING_STATUS.requestBought,
+        };
+      });
+    });
+  });
 
   const renderItemJoin = useCallback((item: TypeMeJoinResponse) => {
     return (

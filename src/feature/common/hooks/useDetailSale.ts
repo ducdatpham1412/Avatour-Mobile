@@ -1,9 +1,9 @@
 import {apiJoinSale} from 'api/discovery';
-import {apiLikePost, apiUnLikePost} from 'api/profile';
+import {apiLikePost, apiRequestBought, apiUnLikePost} from 'api/profile';
 import {useAppSelector} from 'app-redux/store';
-import {GROUP_BUYING_STATUS, REACT} from 'asset/enum';
+import {APP_EVENT, GROUP_BUYING_STATUS, REACT} from 'asset/enum';
 import dayjs from 'dayjs';
-import {useApiImmutable} from 'hook';
+import {useApiImmutable, useAppEvent} from 'hook';
 import {appAlert} from 'navigation/NavigationService';
 import {useEffect, useState} from 'react';
 import {formatUTCDate, getDateTimeNow} from 'utility/format';
@@ -29,6 +29,7 @@ const useDetailSale = ({saleId, sale}: Params) => {
   const dataMeJoined = useApiImmutable<TypeMeJoinResponse[]>({
     path: `/profile/sales/join/${saleId ?? sale?.id}`,
   });
+  const appEvent = useAppEvent(APP_EVENT.requestBoughtJoin);
   const [loadingJoin, setLoadingJoin] = useState(false);
 
   useEffect(() => {
@@ -89,6 +90,12 @@ const useDetailSale = ({saleId, sale}: Params) => {
               note: params.note,
               created: formatUTCDate(dayjs()),
               status: GROUP_BUYING_STATUS.notBought,
+              sale: {
+                images: data?.images,
+                creator: data?.creator,
+                name: data?.creator_name,
+                avatar: data?.creator_avatar,
+              },
             }),
           {revalidate: false},
         );
@@ -136,6 +143,39 @@ const useDetailSale = ({saleId, sale}: Params) => {
     }
   };
 
+  const onRequestBought = async (joinId: number) => {
+    if (data) {
+      try {
+        setLoadingJoin(true);
+        await apiRequestBought({
+          list_joins_id: [joinId],
+        });
+        await dataMeJoined.mutate(
+          pre => {
+            if (pre) {
+              return pre.map(join => {
+                if (join.id !== joinId) {
+                  return join;
+                }
+                return {
+                  ...join,
+                  status: GROUP_BUYING_STATUS.requestBought,
+                };
+              });
+            }
+            return undefined;
+          },
+          {revalidate: false},
+        );
+        appEvent.emit({joinId});
+      } catch (err) {
+        appAlert(err);
+      } finally {
+        setLoadingJoin(false);
+      }
+    }
+  };
+
   return [
     {
       data,
@@ -143,7 +183,7 @@ const useDetailSale = ({saleId, sale}: Params) => {
       loading: loading || dataMeJoined?.loading,
       loadingJoin,
     },
-    {onRefresh, onReaction, onJoin},
+    {onRefresh, onReaction, onJoin, onRequestBought},
   ] as const;
 };
 
