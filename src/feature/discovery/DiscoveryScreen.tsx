@@ -51,7 +51,9 @@ const DiscoveryScreen = () => {
             $buttonSearch,
             {backgroundColor: theme.white, borderColor: theme.gray_300},
           ]}
-          onPress={() => navigate(DISCOVERY_ROUTE.searchScreen)}>
+          onPress={() => {
+            navigate(DISCOVERY_ROUTE.searchScreen);
+          }}>
           <AntDesign
             name="search1"
             style={[$iconSearch, {color: theme.gray_500}]}

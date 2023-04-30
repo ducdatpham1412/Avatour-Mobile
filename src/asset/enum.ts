@@ -349,3 +349,12 @@ export enum TYPE_SALE_SEARCH {
 export enum APP_EVENT {
   requestBoughtJoin = 'request-bought-join',
 }
+
+export enum TYPE_AUTH_REQUEST {
+  lock_account = 0,
+  delete_account = 1,
+  upgrade_to_shop = 2,
+  update_price = 3,
+  delete_gb = 4,
+  update_bank = 5,
+}

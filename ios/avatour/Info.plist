@@ -37,6 +37,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera permission</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Microphone permission</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location permission</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

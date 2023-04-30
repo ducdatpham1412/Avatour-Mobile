@@ -6,4 +6,5 @@ export {default as InputBox} from './InputBox';
 export {default as InputSearch} from './InputSearch';
 export {default as LeftIcon} from './LeftIcon';
 export {default as RightIcon} from './RightIcon';
+export {default as ScaleView} from './ScaleView';
 export {default as ScrollSyncSizeImage} from './ScrollSyncSizeImage';

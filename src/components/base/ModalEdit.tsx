@@ -2,10 +2,12 @@ import {BORDER_RADIUS} from 'asset';
 import ButtonX from 'components/common/ButtonX';
 import {useTheme} from 'hook';
 import React, {
+  ElementRef,
   ForwardedRef,
   forwardRef,
   ReactNode,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 import {Modal, TextStyle, View, ViewStyle} from 'react-native';
@@ -13,6 +15,7 @@ import {I18Normalize} from 'utility/I18Next';
 import {scale, verticalScale} from 'utility/scale';
 import StyleButton from './StyleButton';
 import StyleText from './StyleText';
+import {ScaleView} from 'components/common';
 
 interface Props {
   children?: ReactNode;
@@ -35,12 +38,15 @@ const ModalEdit = (
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const theme = useTheme();
+  const scaleRef = useRef<ElementRef<typeof ScaleView>>(null);
   const [visible, setVisible] = useState(false);
 
   useImperativeHandle(
     ref,
     () => ({
-      show: () => setVisible(true),
+      show: () => {
+        setVisible(true);
+      },
       hide: () => setVisible(false),
     }),
     [],
@@ -49,11 +55,22 @@ const ModalEdit = (
   return (
     <Modal
       visible={visible}
-      onDismiss={() => setVisible(false)}
+      onDismiss={() => {
+        setVisible(false);
+      }}
       transparent
-      animationType="slide">
-      <View style={[$container, {backgroundColor: theme.black_opacity(0.2)}]}>
-        <View style={[$body, {backgroundColor: theme.white}]}>
+      animationType="fade">
+      <View
+        style={[
+          $container,
+          {
+            backgroundColor: theme.black_opacity(0.4),
+          },
+        ]}
+        onLayout={() => scaleRef.current?.zoomOut()}>
+        <ScaleView
+          ref={scaleRef}
+          style={[$body, {backgroundColor: theme.white}]}>
           <ButtonX
             onPress={() => {
               setVisible(false);
@@ -71,7 +88,7 @@ const ModalEdit = (
             isLoading={loading}
             disable={disable}
           />
-        </View>
+        </ScaleView>
       </View>
     </Modal>
   );
@@ -81,7 +98,6 @@ const $container: ViewStyle = {
   width: '100%',
   height: '100%',
   alignItems: 'center',
-  justifyContent: 'center',
 };
 const $body: ViewStyle = {
   width: '90%',
@@ -90,6 +106,7 @@ const $body: ViewStyle = {
   borderRadius: BORDER_RADIUS.f3,
   alignItems: 'center',
   paddingHorizontal: scale(16),
+  marginTop: verticalScale(200),
 };
 const $title: TextStyle = {
   fontWeight: 'bold',

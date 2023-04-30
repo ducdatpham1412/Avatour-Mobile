@@ -1,3 +1,4 @@
+import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import request from './request';
 
 export const apiUpgradeAccount = (body: TypeUpgradeAccount) => {
@@ -56,12 +57,62 @@ export const apiGetIdEnjoyMode = () => {
 };
 
 export const apiLockAccount = () => {
-  return request.put('/auth/lock-account');
+  return request.put(
+    '/auth/request',
+    {},
+    {
+      params: {
+        type: TYPE_AUTH_REQUEST.lock_account,
+      },
+    },
+  );
 };
 
 export const apiOpenAccount = (params: TypeOpenAccountRequest) => {
-  return request.put('/auth/open-account', params);
+  return request.get('/auth/request', {
+    params: {
+      username: params.username,
+      code: params.code,
+    },
+  });
 };
 export const apiRequestDeleteAccount = () => {
-  return request.put('auth/delete-account');
+  return request.put(
+    'auth/request',
+    {},
+    {
+      params: {
+        type: TYPE_AUTH_REQUEST.delete_account,
+      },
+    },
+  );
+};
+
+export const apiUpdateBankAccount = (params: TypeUpdateBankAccount) => {
+  return request.put(
+    'auth/request',
+    {
+      bank_code: params.bank_code,
+      bank_account: params.bank_account,
+    },
+    {
+      params: {
+        type: TYPE_AUTH_REQUEST.update_bank,
+      },
+    },
+  );
+};
+
+export const apiGetUpdateBank = (): Promise<
+  TemplateApiResponse<TypeGetRequestResponse<TypeUpdateBankAccount> | null>
+> => {
+  return request.post(
+    'auth/request',
+    {},
+    {
+      params: {
+        type: TYPE_AUTH_REQUEST.update_bank,
+      },
+    },
+  );
 };

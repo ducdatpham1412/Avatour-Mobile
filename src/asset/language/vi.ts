@@ -29,6 +29,7 @@ const common = {
   change: 'Thay đổi',
   confirm: 'Xác nhận',
   ok: 'Ok',
+  alert: 'Thông báo',
 };
 
 const login = {
@@ -371,6 +372,7 @@ const profile = {
   updateBankAccount: 'Tài khoản nhận tiền',
   postGroupBuying: 'Tạo đơn',
   confirmWithVendor: 'Xác nhận với người bán',
+  havingRequestUpdate: 'Bạn đang có một yêu cầu cập nhật',
 };
 
 // MESS ROUTE
@@ -526,6 +528,8 @@ const alert = {
     'Chúng tôi sẽ xét duyệt yêu cầu thay đổi giá của bạn trong vòng 24h.\nNgoài ra, để đảm bảo quyền lợi của những người đã đặt cọc với giá cũ, mọi người cũng có thể xem lịch sửa chỉnh sửa giá của bạn.',
   sureUpdateBankAccount:
     'Bạn chắc chắn muốn cập nhật tài khoản ngân hàng của mình?',
+  requestUpdateBankSuccess:
+    'Gửi yêu cầu cập nhật tài khoản nhận tiền thành công\nChúng tôi sẽ xem xét và phản hồi lại bạn trong thời gian 1 ngày',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',
