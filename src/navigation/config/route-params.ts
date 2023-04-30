@@ -10,6 +10,7 @@ import ROOT_SCREEN, {
   REPUTATION_ROUTE,
   SETTING_ROUTE,
 } from './routes';
+import {APP_EVENT} from 'asset/enum';
 
 export type AllRoutes =
   | ROOT_SCREEN
@@ -162,8 +163,16 @@ export type AppParamsList = {
     sale?: TypeGroupBuying;
   };
   [ROOT_SCREEN.detailMeJoin]: {
-    itemJoin: TypeJoinRequest;
-    mode: 'confirm-join' | 'see-detail';
+    saleId: number;
+    itemJoinRequest?: TypeJoinRequest;
+    itemJoin?: TypeMeJoinResponse;
+    mode: 'confirm-join' | 'see-detail' | 'see-detail-from-sale';
     onSuccess?: () => void;
+  };
+};
+
+export type AppEventList = {
+  [APP_EVENT.requestBoughtJoin]: {
+    joinId: number;
   };
 };

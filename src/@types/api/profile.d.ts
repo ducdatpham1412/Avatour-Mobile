@@ -66,3 +66,7 @@ interface TypeEditPostRequest {
   link?: string | null;
   isDraft?: boolean;
 }
+
+interface TypeRequestBought {
+  list_joins_id: number[];
+}

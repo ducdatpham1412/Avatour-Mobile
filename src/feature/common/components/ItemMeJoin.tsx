@@ -2,8 +2,6 @@ import {BORDER_RADIUS} from 'asset';
 import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
-import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo, useMemo} from 'react';
 import isEqual from 'react-fast-compare';
 import {TextStyle, ViewStyle} from 'react-native';
@@ -14,9 +12,10 @@ import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
   item: TypeMeJoinResponse;
+  onPress: () => void;
 }
 
-const ItemMeJoin = ({item}: Props) => {
+const ItemMeJoin = ({item, onPress}: Props) => {
   const theme = useTheme();
 
   const textAndColor = useMemo(() => {
@@ -52,12 +51,7 @@ const ItemMeJoin = ({item}: Props) => {
           backgroundColor: theme.gray_50,
         },
       ]}
-      onPress={() =>
-        navigate(ROOT_SCREEN.detailMeJoin, {
-          itemJoin: {...item, saleId: item.sale_id},
-          mode: 'see-detail',
-        })
-      }>
+      onPress={onPress}>
       <StyleText
         i18Text={textAndColor.text}
         customStyle={[$title, {color: textAndColor.color}]}

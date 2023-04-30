@@ -24,7 +24,10 @@ export const goBack = () => {
   }
 };
 
-export const push = (name: string, params?: {}) => {
+export const push = <T extends AllRoutes>(
+  name: T,
+  params?: T extends keyof AppParamsList ? AppParamsList[T] : undefined,
+) => {
   navigationRef.dispatch(StackActions.push(name, params));
 };
 

@@ -149,3 +149,9 @@ export const apiGetListFollow = ({params}: TypeParamsPaging) => {
     },
   });
 };
+
+export const apiRequestBought = (params: TypeRequestBought) => {
+  return request.post('/profile/sales/confirm', {
+    list_joins_id: params.list_joins_id,
+  });
+};

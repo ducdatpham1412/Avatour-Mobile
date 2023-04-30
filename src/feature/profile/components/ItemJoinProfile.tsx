@@ -1,4 +1,5 @@
 import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
+import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {
   StyleIcon,
   StyleImage,
@@ -10,7 +11,7 @@ import {navigate} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
-import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {borderWidthTiny, detectFromStyle} from 'utility/assistant';
 import {formatDDMMMMYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
@@ -41,7 +42,8 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
       ]}
       onPress={() =>
         navigate(ROOT_SCREEN.detailMeJoin, {
-          itemJoin: {...item, saleId: item?.sale_id},
+          saleId: item?.sale_id,
+          itemJoin: item,
           mode: 'see-detail',
         })
       }
@@ -87,10 +89,26 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
           originValue={formatMoney(item?.deposit)}
           customStyle={[
             $textInfo,
-            {color: theme.red, fontSize: fontSize.current},
+            {color: theme.blue, fontSize: fontSize.current},
           ]}
         />
       </View>
+
+      {item?.status === GROUP_BUYING_STATUS.requestBought && (
+        <View style={$informationView}>
+          <StyleText
+            i18Text="profile.waitingConfirm"
+            customStyle={[
+              $textTitle,
+              {
+                color: theme.red,
+                fontSize: fontSize.current,
+                fontWeight: 'bold',
+              },
+            ]}
+          />
+        </View>
+      )}
     </StyleTouchable>
   );
 };
