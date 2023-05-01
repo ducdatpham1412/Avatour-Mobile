@@ -37,10 +37,6 @@ const MyProfile = () => {
     return <ListSales userId={profile?.id} />;
   };
 
-  const renderFavorite = () => {
-    return <View />;
-  };
-
   const renderReview = () => {
     return <View />;
   };

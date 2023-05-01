@@ -101,6 +101,6 @@ const Theme = {
   },
 };
 
-export type TypeTheme = typeof Theme.darkTheme;
+export type TypeTheme = typeof Theme.newTheme;
 
 export default Theme;

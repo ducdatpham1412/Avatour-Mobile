@@ -30,6 +30,7 @@ const common = {
   error: 'Error',
   confirm: 'Confirm',
   ok: 'Ok',
+  alert: 'Alert',
 };
 
 const login = {
@@ -397,6 +398,7 @@ const profile = {
   updateBankAccount: 'Receiving account',
   postGroupBuying: 'Create group buying',
   confirmWithVendor: 'Confirm with vendor',
+  havingRequestUpdate: "You're having an update request",
 };
 
 // SETTING ROUTE
@@ -520,6 +522,8 @@ const alert = {
   ifUpdatePrice:
     'We will review your prices change request within 24 hours.\nAlso, to protect the interests of who have deposited at the old price, people can also view your prices edit schedule.',
   sureUpdateBankAccount: 'Are you sure want to update your bank account?',
+  requestUpdateBankSuccess:
+    'Request updating bank account successfully\nOur team will review and respond to you within 1 day',
 
   // PERMISSION
   permissionCamera: 'Access camera',

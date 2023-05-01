@@ -75,7 +75,7 @@ interface TypeResetPasswordResponse {
 
 interface TypeOpenAccountRequest {
   username: string;
-  verifyCode: any;
+  code: any;
 }
 
 interface TypeUpgradeAccount {
@@ -83,4 +83,17 @@ interface TypeUpgradeAccount {
   phone: string;
   bankCode: string;
   bankAccount: string;
+}
+
+interface TypeUpdateBankAccount {
+  bank_code: string;
+  bank_account: string;
+}
+
+interface TypeGetRequestResponse<T> {
+  id: number;
+  type: number;
+  created: string;
+  expired: string;
+  data: T;
 }

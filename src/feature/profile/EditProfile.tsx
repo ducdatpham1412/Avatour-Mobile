@@ -1,50 +1,45 @@
 import {apiEditProfile} from 'api/profile';
 import {updatePassport} from 'app-redux';
-import FindmeStore, {useAppSelector} from 'app-redux/store';
+import Store, {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
-import {AVATAR_SIZE, FONT_SIZE} from 'asset/standardValue';
+import {safePaddingNotZero} from 'asset/metrics';
+import {AVATAR_SIZE} from 'asset/standardValue';
 import {
-  SafeView,
+  AppInput,
   StyleButton,
   StyleContainer,
   StyleImage,
-  StyleInput,
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import StyleActionSheet from 'components/common/StyleActionSheet';
 import {useLoading, useTheme} from 'hook';
-import StyleHeader from 'navigation/components/StyleHeader';
-import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {appAlert, navigate} from 'navigation/NavigationService';
-import React, {useMemo, useRef, useState} from 'react';
+import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
+import {ModalActionSheet} from 'navigation/screen/modals';
+import React, {useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Platform, TextInput, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ImageStyle, TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {SharedElement} from 'react-navigation-shared-element';
+import ImageUploader from 'utility/ImageUploader';
 import {
   borderWidthTiny,
   chooseImageFromCamera,
   chooseImageFromLibrary,
   seeDetailImage,
 } from 'utility/assistant';
-import {I18Normalize} from 'utility/I18Next';
-import ImageUploader from 'utility/ImageUploader';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 import BtnPenEdit from './components/BtnPenEdit';
 
 const EditProfile = () => {
-  const {profile, setting} = useAppSelector(
-    state => state.accountSlice.passport,
-  );
+  const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
+  const {profile} = useAppSelector(state => state.accountSlice.passport);
   const {loading, setLoading} = useLoading();
   const {t} = useTranslation();
 
   const inputDescriptionRef = useRef<TextInput>(null);
-  const actionRef = useRef<any>(null);
-  const modalUpdateBank = useRef<any>(null);
 
   const [avatar, setAvatar] = useState(profile?.avatar);
   const [name, setName] = useState(profile?.name);
@@ -65,48 +60,11 @@ const EditProfile = () => {
       !name || (name === profile.name && description === profile.description);
   }
 
-  const listTextAndOption: Array<{
-    text: I18Normalize;
-    action(): void;
-  }> = useMemo(() => {
-    return [
-      {
-        text: 'common.chooseFromCamera',
-        action: async () =>
-          chooseImageFromCamera((path: string) => setAvatar(path), {
-            maxWidth: AVATAR_SIZE.width,
-            maxHeight: AVATAR_SIZE.height,
-          }),
-      },
-      {
-        text: 'common.chooseFromLibrary',
-        action: async () =>
-          chooseImageFromLibrary(
-            (path: string) => {
-              setAvatar(path);
-            },
-            {
-              maxWidth: AVATAR_SIZE.width,
-              maxHeight: AVATAR_SIZE.height,
-            },
-          ),
-      },
-      {
-        text: 'profile.removeAvatar',
-        action: () => setAvatar(''),
-      },
-      {
-        text: 'common.cancel',
-        action: () => null,
-      },
-    ];
-  }, []);
-
   const onSaveChange = async () => {
     try {
       setLoading(true);
-      const {modeExp} = FindmeStore.getState().accountSlice;
-      const {token} = FindmeStore.getState().logicSlice;
+      const {modeExp} = Store.getState().accountSlice;
+      const {token} = Store.getState().logicSlice;
 
       if (!modeExp && token) {
         let newAvatar;
@@ -146,18 +104,61 @@ const EditProfile = () => {
     }
   };
 
-  return (
-    <SafeView>
-      <StyleHeader title="profile.component.infoProfile.editProfile" />
+  const onShowOptionAvatar = () => {
+    ModalActionSheet.show({
+      options: [
+        {
+          title: 'common.chooseFromCamera',
+          onPress: () =>
+            chooseImageFromCamera((path: string) => setAvatar(path), {
+              maxWidth: AVATAR_SIZE.width,
+              maxHeight: AVATAR_SIZE.height,
+            }),
+        },
+        {
+          title: 'common.chooseFromLibrary',
+          onPress: () =>
+            chooseImageFromLibrary(
+              (path: string) => {
+                setAvatar(path);
+              },
+              {
+                maxWidth: AVATAR_SIZE.width,
+                maxHeight: AVATAR_SIZE.height,
+              },
+            ),
+        },
+        {
+          title: 'profile.removeAvatar',
+          onPress: () => setAvatar(''),
+        },
+      ],
+    });
+  };
 
-      <StyleContainer scrollEnabled customStyle={styles.container}>
-        <View style={styles.avatarBox}>
+  return (
+    <>
+      <StyleContainer
+        scrollEnabled
+        customStyle={$container}
+        headerProps={{
+          title: 'profile.component.infoProfile.editProfile',
+        }}
+        BottomComponent={
+          <StyleButton
+            title="profile.edit.confirmButton"
+            containerStyle={{marginBottom: bottom || safePaddingNotZero}}
+            onPress={onSaveChange}
+            disable={disableButton}
+            isLoading={loading}
+          />
+        }>
+        <View style={$avatarBox}>
           <StyleTouchable
             customStyle={[
-              styles.avatar,
+              $avatar,
               {
-                borderColor: theme.borderColor,
-                backgroundColor: theme.backgroundColor,
+                borderColor: theme.gray_400,
               },
             ]}
             onPress={() => {
@@ -167,235 +168,159 @@ const EditProfile = () => {
                 });
               }
             }}
-            onLongPress={() => actionRef.current.show()}>
-            <SharedElement id="avatar_share" style={styles.avatarImg}>
-              <StyleImage
-                source={{uri: avatar}}
-                customStyle={styles.avatarImg}
-              />
-            </SharedElement>
+            onLongPress={onShowOptionAvatar}>
+            <StyleImage source={{uri: avatar}} customStyle={$avatarImg} />
           </StyleTouchable>
 
           <BtnPenEdit
-            btnStyle={styles.btnEditAvatar}
-            onPress={() => actionRef.current.show()}
-          />
-
-          <StyleActionSheet
-            ref={actionRef}
-            listTextAndAction={listTextAndOption}
+            containerStyle={$btnEditAvatar}
+            onPress={onShowOptionAvatar}
           />
         </View>
 
-        <View
-          style={[
-            styles.nameBox,
-            {borderColor: theme.borderColor, width: '70%'},
-          ]}>
+        <View style={[$nameBox, {backgroundColor: theme.white}]}>
           <AntDesign
             name="user"
-            style={[styles.iconLocation, {color: theme.borderColor}]}
+            style={[$iconLocation, {color: theme.gray_600}]}
           />
-          <TextInput
+          <AppInput
             defaultValue={name || ''}
             onChangeText={text => setName(text)}
             placeholder={t('profile.edit.name')}
-            placeholderTextColor={theme.holderColorLighter}
-            style={[styles.inputName, {color: theme.textHightLight}]}
+            style={$inputName}
             maxLength={100}
           />
         </View>
 
-        {isShopAccount && (
-          <View style={[styles.nameBox, {borderColor: theme.borderColor}]}>
+        {!isShopAccount && (
+          <View style={[$nameBox, {backgroundColor: theme.white}]}>
             <Ionicons
               name="location-outline"
-              style={[styles.iconLocation, {color: theme.borderColor}]}
+              style={[$iconLocation, {color: theme.gray_600}]}
             />
-            <TextInput
+            <AppInput
               defaultValue={location || ''}
               onChangeText={text => setLocation(text)}
               placeholder={t('profile.location')}
-              placeholderTextColor={theme.holderColorLighter}
-              style={[styles.inputName, {color: theme.textHightLight}]}
+              style={$inputName}
               maxLength={100}
             />
           </View>
         )}
 
         <StyleTouchable
-          customStyle={[
-            styles.descriptionBox,
-            {borderColor: theme.borderColor},
-          ]}
+          customStyle={[$descriptionBox, {backgroundColor: theme.white}]}
           activeOpacity={1}
           onPress={() => inputDescriptionRef.current?.focus()}>
-          <StyleInput
+          <AppInput
             ref={inputDescriptionRef}
             value={description}
-            i18Placeholder="profile.description"
+            placeholder={t('profile.description')}
             multiline
             onChangeText={value => setDescription(value)}
-            containerStyle={{width: '100%'}}
-            inputStyle={[
-              styles.inputDescription,
-              {color: theme.textHightLight},
-            ]}
-            hasUnderLine={false}
-            hasErrorBox={false}
+            style={$inputDescription}
             maxLength={1000}
           />
         </StyleTouchable>
 
-        {isShopAccount && (
+        {!isShopAccount && (
           <StyleTouchable
-            customStyle={[styles.bankBox, {borderColor: theme.borderColor}]}
-            activeOpacity={1}
-            onPress={() => modalUpdateBank.current?.show()}>
-            <StyleText
-              i18Text="profile.bankName"
-              customStyle={[
-                styles.textBankName,
-                {color: theme.textHightLight},
-              ]}>
+            customStyle={[$bankBox, {backgroundColor: theme.white}]}
+            onPress={() =>
+              ModalActionSheet.show({
+                options: [
+                  {
+                    title: 'profile.post.edit',
+                    onPress: () => navigate(ROOT_SCREEN.updateBankAccount),
+                  },
+                ],
+              })
+            }>
+            <StyleText i18Text="profile.bankName">
+              <StyleText originValue=": " />
               <StyleText
-                originValue={`: ${setting.bank_code}`}
-                customStyle={[
-                  styles.textBankName,
-                  {color: theme.textHightLight},
-                ]}
+                originValue={`${profile?.information?.bank_code || '34232'}`}
+                customStyle={$textBank}
               />
             </StyleText>
-            <StyleText
-              i18Text="profile.accountNumber"
-              customStyle={[
-                styles.textBankName,
-                {color: theme.textHightLight},
-              ]}>
+            <StyleText i18Text="profile.accountNumber">
+              <StyleText originValue=": " />
               <StyleText
-                originValue={`: ${setting.bank_account}`}
-                customStyle={[
-                  styles.textBankName,
-                  {color: theme.textHightLight},
-                ]}
+                originValue={`${profile?.information?.bank_code}`}
+                customStyle={$textBank}
               />
             </StyleText>
           </StyleTouchable>
         )}
-
-        <StyleButton
-          title="profile.edit.confirmButton"
-          containerStyle={styles.saveBtnView}
-          onPress={onSaveChange}
-          disable={disableButton}
-          isLoading={loading}
-        />
       </StyleContainer>
-
-      <StyleActionSheet
-        ref={modalUpdateBank}
-        listTextAndAction={[
-          {
-            text: 'profile.post.edit',
-            action: () => navigate(ROOT_SCREEN.updateBankAccount),
-          },
-          {
-            text: 'common.cancel',
-            action: () => null,
-          },
-        ]}
-      />
-    </SafeView>
+    </>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  // avatar
-  avatarBox: {
-    width: '200@s',
-    height: '200@s',
-    marginTop: '10@vs',
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
-    borderWidth: '2@ms',
-    borderRadius: '200@s',
-  },
-  avatarImg: {
-    width: '100%',
-    height: '100%',
-    borderRadius: '100@vs',
-  },
-  btnEditAvatar: {
-    width: '27@ms',
-    height: '27@ms',
-    bottom: '10@s',
-    left: '20@s',
-  },
-  // name
-  nameBox: {
-    width: '80%',
-    alignSelf: 'center',
-    borderWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: '5@s',
-    borderRadius: '5@ms',
-    marginTop: '10@vs',
-  },
-  inputName: {
-    flex: 1,
-    fontSize: FONT_SIZE.normal,
-    paddingTop: '10@vs',
-    paddingBottom: '10@vs',
-    marginLeft: '5@s',
-  },
-  iconNameBox: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconLocation: {
-    fontSize: '20@ms',
-  },
-  // description
-  descriptionBox: {
-    width: '80%',
-    minHeight: '100@vs',
-    paddingBottom: '10@vs',
-    paddingTop: '5@vs',
-    borderWidth: borderWidthTiny,
-    borderColor: 'white',
-    borderRadius: '5@ms',
-    marginTop: '10@vs',
-  },
-  inputDescription: {
-    fontSize: FONT_SIZE.normal,
-  },
-  bankBox: {
-    width: '80%',
-    borderWidth: borderWidthTiny,
-    paddingVertical: '5@vs',
-    marginTop: '10@vs',
-    borderRadius: '5@ms',
-    paddingHorizontal: '10@s',
-  },
-  textBankName: {
-    fontSize: FONT_SIZE.normal,
-  },
-  // btnSave
-  saveBtnView: {
-    paddingHorizontal: '60@s',
-    marginTop: '40@vs',
-    marginBottom: '10@vs',
-  },
-});
+const $container: ViewStyle = {
+  alignItems: 'center',
+};
+const $avatarBox: ViewStyle = {
+  width: moderateScale(150),
+  height: moderateScale(150),
+  marginTop: verticalScale(10),
+};
+const $avatar: ImageStyle = {
+  width: '100%',
+  height: '100%',
+  borderWidth: borderWidthTiny,
+  borderRadius: 150,
+};
+const $avatarImg: ImageStyle = {
+  width: '100%',
+  height: '100%',
+  borderRadius: 100,
+};
+const $btnEditAvatar: ViewStyle = {
+  width: moderateScale(27),
+  height: moderateScale(27),
+  bottom: scale(10),
+  left: scale(10),
+};
+const $nameBox: ViewStyle = {
+  width: '90%',
+  alignSelf: 'center',
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: scale(5),
+  borderRadius: moderateScale(5),
+  marginTop: verticalScale(10),
+};
+const $inputName: TextStyle = {
+  flex: 1,
+  paddingTop: verticalScale(10),
+  paddingBottom: verticalScale(10),
+  marginLeft: scale(5),
+};
+const $iconLocation: TextStyle = {
+  fontSize: moderateScale(20),
+};
+const $descriptionBox: ViewStyle = {
+  width: '90%',
+  borderRadius: moderateScale(5),
+  marginTop: verticalScale(10),
+  paddingVertical: verticalScale(10),
+};
+const $inputDescription: ViewStyle = {
+  width: '100%',
+  padding: scale(10),
+  minHeight: verticalScale(100),
+  maxHeight: verticalScale(200),
+};
+const $bankBox: ViewStyle = {
+  width: '90%',
+  paddingVertical: verticalScale(5),
+  marginTop: verticalScale(10),
+  borderRadius: moderateScale(5),
+  paddingHorizontal: scale(10),
+};
+const $textBank: TextStyle = {
+  fontWeight: 'bold',
+};
 
 export default EditProfile;
