@@ -4,7 +4,7 @@ import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleText, StyleTouchable} from 'components/base';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -38,7 +38,9 @@ const UpdatePriceStatus = (props: Props) => {
         },
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }

@@ -8,7 +8,7 @@ import {
 } from 'components/base';
 import Redux from 'hook/useRedux';
 import StyleHeader from 'navigation/components/StyleHeader';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -22,7 +22,9 @@ const ConfirmLockAccount = () => {
       await apiLockAccount();
       await AuthenticateService.logOut({hadRefreshTokenBlacked: false});
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

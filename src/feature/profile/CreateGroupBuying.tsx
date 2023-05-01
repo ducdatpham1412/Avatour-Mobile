@@ -4,6 +4,8 @@ import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
+import LoadingScreen from 'components/LoadingScreen';
+import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import {
   StyleContainer,
   StyleIcon,
@@ -11,18 +13,12 @@ import {
   StyleTouchable,
 } from 'components/base';
 import ScrollSyncSizeImage from 'components/common/ScrollSyncSizeImage';
-import LoadingScreen from 'components/LoadingScreen';
-import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import UpdatePriceStatus from 'feature/common/components/UpdatePriceStatus';
 import Redux from 'hook/useRedux';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
-import {
-  appAlert,
-  appAlertYesNo,
-  goBack,
-  navigate,
-} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
@@ -32,14 +28,14 @@ import {Modalize} from 'react-native-modalize';
 import {ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {I18Normalize} from 'utility/I18Next';
+import ImageUploader from 'utility/ImageUploader';
 import {
   borderWidthTiny,
   chooseIconTopic,
   onGoToSignUp,
 } from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
-import {I18Normalize} from 'utility/I18Next';
-import ImageUploader from 'utility/ImageUploader';
 import AddInfoButton from './components/AddInfoButton';
 import PreviewVideo from './components/PreviewVideo';
 import ModalAddPrice from './post/ModalAddPrice';
@@ -162,15 +158,14 @@ const CreateGroupBuying = ({route}: Props) => {
           status: 'error',
           data: newGroupBuying,
         });
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     } else {
-      appAlert('discovery.bubble.goToSignUp', {
-        moreNotice: 'common.letGo',
-        moreAction: () => {
-          goBack();
-          onGoToSignUp();
-        },
+      ModalAlert.options({
+        i18Content: 'discovery.bubble.goToSignUp',
+        onContinue: onGoToSignUp,
       });
     }
   };
@@ -200,7 +195,9 @@ const CreateGroupBuying = ({route}: Props) => {
         });
         goBack();
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         Redux.setIsLoading(false);
       }
@@ -240,7 +237,9 @@ const CreateGroupBuying = ({route}: Props) => {
         });
         goBack();
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         Redux.setIsLoading(false);
       }
@@ -257,15 +256,9 @@ const CreateGroupBuying = ({route}: Props) => {
       postStatus: initValue.postStatus,
     };
     if (!isEqual(temp, initValue)) {
-      appAlertYesNo({
-        i18Title: 'common.wantToDiscard',
-        agreeText: 'common.discard',
-        refuseText: 'common.stay',
-        agreeChange: () => {
-          goBack();
-          goBack();
-        },
-        refuseChange: goBack,
+      ModalAlert.options({
+        i18Content: 'common.wantToDiscard',
+        onContinue: goBack,
       });
     } else {
       goBack();
@@ -291,7 +284,9 @@ const CreateGroupBuying = ({route}: Props) => {
           },
         });
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         Redux.setIsLoading(false);
       }

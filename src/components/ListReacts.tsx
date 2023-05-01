@@ -5,7 +5,7 @@ import {REACT, RELATIONSHIP} from 'asset/enum';
 import {Metrics} from 'asset/metrics';
 import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect} from 'react';
 import {Platform, ScrollView, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
@@ -33,7 +33,9 @@ const onFollowUser = async (params: {userId: number; setList: Function}) => {
       });
     });
   } catch (err) {
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
   }
 };
 

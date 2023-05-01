@@ -3,6 +3,8 @@ import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import AutoHeightImage from 'components/AutoHeightImage';
+import LoadingScreen from 'components/LoadingScreen';
+import StyleKeyboardAwareView from 'components/StyleKeyboardAwareView';
 import {
   StyleButton,
   StyleImage,
@@ -11,10 +13,9 @@ import {
 } from 'components/base';
 import ButtonBack from 'components/common/ButtonBack';
 import InputBox from 'components/common/InputBox';
-import LoadingScreen from 'components/LoadingScreen';
-import StyleKeyboardAwareView from 'components/StyleKeyboardAwareView';
 import Redux from 'hook/useRedux';
-import {appAlert, goBack} from 'navigation/NavigationService';
+import {goBack} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {Platform, ScrollView, TextInput, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -28,14 +29,14 @@ const onConfirm = async (params: TypeUpgradeAccount) => {
   try {
     Redux.setIsLoading(true);
     await apiUpgradeAccount(params);
-    appAlert('profile.requestUpgradeSuccess', {
-      actionClickOk: () => {
-        goBack();
-        goBack();
-      },
+    ModalAlert.success({
+      i18Content: 'profile.requestUpgradeSuccess',
+      onClose: () => goBack(),
     });
   } catch (err) {
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
   } finally {
     Redux.setIsLoading(false);
   }

@@ -13,7 +13,8 @@ import {useTheme} from 'hook';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
-import {appAlert, goBack, popUpPicker} from 'navigation/NavigationService';
+import {goBack, popUpPicker} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useCallback, useRef, useState} from 'react';
 import {TextInput, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
@@ -75,14 +76,14 @@ const ReportUser = ({route}: Props) => {
           },
         });
 
-        appAlert('discovery.report.reportHadSent', {
-          actionClickOk: () => {
-            goBack();
-            goBack();
-          },
+        ModalAlert.notification({
+          i18Content: 'discovery.report.reportHadSent',
+          onClose: goBack,
         });
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     }
   };

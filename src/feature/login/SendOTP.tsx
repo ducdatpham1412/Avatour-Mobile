@@ -17,7 +17,8 @@ import {useLoading, useTheme} from 'hook';
 import useCountdown from 'hook/useCountdown';
 import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Keyboard, Text, TextInput, Vibration, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
@@ -27,7 +28,6 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {ScaledSheet} from 'react-native-size-matters';
-import {TypeItemLoginSuccess} from 'utility/login/loginService';
 
 const SendOTP = ({
   route: {params},
@@ -132,14 +132,17 @@ const SendOTP = ({
         setLoading(true);
         await apiOpenAccount({
           username: paramsOTP.username,
-          verifyCode: code,
+          code: code,
         });
-        appAlert('login.loginScreen.openAccountSuccess', {
-          actionClickOk: () => navigate(LOGIN_ROUTE.loginScreen),
+        ModalAlert.success({
+          i18Content: 'login.loginScreen.openAccountSuccess',
+          onClose: () => navigate(LOGIN_ROUTE.loginScreen),
         });
       } catch (err) {
         handleWrongOtp();
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         setLoading(false);
       }
@@ -155,7 +158,9 @@ const SendOTP = ({
       resetCountdown();
       await apiRequestOTP(paramsOTP);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       setLoading(false);
     }

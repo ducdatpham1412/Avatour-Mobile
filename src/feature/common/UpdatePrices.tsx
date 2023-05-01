@@ -16,7 +16,8 @@ import Redux from 'hook/useRedux';
 import {isEqual} from 'lodash';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {AppParamsList, PROFILE_ROUTE} from 'navigation/config';
-import {appAlert, goBack} from 'navigation/NavigationService';
+import {goBack} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -69,7 +70,9 @@ const UpdatePrices = ({route}: Props) => {
         },
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }

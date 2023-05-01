@@ -10,7 +10,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import {useLoading, useTheme} from 'hook';
-import {appAlert, goBack} from 'navigation/NavigationService';
+import {goBack} from 'navigation/NavigationService';
 import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
@@ -95,7 +95,9 @@ const UpdateBankAccount = () => {
             onClose: goBack,
           });
         } catch (err) {
-          appAlert(err);
+          ModalAlert.error({
+            content: err,
+          });
         } finally {
           setLoading(false);
         }

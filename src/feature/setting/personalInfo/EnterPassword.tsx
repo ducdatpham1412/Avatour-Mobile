@@ -7,7 +7,8 @@ import LoadingScreen from 'components/LoadingScreen';
 import Redux from 'hook/useRedux';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {SETTING_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {TextInput} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -38,7 +39,9 @@ const EnterPassword = ({route}: Props) => {
     const activeUser = await AsyncStorage.getActiveUser();
 
     if (activeUser.password !== password) {
-      appAlert('setting.personalInfo.passwordNotTrue');
+      ModalAlert.error({
+        i18Content: 'setting.personalInfo.passwordNotTrue',
+      });
       return;
     }
 
@@ -58,7 +61,9 @@ const EnterPassword = ({route}: Props) => {
           paramsOTP,
         });
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         Redux.setIsLoading(false);
       }
@@ -75,7 +80,9 @@ const EnterPassword = ({route}: Props) => {
         });
         navigate(SETTING_ROUTE.personalInformation);
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         Redux.setIsLoading(false);
       }

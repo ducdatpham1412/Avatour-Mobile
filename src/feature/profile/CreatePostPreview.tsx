@@ -5,18 +5,14 @@ import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {LIST_FEELINGS, LIST_TOPICS, NUMBER_STARS} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
+import LoadingScreen from 'components/LoadingScreen';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import ScrollSyncSizeImage from 'components/common/ScrollSyncSizeImage';
-import LoadingScreen from 'components/LoadingScreen';
 import Redux from 'hook/useRedux';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
-import {
-  appAlert,
-  appAlertYesNo,
-  goBack,
-  navigate,
-} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -35,8 +31,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {onGoToSignUp} from 'utility/assistant';
 import ImageUploader from 'utility/ImageUploader';
+import {onGoToSignUp} from 'utility/assistant';
 import ItemToolCreatePost from './components/ItemToolCreatePost';
 import PreviewVideo from './components/PreviewVideo';
 import ModalAddLink from './post/ModalAddLink';
@@ -210,15 +206,9 @@ const CreatePostPreview = ({
       location !== initValue.location ||
       itemError
     ) {
-      appAlertYesNo({
-        i18Title: 'common.wantToDiscard',
-        agreeText: 'common.discard',
-        refuseText: 'common.stay',
-        agreeChange: () => {
-          goBack();
-          goBack();
-        },
-        refuseChange: goBack,
+      ModalAlert.options({
+        i18Content: 'common.wantToDiscard',
+        onContinue: goBack,
       });
     } else {
       goBack();
@@ -311,15 +301,14 @@ const CreatePostPreview = ({
             userReviewed: initValue.userReviewed,
           },
         });
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     } else {
-      appAlert('discovery.bubble.goToSignUp', {
-        moreNotice: 'common.letGo',
-        moreAction: () => {
-          goBack();
-          onGoToSignUp();
-        },
+      ModalAlert.options({
+        i18Content: 'discovery.bubble.goToSignUp',
+        onContinue: onGoToSignUp,
       });
     }
   };
@@ -377,7 +366,9 @@ const CreatePostPreview = ({
         goBack();
       }
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }

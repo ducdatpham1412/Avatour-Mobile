@@ -23,17 +23,13 @@ import {
 } from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import Redux from 'hook/useRedux';
-import {
-  appAlert,
-  navigate,
-  push,
-  showSwipeImages,
-} from 'navigation/NavigationService';
+import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN, {
   LOGIN_ROUTE,
   PROFILE_ROUTE,
   SETTING_ROUTE,
 } from 'navigation/config/routes';
+import {ModalAlert} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction, useState} from 'react';
 import {
   DevSettings,
@@ -533,7 +529,9 @@ export const onReactSale = async (
       });
     }
   } catch (err) {
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
     setList(pre => {
       return pre.map(item => {
         if (item?.id !== postId) {

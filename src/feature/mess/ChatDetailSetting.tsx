@@ -9,9 +9,10 @@ import {CONVERSATION_STATUS, TYPE_COLOR} from 'asset/enum';
 import {Metrics} from 'asset/metrics';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import Redux from 'hook/useRedux';
+import {navigate} from 'navigation/NavigationService';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {AppParamsList, MESS_ROUTE, ROOT_SCREEN} from 'navigation/config';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useMemo, useRef, useState} from 'react';
 import {Platform, ScrollView, TextInput, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -97,7 +98,9 @@ const ChatDetailSetting = ({route}: Props) => {
         modalizeThemeRef.current?.close();
       }
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 
@@ -119,7 +122,9 @@ const ChatDetailSetting = ({route}: Props) => {
         });
       }
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 
@@ -139,7 +144,9 @@ const ChatDetailSetting = ({route}: Props) => {
         });
       }
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 
@@ -258,7 +265,9 @@ const ChatDetailSetting = ({route}: Props) => {
         });
         modalizeNameRef.current?.close();
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     };
 

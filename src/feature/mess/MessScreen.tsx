@@ -1,11 +1,13 @@
 import {apiGetDetailConversation} from 'api/conversation';
 import {TypeChatTagResponse} from 'api/interface';
+import {useAppSelector} from 'app-redux/store';
 import {StyleText, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import Redux from 'hook/useRedux';
 import {useSocketChatTagBubble} from 'hook/useSocketIO';
+import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {MESS_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {memo, useCallback, useEffect} from 'react';
 import {Platform, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -14,8 +16,8 @@ import {isTimeBefore} from 'utility/format';
 import ChatTag from './components/ChatTag';
 
 const RenderMessages = () => {
-  const chatTagFromNotification = Redux.getChatTagFromNotification();
-  const myId = Redux.getPassport().profile.id;
+  const {chatTagFromNotification} = useAppSelector(state => state.logicSlice);
+  const myId = useAppSelector(state => state.accountSlice.passport.profile.id);
 
   const {
     listChatTags,
@@ -49,7 +51,9 @@ const RenderMessages = () => {
           return [res.data].concat(preValue);
         });
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     }
   };
@@ -73,7 +77,9 @@ const RenderMessages = () => {
         setListChatTags,
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

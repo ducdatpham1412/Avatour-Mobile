@@ -3,7 +3,7 @@ import {apiFollowUser} from 'api/profile';
 import {RELATIONSHIP} from 'asset/enum';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -28,7 +28,9 @@ const ItemFollow = (props: Props) => {
       await apiFollowUser(item.id);
     } catch (err) {
       setHadNotFollow(true);
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

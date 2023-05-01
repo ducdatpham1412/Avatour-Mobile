@@ -1,10 +1,12 @@
 import {apiChangeLanguage} from 'api/setting';
+import {useAppSelector} from 'app-redux/store';
 import {LANGUAGE_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {StyleImage} from 'components/base';
+import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -13,9 +15,13 @@ import FindmeAsyncStorage from 'utility/asyncStore';
 import I18Next from 'utility/I18Next';
 
 const LanguageSetting = () => {
-  const theme = Redux.getTheme();
-  const language = Redux.getPassport().setting?.language;
-  const isModeExp = Redux.getModeExp();
+  const theme = useTheme();
+  const {
+    modeExp,
+    passport: {
+      profile: {language},
+    },
+  } = useAppSelector(state => state.accountSlice);
 
   const [isPicked, setIsPicked] = useState(language);
   const selectBorderColor = (lan: number) =>
@@ -23,7 +29,7 @@ const LanguageSetting = () => {
 
   const switchLanguage = async (newLanguage: number) => {
     try {
-      if (!isModeExp) {
+      if (!modeExp) {
         apiChangeLanguage(newLanguage);
       }
       I18Next.changeLanguage(chooseLanguageFromId(newLanguage));
@@ -32,9 +38,13 @@ const LanguageSetting = () => {
       await FindmeAsyncStorage.editLanguageModeExp(
         chooseLanguageFromId(newLanguage),
       );
-      appAlert('alert.successChange');
+      ModalAlert.success({
+        i18Content: 'alert.successChange',
+      });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

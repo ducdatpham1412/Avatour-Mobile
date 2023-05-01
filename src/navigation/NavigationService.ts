@@ -6,6 +6,7 @@ import ROOT_SCREEN from 'navigation/config/routes';
 import {ReactNode} from 'react';
 import {I18Normalize} from 'utility/I18Next';
 import {AllRoutes, AppParamsList} from './config';
+import {ModalAlert} from './screen/modals';
 
 export const navigationRef = createNavigationContainerRef();
 
@@ -55,16 +56,24 @@ interface TypeAlertYesOrNo {
 }
 
 export const appAlert = (notice: any, more?: TypeMoreChoiceAlert) => {
-  navigate(ROOT_SCREEN.alert, {
-    notice: notice as I18Normalize,
-    actionClickOk: more?.actionClickOk,
-    moreNotice: more?.moreNotice,
-    moreAction: more?.moreAction,
-  });
+  if (more?.moreNotice) {
+    ModalAlert.options({
+      content: String(notice),
+      onContinue: () => more?.moreAction?.(),
+    });
+  } else {
+    ModalAlert.notification({
+      content: String(notice),
+      onClose: () => more?.actionClickOk?.(),
+    });
+  }
 };
 
 export const appAlertYesNo = (params: TypeAlertYesOrNo) => {
-  navigate(ROOT_SCREEN.alertYesNo, params);
+  ModalAlert.options({
+    i18Content: params.i18Title,
+    onContinue: params.agreeChange,
+  });
 };
 
 export const showSwipeImages = (

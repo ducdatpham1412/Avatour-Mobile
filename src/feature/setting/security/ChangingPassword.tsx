@@ -3,7 +3,7 @@ import {apiChangePassword} from 'api/setting';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleButton, StyleInputForm} from 'components/base';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {memo, useEffect, useRef, useState} from 'react';
 import {FormProvider, useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -69,11 +69,17 @@ const ChangingPassword = ({isOpening}: Props) => {
   const confirmChangePassword = async () => {
     if (errors.nowPass || errors.newPass || errors.confirmPass) {
       if (errors.nowPass) {
-        appAlert(errors.nowPass.message);
+        ModalAlert.error({
+          content: errors.nowPass.message,
+        });
       } else if (errors.newPass) {
-        appAlert(errors.newPass.message);
+        ModalAlert.error({
+          content: errors.newPass.message,
+        });
       } else if (errors.confirmPass) {
-        appAlert(errors.confirmPass.message);
+        ModalAlert.error({
+          content: errors.confirmPass.message,
+        });
       }
       return;
     }
@@ -85,7 +91,9 @@ const ChangingPassword = ({isOpening}: Props) => {
       const confirmPassword = getValues('confirmPass');
 
       if (oldPassword !== password) {
-        appAlert('alert.nowPassError');
+        ModalAlert.error({
+          i18Content: 'alert.nowPassError',
+        });
         return;
       }
 
@@ -107,10 +115,13 @@ const ChangingPassword = ({isOpening}: Props) => {
         setValue('newPass', '');
         setValue('confirmPass', '');
       }
-
-      appAlert('alert.successChange');
+      ModalAlert.success({
+        i18Content: 'alert.successChange',
+      });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }

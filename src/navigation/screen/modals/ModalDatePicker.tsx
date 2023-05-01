@@ -13,7 +13,7 @@ import {
   CalendarDate,
   ValidRangeType,
 } from 'react-native-paper-dates/src/Date/Calendar';
-import {addDate, formatUTCDate} from 'utility/format';
+import {formatUTCDate} from 'utility/format';
 
 interface TypeParamsChange {
   date: CalendarDate;

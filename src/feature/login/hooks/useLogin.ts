@@ -6,7 +6,7 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 import {RootState, useAppSelector} from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import {useEffect, useRef, useState} from 'react';
 import AsyncStorage from 'utility/asyncStore';
 import AuthenticateService from 'utility/login/loginService';
@@ -85,7 +85,9 @@ const useLogin = () => {
         typeSocial: TYPE_SOCIAL_LOGIN.apple,
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       setLoading(false);
     }

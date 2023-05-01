@@ -10,7 +10,8 @@ import {
 import {InputBox} from 'components/common';
 import {useTheme} from 'hook';
 import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {Dispatch, SetStateAction, useRef, useState} from 'react';
 import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -34,7 +35,9 @@ const onSignUp = async (
       paramsOTP,
     });
   } catch (err) {
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
   } finally {
     setLoading(false);
   }

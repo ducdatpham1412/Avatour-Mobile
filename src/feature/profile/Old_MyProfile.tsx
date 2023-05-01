@@ -3,8 +3,8 @@ import {
   apiGetListGBJoined,
   apiGetListGbJoining,
   apiGetListGroupBuying,
-  apiGetListSalesLiked,
   apiGetListReviewAboutUser,
+  apiGetListSalesLiked,
   apiGetProfile,
   apiLikePost,
   apiUnLikePost,
@@ -13,13 +13,13 @@ import {ACCOUNT, POST_TYPE, REACT, TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
+import ModalCommentLike from 'components/ModalCommentLike';
+import StyleTabView from 'components/StyleTabView';
+import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import LoadingIndicator from 'components/common/LoadingIndicator';
 import StyleActionSheet from 'components/common/StyleActionSheet';
-import ModalCommentLike from 'components/ModalCommentLike';
-import StyleTabView from 'components/StyleTabView';
-import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import ItemGroupBuying from 'feature/common/components/ItemGroupBuying';
 import Bubble from 'feature/discovery/components/Bubble';
 import BubbleGroupBuying, {
@@ -27,9 +27,9 @@ import BubbleGroupBuying, {
 } from 'feature/discovery/components/BubbleGroupBuying';
 import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
+import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
-import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
+import {ModalAlert, modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
@@ -46,12 +46,12 @@ import {
   modalizeMyProfileShop,
   onGoToSignUp,
 } from 'utility/assistant';
+import {fakeGroupBuying} from 'utility/staticData';
 import InformationProfile from './components/InformationProfile';
 import SearchAndSetting, {
   searchSettingHeight,
 } from './components/SearchAndSetting';
 import ToolMyProfile, {toolProfileHeight} from './components/ToolMyProfile';
-import {fakeGroupBuying} from 'utility/staticData';
 
 const {width, safeBottomPadding} = Metrics;
 
@@ -161,7 +161,9 @@ const onHandleLike = async (params: ParamsLikeGB, setList: any) => {
   } catch (err) {
     setIsLiked(currentLike);
     setTotalLikes(currentNumberLikes);
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
   }
 };
 
@@ -308,7 +310,9 @@ const ProfileAccount = () => {
         postReviewPaging.onRefresh();
       }
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

@@ -9,13 +9,8 @@ import Bubble from 'feature/discovery/components/Bubble';
 import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
-import {
-  appAlert,
-  appAlertYesNo,
-  goBack,
-  navigate,
-} from 'navigation/NavigationService';
-import {modalCommentLikeAllAppRef} from 'navigation/screen/modals';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert, modalCommentLikeAllAppRef} from 'navigation/screen/modals';
 import React, {useCallback, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -30,13 +25,14 @@ const onDeletePost = (postId: string, setList: any) => {
         return preValue.filter(item => item.id !== postId);
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
-  appAlertYesNo({
-    i18Title: 'profile.post.sureDeletePost',
-    agreeChange: agreeDelete,
-    refuseChange: goBack,
+  ModalAlert.options({
+    i18Content: 'profile.post.sureDeletePost',
+    onContinue: agreeDelete,
   });
 };
 

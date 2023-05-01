@@ -15,10 +15,10 @@ import useCountdown from 'hook/useCountdown';
 import Redux from 'hook/useRedux';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {SETTING_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Vibration} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 
 interface Props {
@@ -62,8 +62,9 @@ const SendOTPChangeInfo = ({route}: Props) => {
       });
       navigate(SETTING_ROUTE.personalInformation);
     } catch (err) {
-      Vibration.vibrate();
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }
@@ -74,7 +75,9 @@ const SendOTPChangeInfo = ({route}: Props) => {
       resetCountdown();
       await apiRequestOTP(paramsOTP);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

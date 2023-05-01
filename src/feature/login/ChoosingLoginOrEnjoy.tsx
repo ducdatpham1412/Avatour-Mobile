@@ -6,7 +6,8 @@ import {PRIVACY_URL, TERMS_URL} from 'asset/standardValue';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import ROOT_SCREEN from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useRef} from 'react';
 import {Animated, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -46,7 +47,9 @@ const ChoosingLoginOrEnjoy = () => {
       updateResource(resource.data);
       setModeExp(true);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 
