@@ -8,4 +8,6 @@ export interface IconSvgProps {
 }
 
 export {default as ErrorIcon} from './ErrorIcon';
+export {default as NotificationIcon} from './NotificationIcon';
+export {default as QuestionIcon} from './QuestionIcon';
 export {default as SuccessIcon} from './SuccessIcon';

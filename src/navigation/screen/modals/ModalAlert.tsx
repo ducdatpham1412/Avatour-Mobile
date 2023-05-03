@@ -1,5 +1,10 @@
 import {BORDER_RADIUS, FONT_SIZE} from 'asset';
-import {ErrorIcon, SuccessIcon} from 'asset/icons';
+import {
+  ErrorIcon,
+  NotificationIcon,
+  QuestionIcon,
+  SuccessIcon,
+} from 'asset/icons';
 import {StyleButton, StyleText} from 'components/base';
 import {ScaleView} from 'components/common';
 import {useTheme} from 'hook';
@@ -66,11 +71,11 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const [title, setTitle] = useState<I18Normalize>('common.null');
   const [content, setContent] = useState<I18Normalize>('common.null');
 
-  let tintColor = theme.p_600;
+  let tintColor = theme.white;
   if (status === 'notification') {
     tintColor = theme.p_700;
   } else if (status === 'success') {
-    tintColor = theme.p_700;
+    tintColor = theme.p_600;
   } else if (status === 'error') {
     tintColor = theme.red;
   } else if (status === 'options') {
@@ -145,15 +150,17 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   );
 
   const renderIcon = () => {
-    if (
-      status === 'success' ||
-      status == 'options' ||
-      status === 'notification'
-    ) {
-      return <SuccessIcon style={$icon} tintColor={theme.p_800} />;
+    if (status === 'success') {
+      return <SuccessIcon style={$icon} tintColor={tintColor} />;
     }
     if (status === 'error') {
-      return <ErrorIcon style={$icon} tintColor={theme.red} />;
+      return <ErrorIcon style={$icon} tintColor={tintColor} />;
+    }
+    if (status === 'notification') {
+      return <NotificationIcon style={$icon} tintColor={tintColor} />;
+    }
+    if (status === 'options') {
+      return <QuestionIcon style={$icon} tintColor={tintColor} />;
     }
     return null;
   };
