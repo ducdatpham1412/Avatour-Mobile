@@ -13,9 +13,9 @@ import {
   StyleTouchable,
 } from 'components/base';
 import {useLoading, useTheme} from 'hook';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
-import {ModalActionSheet} from 'navigation/screen/modals';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ImageStyle, TextInput, TextStyle, View, ViewStyle} from 'react-native';
@@ -94,11 +94,14 @@ const EditProfile = () => {
         profile: {avatar: avatar || '', name, description, location},
       });
 
-      appAlert('alert.successUpdatePro', {
-        actionClickOk: () => navigate(PROFILE_ROUTE.myProfile),
+      ModalAlert.success({
+        i18Content: 'alert.successUpdatePro',
+        onClose: () => navigate(PROFILE_ROUTE.myProfile),
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       setLoading(false);
     }

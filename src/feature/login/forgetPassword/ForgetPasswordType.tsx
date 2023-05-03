@@ -5,7 +5,8 @@ import {StyleButton, StyleContainer} from 'components/base';
 import InputBox from 'components/common/InputBox';
 import {useLoading} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {TextInput, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -38,7 +39,9 @@ const ForgetPasswordType = () => {
         },
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       setLoading(false);
     }

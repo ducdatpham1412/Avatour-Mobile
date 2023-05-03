@@ -6,23 +6,25 @@ import {
   StyleIcon,
   StyleText,
 } from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import StyleHeader from 'navigation/components/StyleHeader';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import AuthenticateService from 'utility/login/loginService';
 
 const ConfirmDeleteAccount = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   const onRequestDeleteAccount = async () => {
     try {
       await apiRequestDeleteAccount();
       await AuthenticateService.logOut({hadRefreshTokenBlacked: false});
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

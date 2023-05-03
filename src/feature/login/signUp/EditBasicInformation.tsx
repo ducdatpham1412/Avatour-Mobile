@@ -10,18 +10,18 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import ClassDateTimePicker from 'components/base/picker/ClassDateTimePicker';
 import InputBox from 'components/common/InputBox';
 import Redux from 'hook/useRedux';
+import {goBack} from 'navigation/NavigationService';
 import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
-import {appAlert, appAlertYesNo, goBack} from 'navigation/NavigationService';
+import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {I18Normalize} from 'utility/I18Next';
 import {isIOS} from 'utility/assistant';
 import AsyncStore from 'utility/asyncStore';
 import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
-import {I18Normalize} from 'utility/I18Next';
 import AuthenticateService from 'utility/login/loginService';
 import GenderSwipe from '../components/GenderSwipe';
 
@@ -33,13 +33,23 @@ const EditBasicInformation = ({
 }: RouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
   const {isLoginSocial = false, itemLoginSuccess} = route.params;
   const scrollPickerRef = useRef<ScrollView>(null);
-  const dateTimeRef = useRef<ClassDateTimePicker>(null);
 
   const [gender, setGender] = useState(GENDER_TYPE.woman);
   const [name, setName] = useState('');
   const [birthday, setBirthday] = useState<Date | undefined>(undefined);
 
   const [index, setIndex] = useState(0);
+
+  const textBirthday = birthday
+    ? formatDateDayMonthYear(birthday)
+    : 'login.detailInformation.chooseBirthday';
+  const titleButton = index === 2 ? 'common.done' : 'common.next';
+  let disableButton = false;
+  if (index === 1) {
+    disableButton = !name;
+  } else if (index === 2) {
+    disableButton = !birthday;
+  }
 
   const onPressButton = () => {
     if (index < 2) {
@@ -66,7 +76,9 @@ const EditBasicInformation = ({
             isLoginSocial,
           });
         } catch (err) {
-          appAlert(err);
+          ModalAlert.error({
+            content: err,
+          });
         } finally {
           Redux.setIsLoading(false);
         }
@@ -75,29 +87,21 @@ const EditBasicInformation = ({
       if (isLoginSocial) {
         onEditProfileAndGo(true);
       } else {
-        appAlertYesNo({
-          i18Title: 'alert.wantToSave',
-          agreeChange: () => onEditProfileAndGo(true),
-          refuseChange: () => onEditProfileAndGo(false),
-          agreeButtonOpacity: 1,
+        ModalAlert.options({
+          i18Content: 'alert.wantToSave',
+          onContinue: () => onEditProfileAndGo(true),
+          onCancel: () => onEditProfileAndGo(false),
         });
       }
     }
   };
 
-  const RenderPicker = () => {
-    const textBirthday = birthday
-      ? formatDateDayMonthYear(birthday)
-      : 'login.detailInformation.chooseBirthday';
-    const titleButton = index === 2 ? 'common.done' : 'common.next';
-    let disableButton = false;
-    if (index === 1) {
-      disableButton = !name;
-    } else if (index === 2) {
-      disableButton = !birthday;
-    }
-
-    return (
+  return (
+    <SafeView>
+      <StyleText
+        i18Text="login.detailInformation.title"
+        customStyle={styles.titleText}
+      />
       <StyleContainer containerStyle={styles.pickerPart} extraHeight={50}>
         <View style={styles.pickerView}>
           <ScrollView
@@ -132,7 +136,14 @@ const EditBasicInformation = ({
             <View style={styles.pickerBox}>
               <StyleTouchable
                 hitSlop={20}
-                onPress={() => dateTimeRef.current?.show()}>
+                onPress={() => {
+                  ModalDatePicker.show({
+                    date: String(birthday ?? defaultDate),
+                    onChangeRange(value) {
+                      setBirthday(value.date);
+                    },
+                  });
+                }}>
                 <StyleText
                   i18Text={textBirthday as I18Normalize}
                   customStyle={
@@ -151,23 +162,6 @@ const EditBasicInformation = ({
           disable={disableButton}
         />
       </StyleContainer>
-    );
-  };
-
-  return (
-    <SafeView>
-      <StyleText
-        i18Text="login.detailInformation.title"
-        customStyle={styles.titleText}
-      />
-      {RenderPicker()}
-
-      <ClassDateTimePicker
-        ref={dateTimeRef}
-        initDate={birthday || defaultDate}
-        onChangeDateTime={value => setBirthday(value)}
-        theme={Theme.lightTheme}
-      />
     </SafeView>
   );
 };

@@ -10,21 +10,22 @@ import {apiBlockUser} from 'api/setting';
 import {ACCOUNT, POST_TYPE, RELATIONSHIP} from 'asset/enum';
 import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
-import {StyleText, StyleTouchable} from 'components/base';
-import LoadingIndicator from 'components/common/LoadingIndicator';
-import NoData from 'components/common/NoData';
-import StyleActionSheet from 'components/common/StyleActionSheet';
 import LoadingScreen from 'components/LoadingScreen';
 import ModalCommentLike from 'components/ModalCommentLike';
 import StyleTabView from 'components/StyleTabView';
 import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
+import {StyleText, StyleTouchable} from 'components/base';
+import LoadingIndicator from 'components/common/LoadingIndicator';
+import NoData from 'components/common/NoData';
+import StyleActionSheet from 'components/common/StyleActionSheet';
 import ItemGroupBuying from 'feature/common/components/ItemGroupBuying';
 import Bubble from 'feature/discovery/components/Bubble';
 import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
+import {navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
@@ -59,7 +60,9 @@ const onBlockUser = async (userId: number) => {
   try {
     await apiBlockUser(userId);
   } catch (err) {
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
   }
 };
 const onReport = async (userId: number, userName: string) => {
@@ -129,7 +132,9 @@ const OtherProfile = ({route}: Props) => {
       setIsFollowing(res.data.relationship === RELATIONSHIP.following);
       setProfile(res.data);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }
@@ -160,7 +165,9 @@ const OtherProfile = ({route}: Props) => {
           ...profile,
           followers: currentFollowers,
         });
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     }
   };
@@ -184,7 +191,9 @@ const OtherProfile = ({route}: Props) => {
         listPostsReviewAbout.onRefresh();
       }
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

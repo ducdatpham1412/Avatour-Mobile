@@ -150,7 +150,9 @@ const DetailMeJoin = ({
           listInformation={[
             {
               title: 'discovery.amount',
-              content: String(itemJoin?.amount),
+              content: String(
+                itemJoin?.amount || itemJoinRequest?.amount || '0',
+              ),
             },
             {
               title: 'discovery.arrivalTime',
@@ -170,7 +172,7 @@ const DetailMeJoin = ({
                 style={{color: theme.gray_600}}
               />
               <StyleText
-                originValue={itemJoin?.note}
+                originValue={itemJoin?.note || itemJoinRequest?.note}
                 style={[$contentNote, {color: theme.black}]}
               />
             </View>,

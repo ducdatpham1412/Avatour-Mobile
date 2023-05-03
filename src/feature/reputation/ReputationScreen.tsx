@@ -1,12 +1,11 @@
 import {apiGetTopReviewers} from 'api/discovery';
-import {TypeGradient} from 'api/interface';
-import FindmeStore from 'app-redux/store';
+import Store from 'app-redux/store';
 import Theme from 'asset/theme/Theme';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import AvatarBackground from 'feature/profile/components/AvatarBackground';
 import Redux from 'hook/useRedux';
-import {appAlert, goBack} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,18 +14,15 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {onGoToProfile, onGoToSignUp} from 'utility/assistant';
 
 const checkAndToToProfile = (userId: number) => {
-  const {token} = FindmeStore.getState().logicSlice;
-  const isModeExp = FindmeStore.getState().accountSlice.modeExp;
+  const {token} = Store.getState().logicSlice;
+  const isModeExp = Store.getState().accountSlice.modeExp;
 
   if (token && !isModeExp) {
     onGoToProfile(userId);
   } else {
-    appAlert('discovery.bubble.goToSignUp', {
-      moreNotice: 'common.letGo',
-      moreAction: () => {
-        goBack();
-        onGoToSignUp();
-      },
+    ModalAlert.options({
+      i18Content: 'discovery.bubble.goToSignUp',
+      onContinue: onGoToSignUp,
     });
   }
 };
@@ -97,7 +93,12 @@ const ReputationScreen = () => {
       const res = await apiGetTopReviewers();
       setData(res.data);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       setIsLoading(false);
     }

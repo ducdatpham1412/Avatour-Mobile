@@ -1,5 +1,6 @@
 import {BORDER_RADIUS, FONT_SIZE} from 'asset';
 import {ErrorIcon, SuccessIcon} from 'asset/icons';
+import {StyleButton, StyleText} from 'components/base';
 import {ScaleView} from 'components/common';
 import {useTheme} from 'hook';
 import React, {
@@ -19,32 +20,33 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {Svg, Path} from 'react-native-svg';
-import {StyleButton, StyleText} from 'components/base';
+import {Path, Svg} from 'react-native-svg';
 import {I18Normalize} from 'utility/I18Next';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 const modalRef = createRef<ElementRef<typeof ModalAlert>>();
 
 type TypeShowParams = {
   title?: I18Normalize;
   i18Content?: I18Normalize;
-  content?: string;
+  content?: any;
   onClose?: () => void;
 };
 
 type TypeShowOptions = TypeShowParams & {
+  onCancel?: () => void;
   onContinue: () => void;
 };
 
 type TypeShow = {
+  notification: (value: TypeShowParams) => void;
   success: (value: TypeShowParams) => void;
   error: (value: TypeShowParams) => void;
   options: (value: TypeShowOptions) => void;
   hide: () => void;
 };
 
-type TypeStatus = 'success' | 'error' | 'options';
+type TypeStatus = 'notification' | 'success' | 'error' | 'options';
 
 /**
  * This promise to await the last show finished, then the next can show;
@@ -56,6 +58,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const theme = useTheme();
   const scaleRef = useRef<ElementRef<typeof ScaleView>>(null);
   const onContinueFunction = useRef<() => void>();
+  const onCancelFunction = useRef<() => void>();
   const onCloseFunction = useRef<() => void>();
 
   const [visible, setVisible] = useState(false);
@@ -64,7 +67,9 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const [content, setContent] = useState<I18Normalize>('common.null');
 
   let tintColor = theme.p_600;
-  if (status === 'success') {
+  if (status === 'notification') {
+    tintColor = theme.p_700;
+  } else if (status === 'success') {
     tintColor = theme.p_700;
   } else if (status === 'error') {
     tintColor = theme.red;
@@ -75,11 +80,24 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   useImperativeHandle(
     ref ?? modalRef,
     () => ({
+      notification: async value => {
+        await promiseForNextShow;
+        Vibration.vibrate();
+        setStatus('notification');
+        setTitle(value?.title ?? 'common.alert');
+        setContent(
+          value?.i18Content ??
+            (value?.content as I18Normalize) ??
+            'common.null',
+        );
+        onCloseFunction.current = value.onClose;
+        setVisible(true);
+      },
       success: async value => {
         await promiseForNextShow;
         Vibration.vibrate();
         setStatus('success');
-        setTitle(value?.title ?? 'common.alert');
+        setTitle(value?.title ?? 'common.success');
         setContent(
           value?.i18Content ??
             (value?.content as I18Normalize) ??
@@ -103,6 +121,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       },
       options: async value => {
         await promiseForNextShow;
+        Vibration.vibrate();
         setStatus('options');
         setTitle(value.title ?? 'common.alert');
         setContent(
@@ -112,6 +131,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
         );
         onCloseFunction.current = value.onClose;
         onContinueFunction.current = value.onContinue;
+        onCancelFunction.current = value.onCancel;
         setVisible(true);
       },
       hide: () => {
@@ -125,7 +145,11 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   );
 
   const renderIcon = () => {
-    if (status === 'success' || status == 'options') {
+    if (
+      status === 'success' ||
+      status == 'options' ||
+      status === 'notification'
+    ) {
       return <SuccessIcon style={$icon} tintColor={theme.p_800} />;
     }
     if (status === 'error') {
@@ -157,6 +181,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             titleStyle={{color: theme.black}}
             onPress={() => {
               onCloseFunction.current?.();
+              onCancelFunction.current?.();
               modalRef.current?.hide();
             }}
           />
@@ -183,6 +208,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
         setVisible(false);
         onCloseFunction.current = undefined;
         onContinueFunction.current = undefined;
+        onCancelFunction.current = undefined;
         setStatus(undefined);
         setTitle('common.null');
         setContent('common.null');
@@ -285,6 +311,8 @@ const $buttonContinue: ViewStyle = {
 };
 
 export default Object.assign(ModalAlert, {
+  notification: (value: TypeShowParams) =>
+    modalRef.current?.notification(value),
   success: (value: TypeShowParams) => modalRef.current?.success(value),
   error: (value: TypeShowParams) => modalRef.current?.error(value),
   options: (value: TypeShowOptions) => modalRef.current?.options(value),

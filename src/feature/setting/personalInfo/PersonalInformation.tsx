@@ -1,16 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import {apiChangeInformation} from 'api/setting';
+import {updatePassport} from 'app-redux';
+import {useAppSelector} from 'app-redux/store';
 import {StyleContainer, StyleText} from 'components/base';
 import ClassDateTimePicker from 'components/base/picker/ClassDateTimePicker';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
+import {goBack, navigate, popUpPicker} from 'navigation/NavigationService';
 import StyleHeader from 'navigation/components/StyleHeader';
 import {SETTING_ROUTE} from 'navigation/config/routes';
-import {
-  appAlertYesNo,
-  goBack,
-  navigate,
-  popUpPicker,
-} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
@@ -24,24 +22,24 @@ import {
   formatUTCDate,
   isTimeEqual,
 } from 'utility/format';
+import ItemInfo from './ItemInfo';
 import ModalChangeEmail from './components/ModalChangeEmail';
 import ModalChangePhone from './components/ModalChangePhone';
-import ItemInfo from './ItemInfo';
 
 const PersonalInformation = () => {
   const {t} = useTranslation();
-  const {information} = Redux.getPassport();
-  const theme = Redux.getTheme();
+  const {profile} = useAppSelector(state => state.accountSlice.passport);
+  const theme = useTheme();
 
   const emailRef = useRef<ModalChangeEmail>(null);
   const phoneRef = useRef<ModalChangePhone>(null);
   const birthdayRef = useRef<ClassDateTimePicker>(null);
-  const informationValueRef = useRef<any>(information);
+  const informationValueRef = useRef<any>(profile.information);
 
-  const [email, setEmail] = useState(information.email);
-  const [phone, setPhone] = useState(information.phone);
-  const [gender, setGender] = useState(information.gender);
-  const [birthday, setBirthday] = useState(formatUTCDate(information.birthday));
+  const [email, setEmail] = useState(profile.information.email);
+  const [phone, setPhone] = useState(profile.information.phone);
+  const [gender, setGender] = useState(profile.gender);
+  const [birthday, setBirthday] = useState(formatUTCDate(profile.birthday));
 
   const refuseChange = () => {
     setEmail(informationValueRef.current.email);
@@ -56,8 +54,10 @@ const PersonalInformation = () => {
         await apiChangeInformation({
           gender: newInfo.gender,
         });
-        Redux.updatePassport({
-          information: newInfo,
+        updatePassport({
+          profile: {
+            information: newInfo,
+          },
         });
         goBack();
         return;
@@ -66,8 +66,10 @@ const PersonalInformation = () => {
         await apiChangeInformation({
           birthday: newInfo.birthday,
         });
-        Redux.updatePassport({
-          information: newInfo,
+        updatePassport({
+          profile: {
+            information: newInfo,
+          },
         });
         goBack();
         return;
@@ -89,14 +91,10 @@ const PersonalInformation = () => {
   };
 
   const openConfirmChange = async (newInfo: any) => {
-    appAlertYesNo({
-      i18Title: 'setting.personalInfo.alertCfChange',
-      agreeChange: () => agreeChange(newInfo),
-      refuseChange: () => {
-        refuseChange();
-        goBack();
-      },
-      touchOutBack: false,
+    ModalAlert.options({
+      i18Content: 'setting.personalInfo.alertCfChange',
+      onCancel: refuseChange,
+      onContinue: () => agreeChange(newInfo),
     });
   };
 
@@ -118,8 +116,8 @@ const PersonalInformation = () => {
   }, [email, phone, gender, birthday]);
 
   useEffect(() => {
-    informationValueRef.current = information;
-  }, [information]);
+    informationValueRef.current = profile.information;
+  }, [profile.information]);
 
   const onNavigateGenderPicker = () => {
     popUpPicker({

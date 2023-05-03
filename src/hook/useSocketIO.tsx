@@ -28,13 +28,13 @@ import {
   TYPE_BUBBLE_PALACE_ACTION,
 } from 'asset/enum';
 import Config from 'asset/env';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect} from 'react';
 import {AppState, AppStateStatus} from 'react-native';
-import {io, Socket} from 'socket.io-client';
+import {Socket, io} from 'socket.io-client';
+import ImageUploader from 'utility/ImageUploader';
 import {isIOS, reorderListChatTag} from 'utility/assistant';
 import {isTimeBefore} from 'utility/format';
-import ImageUploader from 'utility/ImageUploader';
 import usePaging from './usePaging';
 import Redux from './useRedux';
 
@@ -182,7 +182,9 @@ export const useSocketChatTagBubble = () => {
           try {
             // call api get chat tag with id
           } catch (err) {
-            appAlert(err);
+            ModalAlert.error({
+              content: err,
+            });
           }
         }
       },
@@ -215,7 +217,9 @@ export const useSocketChatTagBubble = () => {
         try {
           // call api get chat tag with id
         } catch (err) {
-          appAlert(err);
+          ModalAlert.error({
+            content: err,
+          });
         }
       }
     });
@@ -406,7 +410,9 @@ const deleteMessage = async (idMessage: string) => {
   try {
     await apiDeleteMessage(idMessage);
   } catch (err) {
-    appAlert(err);
+    ModalAlert.error({
+      content: err,
+    });
   }
 };
 
@@ -550,7 +556,9 @@ export const useSocketChatDetail = (params: {
         _params.content = messImages;
         socket?.emit(SOCKET_EVENT.message, _params);
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     } else {
       socket?.emit(SOCKET_EVENT.message, _params);

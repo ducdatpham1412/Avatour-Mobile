@@ -15,8 +15,9 @@ import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   LOGIN_ROUTE,
 } from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
-import {chooseLanguageFromId, isIOS} from 'utility/assistant';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
+import {isIOS} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
 import I18Next from 'utility/I18Next';
 
@@ -106,7 +107,9 @@ const AuthenticateService = {
         });
       }
     } catch (err) {
-      appAlert('alert.loginFail');
+      ModalAlert.error({
+        i18Content: 'alert.loginFail',
+      });
     }
   },
   requestLoginSocial: async (params: RequestLoginSocialParams) => {
@@ -141,7 +144,9 @@ const AuthenticateService = {
         }
       }
     } catch (error) {
-      appAlert('alert.loginFail');
+      ModalAlert.error({
+        i18Content: 'alert.loginFail',
+      });
     }
   },
 
@@ -174,7 +179,9 @@ const AuthenticateService = {
       closeSocket();
       params?.callBack?.();
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   },
 };

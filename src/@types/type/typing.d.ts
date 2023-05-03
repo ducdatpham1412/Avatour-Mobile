@@ -17,3 +17,4 @@ declare module 'reace-native-vector-icons/Fontisto';
 declare module 'react-native-double-click';
 declare module 'react-fast-compare';
 declare module 'react-native-video-controls';
+declare module 'react-native-pinchable';

@@ -3,9 +3,10 @@ import {SIGN_UP_TYPE, TYPE_OTP} from 'asset/enum';
 import Images from 'asset/img/images';
 import {StyleContainer, StyleText} from 'components/base';
 import Redux from 'hook/useRedux';
+import {navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -37,7 +38,9 @@ const ForgetPasswordSend = ({
         paramsOTP,
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       Redux.setIsLoading(false);
     }

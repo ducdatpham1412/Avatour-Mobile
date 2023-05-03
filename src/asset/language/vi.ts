@@ -27,6 +27,7 @@ const common = {
   null: '',
   search: 'Tìm kiếm',
   change: 'Thay đổi',
+  error: 'Lỗi',
   confirm: 'Xác nhận',
   ok: 'Ok',
   alert: 'Thông báo',

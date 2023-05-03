@@ -11,7 +11,6 @@ import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
 import UpdatePrices from 'feature/common/UpdatePrices';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
-import DetailGroupBuying from 'feature/discovery/DetailGroupBuying';
 import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
@@ -22,10 +21,10 @@ import {
   CreateGroupBuying,
   CreatePostPickImage,
   CreatePostPreview,
-  MyProfile,
   EditProfile,
-  OtherProfile,
   ListFollows,
+  MyProfile,
+  OtherProfile,
 } from 'feature/profile';
 import {useTheme} from 'hook';
 import {AppParamsList} from 'navigation/config';
@@ -65,14 +64,6 @@ const AppStack = () => {
       <Stack.Screen name={ROOT_SCREEN.otherProfile} component={OtherProfile} />
       <Stack.Screen name={ROOT_SCREEN.listFollows} component={ListFollows} />
       <Stack.Screen name={ROOT_SCREEN.detailBubble} component={DetailBubble} />
-      <Stack.Screen
-        name={ROOT_SCREEN.detailGroupBuying}
-        component={DetailGroupBuying}
-        options={{
-          cardStyleInterpolator:
-            CardStyleInterpolators.forRevealFromBottomAndroid,
-        }}
-      />
       <Stack.Screen name={ROOT_SCREEN.myProfile} component={MyProfile} />
       <Stack.Screen name={ROOT_SCREEN.editProfile} component={EditProfile} />
 

@@ -1,7 +1,7 @@
 import {apiGetListBlocked, apiUnBlockUser} from 'api/setting';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {memo, useEffect, useRef, useState} from 'react';
 import {Animated, ScrollView, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
@@ -79,7 +79,9 @@ const UserBlocked = ({isOpening}: Props) => {
         const res = await apiGetListBlocked();
         setListBlocked(res.data);
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     }
   };
@@ -107,7 +109,9 @@ const UserBlocked = ({isOpening}: Props) => {
       });
       setListBlocked(temp);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

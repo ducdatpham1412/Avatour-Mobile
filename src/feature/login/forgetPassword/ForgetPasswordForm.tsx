@@ -4,7 +4,8 @@ import {StyleButton, StyleContainer} from 'components/base';
 import {InputBox} from 'components/common';
 import {useLoading} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
-import {appAlert, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -33,11 +34,14 @@ const ForgetPasswordForm = ({route}: any) => {
         password,
         confirm_password: confirmPassword,
       });
-      appAlert('alert.successChangePass', {
-        actionClickOk: () => navigate(LOGIN_ROUTE.loginScreen),
+      ModalAlert.success({
+        i18Content: 'alert.successChangePass',
+        onClose: () => navigate(LOGIN_ROUTE.loginScreen),
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     } finally {
       setLoading(false);
     }

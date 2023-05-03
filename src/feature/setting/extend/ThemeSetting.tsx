@@ -5,7 +5,7 @@ import {Metrics} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {StyleImage} from 'components/base';
 import Redux from 'hook/useRedux';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -34,10 +34,14 @@ const ThemeSetting = () => {
         await apiChangeTheme(newTheme);
       }
       Redux.setTheme(newTheme);
-      appAlert('alert.successChange');
+      ModalAlert.success({
+        i18Content: 'alert.successChange',
+      });
       setIsPicked(type);
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

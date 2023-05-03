@@ -4,7 +4,7 @@ import {useAppSelector} from 'app-redux/store';
 import {APP_EVENT, GROUP_BUYING_STATUS, REACT} from 'asset/enum';
 import dayjs from 'dayjs';
 import {useApiImmutable, useAppEvent} from 'hook';
-import {appAlert} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import {useEffect, useState} from 'react';
 import {formatUTCDate, getDateTimeNow} from 'utility/format';
 
@@ -43,7 +43,9 @@ const useDetailSale = ({saleId, sale}: Params) => {
       await mutate();
       await dataMeJoined.mutate();
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 
@@ -134,9 +136,14 @@ const useDetailSale = ({saleId, sale}: Params) => {
           {revalidate: false},
         );
 
-        extraParams?.onSuccess?.();
+        ModalAlert.success({
+          i18Content: 'profile.joinedSuccess',
+          onClose: extraParams?.onSuccess,
+        });
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         setLoadingJoin(false);
       }
@@ -150,6 +157,7 @@ const useDetailSale = ({saleId, sale}: Params) => {
         await apiRequestBought({
           list_joins_id: [joinId],
         });
+        // add modal alert here
         await dataMeJoined.mutate(
           pre => {
             if (pre) {
@@ -169,7 +177,9 @@ const useDetailSale = ({saleId, sale}: Params) => {
         );
         appEvent.emit({joinId});
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         setLoadingJoin(false);
       }

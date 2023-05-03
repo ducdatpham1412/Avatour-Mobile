@@ -32,8 +32,8 @@ import StyleMoreText from 'components/StyleMoreText';
 import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import Redux from 'hook/useRedux';
 import StyleHeader from 'navigation/components/StyleHeader';
-import {appAlert} from 'navigation/NavigationService';
 import {showPreviewLink} from 'navigation/screen/AppStack';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
 import Share from 'react-native-share';
@@ -93,7 +93,9 @@ const DetailBubble = ({route}: Props) => {
           onShowModalComment(res.data, 'like');
         }
       } catch (err) {
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -113,7 +115,9 @@ const DetailBubble = ({route}: Props) => {
             onShowModalComment(res.data, 'like');
           }
         } catch (err) {
-          appAlert(err);
+          ModalAlert.error({
+            content: err,
+          });
         } finally {
           setIsLoading(false);
         }
@@ -150,7 +154,9 @@ const DetailBubble = ({route}: Props) => {
           isLiked: currentLike,
           totalLikes: currentTotalLikes,
         });
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     }
   };
@@ -174,7 +180,9 @@ const DetailBubble = ({route}: Props) => {
           ...bubble,
           isSaved: currentSave,
         });
-        appAlert(err);
+        ModalAlert.error({
+          content: err,
+        });
       }
     }
   };
@@ -229,7 +237,9 @@ const DetailBubble = ({route}: Props) => {
         url: link,
       });
     } catch (err) {
-      appAlert(err);
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 
