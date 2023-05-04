@@ -12,6 +12,7 @@ import ConfirmDeleteAccount from 'feature/setting/security/ConfirmDeleteAccount'
 import ConfirmLockAccount from 'feature/setting/security/ConfirmLockAccount';
 import SecurityAndLogin from 'feature/setting/security/SecurityAndLogin';
 import SettingScreen from 'feature/setting/SettingScreen';
+import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
 import {SETTING_ROUTE} from 'navigation/config/routes';
 import React from 'react';
@@ -20,7 +21,7 @@ const SettingStack = createStackNavigator();
 const {safeTopPadding} = Metrics;
 
 const SettingRoute = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   return (
     <SettingStack.Navigator
@@ -29,7 +30,7 @@ const SettingRoute = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerShown: false,
         cardStyle: {
-          backgroundColor: theme.backgroundColor,
+          backgroundColor: theme.background,
           paddingTop: safeTopPadding,
         },
       }}>

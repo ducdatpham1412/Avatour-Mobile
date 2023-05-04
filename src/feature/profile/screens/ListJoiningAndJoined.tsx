@@ -1,7 +1,7 @@
 import {apiGetListGBJoined, apiGetListGbJoining} from 'api/profile';
-import {FONT_SIZE, HORIZONTAL_PADDING} from 'asset';
+import {FONT_SIZE} from 'asset';
 import {APP_EVENT, GROUP_BUYING_STATUS} from 'asset/enum';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
+import {Metrics, horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {StyleList, StyleText} from 'components/base';
 import {useAppEvent, usePaging} from 'hook';
 import React, {useCallback} from 'react';
@@ -80,21 +80,16 @@ const ListJoiningAndJoined = () => {
       }}
       loadingMore={loadingMore}
       onLoadMore={onLoadMore}
-      style={$container}
       contentContainerStyle={$contentContainer}
       ListHeaderComponent={renderHeaderComponent()}
-      showsVerticalScrollIndicator
     />
   );
 };
 
-const $container: ViewStyle = {
-  flex: 1,
-};
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingBottom: safePaddingNotZero,
-  paddingHorizontal: HORIZONTAL_PADDING,
+  paddingHorizontal: horizontalPadding,
 };
 const $header: ViewStyle = {
   width: Metrics.width,
@@ -106,6 +101,7 @@ const $containerHeader: ViewStyle = {
 const $contentHeader: ViewStyle = {
   paddingLeft: scale(12),
   paddingRight: scale(12),
+  paddingBottom: verticalScale(10),
 };
 const $textJoining: TextStyle = {
   marginLeft: scale(12),

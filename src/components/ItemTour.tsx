@@ -119,8 +119,8 @@ const ItemTour = ({item, containerStyle}: Props) => {
 };
 
 const $container: ViewStyle = {
-  width: scale(200),
-  height: scale(200) * ratioImageTour,
+  width: scale(351),
+  height: scale(351) * ratioImageTour,
   borderRadius: BORDER_RADIUS.f2,
   overflow: 'hidden',
 };
@@ -180,6 +180,9 @@ const $iconAvatar: ImageStyle = {
 
 export default memo(ItemTour, (pre: Props, next: Props) => {
   if (!isEqual(pre.item, next.item)) {
+    return false;
+  }
+  if (__DEV__ && !isEqual(pre.containerStyle, next.containerStyle)) {
     return false;
   }
   return true;

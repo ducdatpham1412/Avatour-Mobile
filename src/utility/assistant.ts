@@ -6,7 +6,7 @@ import {
   TypeMemberInListChatTag,
 } from 'api/interface';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
-import FindmeStore from 'app-redux/store';
+import Store from 'app-redux/store';
 import {
   FEELING,
   GENDER_TYPE,
@@ -49,7 +49,7 @@ export const interactBubble = (params: TypeInteractBubble) => {
 
 export const choosePrivateAvatar = (_gender?: number) => {
   const gender =
-    _gender || FindmeStore.getState().accountSlice.passport.profile.gender;
+    _gender || Store.getState().accountSlice.passport.profile.gender;
 
   switch (gender) {
     case GENDER_TYPE.man:
@@ -178,7 +178,7 @@ export const modalizeGoToChatTagFromGroup = (params: {chatTagId: string}) => {
 export const renderIconGender = (_gender?: number) => {
   const gender =
     _gender === undefined
-      ? FindmeStore.getState().accountSlice.passport.profile.gender
+      ? Store.getState().accountSlice.passport.profile.gender
       : _gender;
 
   if (gender === GENDER_TYPE.man) {
@@ -210,7 +210,7 @@ export const onGoToSignUp = () => {
 export const moveMeToEndOfListMember = (
   listMember: Array<TypeMemberInListChatTag>,
 ) => {
-  const myId = FindmeStore.getState().accountSlice.passport.profile.id;
+  const myId = Store.getState().accountSlice.passport.profile.id;
 
   const temp = [...listMember];
   let memberMe: any;
@@ -258,7 +258,7 @@ export const modalizeMyProfile: Array<{
   action: any;
 }> = [
   {
-    text: 'profile.component.infoProfile.editProfile',
+    text: 'profile.editProfile',
     action: () => navigate(PROFILE_ROUTE.editProfile),
   },
   {
@@ -285,7 +285,7 @@ export const modalizeMyProfileShop: Array<{
   action: any;
 }> = [
   {
-    text: 'profile.component.infoProfile.editProfile',
+    text: 'profile.editProfile',
     action: () => navigate(PROFILE_ROUTE.editProfile),
   },
   {
@@ -429,13 +429,13 @@ export const fakeBubbleFocusing: TypeBubblePalace = {
 };
 
 export const onGoToProfile = (userId: number, params = {}) => {
-  const isModeExp = FindmeStore.getState().accountSlice.modeExp;
+  const isModeExp = Store.getState().accountSlice.modeExp;
   if (isModeExp) {
     return;
   }
-  const myId = FindmeStore.getState().accountSlice.passport.profile.id;
+  const myId = Store.getState().accountSlice.passport.profile.id;
   if (userId === myId) {
-    navigate(ROOT_SCREEN.myProfile);
+    push(ROOT_SCREEN.myProfile);
     // push(ROOT_SCREEN.otherProfile, {
     //     id: userId,
     // });

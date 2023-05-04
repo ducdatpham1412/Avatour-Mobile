@@ -291,13 +291,19 @@ const mess = {
 // PROFILE ROUTE
 const profile = {
   title: 'Profile',
+  editProfile: 'Edit profile',
+  follow: 'Follow',
+  unFollow: 'Unfollow',
+  follower: 'Followers',
+  following: 'Followings',
+  block: 'Block',
+  report: 'Report',
   component: {
     infoProfile: {
       follower: 'Followers',
       following: 'Following',
       introduce: 'Sign up for more chat enjoy and make your own profile !',
       tellSignUp: 'Go to sign up',
-      editProfile: 'Edit profile',
     },
     searchAndSetting: 'Finding others',
   },
@@ -308,8 +314,6 @@ const profile = {
   },
   screen: {
     sendMessage: 'Send message',
-    follow: 'Follow',
-    unFollow: 'Unfollow',
     goToChatTag: 'Go to conversation',
     confirmDeleteGroup:
       "After deleting, people won't see and join your group\nAre you sure delete?",
@@ -317,8 +321,6 @@ const profile = {
   modalize: {
     setting: 'Setting',
     myInfo: 'My information',
-    block: 'Block',
-    report: 'Report',
   },
   post: {
     title: 'Post your image',
@@ -349,11 +351,6 @@ const profile = {
     travel: 'Travel',
     cuisine: 'Cuisine',
     shopping: 'Shopping',
-  },
-  follow: {
-    follower: 'Followers',
-    following: 'Followings',
-    follow: 'Follow',
   },
   removeAvatar: 'Remove avatar',
   draftPost: 'Draft',
@@ -392,17 +389,18 @@ const profile = {
   waitingConfirm: "Waiting for supplier's confirmation",
   joinedSuccess: 'Joined successfully',
   gbOrder: 'Group booking orders',
-  editProfile: 'Edit profile',
   maxGroups: 'Maximum number of groups',
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
   postGroupBuying: 'Create group buying',
   confirmWithVendor: 'Confirm with vendor',
   havingRequestUpdate: "You're having an update request",
+  review: 'Review',
 };
 
 // SETTING ROUTE
 const setting = {
+  title: 'Setting',
   component: {
     typeMainSetting: {
       security: 'Security and login',
@@ -411,9 +409,6 @@ const setting = {
       extend: 'Extend setting',
       logOut: 'Log out',
     },
-  },
-  settingScreen: {
-    headerTitle: 'Setting',
   },
   securityAndLogin: {
     headerTitle: 'Security and login',

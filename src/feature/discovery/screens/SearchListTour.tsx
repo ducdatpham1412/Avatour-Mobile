@@ -1,7 +1,6 @@
 import {apiSearch} from 'api/discovery';
-import {ratioImageTour} from 'asset';
 import {POST_SEARCH} from 'asset/enum';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
+import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging} from 'hook';
@@ -68,9 +67,7 @@ const $container: ViewStyle = {
   paddingHorizontal: scale(12),
 };
 const $itemView: ViewStyle = {
-  width: Metrics.width - scale(24),
-  height: (Metrics.width - scale(24)) * ratioImageTour * 0.8,
-  marginBottom: verticalScale(12),
+  marginTop: verticalScale(7),
 };
 
 export default SearchListTour;

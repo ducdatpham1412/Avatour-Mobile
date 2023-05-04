@@ -23,7 +23,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {I18Normalize} from 'utility/I18Next';
-import {renderPersonalJoinsFromGroups} from 'utility/assistant';
+import {onGoToProfile, renderPersonalJoinsFromGroups} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
@@ -111,8 +111,19 @@ const DetailSale = ({
     return (
       <View style={$informationView}>
         <View style={$informationBox}>
-          <StyleIcon source={{uri: data?.creator_avatar}} size={25} />
-          <StyleText originValue={data?.creator_name} customStyle={$textName} />
+          <StyleTouchable
+            customStyle={$buttonName}
+            onPress={() => {
+              if (data?.creator) {
+                onGoToProfile(data?.creator);
+              }
+            }}>
+            <StyleIcon source={{uri: data?.creator_avatar}} size={25} />
+            <StyleText
+              originValue={data?.creator_name}
+              customStyle={$textName}
+            />
+          </StyleTouchable>
         </View>
 
         <View style={$informationBox}>
@@ -443,6 +454,10 @@ const $informationBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   marginTop: verticalScale(12),
+};
+const $buttonName: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
 };
 const $textName: TextStyle = {
   marginLeft: scale(8),

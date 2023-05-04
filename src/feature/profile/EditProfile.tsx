@@ -144,9 +144,7 @@ const EditProfile = () => {
       <StyleContainer
         scrollEnabled
         customStyle={$container}
-        headerProps={{
-          title: 'profile.component.infoProfile.editProfile',
-        }}
+        headerProps={{title: 'profile.editProfile'}}
         BottomComponent={
           <StyleButton
             title="profile.edit.confirmButton"

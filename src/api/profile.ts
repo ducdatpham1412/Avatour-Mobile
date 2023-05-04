@@ -66,20 +66,20 @@ export const apiGetProfile = (
   success: boolean;
   data: TypeGetProfileResponse;
 }> => {
-  return request.get(`/profile/get-profile/${id}`);
+  return request.get(`/profile/${id}`);
 };
 
 export const apiEditProfile = (
   params: TypeEditProfileRequest,
 ): Promise<TypeEditProfileResponse> => {
-  return request.put('/profile/edit-profile', params);
+  return request.put('/profile', params);
 };
 
 export const apiFollowUser = (id: number) => {
-  return request.put(`/profile/follow/${id}`);
+  return request.post(`/profile/follow/${id}`);
 };
 export const apiUnFollowUser = (id: number) => {
-  return request.put(`/profile/un-follow/${id}`);
+  return request.delete(`/profile/follow/${id}`);
 };
 
 export const apiCreatePost = (

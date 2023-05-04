@@ -1,4 +1,7 @@
-export {default as ModalActionSheet} from './ModalActionSheet';
+export {
+  default as ModalActionSheet,
+  type TypeShowActionSheet,
+} from './ModalActionSheet';
 export {default as ModalAlert} from './ModalAlert';
 export {default as ModalCommentLike} from './ModalCommentLike';
 export {

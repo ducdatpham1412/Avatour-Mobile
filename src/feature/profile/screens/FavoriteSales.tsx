@@ -1,6 +1,5 @@
 import {apiGetListSalesLiked} from 'api/profile';
-import {HORIZONTAL_PADDING} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging} from 'hook';
@@ -58,7 +57,7 @@ const FavoriteSales = () => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingBottom: safePaddingNotZero,
-  paddingHorizontal: HORIZONTAL_PADDING,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default FavoriteSales;

@@ -1,7 +1,7 @@
 import {useIsFocused} from '@react-navigation/native';
 import {setScrollMainAndChatEnable} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
-import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS, ratioImageTour} from 'asset';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
@@ -207,11 +207,6 @@ const $titleCategory: TextStyle = {
 const $favoriteTourView: ViewStyle = {
   marginTop: verticalScale(16),
 };
-const $titleCard: TextStyle = {
-  fontSize: FONT_SIZE.f1,
-  fontWeight: 'bold',
-  marginLeft: scale(12),
-};
 const $listTourView: ViewStyle = {
   marginTop: verticalScale(12),
 };
@@ -225,6 +220,8 @@ const $locationView: ViewStyle = {
   marginTop: verticalScale(12),
 };
 const $itemTourBox: ViewStyle = {
+  width: scale(200),
+  height: scale(200) * ratioImageTour * 1.25,
   marginRight: scale(8),
 };
 

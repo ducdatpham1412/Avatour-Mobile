@@ -2,11 +2,11 @@ import {FONT_SIZE} from 'asset/standardValue';
 import {StyleText} from 'components/base';
 import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
-import {borderWidthTiny} from 'utility/assistant';
 import {I18Normalize} from 'utility/I18Next';
+import {borderWidthTiny} from 'utility/assistant';
+import {scale, verticalScale} from 'utility/scale';
 import HeaderLeftIcon from './HeaderLeftIcon';
 
 export interface StyleHeaderProps {
@@ -17,6 +17,7 @@ export interface StyleHeaderProps {
   titleStyle?: StyleProp<TextStyle>;
   iconStyle?: StyleProp<TextStyle>;
   showIconBack?: boolean;
+  RightComponent?: ReactNode;
 }
 
 const StyleHeader = (props: StyleHeaderProps) => {
@@ -28,13 +29,14 @@ const StyleHeader = (props: StyleHeaderProps) => {
     titleStyle,
     iconStyle,
     showIconBack = true,
+    RightComponent,
   } = props;
   const theme = useTheme();
 
   return (
     <View
       style={[
-        styles.container,
+        $container,
         {
           backgroundColor: theme.background,
           borderBottomColor: theme.gray_300,
@@ -44,37 +46,44 @@ const StyleHeader = (props: StyleHeaderProps) => {
       <StyleText
         i18Text={title as I18Normalize}
         i18Params={titleParams}
-        customStyle={[styles.titleText, titleStyle]}
+        customStyle={[$titleText, titleStyle]}
       />
 
       {!!showIconBack && (
         <HeaderLeftIcon
-          style={styles.headerLeft}
+          style={$headerLeft}
           onPress={onGoBack || goBack}
           iconStyle={iconStyle}
         />
+      )}
+
+      {!!RightComponent && (
+        <View style={$rightComponent}>{RightComponent}</View>
       )}
     </View>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '100%',
-    paddingBottom: '7@vs',
-    paddingTop: '3@vs',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: borderWidthTiny,
-  },
-  titleText: {
-    fontSize: FONT_SIZE.f1,
-    fontWeight: 'bold',
-  },
-  headerLeft: {
-    position: 'absolute',
-    left: '10@s',
-  },
-});
+const $container: ViewStyle = {
+  width: '100%',
+  paddingBottom: verticalScale(7),
+  paddingTop: verticalScale(3),
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderBottomWidth: borderWidthTiny,
+};
+const $titleText: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+  maxWidth: '80%',
+};
+const $headerLeft: ViewStyle = {
+  position: 'absolute',
+  left: scale(12),
+};
+const $rightComponent: ViewStyle = {
+  position: 'absolute',
+  right: scale(12),
+};
 
 export default StyleHeader;

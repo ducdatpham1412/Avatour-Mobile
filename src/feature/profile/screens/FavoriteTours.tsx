@@ -1,8 +1,7 @@
-import {View, Text, ViewStyle} from 'react-native';
-import React from 'react';
-import {HORIZONTAL_PADDING} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {StyleList} from 'components/base';
+import React from 'react';
+import {ViewStyle} from 'react-native';
 
 const FavoriteTours = () => {
   return (
@@ -18,7 +17,7 @@ const FavoriteTours = () => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingBottom: safePaddingNotZero,
-  paddingHorizontal: HORIZONTAL_PADDING,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default FavoriteTours;

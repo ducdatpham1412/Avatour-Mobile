@@ -348,6 +348,8 @@ export enum TYPE_SALE_SEARCH {
 
 export enum APP_EVENT {
   requestBoughtJoin = 'request-bought-join',
+  reactSale = 'react-sale',
+  reactTour = 'react-tour',
 }
 
 export enum TYPE_AUTH_REQUEST {
@@ -357,4 +359,9 @@ export enum TYPE_AUTH_REQUEST {
   update_price = 3,
   delete_gb = 4,
   update_bank = 5,
+}
+
+export enum TYPE_GET_TOUR {
+  list = 0,
+  favorite = 1,
 }
