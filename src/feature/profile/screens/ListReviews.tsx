@@ -1,10 +1,16 @@
-import {View, Text} from 'react-native';
+import {ItemReview} from 'components';
 import React from 'react';
+import {View} from 'react-native';
 
-const ListReviews = () => {
+interface Props {
+  userId: number;
+  account_type: number;
+}
+
+const ListReviews = ({}: Props) => {
   return (
     <View>
-      <Text>ListReviews</Text>
+      <ItemReview />
     </View>
   );
 };

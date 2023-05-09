@@ -5,12 +5,15 @@ import useSWRImmutable from 'swr/immutable';
 interface TypeParamsApi {
   path: string;
   params?: Record<string, any>;
-  config?: SWRConfiguration;
+  config?: SWRConfiguration & {revalidateAll?: boolean};
 }
 
 const useApi = <T>({path, params, config}: TypeParamsApi) => {
+  const moreConfig: SWRConfiguration = config?.revalidateAll
+    ? {revalidateOnFocus: true, revalidateIfStale: true}
+    : {};
   const {data, error, isLoading, mutate} = useSWR<T, Error>(
-    path,
+    [path, params, 'useApi'],
     async () => {
       const res = await request.get(path, params);
       return res?.data;
@@ -20,6 +23,7 @@ const useApi = <T>({path, params, config}: TypeParamsApi) => {
       shouldRetryOnError: false,
       revalidateIfStale: false,
       ...config,
+      ...moreConfig,
     },
   );
 
@@ -33,7 +37,7 @@ const useApi = <T>({path, params, config}: TypeParamsApi) => {
 
 export const useApiImmutable = <T>({path, params, config}: TypeParamsApi) => {
   const {data, error, isLoading, mutate} = useSWRImmutable<T, Error>(
-    path,
+    [path, params, 'useApiImmutable'],
     async () => {
       const res = await request.get(path, params);
       return res?.data;

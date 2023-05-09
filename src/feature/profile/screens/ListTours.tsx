@@ -18,12 +18,13 @@ const renderItemTour = (item: Tour) => {
 
 const ListTours = ({userId}: Props) => {
   const {bottom} = useSafeAreaInsets();
-  const {list} = usePaging<Tour>({
-    request: apiGetListTours,
-    params: {
-      user_id: userId,
-    },
-  });
+  const {list, refreshing, onRefresh, onLoadMore, loadingMore} =
+    usePaging<Tour>({
+      request: apiGetListTours,
+      params: {
+        user_id: userId,
+      },
+    });
 
   return (
     <StyleList
