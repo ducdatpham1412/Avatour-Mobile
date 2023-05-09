@@ -1,9 +1,9 @@
 import {Dimensions} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import {moderateScale} from 'react-native-size-matters';
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
-import DeviceInfo from 'react-native-device-info';
 import {isIOS} from 'utility/assistant';
-import {vs} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 
 const {width, height} = Dimensions.get('screen');
 const safeTopAndroid = DeviceInfo.hasNotch()
@@ -28,4 +28,5 @@ export const Metrics = {
   tabBarUp,
 };
 
-export const safePaddingNotZero = vs(7);
+export const safePaddingNotZero = verticalScale(7);
+export const horizontalPadding = scale(12);

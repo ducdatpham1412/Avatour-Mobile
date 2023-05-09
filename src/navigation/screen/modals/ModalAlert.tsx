@@ -44,10 +44,10 @@ type TypeShowOptions = TypeShowParams & {
 };
 
 type TypeShow = {
-  notification: (value: TypeShowParams) => void;
-  success: (value: TypeShowParams) => void;
-  error: (value: TypeShowParams) => void;
-  options: (value: TypeShowOptions) => void;
+  notification: (value?: TypeShowParams) => void;
+  success: (value?: TypeShowParams) => void;
+  error: (value?: TypeShowParams) => void;
+  options: (value?: TypeShowOptions) => void;
   hide: () => void;
 };
 
@@ -95,7 +95,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             (value?.content as I18Normalize) ??
             'common.null',
         );
-        onCloseFunction.current = value.onClose;
+        onCloseFunction.current = value?.onClose;
         setVisible(true);
       },
       success: async value => {
@@ -108,35 +108,35 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             (value?.content as I18Normalize) ??
             'common.null',
         );
-        onCloseFunction.current = value.onClose;
+        onCloseFunction.current = value?.onClose;
         setVisible(true);
       },
       error: async value => {
         await promiseForNextShow;
         Vibration.vibrate();
         setStatus('error');
-        setTitle(value.title ?? 'common.error');
+        setTitle(value?.title ?? 'common.error');
         setContent(
           value?.i18Content ??
             (value?.content as I18Normalize) ??
             'common.null',
         );
-        onCloseFunction.current = value.onClose;
+        onCloseFunction.current = value?.onClose;
         setVisible(true);
       },
       options: async value => {
         await promiseForNextShow;
         Vibration.vibrate();
         setStatus('options');
-        setTitle(value.title ?? 'common.alert');
+        setTitle(value?.title ?? 'common.alert');
         setContent(
           value?.i18Content ??
             (value?.content as I18Normalize) ??
             'common.null',
         );
-        onCloseFunction.current = value.onClose;
-        onContinueFunction.current = value.onContinue;
-        onCancelFunction.current = value.onCancel;
+        onCloseFunction.current = value?.onClose;
+        onContinueFunction.current = value?.onContinue;
+        onCancelFunction.current = value?.onCancel;
         setVisible(true);
       },
       hide: () => {
@@ -318,10 +318,10 @@ const $buttonContinue: ViewStyle = {
 };
 
 export default Object.assign(ModalAlert, {
-  notification: (value: TypeShowParams) =>
+  notification: (value?: TypeShowParams) =>
     modalRef.current?.notification(value),
-  success: (value: TypeShowParams) => modalRef.current?.success(value),
-  error: (value: TypeShowParams) => modalRef.current?.error(value),
-  options: (value: TypeShowOptions) => modalRef.current?.options(value),
+  success: (value?: TypeShowParams) => modalRef.current?.success(value),
+  error: (value?: TypeShowParams) => modalRef.current?.error(value),
+  options: (value?: TypeShowOptions) => modalRef.current?.options(value),
   hide: () => modalRef.current?.hide(),
 });

@@ -1,3 +1,4 @@
+import {TYPE_GET_TOUR} from 'asset/enum';
 import request from './request';
 
 export const apiJoinSale = (
@@ -131,5 +132,28 @@ export const apiSearch = ({
 }: TypeParamsPaging<TypeSearchRequest>): Promise<TypeSearchResponse> => {
   return request.get('/common/search', {
     params,
+  });
+};
+
+export const apiGetListTours = ({
+  params,
+}: TypeParamsPaging<{user_id: number}>) => {
+  return request.get('/common/tours', {
+    params: {
+      page_index: params.pageIndex,
+      take: params.take,
+      user_id: params.user_id,
+      type: TYPE_GET_TOUR.list,
+    },
+  });
+};
+
+export const apiGetListToursFavorite = ({params}: TypeParamsPaging<{}>) => {
+  return request.get('/common/tours', {
+    params: {
+      page_index: params.pageIndex,
+      take: params.take,
+      type: TYPE_GET_TOUR.favorite,
+    },
   });
 };

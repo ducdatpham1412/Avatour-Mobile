@@ -204,8 +204,6 @@ export const LINE_HEIGHT = {
   }),
 };
 
-export const HORIZONTAL_PADDING = scale(12);
-
 export const ratioImageGroupBuying = 1; // height / width
-export const ratioImageTour = 180 / 200;
+export const ratioImageTour = 144 / 200;
 export const ratioImageSale = 232 / 319;

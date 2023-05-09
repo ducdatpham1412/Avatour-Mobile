@@ -16,14 +16,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface Props {
-  profile: TypeGetProfileResponse;
+  profile?: TypeGetProfileResponse;
+  isFollowing?: boolean;
+  onFollow?: () => Promise<void>;
 }
 
 const avatarSize = Metrics.width / 3.5;
 
-const InformationProfile = ({profile}: Props) => {
+const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
   const theme = useTheme();
   const myId = useAppSelector(state => state.accountSlice.passport.profile.id);
+
+  if (!profile) {
+    return <View style={[$container, {backgroundColor: theme.gray_200}]} />;
+  }
+
   const {
     name,
     description,
@@ -115,9 +122,9 @@ const InformationProfile = ({profile}: Props) => {
       <View style={$buttonView}>
         <StyleTouchable
           customStyle={[$buttonTouch, {backgroundColor: theme.gray_300}]}
-          onPress={() => console.log('Follow / un follow user')}>
+          onPress={onFollow}>
           <StyleText
-            i18Text="profile.follow.follow"
+            i18Text={isFollowing ? 'profile.unFollow' : 'profile.follow'}
             customStyle={$textButton}
           />
         </StyleTouchable>
@@ -182,7 +189,7 @@ const InformationProfile = ({profile}: Props) => {
           customStyle={styles.elementFollow}
           onPress={() => onNavigateFollow(TYPE_FOLLOW.follower)}>
           <StyleText
-            i18Text="profile.component.infoProfile.follower"
+            i18Text="profile.follower"
             customStyle={{color: theme.gray_500}}
           />
           <StyleText
@@ -196,7 +203,7 @@ const InformationProfile = ({profile}: Props) => {
           customStyle={styles.elementFollow}
           onPress={() => onNavigateFollow(TYPE_FOLLOW.following)}>
           <StyleText
-            i18Text="profile.component.infoProfile.following"
+            i18Text="profile.following"
             customStyle={{color: theme.gray_500}}
           />
           <StyleText
@@ -214,6 +221,7 @@ const InformationProfile = ({profile}: Props) => {
 const $container: ViewStyle = {
   width: '100%',
   paddingHorizontal: scale(16),
+  minHeight: avatarSize,
   marginTop: safePaddingNotZero,
 };
 const $introduceView: ViewStyle = {

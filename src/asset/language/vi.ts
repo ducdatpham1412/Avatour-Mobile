@@ -265,6 +265,13 @@ const reputation = {
 // PROFILE SCREEN
 const profile = {
   title: 'Cá nhân',
+  editProfile: 'Chỉnh sửa trang cá nhân',
+  follow: 'Theo dõi',
+  unFollow: 'Huỷ theo dõi',
+  follower: 'Người theo dõi',
+  following: 'Đang theo dõi',
+  block: 'Chặn',
+  report: 'Tố cáo',
   component: {
     infoProfile: {
       follower: 'Người theo dõi',
@@ -272,7 +279,6 @@ const profile = {
       introduce:
         'Đăng ký tài khoản để trải nghiệm các năng chat và tạo trang cá nhân của riêng mình nhé !',
       tellSignUp: 'Đi tới đăng ký',
-      editProfile: 'Chỉnh sửa trang cá nhân',
     },
     searchAndSetting: 'Tìm những người khác',
   },
@@ -292,8 +298,6 @@ const profile = {
   modalize: {
     setting: 'Cài đặt',
     myInfo: 'Thông tin của tôi',
-    block: 'Chặn',
-    report: 'Tố cáo',
   },
   post: {
     title: 'Đăng ảnh',
@@ -324,11 +328,6 @@ const profile = {
     travel: 'Du lịch',
     cuisine: 'Ẩm thực',
     shopping: 'Mua sắm',
-  },
-  follow: {
-    follower: 'Người theo dõi',
-    following: 'Đang theo dõi',
-    follow: 'Theo dõi',
   },
   removeAvatar: 'Xoá ảnh',
   draftPost: 'Bài nháp',
@@ -367,13 +366,13 @@ const profile = {
   waitingConfirm: 'Chờ cửa hàng xác nhận',
   joinedSuccess: 'Tham gia thành công',
   gbOrder: 'Đơn hàng',
-  editProfile: 'Chỉnh sửa',
   maxGroups: 'Số lượng nhóm tối đa',
   sendRequestChangePrice: 'Yêu cầu thay đổi giá',
   updateBankAccount: 'Tài khoản nhận tiền',
   postGroupBuying: 'Tạo đơn',
   confirmWithVendor: 'Xác nhận với người bán',
   havingRequestUpdate: 'Bạn đang có một yêu cầu cập nhật',
+  review: 'Đánh giá',
 };
 
 // MESS ROUTE
@@ -408,6 +407,7 @@ const mess = {
 
 // SETTING ROUTE
 const setting = {
+  title: 'Cài đặt',
   component: {
     typeMainSetting: {
       security: 'Bảo mật và đăng nhập',
@@ -416,9 +416,6 @@ const setting = {
       extend: 'Cài đặt mở rộng',
       logOut: 'Đăng xuất',
     },
-  },
-  settingScreen: {
-    headerTitle: 'Cài đặt',
   },
   securityAndLogin: {
     headerTitle: 'Bảo mật và đăng nhập',

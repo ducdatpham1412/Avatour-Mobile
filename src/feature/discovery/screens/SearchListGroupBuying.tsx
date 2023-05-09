@@ -1,9 +1,9 @@
 import {apiSearch} from 'api/discovery';
-import {POST_SEARCH} from 'asset/enum';
+import {APP_EVENT, POST_SEARCH} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
-import {usePaging} from 'hook';
+import {useAppEvent, usePaging} from 'hook';
 import React, {useEffect} from 'react';
 import isEqual from 'react-fast-compare';
 import {View, ViewStyle} from 'react-native';
@@ -33,6 +33,20 @@ const SearchListGroupBuying = ({searchParams}: Props) => {
       post_search: POST_SEARCH.group_buying,
     },
     isInitNotRunRequest: true,
+  });
+
+  useAppEvent(APP_EVENT.reactSale, data => {
+    setList(pre => {
+      return pre.map(sale => {
+        if (sale.id !== data?.saleId) {
+          return sale;
+        }
+        return {
+          ...sale,
+          is_liked: data.type === 'like',
+        };
+      });
+    });
   });
 
   useEffect(() => {

@@ -62,8 +62,8 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
 };
 
 const $contentContainer: ViewStyle = {
+  flexGrow: 1,
   width: '100%',
-  minHeight: '100%',
   paddingHorizontal: scale(12),
 };
 

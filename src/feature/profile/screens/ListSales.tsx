@@ -1,19 +1,23 @@
 import {apiGetListGroupBuying} from 'api/profile';
-import {HORIZONTAL_PADDING} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
+import {useAppSelector} from 'app-redux/store';
+import {ACCOUNT} from 'asset/enum';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
-import {StyleList} from 'components/base';
-import {usePaging} from 'hook';
+import {StyleButton, StyleList} from 'components/base';
+import {usePaging, useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
+import {ROOT_SCREEN} from 'navigation/config';
 import React, {useCallback} from 'react';
-import {ViewStyle} from 'react-native';
-import {onReactSale} from 'utility/assistant';
+import {ViewStyle, View} from 'react-native';
+import {borderWidthTiny, onReactSale} from 'utility/assistant';
 import {scale} from 'utility/scale';
 
 interface Props {
   userId: number;
+  account_type: number;
 }
 
-const ListSales = ({userId}: Props) => {
+const ListSalesSupplier = ({userId}: Props) => {
   const {
     list,
     setList,
@@ -48,7 +52,6 @@ const ListSales = ({userId}: Props) => {
   return (
     <StyleList
       data={list}
-      style={$container}
       contentContainerStyle={$contentContainer}
       keyExtractor={item => String(item?.id)}
       renderItem={({item, index}) => renderItemSale(item, index)}
@@ -63,13 +66,45 @@ const ListSales = ({userId}: Props) => {
   );
 };
 
+const ListSaleConsumer = ({userId}: Props) => {
+  const theme = useTheme();
+  const {id: myId} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
+  return (
+    <View style={$container}>
+      {userId === myId && (
+        <StyleButton
+          title="profile.upgradeAccount"
+          onPress={() => navigate(ROOT_SCREEN.upgradeAccount)}
+          containerStyle={[$buttonUpgrade, {borderColor: theme.black}]}
+          titleStyle={{color: theme.black, fontWeight: 'normal'}}
+        />
+      )}
+    </View>
+  );
+};
+
+const ListSales = ({userId, account_type}: Props) => {
+  if (account_type === ACCOUNT.shop) {
+    return <ListSalesSupplier userId={userId} account_type={account_type} />;
+  }
+  return <ListSaleConsumer userId={userId} account_type={account_type} />;
+};
+
 const $container: ViewStyle = {
   flex: 1,
-  paddingHorizontal: HORIZONTAL_PADDING,
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingBottom: safePaddingNotZero,
+  paddingHorizontal: horizontalPadding,
+};
+const $buttonUpgrade: ViewStyle = {
+  backgroundColor: 'transparent',
+  borderWidth: borderWidthTiny,
 };
 
 export default ListSales;

@@ -30,6 +30,7 @@ const useDetailSale = ({saleId, sale}: Params) => {
     path: `/profile/sales/join/${saleId ?? sale?.id}`,
   });
   const appEvent = useAppEvent(APP_EVENT.requestBoughtJoin);
+  const appEventReact = useAppEvent(APP_EVENT.reactSale);
   const [loadingJoin, setLoadingJoin] = useState(false);
 
   useEffect(() => {
@@ -59,10 +60,18 @@ const useDetailSale = ({saleId, sale}: Params) => {
             type: REACT.sale,
             reactedId: data?.id,
           });
+          appEventReact.emit({
+            saleId: data?.id,
+            type: 'dislike',
+          });
         } else {
           await apiLikePost({
             type: REACT.sale,
             reactedId: data?.id,
+          });
+          appEventReact.emit({
+            saleId: data?.id,
+            type: 'like',
           });
         }
       } catch (err) {

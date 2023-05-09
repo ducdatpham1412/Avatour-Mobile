@@ -1,4 +1,6 @@
+import {FONT_SIZE} from 'asset';
 import {safePaddingNotZero} from 'asset/metrics';
+import {StyleText} from 'components/base';
 import {useTheme} from 'hook';
 import React, {
   ElementRef,
@@ -8,27 +10,31 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import {useTranslation} from 'react-i18next';
+import {View} from 'react-native';
 import {ActionSheetCustom as ActionSheet} from 'react-native-actionsheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useUpdate} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, verticalScale} from 'utility/scale';
 
-type TypeShowElement = {
+export type TypeShowActionSheet = {
   title: I18Normalize;
+  onPress: () => void;
+};
+
+type TypeActionSheetElement = {
+  title: Element;
   onPress: () => void;
 };
 
 const modalRef = createRef<ElementRef<typeof ModalActionSheet>>();
 
 const ModalActionSheet = forwardRef(
-  (_: any, ref: ForwardedRef<TypeShowModalize<TypeShowElement[]>>) => {
+  (_: any, ref: ForwardedRef<TypeShowModalize<TypeShowActionSheet[]>>) => {
     const update = useUpdate();
     const {bottom} = useSafeAreaInsets();
     const theme = useTheme();
-    const {t} = useTranslation();
-    const listOptions = useRef<TypeShowElement[]>([]);
+    const listOptions = useRef<TypeActionSheetElement[]>([]);
     const actionSheetRef = useRef<any>(null);
 
     useImperativeHandle(
@@ -36,8 +42,30 @@ const ModalActionSheet = forwardRef(
       () => ({
         show: value => {
           if (value) {
-            listOptions.current = value.concat({
-              title: 'common.cancel',
+            listOptions.current = value.map(option => {
+              return {
+                title: (
+                  <View>
+                    <StyleText
+                      i18Text={option.title}
+                      customStyle={{
+                        fontSize: FONT_SIZE.f1,
+                      }}
+                    />
+                  </View>
+                ),
+                onPress: option.onPress,
+              };
+            });
+            listOptions.current.push({
+              title: (
+                <View>
+                  <StyleText
+                    i18Text="common.cancel"
+                    customStyle={{fontSize: FONT_SIZE.f1, fontWeight: 'bold'}}
+                  />
+                </View>
+              ),
               onPress: () => actionSheetRef.current?.hide(),
             });
             update();
@@ -52,7 +80,7 @@ const ModalActionSheet = forwardRef(
     return (
       <ActionSheet
         ref={actionSheetRef}
-        options={listOptions.current.map(item => t(item.title))}
+        options={listOptions.current.map(item => item.title)}
         cancelButtonIndex={listOptions.current.length - 1}
         onPress={(index: number) => {
           listOptions.current?.[index]?.onPress();
@@ -79,7 +107,7 @@ const ModalActionSheet = forwardRef(
 );
 
 export default Object.assign(ModalActionSheet, {
-  show: (value: {options: TypeShowElement[]}) =>
+  show: (value: {options: TypeShowActionSheet[]}) =>
     modalRef.current?.show(value.options),
   hide: () => modalRef.current?.hide(),
 });

@@ -27,14 +27,13 @@ export type AppParamsList = {
   [key: string]: any;
   [ROOT_SCREEN.otherProfile]: {
     id: number;
-    onGoBack(): void;
-    seeReviewFirst?: boolean;
+    initTabIndex?: number;
   };
   [ROOT_SCREEN.listFollows]: {
     userId: number;
     name: string;
     type: number;
-    onGoBack(): void;
+    onGoBack?: () => void;
   };
   [ROOT_SCREEN.detailBubble]: {
     bubbleId?: string;
@@ -174,5 +173,13 @@ export type AppParamsList = {
 export type AppEventList = {
   [APP_EVENT.requestBoughtJoin]: {
     joinId: number;
+  };
+  [APP_EVENT.reactSale]: {
+    saleId: number;
+    type: 'like' | 'dislike';
+  };
+  [APP_EVENT.reactTour]: {
+    tourId: number;
+    type: 'like' | 'dislike';
   };
 };

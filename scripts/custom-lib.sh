@@ -34,6 +34,7 @@ if [ ./react-native-tab-view ]; then
     cp ./react-native-tab-view/src/PageViewAdapter.tsx ../node_modules/react-native-tab-view/src/PageViewAdapter.tsx;
     cp ./react-native-tab-view/src/PanResponderAdapter.tsx ../node_modules/react-native-tab-view/src/PanResponderAdapter.tsx;
     cp ./react-native-tab-view/src/TabView.tsx ../node_modules/react-native-tab-view/src/TabView.tsx;
+    cp ./react-native-tab-view/src/PagerViewAdapter.tsx ../node_modules/react-native-tab-view/src/PagerViewAdapter.tsx;
 fi
 
 

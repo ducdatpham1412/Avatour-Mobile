@@ -1,13 +1,13 @@
-import {FONT_SIZE, HORIZONTAL_PADDING} from 'asset';
+import {FONT_SIZE} from 'asset';
+import Images from 'asset/img/images';
 import {TabView} from 'components';
+import {StyleIcon, StyleText} from 'components/base';
 import React from 'react';
 import {ImageSourcePropType, TextStyle, View, ViewStyle} from 'react-native';
+import {I18Normalize} from 'utility/I18Next';
 import {scale} from 'utility/scale';
 import FavoriteSales from './FavoriteSales';
 import FavoriteTours from './FavoriteTours';
-import {I18Normalize} from 'utility/I18Next';
-import {StyleIcon, StyleText} from 'components/base';
-import Images from 'asset/img/images';
 
 interface IconTabBarProps {
   icon: ImageSourcePropType;
@@ -39,7 +39,6 @@ const ListFavorites = () => {
 
 const $container: ViewStyle = {
   flex: 1,
-  paddingHorizontal: HORIZONTAL_PADDING,
 };
 const $titleView: ViewStyle = {
   flexDirection: 'row',
