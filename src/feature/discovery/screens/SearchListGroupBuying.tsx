@@ -1,4 +1,5 @@
 import {apiSearch} from 'api/discovery';
+import {useAppSelector} from 'app-redux/store';
 import {APP_EVENT, POST_SEARCH} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
@@ -11,12 +12,9 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {onReactSale} from 'utility/assistant';
 import {scale} from 'utility/scale';
 
-interface Props {
-  searchParams: Omit<TypeSearchRequest, 'post_search'>;
-}
-
-const SearchListGroupBuying = ({searchParams}: Props) => {
+const SearchListGroupBuying = () => {
   const {bottom} = useSafeAreaInsets();
+  const {searchParams} = useAppSelector(state => state.logicSlice);
 
   const {
     list,

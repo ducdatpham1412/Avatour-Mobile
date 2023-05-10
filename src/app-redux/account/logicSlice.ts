@@ -59,6 +59,8 @@ export const initialLogicState = {
     searchScreen: true,
   },
 
+  searchParams: <TypeSearchParams>{},
+
   resource: <TypeResourceResponse['data']>{},
 };
 
@@ -113,6 +115,9 @@ const logicSlice = createSlice({
     },
     setGestureHandle: (state, action) => {
       state.gestureHandle = action.payload;
+    },
+    setSearchParams: (state, action) => {
+      state.searchParams = action.payload;
     },
   },
 });

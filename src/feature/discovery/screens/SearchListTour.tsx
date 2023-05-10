@@ -1,4 +1,5 @@
 import {apiSearch} from 'api/discovery';
+import {useAppSelector} from 'app-redux/store';
 import {POST_SEARCH} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
@@ -14,8 +15,9 @@ interface Props {
   searchParams: Omit<TypeSearchRequest, 'post_search'>;
 }
 
-const SearchListTour = ({searchParams}: Props) => {
+const SearchListTour = () => {
   const {bottom} = useSafeAreaInsets();
+  const {searchParams} = useAppSelector(state => state.logicSlice);
   const {
     list,
     setParams,

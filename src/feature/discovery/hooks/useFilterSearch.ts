@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ASYNC_TYPE} from 'asset/enum';
-import {useEffect, useRef, useState} from 'react';
+import {useState} from 'react';
 import isEqual from 'react-fast-compare';
+import {useAsync} from 'react-use';
 import AppAsyncStorage from 'utility/asyncStore';
 import {OptionTickBox} from '../components';
 
@@ -14,26 +15,23 @@ const useFilterSearch = ({onChangeSearch, initSearchParams}: Params) => {
   const [searchParams, setSearchParams] =
     useState<TypeSearchParams>(initSearchParams);
 
-  useEffect(() => {
-    const initParams = async () => {
-      const res = await AppAsyncStorage.getSearchParams();
-      if (isEqual(searchParams, {})) {
-        onChangeSearch(res);
-        setSearchParams(res);
-      } else {
-        const newSearchParams = {
-          ...res,
-          ...searchParams,
-        };
-        onChangeSearch(newSearchParams);
-        setSearchParams(newSearchParams);
-        await AsyncStorage.setItem(
-          ASYNC_TYPE.searchParams,
-          JSON.stringify(newSearchParams),
-        );
-      }
-    };
-    initParams();
+  useAsync(async () => {
+    const res = await AppAsyncStorage.getSearchParams();
+    if (isEqual(searchParams, {})) {
+      onChangeSearch(res);
+      setSearchParams(res);
+    } else {
+      const newSearchParams = {
+        ...res,
+        ...searchParams,
+      };
+      onChangeSearch(newSearchParams);
+      setSearchParams(newSearchParams);
+      await AsyncStorage.setItem(
+        ASYNC_TYPE.searchParams,
+        JSON.stringify(newSearchParams),
+      );
+    }
   }, []);
 
   const onPressVehicle = (value: OptionTickBox) => {
@@ -54,10 +52,12 @@ const useFilterSearch = ({onChangeSearch, initSearchParams}: Params) => {
   const onPressService = (value: OptionTickBox) => {
     const included = !!searchParams.services?.find(id => id === value.id);
     if (included) {
-      setSearchParams(pre => ({
-        ...pre,
-        services: pre?.services?.filter(id => id !== value.id),
-      }));
+      if (searchParams?.services && searchParams?.services?.length > 1) {
+        setSearchParams(pre => ({
+          ...pre,
+          services: pre?.services?.filter(id => id !== value.id),
+        }));
+      }
     } else {
       setSearchParams(pre => ({
         ...pre,
