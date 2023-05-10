@@ -251,6 +251,7 @@ const discovery = {
   arrivalTimePassed: 'Đã quá thời gian đến.\n',
   please: 'Bạn vui lòng ',
   confirmJoinSuccess: ' để xác nhận tham gia thành công nha.',
+  notRequestConfirm: 'Chưa gửi yêu cầu xác nhận',
 };
 
 // REPUTATION

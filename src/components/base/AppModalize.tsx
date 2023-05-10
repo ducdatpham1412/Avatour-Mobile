@@ -1,3 +1,4 @@
+import {FONT_SIZE} from 'asset';
 import {useTheme} from 'hook';
 import React, {
   ForwardedRef,
@@ -6,9 +7,11 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import {StyleProp, View, ViewStyle} from 'react-native';
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {Modalize} from 'react-native-modalize';
+import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
+import StyleText from './StyleText';
 
 type Props = {
   containerStyle?: StyleProp<ViewStyle>;
@@ -16,6 +19,9 @@ type Props = {
   modalHeight?: number;
   panGestureEnabled?: boolean;
   onOpen?: () => void;
+  onClosed?: () => void;
+  title?: I18Normalize;
+  titleParams?: Record<string, any>;
 };
 
 const AppModalize = forwardRef(
@@ -26,6 +32,9 @@ const AppModalize = forwardRef(
       modalHeight,
       panGestureEnabled = true,
       onOpen,
+      onClosed,
+      title,
+      titleParams,
     }: Props,
     ref: ForwardedRef<TypeShowModalize>,
   ) => {
@@ -54,7 +63,8 @@ const AppModalize = forwardRef(
         overlayStyle={{backgroundColor: theme.black_opacity(0.3)}}
         closeOnOverlayTap={panGestureEnabled}
         panGestureEnabled={panGestureEnabled}
-        onOpen={onOpen}>
+        onOpen={onOpen}
+        onClosed={onClosed}>
         <View
           style={[
             $container,
@@ -64,6 +74,14 @@ const AppModalize = forwardRef(
             },
             containerStyle,
           ]}>
+          {!!title && (
+            <StyleText
+              i18Text={title}
+              i18Params={titleParams}
+              customStyle={$title}
+              numberOfLines={1}
+            />
+          )}
           {children}
         </View>
       </Modalize>
@@ -81,6 +99,12 @@ const $container: ViewStyle = {
   paddingTop: verticalScale(16),
   paddingHorizontal: scale(12),
   overflow: 'hidden',
+};
+const $title: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+  alignSelf: 'center',
+  marginBottom: verticalScale(10),
 };
 
 export default AppModalize;

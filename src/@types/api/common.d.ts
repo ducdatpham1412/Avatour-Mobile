@@ -50,6 +50,19 @@ interface TypeGroupJoin {
   members: TypePersonalJoin[];
 }
 
+interface TypePersonalJoinOfAdmin {
+  id: number;
+  deposit: number;
+  amount: number;
+  time_will_buy: string;
+  note: string;
+  creator: number;
+  creator_name: string;
+  creator_avatar: string;
+  created: string;
+  status: number;
+}
+
 interface TypeGroupBuying {
   id: number;
   post_type: number;

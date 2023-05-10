@@ -1,19 +1,20 @@
 import {useTheme} from 'hook';
-import React, {isValidElement} from 'react';
+import React, {ReactNode, isValidElement} from 'react';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny} from 'utility/assistant';
 import BoxView from './BoxView';
 import {StyleText} from './base';
-import {verticalScale} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 
 type TypeInfoContent = {
+  icon?: ReactNode;
   title: I18Normalize;
   content: string;
 };
 
 interface Props {
-  listInformation: Array<TypeInfoContent | Element>;
+  listInformation: Array<TypeInfoContent | Element | null>;
   containerStyle?: StyleProp<ViewStyle>;
 }
 
@@ -25,7 +26,21 @@ const BoxInformation = ({listInformation, containerStyle}: Props) => {
       {listInformation.map((item, index) => {
         const isLatest = index === listInformation.length - 1;
         if (isValidElement(item)) {
-          return <View style={$boxContainerColumn}>{item}</View>;
+          return (
+            <View
+              style={[
+                $boxContainerColumn,
+                {
+                  borderBottomColor: theme.gray_200,
+                  borderBottomWidth: isLatest ? 0 : borderWidthTiny,
+                },
+              ]}>
+              {item}
+            </View>
+          );
+        }
+        if (item === null) {
+          return null;
         }
         const itemContent: TypeInfoContent = item as TypeInfoContent;
 
@@ -38,10 +53,19 @@ const BoxInformation = ({listInformation, containerStyle}: Props) => {
                 borderBottomWidth: isLatest ? 0 : borderWidthTiny,
               },
             ]}>
-            <StyleText
-              i18Text={itemContent?.title}
-              customStyle={[$textTitle, {color: theme.gray_600}]}
-            />
+            <View style={$leftView}>
+              {itemContent?.icon}
+              <StyleText
+                i18Text={itemContent?.title}
+                customStyle={[
+                  $textTitle,
+                  {
+                    color: theme.gray_600,
+                    marginLeft: itemContent?.icon ? scale(4) : 0,
+                  },
+                ]}
+              />
+            </View>
             <StyleText
               originValue={itemContent?.content}
               customStyle={$textContent}
@@ -62,6 +86,11 @@ const $boxContainer: ViewStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
   paddingVertical: verticalScale(12),
+};
+const $leftView: ViewStyle = {
+  flex: 0.75,
+  flexDirection: 'row',
+  alignItems: 'center',
 };
 const $boxContainerColumn: ViewStyle = {
   width: '100%',

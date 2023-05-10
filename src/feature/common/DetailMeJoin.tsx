@@ -1,3 +1,4 @@
+import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE} from 'asset';
 import {APP_EVENT, GROUP_BUYING_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
@@ -17,7 +18,6 @@ import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React, {ElementRef, useMemo, useRef, useState} from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
 import {renderPersonalJoinsFromGroups} from 'utility/assistant';
 import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
@@ -33,6 +33,9 @@ const DetailMeJoin = ({
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const {id: myId} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
 
   const [{loadingJoin, data, loading}, {onJoin, onRequestBought, onRefresh}] =
     useDetailSale({
@@ -241,6 +244,7 @@ const DetailMeJoin = ({
         groups={data?.groups || []}
         refreshing={loading}
         onRefresh={onRefresh}
+        isMySale={data?.creator === myId}
       />
     </>
   );
