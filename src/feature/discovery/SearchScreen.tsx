@@ -1,24 +1,17 @@
-import {setGestureHandle} from 'app-redux';
 import Images from 'asset/img/images';
 import {FONT_SIZE} from 'asset/standardValue';
-import {StyleTabView} from 'components';
+import {TabView} from 'components';
 import {SafeView, StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
+import {IconTabBar} from 'components/common';
 import {useTheme} from 'hook';
+import {goBack} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {DISCOVERY_ROUTE} from 'navigation/config/routes';
-import {goBack} from 'navigation/NavigationService';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
-import {
-  Animated,
-  ScrollView,
-  TextInput,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {ScrollView, TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useUpdateEffect} from 'react-use';
@@ -28,39 +21,36 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
 import {SearchListGroupBuying, SearchListTour} from './screens';
+import {setSearchParams} from 'app-redux';
+import {useAppSelector} from 'app-redux/store';
 
 const SearchScreen = ({
   route,
 }: RouteParams<AppParamsList[DISCOVERY_ROUTE.searchScreen]>) => {
   const theme = useTheme();
   const {t} = useTranslation();
+  const {searchParams} = useAppSelector(state => state.logicSlice);
 
   const servicesRoute = useRef(route.params?.services).current;
-  const searchRoute = useRef(route.params?.search).current;
+  const searchRoute = useRef(route.params?.search);
   const isRouteParamsNull = useRef(
-    servicesRoute === undefined && searchRoute === undefined,
-  ).current;
+    servicesRoute === undefined && searchRoute.current === undefined,
+  );
   const initSearchParams = useRef(
     servicesRoute ? {services: [servicesRoute]} : {},
-  ).current;
+  );
 
   const modalFilterRef = useRef<ElementRef<typeof ModalSearchFilter>>(null);
   const inputRef = useRef<TextInput>(null);
-  const checkShouldSetShowResultByTrue = useRef(!isRouteParamsNull);
-  const tabViewRef = useRef<StyleTabView>(null);
+  const checkHaveInitSearchParams = useRef(false);
 
-  const [displayHint, setDisplayHint] = useState(isRouteParamsNull);
-  const [showResult, setShowResult] = useState(!isRouteParamsNull);
+  const [displayHint, setDisplayHint] = useState(isRouteParamsNull.current);
+  const [showResult, setShowResult] = useState(!isRouteParamsNull.current);
 
-  const [location, setLocation] = useState(searchRoute || '');
-  const [searchParams, setSearchParams] =
-    useState<TypeSearchParams>(initSearchParams);
-
-  const [indexFocus, setIndexFocus] = useState(0);
-  const translateIndicatorX = useRef(new Animated.Value(0)).current;
+  const [location, setLocation] = useState(searchRoute.current || '');
 
   useEffect(() => {
-    if (isRouteParamsNull) {
+    if (isRouteParamsNull.current) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 300);
@@ -69,10 +59,10 @@ const SearchScreen = ({
 
   useUpdateEffect(() => {
     if (!isEqual(searchParams, {})) {
-      if (checkShouldSetShowResultByTrue.current) {
+      if (isRouteParamsNull.current && checkHaveInitSearchParams.current) {
         setShowResult(true);
       } else {
-        checkShouldSetShowResultByTrue.current = true;
+        checkHaveInitSearchParams.current = true;
       }
       setDisplayHint(false);
     }
@@ -91,13 +81,10 @@ const SearchScreen = ({
         style={[$input, {color: theme.black}]}
         placeholder={t('discovery.searchAround')}
         onChangeText={text => setLocation(text)}
-        defaultValue={searchRoute}
+        defaultValue={searchRoute.current}
         returnKeyType="search"
         onSubmitEditing={() => {
-          setSearchParams(pre => ({
-            ...pre,
-            location,
-          }));
+          setSearchParams({...searchParams, location});
         }}
         placeholderTextColor={theme.gray_500}
         onFocus={() => setDisplayHint(true)}
@@ -156,7 +143,7 @@ const SearchScreen = ({
             />
           </StyleTouchable>
 
-          {searchParams.number_people && (
+          {!!searchParams.number_people && (
             <StyleTouchable
               customStyle={[
                 $toolBox,
@@ -205,7 +192,7 @@ const SearchScreen = ({
             </StyleTouchable>
           )}
 
-          {searchParams?.services?.length && (
+          {!!searchParams?.services?.length && (
             <StyleTouchable
               customStyle={[
                 $toolBox,
@@ -232,45 +219,6 @@ const SearchScreen = ({
             </StyleTouchable>
           )}
         </ScrollView>
-
-        {showResult && (
-          <View style={$toolPostSearch}>
-            <View style={$postSearchBox}>
-              <StyleTouchable
-                customStyle={$searchTab}
-                onPress={() => tabViewRef.current?.navigateToIndex(0)}>
-                <StyleText
-                  i18Text="discovery.tour"
-                  customStyle={[
-                    $textSearchTab,
-                    {color: indexFocus === 0 ? theme.p_800 : theme.gray_500},
-                  ]}
-                />
-              </StyleTouchable>
-              <View style={{width: indicatorTabWidth}} />
-              <StyleTouchable
-                customStyle={$searchTab}
-                onPress={() => tabViewRef.current?.navigateToIndex(1)}>
-                <StyleText
-                  i18Text="discovery.groupBuying"
-                  customStyle={[
-                    $textSearchTab,
-                    {color: indexFocus === 1 ? theme.p_800 : theme.gray_500},
-                  ]}
-                />
-              </StyleTouchable>
-            </View>
-            <Animated.View
-              style={[
-                $indicatorTab,
-                {
-                  backgroundColor: theme.p_800,
-                  transform: [{translateX: translateIndicatorX}],
-                },
-              ]}
-            />
-          </View>
-        )}
       </View>
     );
   };
@@ -282,26 +230,18 @@ const SearchScreen = ({
         {renderToolBox()}
         <View style={$resultView}>
           {showResult && (
-            <StyleTabView
-              ref={tabViewRef}
-              containerStyle={$resultView}
-              onChangeTabIndex={index => {
-                setIndexFocus(index);
-                if (index === 0) {
-                  setGestureHandle('searchScreen', true);
-                } else {
-                  setGestureHandle('searchScreen', false);
-                }
-              }}
-              onScroll={e =>
-                translateIndicatorX.setValue(
-                  2 * indicatorWidth * e.position +
-                    2 * indicatorTabWidth * e.position,
-                )
-              }>
-              <SearchListTour searchParams={searchParams} />
-              <SearchListGroupBuying searchParams={searchParams} />
-            </StyleTabView>
+            <TabView
+              listElements={[SearchListTour, SearchListGroupBuying]}
+              tabBarStyle={$tabBarResult}
+              listIconTabBar={[
+                <IconTabBar icon={Images.icons.tour} title="discovery.tour" />,
+                <IconTabBar
+                  icon={Images.icons.shop}
+                  title="discovery.groupBuying"
+                />,
+              ]}
+              style={$resultView}
+            />
           )}
 
           {displayHint && (
@@ -310,10 +250,7 @@ const SearchScreen = ({
               onSearch={text => {
                 inputRef.current?.blur();
                 setLocation(text);
-                setSearchParams(pre => ({
-                  ...pre,
-                  location: text,
-                }));
+                setSearchParams({...searchParams, location: text});
               }}
             />
           )}
@@ -323,14 +260,12 @@ const SearchScreen = ({
       <ModalSearchFilter
         ref={modalFilterRef}
         onChangeSearch={value => setSearchParams({...value, location})}
-        initSearchParams={initSearchParams}
+        initSearchParams={initSearchParams.current}
       />
     </>
   );
 };
 
-const indicatorWidth = moderateScale(120);
-const indicatorTabWidth = moderateScale(10);
 const $backView: ViewStyle = {
   width: verticalScale(40),
   height: verticalScale(40),
@@ -378,27 +313,9 @@ const $textTool: TextStyle = {
 const $resultView: ViewStyle = {
   flex: 1,
 };
-const $toolPostSearch: ViewStyle = {
-  width: 2 * indicatorWidth,
-  alignSelf: 'center',
-  marginTop: verticalScale(4),
-};
-const $postSearchBox: ViewStyle = {
-  flexDirection: 'row',
-};
-const $searchTab: ViewStyle = {
-  width: indicatorWidth,
-  paddingVertical: verticalScale(8),
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-const $textSearchTab: TextStyle = {
-  fontWeight: '500',
-};
-const $indicatorTab: ViewStyle = {
-  width: indicatorWidth,
-  height: moderateScale(1.25),
-  borderRadius: 10,
+const $tabBarResult: ViewStyle = {
+  paddingHorizontal: scale(50),
+  paddingTop: 0,
 };
 
 export default SearchScreen;

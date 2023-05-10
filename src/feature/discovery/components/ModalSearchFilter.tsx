@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BORDER_RADIUS, LIST_TOPICS, LIST_TRANSPORTS} from 'asset';
 import {ASYNC_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
+import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {
   AppInput,
@@ -31,14 +31,13 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {borderWidthTiny} from 'utility/assistant';
-import {addDate, formatDDMMMM, formatUTCDate} from 'utility/format';
+import {formatDDMMMM, formatUTCDate} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import dayjs from 'dayjs';
 
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
@@ -313,7 +312,6 @@ const ModalSearchFilter = (
   );
 };
 
-const containerHeight = Metrics.height * 0.7;
 const $contentBox: ViewStyle = {
   marginTop: verticalScale(12),
 };

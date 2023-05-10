@@ -62,3 +62,7 @@ export const setBorderMessRoute = (color: string) => {
 export const setScrollMainAndChatEnable = (value: boolean) => {
   Store.dispatch(logicSliceAction.setScrollMainAndChatEnable(value));
 };
+
+export const setSearchParams = (value: TypeSearchParams) => {
+  Store.dispatch(logicSliceAction.setSearchParams(value));
+};
