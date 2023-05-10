@@ -29,6 +29,7 @@
     "@react-navigation/stack": "^6.3.16",
     "@reduxjs/toolkit": "^1.9.2",
     "ahooks": "^3.7.4",
+    "async-mutex": "^0.4.0",
     "axios": "^1.2.6",
     "dayjs": "^1.11.7",
     "husky": "^8.0.3",

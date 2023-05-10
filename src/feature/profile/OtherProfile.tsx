@@ -22,22 +22,24 @@ const OtherProfile = ({
   const isShopAccount = data?.account_type === ACCOUNT.shop;
 
   const onShowModalOptions = () => {
-    ModalActionSheet.show({
-      options: [
-        {
-          title: isFollowing ? 'profile.unFollow' : 'profile.follow',
-          onPress: follow,
-        },
-        {
-          title: 'profile.block',
-          onPress: block,
-        },
-        {
-          title: 'profile.report',
-          onPress: report,
-        },
-      ],
-    });
+    if (!isBlocked) {
+      ModalActionSheet.show({
+        options: [
+          {
+            title: isFollowing ? 'profile.unFollow' : 'profile.follow',
+            onPress: follow,
+          },
+          {
+            title: isBlocked ? 'profile.unBlock' : 'profile.block',
+            onPress: block,
+          },
+          {
+            title: 'profile.report',
+            onPress: report,
+          },
+        ],
+      });
+    }
   };
 
   const renderShop = () => {
@@ -56,7 +58,9 @@ const OtherProfile = ({
 
   const renderListReviews = () => {
     if (data) {
-      return <ListReviews />;
+      return (
+        <ListReviews userId={data?.id} account_type={data?.account_type} />
+      );
     }
     return null;
   };
@@ -65,7 +69,7 @@ const OtherProfile = ({
     <StyleContainer
       headerProps={{
         title: data?.name as I18Normalize,
-        RightComponent: (
+        RightComponent: !isBlocked && (
           <StyleTouchable onPress={onShowModalOptions}>
             <StyleIcon
               source={Images.icons.more}

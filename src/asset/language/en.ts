@@ -297,6 +297,7 @@ const profile = {
   follower: 'Followers',
   following: 'Followings',
   block: 'Block',
+  unBlock: 'Unblock',
   report: 'Report',
   component: {
     infoProfile: {
@@ -498,7 +499,7 @@ const alert = {
   inValidPhone: 'Invalid phone number',
 
   // PROFILE
-  successUpdatePro: 'Update profile successful !',
+  successUpdatePro: 'Update profile successful!',
   invalidLink: 'Invalid link',
   numberPeopleMoreThan: 'Number people have to be more than {{value}}',
   numberPeopleLessThan: 'Number people have to be less than {{value}}',
@@ -519,6 +520,7 @@ const alert = {
   sureUpdateBankAccount: 'Are you sure want to update your bank account?',
   requestUpdateBankSuccess:
     'Request updating bank account successfully\nOur team will review and respond to you within 1 day',
+  sureToBlock: 'Are you sure you want to block this person?',
 
   // PERMISSION
   permissionCamera: 'Access camera',

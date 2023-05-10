@@ -271,6 +271,7 @@ const profile = {
   follower: 'Người theo dõi',
   following: 'Đang theo dõi',
   block: 'Chặn',
+  unBlock: 'Huỷ chặn',
   report: 'Tố cáo',
   component: {
     infoProfile: {
@@ -528,6 +529,7 @@ const alert = {
     'Bạn chắc chắn muốn cập nhật tài khoản ngân hàng của mình?',
   requestUpdateBankSuccess:
     'Gửi yêu cầu cập nhật tài khoản nhận tiền thành công\nChúng tôi sẽ xem xét và phản hồi lại bạn trong thời gian 1 ngày',
+  sureToBlock: 'Bạn có chắc chắn muốn chặn người này?',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

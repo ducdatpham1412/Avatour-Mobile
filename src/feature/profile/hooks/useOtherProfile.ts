@@ -1,21 +1,30 @@
 import {apiFollowUser, apiUnFollowUser} from 'api/profile';
+import {apiBlockUser, apiUnBlockUser} from 'api/setting';
 import {RELATIONSHIP} from 'asset/enum';
-import {useApiImmutable} from 'hook';
+import {Mutex, withTimeout} from 'async-mutex';
+import {useApi} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 
 const useOtherProfile = (id: number) => {
-  const {data, mutate, loading, error} =
-    useApiImmutable<TypeGetProfileResponse>({
-      path: `/profile/${id}`,
-    });
+  const mutex = withTimeout(new Mutex(), 30000);
+  const {data, mutate, loading, error} = useApi<TypeGetProfileResponse>({
+    path: `/profile/${id}`,
+    config: {
+      revalidateAll: true,
+    },
+  });
 
   const isFollowing = data?.relationship === RELATIONSHIP.following;
   const isBlocked = data?.relationship === RELATIONSHIP.block;
 
   const follow = async () => {
     if (data) {
+      if (mutex.isLocked()) {
+        return;
+      }
+      const release = await mutex.acquire();
       try {
         if (!isFollowing) {
           await apiFollowUser(data?.id);
@@ -33,7 +42,7 @@ const useOtherProfile = (id: number) => {
           );
         } else {
           await apiUnFollowUser(data?.id);
-          mutate(
+          await mutate(
             pre => {
               if (pre) {
                 return {
@@ -47,13 +56,55 @@ const useOtherProfile = (id: number) => {
           );
         }
       } catch (err) {
-        ModalAlert.error();
+        ModalAlert.error({
+          content: err,
+        });
+      } finally {
+        release();
       }
     }
   };
 
-  const block = async () => {
-    console.log('block user: ', id);
+  const block = () => {
+    if (data) {
+      if (mutex.isLocked()) {
+        return;
+      }
+
+      const agree = async () => {
+        const release = await mutex.acquire();
+        try {
+          if (isBlocked) {
+            await apiUnBlockUser(data?.id);
+            await mutate();
+          } else {
+            await apiBlockUser(data?.id);
+            await mutate(
+              pre => {
+                if (pre) {
+                  return {
+                    ...pre,
+                    relationship: RELATIONSHIP.block,
+                  };
+                }
+              },
+              {revalidate: false},
+            );
+          }
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        } finally {
+          release();
+        }
+      };
+
+      ModalAlert.options({
+        i18Content: 'alert.sureToBlock',
+        onContinue: agree,
+      });
+    }
   };
 
   const report = () => {

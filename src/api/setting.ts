@@ -17,10 +17,10 @@ export const apiChangePassword = (params: TypeChangePasswordRequest) => {
 };
 
 export const apiBlockUser = (id: number) => {
-  return request.post(`/setting/block/${id}`);
+  return request.post(`/setting/blocks/${id}`);
 };
 export const apiUnBlockUser = (id: number) => {
-  return request.post(`/setting/unblock/${id}`);
+  return request.delete(`/setting/blocks/${id}`);
 };
 
 export const apiGetListBlocked = (): Promise<TypeGetListBlockedResponse> => {
