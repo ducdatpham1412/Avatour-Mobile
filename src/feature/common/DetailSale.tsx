@@ -28,6 +28,7 @@ import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
+import {useAppSelector} from 'app-redux/store';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -83,6 +84,9 @@ const DetailSale = ({
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailSale]>) => {
   const {top, bottom} = useSafeAreaInsets();
   const theme = useTheme();
+  const {id: myId} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
 
   const [{data, loading, meJoins}, {onReaction, onRefresh}] = useDetailSale({
     saleId,
@@ -403,6 +407,7 @@ const DetailSale = ({
         groups={data?.groups || []}
         refreshing={loading}
         onRefresh={onRefresh}
+        isMySale={data?.creator === myId}
       />
 
       <ModalConfirmJoinGb

@@ -45,22 +45,11 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
     RenderPeopleJoined = (
       <>
         <StyleIcon source={Images.images.defaultAvatar} size={15} />
-        <StyleIcon
-          source={Images.images.defaultAvatar}
-          size={15}
-          customStyle={{left: -scale(3)}}
-        />
-        <StyleIcon
-          source={Images.images.defaultAvatar}
-          size={15}
-          customStyle={{left: -scale(6)}}
-        />
+        <StyleIcon source={Images.images.defaultAvatar} size={15} />
+        <StyleIcon source={Images.images.defaultAvatar} size={15} />
         <StyleText
           i18Text="discovery.beTheFirstJoin"
-          customStyle={[
-            $textInfo,
-            {color: theme.gray_500, marginLeft: -scale(2)},
-          ]}
+          customStyle={[$textInfo, {color: theme.gray_500}]}
         />
       </>
     );
@@ -68,18 +57,11 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
     RenderPeopleJoined = (
       <>
         {listPersonalJoins.map((personal, index) => {
-          let left = 0;
-          if (index === 1) {
-            left = -scale(3);
-          } else if (index === 2) {
-            left = -scale(6);
-          }
           return (
             <StyleIcon
               key={index}
               source={{uri: personal?.creator_avatar}}
               size={15}
-              customStyle={{left}}
             />
           );
         })}
@@ -88,10 +70,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
           i18Params={{
             value: item?.total_members,
           }}
-          customStyle={[
-            $textInfo,
-            {color: theme.gray_500, marginLeft: -scale(2)},
-          ]}
+          customStyle={[$textInfo, {color: theme.gray_500}]}
         />
       </>
     );
@@ -117,15 +96,6 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
           customStyle={$image}
         />
         <View style={[$heartBox, {backgroundColor: theme.white_opacity(0.8)}]}>
-          {/* <StyleIcon
-            source={
-              !!item?.is_liked ? Images.icons.heartFocus : Images.icons.heart
-            }
-            size={32}
-            customStyle={{
-              tintColor: item?.is_liked ? theme.pink : theme.black,
-            }}
-          /> */}
           {!!item?.is_liked ? (
             <IconLiked
               customStyle={$iconLike}
@@ -165,13 +135,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         </View>
       )}
 
-      <View style={$informationView}>
-        {RenderPeopleJoined}
-        <StyleText
-          originValue={item?.creator_location}
-          customStyle={[$textInfo, {color: theme.gray_500}]}
-        />
-      </View>
+      <View style={$informationView}>{RenderPeopleJoined}</View>
 
       <View style={$informationView}>
         <StyleText
@@ -225,7 +189,7 @@ const $textName: TextStyle = {
   fontWeight: 'bold',
 };
 const $textInfo: TextStyle = {
-  marginLeft: scale(8),
+  marginLeft: scale(4),
   fontSize: FONT_SIZE.f3,
 };
 const $textPrice: TextStyle = {

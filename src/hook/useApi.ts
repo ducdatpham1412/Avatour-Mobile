@@ -3,7 +3,7 @@ import useSWR, {SWRConfiguration} from 'swr';
 import useSWRImmutable from 'swr/immutable';
 
 interface TypeParamsApi {
-  path: string;
+  path: string | null | undefined;
   params?: Record<string, any>;
   config?: SWRConfiguration & {revalidateAll?: boolean};
 }
@@ -12,10 +12,10 @@ const useApi = <T>({path, params, config}: TypeParamsApi) => {
   const moreConfig: SWRConfiguration = config?.revalidateAll
     ? {revalidateOnFocus: true, revalidateIfStale: true}
     : {};
-  const {data, error, isLoading, mutate} = useSWR<T, Error>(
-    [path, params, 'useApi'],
+  const {data, error, isLoading, isValidating, mutate} = useSWR<T, Error>(
+    path ? [path, params, 'useApi'] : null,
     async () => {
-      const res = await request.get(path, params);
+      const res = await request.get(path ?? '', {params});
       return res?.data;
     },
     {
@@ -32,14 +32,18 @@ const useApi = <T>({path, params, config}: TypeParamsApi) => {
     error,
     loading: isLoading,
     mutate,
+    validating: isValidating,
   };
 };
 
 export const useApiImmutable = <T>({path, params, config}: TypeParamsApi) => {
-  const {data, error, isLoading, mutate} = useSWRImmutable<T, Error>(
-    [path, params, 'useApiImmutable'],
+  const {data, error, isLoading, isValidating, mutate} = useSWRImmutable<
+    T,
+    Error
+  >(
+    path ? [path, params, 'useApiImmutable'] : null,
     async () => {
-      const res = await request.get(path, params);
+      const res = await request.get(path ?? '', {params});
       return res?.data;
     },
     {
@@ -55,6 +59,7 @@ export const useApiImmutable = <T>({path, params, config}: TypeParamsApi) => {
     error,
     loading: isLoading,
     mutate,
+    validating: isValidating,
   };
 };
 

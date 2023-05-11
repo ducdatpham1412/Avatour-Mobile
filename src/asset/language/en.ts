@@ -247,6 +247,7 @@ const discovery = {
   arrivalTimePassed: 'The arrival time has passed.\n',
   please: 'Please ',
   confirmJoinSuccess: ' to confirm successful participation.',
+  notRequestConfirm: 'No confirmation request yet',
 };
 
 // REPUTATION
