@@ -6,19 +6,65 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {useTheme} from 'hook';
-import React from 'react';
+import {useLoading, useTheme} from 'hook';
+import React, {Dispatch, SetStateAction} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {onGoToProfile} from 'utility/assistant';
 import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
 import {verticalScale} from 'utility/scale';
 
+export type TypeConfirmBought = (
+  list_joins_id: number[],
+  options: {
+    setLoading: Dispatch<SetStateAction<boolean>>;
+  },
+) => Promise<void>;
+
 interface Props {
   item: TypePersonalJoinOfAdmin;
+  onConfirmBought: TypeConfirmBought;
 }
 
-const ItemPersonalJoinOfAdmin = ({item}: Props) => {
-  const {gray_600} = useTheme();
+const ItemPersonalJoinOfAdmin = ({item, onConfirmBought}: Props) => {
+  const theme = useTheme();
+  const {loading, setLoading} = useLoading();
+
+  const renderStatus = () => {
+    if (item?.status === GROUP_BUYING_STATUS.requestBought) {
+      return (
+        <StyleButton
+          title="discovery.confirmBought"
+          onPress={() => onConfirmBought([item?.id], {setLoading})}
+          isLoading={loading}
+        />
+      );
+    }
+    if (
+      item?.status === GROUP_BUYING_STATUS.notBought ||
+      item?.status === GROUP_BUYING_STATUS.notBoughtButOvertime
+    ) {
+      return (
+        <View style={$notRequest}>
+          <StyleText
+            i18Text="discovery.notRequestConfirm"
+            customStyle={{color: theme.gray_600}}
+          />
+        </View>
+      );
+    }
+    if (item?.status === GROUP_BUYING_STATUS.bought) {
+      return (
+        <View style={$notRequest}>
+          <StyleText
+            i18Text="discovery.bought"
+            customStyle={{color: theme.blue, fontWeight: 'bold'}}
+          />
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <BoxInformation
       listInformation={[
@@ -40,19 +86,10 @@ const ItemPersonalJoinOfAdmin = ({item}: Props) => {
           content: formatMoney(item?.deposit),
         },
         <View style={$note}>
-          <StyleText i18Text="discovery.note" style={{color: gray_600}} />
+          <StyleText i18Text="discovery.note" style={{color: theme.gray_600}} />
           <StyleText originValue={item?.note} style={$contentNote} />
         </View>,
-        item?.status === GROUP_BUYING_STATUS.requestBought ? (
-          <StyleButton title="discovery.confirmBought" />
-        ) : (
-          <View style={$notRequest}>
-            <StyleText
-              i18Text="discovery.notRequestConfirm"
-              customStyle={{color: gray_600}}
-            />
-          </View>
-        ),
+        renderStatus(),
       ]}
     />
   );
