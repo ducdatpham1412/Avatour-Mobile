@@ -30,8 +30,10 @@ export const apiGetListPeopleRetail = ({params}: TypeParamsPaging) => {
   });
 };
 
-export const apiConfirmUserBought = (join_id: string) => {
-  return request.put(`profile/confirm-user-bought/${join_id}`);
+export const apiConfirmUserBought = (list_joins_id: number[]) => {
+  return request.put(`profile/sales/confirm`, {
+    list_joins_id,
+  });
 };
 
 export const apiCreateGroupBuying = (body: TypeCreateGroupBuying) => {

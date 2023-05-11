@@ -1,7 +1,10 @@
+import {apiConfirmUserBought} from 'api/discovery';
+import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {Metrics} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleList} from 'components/base';
 import {useApiImmutable, useTheme} from 'hook';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -14,7 +17,9 @@ import {View} from 'react-native';
 import {formatDDMMMMYY} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import ItemPersonalJoin from './ItemPersonalJoin';
-import ItemPersonalJoinOfAdmin from './ItemPersonalJoinOfAdmin';
+import ItemPersonalJoinOfAdmin, {
+  TypeConfirmBought,
+} from './ItemPersonalJoinOfAdmin';
 
 type TypeShow = {
   group: TypeGroupJoin;
@@ -50,10 +55,44 @@ const ListPeopleOfAdmin = ({group}: Props) => {
     },
   });
 
+  const onConfirmBought: TypeConfirmBought = async (
+    list_joins_id,
+    {setLoading},
+  ) => {
+    try {
+      setLoading(true);
+      await apiConfirmUserBought(list_joins_id);
+      await mutate(pre => {
+        if (pre) {
+          return pre.map(join => {
+            if (list_joins_id.includes(join?.id)) {
+              return {
+                ...join,
+                status: GROUP_BUYING_STATUS.bought,
+              };
+            }
+            return join;
+          });
+        }
+      });
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <StyleList
       data={data}
-      renderItem={({item}) => <ItemPersonalJoinOfAdmin item={item} />}
+      renderItem={({item}) => (
+        <ItemPersonalJoinOfAdmin
+          item={item}
+          onConfirmBought={onConfirmBought}
+        />
+      )}
       keyExtractor={item => String(item?.id)}
       ItemSeparatorComponent={Separator}
       initLoading={loading}
