@@ -6,8 +6,7 @@ import {
   StyleIcon,
   StyleText,
 } from 'components/base';
-import Redux from 'hook/useRedux';
-import StyleHeader from 'navigation/components/StyleHeader';
+import {useLoading, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
@@ -15,53 +14,52 @@ import {ScaledSheet} from 'react-native-size-matters';
 import AuthenticateService from 'utility/login/loginService';
 
 const ConfirmLockAccount = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
+  const {loading, setLoading} = useLoading();
 
   const onLockAccount = async () => {
     try {
+      setLoading(true);
       await apiLockAccount();
       await AuthenticateService.logOut({hadRefreshTokenBlacked: false});
     } catch (err) {
       ModalAlert.error({
         content: err,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      <StyleHeader title="setting.securityAndLogin.lockAccount" />
-      <StyleContainer customStyle={styles.container}>
-        <StyleIcon
-          source={Images.images.squirrelEnjoy}
-          size={100}
-          customStyle={styles.iconAlert}
-        />
+    <StyleContainer
+      customStyle={styles.container}
+      headerProps={{
+        title: 'setting.securityAndLogin.lockAccount',
+      }}
+      backgroundColor={theme.white}>
+      <StyleIcon
+        source={Images.images.squirrelEnjoy}
+        size={100}
+        customStyle={styles.iconAlert}
+      />
 
-        <View
-          style={[
-            styles.alertView,
-            {backgroundColor: theme.backgroundButtonColor},
-          ]}>
-          <StyleText
-            i18Text="setting.securityAndLogin.areYouSureLockAccount"
-            customStyle={[styles.textAlert, {color: theme.textColor}]}
-          />
-        </View>
+      <View style={[styles.alertView, {backgroundColor: theme.background}]}>
+        <StyleText i18Text="setting.securityAndLogin.areYouSureLockAccount" />
+      </View>
 
-        <StyleButton
-          title="setting.securityAndLogin.continueLock"
-          containerStyle={styles.buttonDelete}
-          onPress={onLockAccount}
-        />
-      </StyleContainer>
-    </>
+      <StyleButton
+        title="setting.securityAndLogin.continueLock"
+        containerStyle={styles.buttonDelete}
+        onPress={onLockAccount}
+        isLoading={loading}
+      />
+    </StyleContainer>
   );
 };
 
 const styles = ScaledSheet.create({
   container: {
-    paddingHorizontal: '20@s',
     alignItems: 'center',
   },
   alertView: {
@@ -69,9 +67,6 @@ const styles = ScaledSheet.create({
     paddingVertical: '30@vs',
     borderRadius: '14@s',
     marginTop: '40@vs',
-  },
-  textAlert: {
-    fontSize: '14@ms',
   },
   iconAlert: {
     marginTop: '30@vs',

@@ -27,6 +27,7 @@ import {
 } from 'react-native';
 import {Path, Svg} from 'react-native-svg';
 import {I18Normalize} from 'utility/I18Next';
+import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 const modalRef = createRef<ElementRef<typeof ModalAlert>>();
@@ -87,7 +88,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
     () => ({
       notification: async value => {
         await promiseForNextShow;
-        Vibration.vibrate();
+        impactLight();
         setStatus('notification');
         setTitle(value?.title ?? 'common.alert');
         setContent(
@@ -100,7 +101,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       },
       success: async value => {
         await promiseForNextShow;
-        Vibration.vibrate();
+        impactMedium();
         setStatus('success');
         setTitle(value?.title ?? 'common.success');
         setContent(
@@ -126,7 +127,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       },
       options: async value => {
         await promiseForNextShow;
-        Vibration.vibrate();
+        impactMedium();
         setStatus('options');
         setTitle(value?.title ?? 'common.alert');
         setContent(

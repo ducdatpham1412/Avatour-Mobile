@@ -10,9 +10,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import TypeDetailSetting from '../../../components/common/TypeDetailSetting';
 import LanguageSetting from './LanguageSetting';
 import ThemeSetting from './ThemeSetting';
+import {scale} from 'utility/scale';
+import {useTheme} from 'hook';
+import {useAppSelector} from 'app-redux/store';
+import {ACCOUNT} from 'asset/enum';
 
 const ExtendSetting = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
+  const {account_type} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
 
   const [isSettingTheme, setIsSettingTheme] = useState(false);
   const openCloseSettingTheme = () => setIsSettingTheme(!isSettingTheme);
@@ -22,53 +29,56 @@ const ExtendSetting = () => {
     setIsSettingLanguage(!isSettingLanguage);
 
   return (
-    <>
-      <StyleHeader title="setting.extendSetting.headerTitle" />
+    <StyleContainer
+      customStyle={styles.container}
+      headerProps={{
+        title: 'setting.extendSetting.headerTitle',
+      }}
+      backgroundColor={theme.white}>
+      {/* <TypeDetailSetting
+        title="setting.extendSetting.theme"
+        onPress={openCloseSettingTheme}
+        icon={
+          <Ionicons
+            name="color-palette-outline"
+            style={[styles.stylesIcon, {color: theme.orange}]}
+          />
+        }
+      />
+      {isSettingTheme && <ThemeSetting />} */}
 
-      <StyleContainer scrollEnabled containerStyle={styles.container}>
-        <TypeDetailSetting
-          title="setting.extendSetting.theme"
-          onPress={openCloseSettingTheme}
-          icon={
-            <Ionicons
-              name="color-palette-outline"
-              style={[styles.stylesIcon, {color: theme.borderColor}]}
-            />
-          }
-        />
-        {isSettingTheme && <ThemeSetting />}
+      <TypeDetailSetting
+        title="setting.extendSetting.language"
+        onPress={openCloseSettingLanguage}
+        icon={
+          <FontAwesome
+            name="language"
+            style={[styles.stylesIcon, {color: theme.pink}]}
+          />
+        }
+      />
+      {isSettingLanguage && <LanguageSetting />}
 
-        <TypeDetailSetting
-          title="setting.extendSetting.language"
-          onPress={openCloseSettingLanguage}
-          icon={
-            <FontAwesome
-              name="language"
-              style={[styles.stylesIcon, {color: theme.borderColor}]}
-            />
-          }
-        />
-        {isSettingLanguage && <LanguageSetting />}
-
+      {account_type === ACCOUNT.shop && (
         <TypeDetailSetting
           title="profile.updateBankAccount"
           onPress={() => navigate(ROOT_SCREEN.updateBankAccount)}
           icon={
             <FontAwesome
               name="credit-card"
-              style={[styles.stylesIcon, {color: theme.borderColor}]}
+              style={[styles.stylesIcon, {color: theme.blue}]}
             />
           }
         />
-      </StyleContainer>
-    </>
+      )}
+    </StyleContainer>
   );
 };
 
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: '30@s',
+    paddingHorizontal: scale(40),
   },
   stylesIcon: {
     fontSize: '20@ms',

@@ -7,7 +7,6 @@ import {
   StyleText,
 } from 'components/base';
 import {useTheme} from 'hook';
-import StyleHeader from 'navigation/components/StyleHeader';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
@@ -29,39 +28,33 @@ const ConfirmDeleteAccount = () => {
   };
 
   return (
-    <>
-      <StyleHeader title="setting.securityAndLogin.deleteAccount" />
-      <StyleContainer customStyle={styles.container}>
-        <StyleIcon
-          source={Images.images.squirrelEnjoy}
-          size={100}
-          customStyle={styles.iconAlert}
-        />
+    <StyleContainer
+      customStyle={styles.container}
+      headerProps={{
+        title: 'setting.securityAndLogin.deleteAccount',
+      }}
+      backgroundColor={theme.white}>
+      <StyleIcon
+        source={Images.images.squirrelEnjoy}
+        size={100}
+        customStyle={styles.iconAlert}
+      />
 
-        <View
-          style={[
-            styles.alertView,
-            {backgroundColor: theme.backgroundButtonColor},
-          ]}>
-          <StyleText
-            i18Text="setting.securityAndLogin.areYouSureDeleteAccount"
-            customStyle={[styles.textAlert, {color: theme.textColor}]}
-          />
-        </View>
+      <View style={[styles.alertView, {backgroundColor: theme.background}]}>
+        <StyleText i18Text="setting.securityAndLogin.areYouSureDeleteAccount" />
+      </View>
 
-        <StyleButton
-          title="setting.securityAndLogin.continueDelete"
-          containerStyle={styles.buttonDelete}
-          onPress={onRequestDeleteAccount}
-        />
-      </StyleContainer>
-    </>
+      <StyleButton
+        title="setting.securityAndLogin.continueDelete"
+        containerStyle={styles.buttonDelete}
+        onPress={onRequestDeleteAccount}
+      />
+    </StyleContainer>
   );
 };
 
 const styles = ScaledSheet.create({
   container: {
-    paddingHorizontal: '20@s',
     alignItems: 'center',
   },
   alertView: {
@@ -69,9 +62,6 @@ const styles = ScaledSheet.create({
     paddingVertical: '30@vs',
     borderRadius: '14@s',
     marginTop: '40@vs',
-  },
-  textAlert: {
-    fontSize: '14@ms',
   },
   iconAlert: {
     marginTop: '30@vs',

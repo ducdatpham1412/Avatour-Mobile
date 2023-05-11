@@ -13,7 +13,7 @@ import {moderateScale, verticalScale} from 'utility/scale';
 import StyleText from './StyleText';
 
 interface StyleListProps extends FlatListProps<any> {
-  data: any;
+  data: Array<any>;
   ListHeaderComponent?: any;
   loading?: boolean;
   loadingMore?: boolean;

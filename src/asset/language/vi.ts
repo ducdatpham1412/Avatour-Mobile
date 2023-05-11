@@ -102,7 +102,7 @@ const login = {
       ' của chúng tôi. Hiểu về cách chúng tôi xử lý dữ liệu của bạn tại',
     privacyPolicy: 'Chính sách bảo mật',
     yourAccountIsBeingLock:
-      'Tài khoản của bạn đang khoá tạm thời.\nBằng việc ấn Tiếp tục, bạn xác nhận mở khoá tài khoản của mình.',
+      'Tài khoản của bạn đang khoá tạm thời.\nBằng việc ấn "Tiếp tục", bạn xác nhận mở khoá tài khoản của mình.',
     continue: 'Tiếp tục',
     openAccountSuccess: 'Mở khoá tài khoản thành công!',
   },
@@ -503,7 +503,7 @@ const alert = {
   require: 'Giá trị bắt buộc điền',
   minLength: 'Chỉ nhập từ {{min}} tới {{max}} ký tự',
   regexPass:
-    'Phải nhiều hơn 8 ký tự, và bao gồm ít nhất một chữ hoa và một ký tự đặc biệt',
+    'Mật khẩu nhiều hơn 8 ký tự, và bao gồm ít nhất một chữ hoa và một ký tự đặc biệt',
   passNotMatch: 'Mật khẩu không trùng khớp',
   inValidEmail: 'Email không đúng định dạng',
   inValidPhone: 'Số điện thoại không đúng',

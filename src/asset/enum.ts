@@ -219,6 +219,7 @@ export enum ACCOUNT {
   shop = 1,
   admin = 2,
   location = 3,
+  shareTour = 4,
 }
 
 export enum GROUP_BUYING_STATUS {
@@ -364,4 +365,11 @@ export enum TYPE_AUTH_REQUEST {
 export enum TYPE_GET_TOUR {
   list = 0,
   favorite = 1,
+}
+
+export enum TYPE_CHANGE {
+  password = 0,
+  theme = 1,
+  language = 2,
+  information = 3,
 }

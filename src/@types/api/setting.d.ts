@@ -1,20 +1,25 @@
 interface TypeChangePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
 }
 
-interface TypeGetListBlockedResponse {
-  success: boolean;
-  data: any;
+interface TypeBlock {
+  id: number;
+  profile: {
+    id: number;
+    avatar: string;
+    name: string;
+  };
 }
 
 interface TypeChangeInformationRequest {
-  email?: string;
-  phone?: string;
+  username?: string;
   gender?: number;
   birthday?: string;
   name?: string;
+  // code is otp when change username (email / phone)
+  code?: string;
 }
 
 interface TypeChangeInformationResponse {

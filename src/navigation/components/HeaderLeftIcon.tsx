@@ -22,7 +22,7 @@ const HeaderLeftIcon = (props: Props) => {
     <TouchableOpacity {...props}>
       <Entypo
         name="chevron-small-left"
-        style={[styles.icon, {color: theme.gray_500}, props.iconStyle]}
+        style={[styles.icon, {color: theme.black}, props.iconStyle]}
       />
     </TouchableOpacity>
   );

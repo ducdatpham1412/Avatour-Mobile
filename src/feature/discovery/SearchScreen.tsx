@@ -1,3 +1,5 @@
+import {setSearchParams} from 'app-redux';
+import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
 import {FONT_SIZE} from 'asset/standardValue';
 import {TabView} from 'components';
@@ -21,8 +23,6 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
 import {SearchListGroupBuying, SearchListTour} from './screens';
-import {setSearchParams} from 'app-redux';
-import {useAppSelector} from 'app-redux/store';
 
 const SearchScreen = ({
   route,

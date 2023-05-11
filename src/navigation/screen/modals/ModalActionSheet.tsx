@@ -15,6 +15,7 @@ import {ActionSheetCustom as ActionSheet} from 'react-native-actionsheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useUpdate} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
+import {impactLight} from 'utility/haptic';
 import {moderateScale, verticalScale} from 'utility/scale';
 
 export type TypeShowActionSheet = {
@@ -42,6 +43,7 @@ const ModalActionSheet = forwardRef(
       () => ({
         show: value => {
           if (value) {
+            impactLight();
             listOptions.current = value.map(option => {
               return {
                 title: (

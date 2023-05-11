@@ -1,11 +1,13 @@
-import {apiGetListBlocked, apiUnBlockUser} from 'api/setting';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {apiUnBlockUser} from 'api/setting';
+import {useAppSelector} from 'app-redux/store';
+import {StyleIcon, StyleList, StyleText, StyleTouchable} from 'components/base';
+import {useApi, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {memo, useEffect, useRef, useState} from 'react';
-import {Animated, ScrollView, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Animated, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
+import {moderateScale, scale} from 'utility/scale';
 
 interface Props {
   isOpening: boolean;
@@ -18,34 +20,23 @@ interface ModuleBlock {
 }
 
 const ModuleUserBlock = (props: ModuleBlock) => {
-  const theme = Redux.getTheme();
   const {image, name, onUnBlock} = props;
+  const theme = useTheme();
 
   return (
-    <View
-      style={[styles.moduleUserBlock, {backgroundColor: theme.holderColor}]}>
-      <View style={styles.avatarBox}>
-        <StyleImage
-          customStyle={[styles.avatar, {borderColor: theme.borderColor}]}
-          source={{uri: image}}
+    <View style={[styles.moduleUserBlock, {backgroundColor: theme.background}]}>
+      <StyleIcon customStyle={styles.avatar} source={{uri: image}} size={30} />
+      <StyleText
+        originValue={name}
+        customStyle={styles.text}
+        numberOfLines={1}
+      />
+      <StyleTouchable onPress={onUnBlock}>
+        <Feather
+          name="x"
+          style={[styles.iconCancel, {color: theme.gray_500}]}
         />
-      </View>
-
-      <View style={styles.nameBox}>
-        <StyleText
-          originValue={name}
-          customStyle={[styles.nameText, {color: theme.textColor}]}
-        />
-      </View>
-
-      <View style={styles.buttonCancelBox}>
-        <StyleTouchable onPress={onUnBlock}>
-          <Feather
-            name="x"
-            style={[styles.iconCancel, {color: theme.borderColor}]}
-          />
-        </StyleTouchable>
-      </View>
+      </StyleTouchable>
     </View>
   );
 };
@@ -54,41 +45,18 @@ const ModuleUserBlock = (props: ModuleBlock) => {
  * Boss here
  */
 const UserBlocked = ({isOpening}: Props) => {
-  const isModeExp = Redux.getModeExp();
+  const {modeExp} = useAppSelector(state => state.accountSlice);
+
+  const {data, mutate, loading, validating} = useApi<TypeBlock[]>({
+    path: modeExp ? null : '/setting/blocks',
+    config: {
+      revalidateAll: true,
+    },
+  });
 
   const aim = useRef(new Animated.Value(0)).current;
   const [height, setHeight] = useState(0);
   aim.addListener(({value}) => setHeight(value));
-
-  const [listBlocked, setListBlocked] = useState<
-    Array<{
-      id: number;
-      profile: {
-        id: number;
-        avatar: string;
-        name: string;
-      };
-    }>
-  >();
-
-  const getData = async () => {
-    if (isModeExp) {
-      setListBlocked([]);
-    } else {
-      try {
-        const res = await apiGetListBlocked();
-        setListBlocked(res.data);
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   useEffect(() => {
     Animated.timing(aim, {
@@ -98,16 +66,12 @@ const UserBlocked = ({isOpening}: Props) => {
     }).start();
   }, [isOpening]);
 
-  const onUnBlock = async (id: number) => {
+  const onUnBlock = async (userId: number) => {
     try {
-      await apiUnBlockUser(id);
-      const temp: Array<any> = [];
-      listBlocked?.forEach(item => {
-        if (item.profile.id !== id) {
-          temp.push(item);
-        }
+      await apiUnBlockUser(userId);
+      await mutate(pre => pre?.filter(item => item?.profile?.id !== userId), {
+        revalidate: false,
       });
-      setListBlocked(temp);
     } catch (err) {
       ModalAlert.error({
         content: err,
@@ -117,17 +81,21 @@ const UserBlocked = ({isOpening}: Props) => {
 
   return (
     <Animated.View style={[styles.container, {height}]}>
-      <ScrollView>
-        {!!listBlocked &&
-          listBlocked.map(item => (
+      {!!data && (
+        <StyleList
+          data={data}
+          renderItem={({item}) => (
             <ModuleUserBlock
-              key={item.id}
-              image={item.profile.avatar}
-              name={item.profile.name}
-              onUnBlock={() => onUnBlock(item.profile.id)}
+              image={item?.profile?.avatar}
+              name={item?.profile?.name}
+              onUnBlock={() => onUnBlock(item?.profile?.id)}
             />
-          ))}
-      </ScrollView>
+          )}
+          initLoading={loading}
+          refreshing={validating}
+          onRefresh={mutate}
+        />
+      )}
     </Animated.View>
   );
 };
@@ -135,43 +103,29 @@ const UserBlocked = ({isOpening}: Props) => {
 const styles = ScaledSheet.create({
   container: {
     width: '90%',
-    paddingHorizontal: '15@vs',
-    borderRadius: '10@vs',
+    paddingHorizontal: verticalScale(15),
     overflow: 'hidden',
+    alignSelf: 'center',
   },
   moduleUserBlock: {
     width: '100%',
-    height: '45@vs',
-    marginVertical: '3@vs',
-    borderRadius: '20@vs',
-    paddingHorizontal: '15@vs',
+    height: moderateScale(45),
+    marginVertical: verticalScale(3),
+    borderRadius: moderateScale(20),
+    paddingHorizontal: verticalScale(15),
     flexDirection: 'row',
-  },
-  avatarBox: {
-    flex: 1.5,
-    justifyContent: 'center',
+    alignItems: 'center',
   },
   avatar: {
-    width: '30@vs',
-    height: '30@vs',
-    borderWidth: 1,
-    borderRadius: '15@vs',
+    borderRadius: 50,
+    marginRight: scale(4),
   },
-  nameBox: {
-    flex: 4,
-    justifyContent: 'center',
-  },
-  nameText: {
-    fontSize: 20,
-  },
-  buttonCancelBox: {
+  text: {
     flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
   },
   iconCancel: {
-    fontSize: 20,
+    fontSize: moderateScale(17),
   },
 });
 
-export default memo(UserBlocked);
+export default UserBlocked;

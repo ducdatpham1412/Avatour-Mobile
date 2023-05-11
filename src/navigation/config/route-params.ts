@@ -168,6 +168,20 @@ export type AppParamsList = {
     mode: 'confirm-join' | 'see-detail' | 'see-detail-from-sale';
     onSuccess?: () => void;
   };
+  [SETTING_ROUTE.enterPassword]: {
+    newInfo: {
+      email?: string;
+      phone?: string;
+    };
+  };
+  [SETTING_ROUTE.sendOTPChangeInfo]: {
+    name: string;
+    newInfo: {
+      email?: string;
+      phone?: string;
+    };
+    paramsOTP: TypeRequestOTPRequest;
+  };
 };
 
 export type AppEventList = {

@@ -1,19 +1,40 @@
+import {TYPE_CHANGE} from 'asset/enum';
 import request from './request';
 
-export const apiChangeLanguage = (newLanguage: number) => {
-  return request.put('/setting/extend/change-language', {
-    newLanguage,
-  });
+export const apiChangeLanguage = (new_language: number) => {
+  return request.put(
+    '/setting/changes',
+    {
+      new_language,
+    },
+    {
+      params: {
+        type: TYPE_CHANGE.language,
+      },
+    },
+  );
 };
 
-export const apiChangeTheme = (newTheme: number) => {
-  return request.put('/setting/extend/change-theme', {
-    newTheme,
-  });
+export const apiChangeTheme = (new_theme: number) => {
+  return request.put(
+    '/setting/changes',
+    {
+      new_theme,
+    },
+    {
+      params: {
+        type: TYPE_CHANGE.theme,
+      },
+    },
+  );
 };
 
-export const apiChangePassword = (params: TypeChangePasswordRequest) => {
-  return request.put('/setting/security/change-password', params);
+export const apiChangePassword = (body: TypeChangePasswordRequest) => {
+  return request.put('/setting/changes', body, {
+    params: {
+      type: TYPE_CHANGE.password,
+    },
+  });
 };
 
 export const apiBlockUser = (id: number) => {
@@ -21,10 +42,6 @@ export const apiBlockUser = (id: number) => {
 };
 export const apiUnBlockUser = (id: number) => {
   return request.delete(`/setting/blocks/${id}`);
-};
-
-export const apiGetListBlocked = (): Promise<TypeGetListBlockedResponse> => {
-  return request.get('/setting/block/get-list');
 };
 
 export const apiStopConversation = (chatTagId: string) => {
@@ -38,5 +55,9 @@ export const apiOpenConversation = (chatTagId: string) => {
 export const apiChangeInformation = (
   body: TypeChangeInformationRequest,
 ): Promise<TypeChangeInformationResponse> => {
-  return request.put('/setting/change-information', body);
+  return request.put('/setting/changes', body, {
+    params: {
+      type: TYPE_CHANGE.information,
+    },
+  });
 };

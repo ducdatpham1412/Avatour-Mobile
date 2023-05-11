@@ -1,16 +1,13 @@
 import {apiRequestOTP} from 'api/authentication';
 import {TYPE_OTP} from 'asset/enum';
 import Images from 'asset/img/images';
-import {Metrics} from 'asset/metrics';
-import Theme from 'asset/theme/Theme';
-import LoadingScreen from 'components/LoadingScreen';
 import {
   StyleButton,
   StyleContainer,
   StyleIcon,
   StyleText,
 } from 'components/base';
-import Redux from 'hook/useRedux';
+import {useLoading, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
@@ -18,16 +15,16 @@ import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import BackgroundAuthen from './components/BackgroundAuthen';
 
 const ConfirmOpenAccount = ({
   route,
 }: RouteParams<AppParamsList[LOGIN_ROUTE.confirmOpenAccount]>) => {
-  const isLoading = Redux.getIsLoading();
+  const theme = useTheme();
+  const {loading, setLoading} = useLoading();
 
   const onOpenAccount = async () => {
     try {
-      Redux.setIsLoading(true);
+      setLoading(true);
       await apiRequestOTP({
         username: route.params.username,
         type_otp: TYPE_OTP.requestOpenAccount,
@@ -43,48 +40,33 @@ const ConfirmOpenAccount = ({
         content: err,
       });
     } finally {
-      Redux.setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <StyleContainer
-      TopComponent={<BackgroundAuthen />}
       customStyle={styles.container}
       headerProps={{
         title: 'setting.securityAndLogin.lockAccount',
-        iconStyle: {
-          color: Theme.common.white,
-        },
-        titleStyle: {
-          color: Theme.common.white,
-        },
-        containerStyle: styles.headerView,
-      }}>
+      }}
+      backgroundColor={theme.white}>
       <StyleIcon
         source={Images.images.successful}
         size={100}
         customStyle={styles.iconAlert}
       />
 
-      <View
-        style={[
-          styles.alertView,
-          {backgroundColor: Theme.darkTheme.backgroundButtonColor},
-        ]}>
-        <StyleText
-          i18Text="login.loginScreen.yourAccountIsBeingLock"
-          customStyle={[styles.textAlert, {color: Theme.darkTheme.textColor}]}
-        />
+      <View style={[styles.alertView, {backgroundColor: theme.background}]}>
+        <StyleText i18Text="login.loginScreen.yourAccountIsBeingLock" />
       </View>
 
       <StyleButton
         title="login.loginScreen.continue"
         containerStyle={styles.buttonDelete}
         onPress={onOpenAccount}
+        isLoading={loading}
       />
-
-      {isLoading && <LoadingScreen />}
     </StyleContainer>
   );
 };
@@ -92,10 +74,6 @@ const ConfirmOpenAccount = ({
 const styles = ScaledSheet.create({
   container: {
     alignItems: 'center',
-  },
-  headerView: {
-    backgroundColor: 'transparent',
-    marginTop: Metrics.safeTopPadding,
   },
   alertView: {
     paddingHorizontal: '10@s',

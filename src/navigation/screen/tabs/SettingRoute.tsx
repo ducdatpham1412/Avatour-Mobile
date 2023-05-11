@@ -2,7 +2,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {Metrics} from 'asset/metrics';
 import AboutUs from 'feature/setting/aboutUs/AboutUs';
 import ExtendSetting from 'feature/setting/extend/ExtendSetting';
 import EnterPassword from 'feature/setting/personalInfo/EnterPassword';
@@ -12,70 +11,56 @@ import ConfirmDeleteAccount from 'feature/setting/security/ConfirmDeleteAccount'
 import ConfirmLockAccount from 'feature/setting/security/ConfirmLockAccount';
 import SecurityAndLogin from 'feature/setting/security/SecurityAndLogin';
 import SettingScreen from 'feature/setting/SettingScreen';
-import {useTheme} from 'hook';
-import Redux from 'hook/useRedux';
+import {AppParamsList} from 'navigation/config';
 import {SETTING_ROUTE} from 'navigation/config/routes';
 import React from 'react';
 
-const SettingStack = createStackNavigator();
-const {safeTopPadding} = Metrics;
+const Stack = createStackNavigator<AppParamsList>();
 
 const SettingRoute = () => {
-  const theme = useTheme();
-
   return (
-    <SettingStack.Navigator
+    <Stack.Navigator
       screenOptions={{
         gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerShown: false,
-        cardStyle: {
-          backgroundColor: theme.background,
-          paddingTop: safeTopPadding,
-        },
       }}>
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.settingScreen}
         component={SettingScreen}
       />
 
       {/* Security and login */}
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.security}
         component={SecurityAndLogin}
       />
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.confirmLockAccount}
         component={ConfirmLockAccount}
       />
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.confirmDeleteAccount}
         component={ConfirmDeleteAccount}
       />
 
       {/* Personal information */}
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.personalInformation}
         component={PersonalInformation}
       />
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.enterPassword}
         component={EnterPassword}
       />
-      <SettingStack.Screen
+      <Stack.Screen
         name={SETTING_ROUTE.sendOTPChangeInfo}
         component={SendOTPChangeInfo}
       />
 
-      {/* Extend setting */}
-      <SettingStack.Screen
-        name={SETTING_ROUTE.setTheme}
-        component={ExtendSetting}
-      />
-
       {/* About us */}
-      <SettingStack.Screen name={SETTING_ROUTE.aboutUs} component={AboutUs} />
-    </SettingStack.Navigator>
+      <Stack.Screen name={SETTING_ROUTE.aboutUs} component={AboutUs} />
+    </Stack.Navigator>
   );
 };
 

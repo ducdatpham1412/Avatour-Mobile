@@ -3,38 +3,42 @@ import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {StyleContainer, StyleText} from 'components/base';
-import ClassDateTimePicker from 'components/base/picker/ClassDateTimePicker';
 import {useTheme} from 'hook';
 import {goBack, navigate, popUpPicker} from 'navigation/NavigationService';
-import StyleHeader from 'navigation/components/StyleHeader';
 import {SETTING_ROUTE} from 'navigation/config/routes';
-import {ModalAlert} from 'navigation/screen/modals';
+import {
+  ModalAlert,
+  ModalDatePicker,
+  ModalInputEdit,
+} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View} from 'react-native';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {TextStyle, View, ViewStyle} from 'react-native';
+import {verticalScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useUpdateEffect} from 'react-use';
 import {chooseTextFromIdGender, renderListGender} from 'utility/assistant';
 import {
   formatDateDayMonthYear,
   formatUTCDate,
   isTimeEqual,
 } from 'utility/format';
+import {moderateScale, scale} from 'utility/scale';
+import {validateIsEmail, validateIsPhone} from 'utility/validate';
 import ItemInfo from './ItemInfo';
-import ModalChangeEmail from './components/ModalChangeEmail';
-import ModalChangePhone from './components/ModalChangePhone';
 
 const PersonalInformation = () => {
   const {t} = useTranslation();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const theme = useTheme();
 
-  const emailRef = useRef<ModalChangeEmail>(null);
-  const phoneRef = useRef<ModalChangePhone>(null);
-  const birthdayRef = useRef<ClassDateTimePicker>(null);
-  const informationValueRef = useRef<any>(profile.information);
+  const informationValueRef = useRef({
+    ...profile.information,
+    gender: profile.gender,
+    birthday: profile.birthday,
+  });
 
   const [email, setEmail] = useState(profile.information.email);
   const [phone, setPhone] = useState(profile.information.phone);
@@ -98,7 +102,7 @@ const PersonalInformation = () => {
     });
   };
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (email !== informationValueRef.current.email) {
       openConfirmChange({email});
       return;
@@ -116,17 +120,21 @@ const PersonalInformation = () => {
   }, [email, phone, gender, birthday]);
 
   useEffect(() => {
-    informationValueRef.current = profile.information;
+    informationValueRef.current = {
+      ...profile.information,
+      gender: profile.gender,
+      birthday: profile.birthday,
+    };
   }, [profile.information]);
 
   const onNavigateGenderPicker = () => {
     popUpPicker({
       data: renderListGender,
       renderItem: (item: any) => (
-        <View style={styles.elementPicker}>
+        <View style={$elementPicker}>
           <StyleText
             i18Text={item.name}
-            customStyle={[styles.textPicker, {color: theme.textColor}]}
+            customStyle={[$textPicker, {color: theme.textColor}]}
           />
         </View>
       ),
@@ -139,97 +147,82 @@ const PersonalInformation = () => {
   };
 
   return (
-    <>
-      <StyleHeader title="setting.personalInfo.headerTitle" />
-
-      <StyleContainer customStyle={styles.container}>
-        <ItemInfo
-          value={email}
-          icon={
-            <Entypo
-              name="email"
-              style={[styles.icon, {color: theme.borderColor}]}
-            />
-          }
-          onPressEdit={() => emailRef.current?.show()}
-        />
-
-        <ItemInfo
-          value={phone}
-          icon={
-            <Feather
-              name="phone"
-              style={[styles.icon, {color: theme.borderColor}]}
-            />
-          }
-          onPressEdit={() => phoneRef.current?.show()}
-        />
-
-        <ItemInfo
-          value={t(chooseTextFromIdGender(gender))}
-          icon={
-            <Feather
-              name="user"
-              style={[styles.icon, {color: theme.borderColor}]}
-            />
-          }
-          onPressEdit={onNavigateGenderPicker}
-        />
-
-        <ItemInfo
-          value={formatDateDayMonthYear(birthday)}
-          icon={
-            <FontAwesome
-              name="birthday-cake"
-              style={[styles.iconBirthday, {color: theme.borderColor}]}
-            />
-          }
-          onPressEdit={() => birthdayRef.current?.show()}
-        />
-      </StyleContainer>
-
-      <ModalChangeEmail
-        ref={emailRef}
-        email={email}
-        onChangeEmail={value => setEmail(value)}
-        theme={theme}
+    <StyleContainer
+      headerProps={{title: 'setting.personalInfo.headerTitle'}}
+      backgroundColor={theme.white}
+      customStyle={$container}>
+      <ItemInfo
+        value={email}
+        icon={<Entypo name="email" style={[$icon, {color: theme.blue}]} />}
+        onPressEdit={() =>
+          ModalInputEdit.show({
+            defaultValue: email,
+            checkValid: value => validateIsEmail(value),
+            placeholder: 'login.email',
+            onSave: value => setEmail(value),
+          })
+        }
       />
 
-      <ModalChangePhone
-        ref={phoneRef}
-        phone={phone}
-        onChangePhone={value => setPhone(value)}
-        theme={theme}
+      <ItemInfo
+        value={phone}
+        icon={<Feather name="phone" style={[$icon, {color: theme.blue}]} />}
+        onPressEdit={() =>
+          ModalInputEdit.show({
+            defaultValue: phone,
+            checkValid: value => validateIsPhone(value),
+            placeholder: 'login.signUp.type.phone',
+            onSave: value => setPhone(value),
+            keyboardType: 'numeric',
+          })
+        }
       />
 
-      <ClassDateTimePicker
-        ref={birthdayRef}
-        initDate={new Date(birthday)}
-        onChangeDateTime={value => setBirthday(formatUTCDate(value))}
-        theme={theme}
+      <ItemInfo
+        value={t(chooseTextFromIdGender(gender))}
+        icon={<Feather name="user" style={[$icon, {color: theme.blue}]} />}
+        onPressEdit={onNavigateGenderPicker}
       />
-    </>
+
+      <ItemInfo
+        value={formatDateDayMonthYear(birthday)}
+        icon={
+          <FontAwesome
+            name="birthday-cake"
+            style={[$iconBirthday, {color: theme.blue}]}
+          />
+        }
+        onPressEdit={() =>
+          ModalDatePicker.show({
+            date: birthday ?? String(new Date()),
+            onChangeRange: value => setBirthday(formatUTCDate(value.date)),
+            validRange: {
+              endDate: new Date(),
+              startDate: undefined,
+            },
+          })
+        }
+      />
+    </StyleContainer>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    paddingHorizontal: '10@vs',
-  },
-  icon: {
-    fontSize: '18@ms',
-  },
-  iconBirthday: {
-    fontSize: '15@ms',
-  },
-  elementPicker: {
-    height: '50@vs',
-    justifyContent: 'center',
-  },
-  textPicker: {
-    fontWeight: 'bold',
-    fontSize: '20@ms',
-  },
-});
+const $container: ViewStyle = {
+  paddingHorizontal: scale(20),
+};
+const $icon: TextStyle = {
+  fontSize: moderateScale(18),
+};
+const $iconBirthday: TextStyle = {
+  fontSize: moderateScale(15),
+};
+const $elementPicker: ViewStyle = {
+  height: verticalScale(50),
+  justifyContent: 'center',
+};
+const $textPicker: TextStyle = {
+  fontWeight: 'bold',
+  fontSize: moderateScale(20),
+};
 
 export default PersonalInformation;
