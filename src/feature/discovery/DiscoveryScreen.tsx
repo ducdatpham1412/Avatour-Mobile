@@ -1,7 +1,13 @@
 import {useIsFocused} from '@react-navigation/native';
 import {setScrollMainAndChatEnable} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
-import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS, ratioImageTour} from 'asset';
+import {
+  BORDER_RADIUS,
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+  LIST_TOPICS,
+  ratioImageTour,
+} from 'asset';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
@@ -69,8 +75,8 @@ const DiscoveryScreen = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={$contentBanner}>
-            {banners.map(url => (
-              <StyleTouchable key={url} customStyle={$itemBannerView}>
+            {banners.map((url, index) => (
+              <StyleTouchable key={index} customStyle={$itemBannerView}>
                 <StyleImage
                   source={{uri: url}}
                   customStyle={$image}
@@ -137,6 +143,7 @@ const DiscoveryScreen = () => {
           <View style={$locationView}>
             {hot_locations.map((location, index) => (
               <ItemHotLocation
+                key={location.id}
                 item={location}
                 isLast={index === hot_locations?.length - 1}
               />
@@ -202,6 +209,7 @@ const $itemCategory: ViewStyle = {
 };
 const $titleCategory: TextStyle = {
   fontSize: FONT_SIZE.f3,
+  fontWeight: FONT_WEIGHT_MEDIUM,
   marginTop: verticalScale(8),
 };
 const $favoriteTourView: ViewStyle = {

@@ -86,7 +86,7 @@ const Theme = {
     gray_700: '#5e5e5e',
     gray_600: '#717171',
     gray_500: '#9A9A9A', // This is the root gray
-    gray_400: '##b9b9b9',
+    gray_400: '#b9b9b9',
     gray_300: '#dddddd',
     gray_200: '#ececec',
     gray_100: '#f4f4f4',

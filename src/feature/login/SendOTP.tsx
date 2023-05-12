@@ -5,6 +5,8 @@ import {
   apiRegister,
   apiRequestOTP,
 } from 'api/authentication';
+import {apiChangeInformation} from 'api/setting';
+import {updatePassport} from 'app-redux';
 import {TYPE_OTP} from 'asset/enum';
 import {standValue} from 'asset/standardValue';
 import {
@@ -16,7 +18,7 @@ import {
 import {useLoading, useTheme} from 'hook';
 import useCountdown from 'hook/useCountdown';
 import {AppParamsList} from 'navigation/config';
-import {LOGIN_ROUTE} from 'navigation/config/routes';
+import {LOGIN_ROUTE, SETTING_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
@@ -28,6 +30,7 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {ScaledSheet} from 'react-native-size-matters';
+import {validateIsEmail, validateIsPhone} from 'utility/validate';
 
 const SendOTP = ({
   route: {params},
@@ -122,6 +125,7 @@ const SendOTP = ({
       } finally {
         setLoading(false);
       }
+      return;
     }
 
     /**
@@ -132,11 +136,54 @@ const SendOTP = ({
         setLoading(true);
         await apiOpenAccount({
           username: paramsOTP.username,
-          code: code,
+          code,
         });
         ModalAlert.success({
           i18Content: 'login.loginScreen.openAccountSuccess',
           onClose: () => navigate(LOGIN_ROUTE.loginScreen),
+        });
+      } catch (err) {
+        handleWrongOtp();
+        ModalAlert.error({
+          content: err,
+        });
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    /**
+     * Change information
+     */
+    if (paramsOTP.type_otp === TYPE_OTP.changeInfo && paramsOTP?.new_username) {
+      try {
+        setLoading(true);
+        await apiChangeInformation({
+          username: paramsOTP.new_username,
+          code,
+        });
+
+        if (validateIsEmail(paramsOTP.new_username)) {
+          updatePassport({
+            profile: {
+              information: {
+                email: paramsOTP.new_username,
+              },
+            },
+          });
+        } else if (validateIsPhone(paramsOTP.new_username)) {
+          updatePassport({
+            profile: {
+              information: {
+                phone: paramsOTP.new_username,
+              },
+            },
+          });
+        }
+        ModalAlert.success({
+          i18Content: 'alert.successUpdatePro',
+          onClose: () => navigate(SETTING_ROUTE.personalInformation),
         });
       } catch (err) {
         handleWrongOtp();

@@ -14,6 +14,7 @@ import UpgradeAccount from 'feature/common/UpgradeAccount';
 import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
+import {SendOTP} from 'feature/login';
 import ChatDetail from 'feature/mess/ChatDetail';
 import ChatDetailSetting from 'feature/mess/ChatDetailSetting';
 import DetailBubble from 'feature/notification/DetailBubble';
@@ -26,16 +27,27 @@ import {
   MyProfile,
   OtherProfile,
 } from 'feature/profile';
+import {
+  AboutUs,
+  ConfirmDeleteAccount,
+  ConfirmLockAccount,
+  EnterPassword,
+  ExtendSetting,
+  PersonalInformation,
+  SecurityAndLogin,
+  SettingScreen,
+} from 'feature/setting';
 import {useTheme} from 'hook';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
+  LOGIN_ROUTE,
   MESS_ROUTE,
   PROFILE_ROUTE,
+  SETTING_ROUTE,
 } from 'navigation/config/routes';
 import React from 'react';
 import MainAndChat from './MainAndChat';
-import SettingRoute from './tabs/SettingRoute';
 
 const modalPreviewLinkRef = React.createRef<ModalPreviewLink>();
 export const showPreviewLink = (item: TypeBubblePalace) => {
@@ -66,6 +78,7 @@ const AppStack = () => {
       <Stack.Screen name={ROOT_SCREEN.detailBubble} component={DetailBubble} />
       <Stack.Screen name={ROOT_SCREEN.myProfile} component={MyProfile} />
       <Stack.Screen name={ROOT_SCREEN.editProfile} component={EditProfile} />
+      <Stack.Screen name={LOGIN_ROUTE.sendOTP} component={SendOTP} />
 
       {/* Interact Bubble */}
       <Stack.Screen
@@ -90,11 +103,6 @@ const AppStack = () => {
       />
 
       <Stack.Screen name={ROOT_SCREEN.reportUser} component={ReportUser} />
-
-      <Stack.Screen
-        name={PROFILE_ROUTE.settingRoute}
-        component={SettingRoute}
-      />
 
       <Stack.Screen
         name={PROFILE_ROUTE.createPostPreview}
@@ -168,6 +176,37 @@ const AppStack = () => {
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
+      />
+
+      {/* Setting screens */}
+      <Stack.Screen
+        name={SETTING_ROUTE.settingScreen}
+        component={SettingScreen}
+      />
+      <Stack.Screen
+        name={SETTING_ROUTE.security}
+        component={SecurityAndLogin}
+      />
+      <Stack.Screen
+        name={SETTING_ROUTE.confirmLockAccount}
+        component={ConfirmLockAccount}
+      />
+      <Stack.Screen
+        name={SETTING_ROUTE.confirmDeleteAccount}
+        component={ConfirmDeleteAccount}
+      />
+      <Stack.Screen
+        name={SETTING_ROUTE.personalInformation}
+        component={PersonalInformation}
+      />
+      <Stack.Screen
+        name={SETTING_ROUTE.enterPassword}
+        component={EnterPassword}
+      />
+      <Stack.Screen name={SETTING_ROUTE.aboutUs} component={AboutUs} />
+      <Stack.Screen
+        name={SETTING_ROUTE.extendSetting}
+        component={ExtendSetting}
       />
     </Stack.Navigator>
   );

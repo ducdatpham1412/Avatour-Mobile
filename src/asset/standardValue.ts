@@ -197,6 +197,8 @@ export const BORDER_RADIUS = {
   f4: moderateScale(8),
 };
 
+export const FONT_WEIGHT_MEDIUM = '500';
+
 export const LINE_HEIGHT = {
   normal: Platform.select({
     ios: '17@ms',

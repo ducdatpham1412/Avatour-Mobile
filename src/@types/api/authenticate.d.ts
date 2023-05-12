@@ -5,6 +5,8 @@ interface TypeRequestOTPRequest {
   // only for register
   password?: string;
   confirm_password?: string;
+  // only for change information
+  new_username?: string;
 }
 
 interface TypeRequestOTPResponse {

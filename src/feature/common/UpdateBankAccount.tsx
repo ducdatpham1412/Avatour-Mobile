@@ -158,7 +158,8 @@ const UpdateBankAccount = () => {
             onPress={onSave}
           />
         }
-        containerStyle={{backgroundColor: theme.white}}>
+        backgroundColor={theme.white}
+        customStyle={styles.container}>
         <StyleText
           i18Text="profile.bank"
           customStyle={styles.titleChooseBank}
@@ -233,6 +234,9 @@ const UpdateBankAccount = () => {
 };
 
 const styles = ScaledSheet.create({
+  container: {
+    paddingHorizontal: scale(32),
+  },
   titleChooseBank: {
     fontWeight: 'bold',
     marginTop: '10@vs',

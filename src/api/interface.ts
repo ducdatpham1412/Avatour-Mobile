@@ -1,28 +1,5 @@
 import {TYPE_OS_LOGIN_SOCIAL, TYPE_SOCIAL_LOGIN} from 'asset/enum';
 
-// OTP
-export interface TypeRequestOTPRequest {
-  username: string;
-  typeOTP: number;
-  // only for register
-  password?: string;
-  confirmPassword?: string;
-  // targetInfo for both register and changeInfo
-  targetInfo?: number;
-}
-export interface TypeRequestOTPResponse {
-  success: boolean;
-  data: any;
-}
-export interface TypeCheckOTPRequest {
-  username: string;
-  code: string;
-}
-export interface TypeCheckOTPResponse {
-  success: boolean;
-  [key: string]: any;
-}
-
 /**
  * AUTHENTICATE
  */

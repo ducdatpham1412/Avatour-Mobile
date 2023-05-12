@@ -4,6 +4,7 @@ import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {StyleImage} from 'components/base';
+import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
@@ -11,7 +12,7 @@ import {TouchableOpacity, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 
 const ThemeSetting = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const isModeExp = Redux.getModeExp();
   const [isPicked, setIsPicked] = useState(
     theme === Theme.darkTheme ? 'dark' : 'light',

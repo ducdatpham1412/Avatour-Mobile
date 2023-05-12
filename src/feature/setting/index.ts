@@ -1,0 +1,8 @@
+export {default as SettingScreen} from './SettingScreen';
+export {default as AboutUs} from './aboutUs/AboutUs';
+export {default as ExtendSetting} from './extend/ExtendSetting';
+export {default as EnterPassword} from './personalInfo/EnterPassword';
+export {default as PersonalInformation} from './personalInfo/PersonalInformation';
+export {default as ConfirmDeleteAccount} from './security/ConfirmDeleteAccount';
+export {default as ConfirmLockAccount} from './security/ConfirmLockAccount';
+export {default as SecurityAndLogin} from './security/SecurityAndLogin';

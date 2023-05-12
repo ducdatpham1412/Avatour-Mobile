@@ -1,39 +1,33 @@
 import {apiRequestOTP} from 'api/authentication';
-import {TypeRequestOTPRequest} from 'api/interface';
 import {apiChangeInformation} from 'api/setting';
-import {SIGN_UP_TYPE, TYPE_OTP} from 'asset/enum';
-import {StyleButton, StyleContainer, StyleInput} from 'components/base';
-import LoadingScreen from 'components/LoadingScreen';
-import Redux from 'hook/useRedux';
-import StyleHeader from 'navigation/components/StyleHeader';
-import {SETTING_ROUTE} from 'navigation/config/routes';
+import {updatePassport} from 'app-redux';
+import {useAppSelector} from 'app-redux/store';
+import {TYPE_OTP} from 'asset/enum';
+import {AppInput, StyleButton, StyleContainer} from 'components/base';
+import {useLoading, useTheme} from 'hook';
+import {AppParamsList} from 'navigation/config';
+import {LOGIN_ROUTE, SETTING_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useEffect, useRef, useState} from 'react';
-import {TextInput} from 'react-native';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
+import {borderWidthTiny} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
+import {scale, verticalScale} from 'utility/scale';
 
-interface Props {
-  route: {
-    params: {
-      newInfo: {
-        email?: string;
-        phone?: string;
-      };
-    };
-  };
-}
-
-const EnterPassword = ({route}: Props) => {
+const EnterPassword = ({
+  route,
+}: RouteParams<AppParamsList[SETTING_ROUTE.enterPassword]>) => {
   const {newInfo} = route.params;
-  const isLoading = Redux.getIsLoading();
-  const inputRef = useRef<TextInput>(null);
+  const {t} = useTranslation();
+  const theme = useTheme();
+  const {loading, setLoading} = useLoading();
+  const {email} = useAppSelector(
+    state => state.accountSlice.passport.profile.information,
+  );
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   const onConfirmPassword = async () => {
     const activeUser = await AsyncStorage.getActiveUser();
@@ -46,36 +40,38 @@ const EnterPassword = ({route}: Props) => {
     }
 
     if (newInfo.email) {
-      const paramsOTP: TypeRequestOTPRequest = {
-        username: newInfo.email,
-        targetInfo: SIGN_UP_TYPE.email,
-        typeOTP: TYPE_OTP.changeInfo,
-      };
-
       try {
-        Redux.setIsLoading(true);
-        await apiRequestOTP(paramsOTP);
-        navigate(SETTING_ROUTE.sendOTPChangeInfo, {
-          name: newInfo.email,
-          newInfo,
-          paramsOTP,
+        setLoading(true);
+        await apiRequestOTP({
+          username: email,
+          type_otp: TYPE_OTP.changeInfo,
+          new_username: newInfo.email,
+        });
+        navigate(LOGIN_ROUTE.sendOTP, {
+          paramsOTP: {
+            username: email,
+            type_otp: TYPE_OTP.changeInfo,
+            new_username: newInfo.email,
+          },
         });
       } catch (err) {
         ModalAlert.error({
           content: err,
         });
       } finally {
-        Redux.setIsLoading(false);
+        setLoading(false);
       }
     } else if (newInfo.phone) {
       try {
-        Redux.setIsLoading(true);
+        setLoading(true);
         await apiChangeInformation({
-          phone: newInfo.phone,
+          username: newInfo.phone,
         });
-        Redux.updatePassport({
-          information: {
-            phone: newInfo.phone,
+        updatePassport({
+          profile: {
+            information: {
+              phone: newInfo.phone,
+            },
           },
         });
         navigate(SETTING_ROUTE.personalInformation);
@@ -84,36 +80,44 @@ const EnterPassword = ({route}: Props) => {
           content: err,
         });
       } finally {
-        Redux.setIsLoading(false);
+        setLoading(false);
       }
     }
   };
 
   return (
-    <>
-      <StyleHeader title="setting.personalInfo.enterPassword" />
+    <StyleContainer
+      headerProps={{
+        title: 'setting.personalInfo.enterPassword',
+      }}
+      backgroundColor={theme.white}>
+      <AppInput
+        value={password}
+        onChangeText={text => setPassword(text)}
+        secureTextEntry
+        style={$inputView}
+        onSubmitEditing={onConfirmPassword}
+        autoFocus
+        placeholder={t('setting.personalInfo.password')}
+      />
 
-      <StyleContainer>
-        <StyleInput
-          ref={inputRef}
-          value={password}
-          onChangeText={text => setPassword(text)}
-          i18Placeholder="setting.personalInfo.password"
-          containerStyle={styles.inputView}
-          secureTextEntry
-          onSubmitEditing={onConfirmPassword}
-        />
-
-        <StyleButton
-          title="setting.personalInfo.confirm"
-          containerStyle={styles.buttonView}
-          onPress={onConfirmPassword}
-        />
-
-        {isLoading && <LoadingScreen />}
-      </StyleContainer>
-    </>
+      <StyleButton
+        title="setting.personalInfo.confirm"
+        containerStyle={styles.buttonView}
+        onPress={onConfirmPassword}
+        isLoading={loading}
+      />
+    </StyleContainer>
   );
+};
+
+const $inputView: ViewStyle = {
+  width: '70%',
+  marginTop: verticalScale(150),
+  alignSelf: 'center',
+  borderBottomWidth: borderWidthTiny,
+  paddingHorizontal: scale(8),
+  paddingBottom: verticalScale(8),
 };
 
 const styles = ScaledSheet.create({

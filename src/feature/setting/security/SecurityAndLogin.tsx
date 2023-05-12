@@ -1,126 +1,86 @@
 import {StyleContainer} from 'components/base';
 import TypeDetailSetting from 'components/common/TypeDetailSetting';
-import Redux from 'hook/useRedux';
-import React, {useState} from 'react';
-import {ScaledSheet} from 'react-native-size-matters';
-import Foundation from 'react-native-vector-icons/Foundation';
-import Entypo from 'react-native-vector-icons/Entypo';
-import StyleHeader from 'navigation/components/StyleHeader';
+import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {SETTING_ROUTE} from 'navigation/config/routes';
+import React, {useState} from 'react';
+import {TextStyle, ViewStyle} from 'react-native';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import UserBlocked from './UserBlocked';
+import Foundation from 'react-native-vector-icons/Foundation';
+import {moderateScale, scale} from 'utility/scale';
 import ChangingPassword from './ChangingPassword';
+import UserBlocked from './UserBlocked';
 
 const SecurityAndLogin = () => {
-    const theme = Redux.getTheme();
+  const theme = useTheme();
 
-    const [firstLoadPassword, setFirstLoadPassword] = useState(false);
-    const [isOpeningChangingPassword, setIsOpeningChangingPassword] =
-        useState(false);
-    const openCloseChangingPassword = () => {
-        setFirstLoadPassword(true);
-        setIsOpeningChangingPassword(!isOpeningChangingPassword);
-    };
+  const [firstLoadPassword, setFirstLoadPassword] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
+  const openCloseChangingPassword = () => {
+    setFirstLoadPassword(true);
+    setOpenChangePassword(!openChangePassword);
+  };
 
-    const [firstLoadBlocked, setFirstLoadBlocked] = useState(false);
-    const [isOpeningBlocked, setIsOpeningBlocked] = useState(false);
-    const openCloseBlockUser = () => {
-        setFirstLoadBlocked(true);
-        setIsOpeningBlocked(!isOpeningBlocked);
-    };
+  const [firstLoadBlocked, setFirstLoadBlocked] = useState(false);
+  const [isOpeningBlocked, setIsOpeningBlocked] = useState(false);
+  const openCloseBlockUser = () => {
+    setFirstLoadBlocked(true);
+    setIsOpeningBlocked(!isOpeningBlocked);
+  };
 
-    const onGoToLockAccount = () => {
-        navigate(SETTING_ROUTE.confirmLockAccount);
-    };
+  return (
+    <StyleContainer
+      customStyle={$container}
+      headerProps={{
+        title: 'setting.securityAndLogin.headerTitle',
+      }}
+      backgroundColor={theme.white}>
+      {/* Change password */}
+      <TypeDetailSetting
+        title="setting.securityAndLogin.changePass"
+        onPress={openCloseChangingPassword}
+        icon={<Foundation name="key" style={[$icon, {color: theme.black}]} />}
+      />
+      {(firstLoadPassword || openChangePassword) && (
+        <ChangingPassword
+          isOpening={openChangePassword}
+          onChangeOpening={value => setOpenChangePassword(value)}
+        />
+      )}
 
-    const onGoToDeleteAccount = () => {
-        navigate(SETTING_ROUTE.confirmDeleteAccount);
-    };
+      {/* User blocked */}
+      <TypeDetailSetting
+        title="setting.securityAndLogin.userBlocked"
+        onPress={openCloseBlockUser}
+        icon={<Entypo name="block" style={[$icon, {color: theme.black}]} />}
+      />
+      {(firstLoadBlocked || isOpeningBlocked) && (
+        <UserBlocked isOpening={isOpeningBlocked} />
+      )}
 
-    return (
-        <>
-            <StyleHeader title="setting.securityAndLogin.headerTitle" />
+      {/* Lock my account */}
+      <TypeDetailSetting
+        title="setting.securityAndLogin.lockAccount"
+        onPress={() => navigate(SETTING_ROUTE.confirmLockAccount)}
+        icon={<Feather name="lock" style={[$icon, {color: theme.black}]} />}
+      />
 
-            <StyleContainer customStyle={styles.container}>
-                {/* Change password */}
-                <TypeDetailSetting
-                    title="setting.securityAndLogin.changePass"
-                    onPress={openCloseChangingPassword}
-                    icon={
-                        <Foundation
-                            name="key"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-                {(firstLoadPassword || isOpeningChangingPassword) && (
-                    <ChangingPassword isOpening={isOpeningChangingPassword} />
-                )}
-
-                {/* User blocked */}
-                <TypeDetailSetting
-                    title="setting.securityAndLogin.userBlocked"
-                    onPress={openCloseBlockUser}
-                    icon={
-                        <Entypo
-                            name="block"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-                {(firstLoadBlocked || isOpeningBlocked) && (
-                    <UserBlocked isOpening={isOpeningBlocked} />
-                )}
-
-                {/* Lock my account */}
-                <TypeDetailSetting
-                    title="setting.securityAndLogin.lockAccount"
-                    onPress={onGoToLockAccount}
-                    icon={
-                        <Feather
-                            name="lock"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-
-                {/* Delete my account */}
-                <TypeDetailSetting
-                    title="setting.securityAndLogin.deleteAccount"
-                    onPress={onGoToDeleteAccount}
-                    icon={
-                        <Feather
-                            name="delete"
-                            style={[
-                                styles.stylesIcon,
-                                {color: theme.borderColor},
-                            ]}
-                        />
-                    }
-                />
-            </StyleContainer>
-        </>
-    );
+      {/* Delete my account */}
+      <TypeDetailSetting
+        title="setting.securityAndLogin.deleteAccount"
+        onPress={() => navigate(SETTING_ROUTE.confirmDeleteAccount)}
+        icon={<Feather name="delete" style={[$icon, {color: theme.black}]} />}
+      />
+    </StyleContainer>
+  );
 };
 
-const styles = ScaledSheet.create({
-    container: {
-        paddingHorizontal: '27@s',
-        alignItems: 'center',
-    },
-    stylesIcon: {
-        fontSize: '20@ms',
-    },
-});
+const $container: ViewStyle = {
+  paddingHorizontal: scale(32),
+};
+const $icon: TextStyle = {
+  fontSize: moderateScale(20),
+};
 
 export default SecurityAndLogin;

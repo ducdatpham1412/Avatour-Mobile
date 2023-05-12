@@ -45,7 +45,7 @@ const ItemTour = ({item, containerStyle}: Props) => {
           <View
             style={[$scheduleBox, {backgroundColor: theme.white_opacity(0.2)}]}>
             {listImages.slice(0, 5).map((image, index) => (
-              <View style={$itemLocationView}>
+              <View style={$itemLocationView} key={index}>
                 <StyleImage
                   source={{uri: image}}
                   defaultSource={Images.images.defaultImage}

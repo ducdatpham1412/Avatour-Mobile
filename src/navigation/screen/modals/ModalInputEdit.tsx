@@ -14,6 +14,7 @@ import {useTranslation} from 'react-i18next';
 import {KeyboardTypeOptions, TextStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {logger} from 'utility/assistant';
+import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface TypeShow {
@@ -48,6 +49,7 @@ const ModalInputEdit = forwardRef(
       ref ?? modalInputRef,
       () => ({
         show: params => {
+          impactMedium();
           const newValue = params?.defaultValue ?? '';
           setValue(newValue);
           setKeyboardType(params?.keyboardType ?? 'default');
@@ -97,6 +99,7 @@ const ModalInputEdit = forwardRef(
           }}
           keyboardType={keyboardType}
           placeholder={t(placeholder)}
+          autoFocus
         />
       </ModalEdit>
     );

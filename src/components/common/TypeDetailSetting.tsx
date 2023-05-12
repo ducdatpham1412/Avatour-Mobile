@@ -1,54 +1,49 @@
-import {FONT_SIZE} from 'asset/standardValue';
-import {StyleText} from 'components/base';
-import Redux from 'hook/useRedux';
+import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
+import {StyleText, StyleTouchable} from 'components/base';
+import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
-import {TouchableOpacity, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
-import {isIOS} from 'utility/assistant';
+import {TextStyle, View, ViewStyle} from 'react-native';
+import {borderWidthTiny} from 'utility/assistant';
 import {I18Normalize} from 'utility/I18Next';
+import {scale, verticalScale} from 'utility/scale';
 
 interface TypeDetailSettingProps {
-    title: I18Normalize;
-    icon?: ReactNode;
-    onPress?(): void;
+  title: I18Normalize;
+  icon?: ReactNode;
+  onPress?(): void;
 }
 
 const TypeDetailSetting = (props: TypeDetailSettingProps) => {
-    const theme = Redux.getTheme();
-    const {title, icon, onPress} = props;
+  const {title, icon, onPress} = props;
+  const theme = useTheme();
 
-    return (
-        <TouchableOpacity
-            style={[
-                styles.frameBorderBottomSetting,
-                {borderColor: theme.borderColor},
-            ]}
-            onPress={onPress}>
-            <StyleText
-                i18Text={title}
-                customStyle={[styles.textHeader, {color: theme.textColor}]}
-            />
-            <View style={styles.iconView}>{icon}</View>
-        </TouchableOpacity>
-    );
+  return (
+    <StyleTouchable
+      customStyle={[
+        $container,
+        {borderColor: theme.gray_300, backgroundColor: theme.background},
+      ]}
+      onPress={onPress}>
+      <StyleText i18Text={title} customStyle={$title} />
+      <View style={$icon}>{icon}</View>
+    </StyleTouchable>
+  );
 };
 
-const styles = ScaledSheet.create({
-    frameBorderBottomSetting: {
-        width: '100%',
-        borderBottomWidth: isIOS ? 0.25 : 0.5,
-        paddingVertical: '8@vs',
-        paddingHorizontal: '10@s',
-        marginVertical: '17@vs',
-        justifyContent: 'center',
-    },
-    textHeader: {
-        fontSize: FONT_SIZE.normal,
-    },
-    iconView: {
-        position: 'absolute',
-        right: '25@s',
-    },
-});
+const $container: ViewStyle = {
+  width: '100%',
+  paddingVertical: verticalScale(12),
+  paddingHorizontal: scale(12),
+  marginTop: verticalScale(16),
+  justifyContent: 'center',
+  borderRadius: 100,
+};
+const $icon: ViewStyle = {
+  position: 'absolute',
+  right: scale(25),
+};
+const $title: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
 
 export default TypeDetailSetting;

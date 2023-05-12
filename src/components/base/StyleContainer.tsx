@@ -19,6 +19,7 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   headerProps?: StyleHeaderProps;
   TopComponent?: ReactNode;
   BottomComponent?: ReactNode;
+  backgroundColor?: string;
 }
 
 // let offsetY = 0;
@@ -32,6 +33,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     headerProps,
     TopComponent,
     BottomComponent,
+    backgroundColor,
   } = props;
   const theme = useTheme();
   const {top} = useSafeAreaInsets();
@@ -39,10 +41,22 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
   return (
     <View
       style={[
-        {flex: 1, paddingTop: top, backgroundColor: theme.background},
+        {
+          flex: 1,
+          paddingTop: top,
+          backgroundColor: backgroundColor ?? theme.background,
+        },
         containerStyle,
       ]}>
-      {headerProps && <StyleHeader {...headerProps} />}
+      {headerProps && (
+        <StyleHeader
+          {...headerProps}
+          containerStyle={[
+            backgroundColor ? {backgroundColor} : {},
+            headerProps?.containerStyle,
+          ]}
+        />
+      )}
       {TopComponent}
       <KeyboardAwareScrollView
         ref={ref}

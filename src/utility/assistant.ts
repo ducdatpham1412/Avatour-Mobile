@@ -24,11 +24,7 @@ import {
 import Theme from 'asset/theme/Theme';
 import Redux from 'hook/useRedux';
 import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
-import ROOT_SCREEN, {
-  LOGIN_ROUTE,
-  PROFILE_ROUTE,
-  SETTING_ROUTE,
-} from 'navigation/config/routes';
+import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
 import {ModalAlert} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction, useState} from 'react';
 import {
@@ -252,54 +248,6 @@ export const modeExpUsePaging = () => {
     setList,
   };
 };
-
-export const modalizeMyProfile: Array<{
-  text: I18Normalize;
-  action: any;
-}> = [
-  {
-    text: 'profile.editProfile',
-    action: () => navigate(PROFILE_ROUTE.editProfile),
-  },
-  {
-    text: 'profile.modalize.myInfo',
-    action: () =>
-      navigate(PROFILE_ROUTE.settingRoute, {
-        screen: SETTING_ROUTE.personalInformation,
-      }),
-  },
-  {
-    text: 'profile.upgradeAccount',
-    action: () => {
-      push(ROOT_SCREEN.upgradeAccount);
-    },
-  },
-  {
-    text: 'common.cancel',
-    action: () => null,
-  },
-];
-
-export const modalizeMyProfileShop: Array<{
-  text: I18Normalize;
-  action: any;
-}> = [
-  {
-    text: 'profile.editProfile',
-    action: () => navigate(PROFILE_ROUTE.editProfile),
-  },
-  {
-    text: 'profile.modalize.myInfo',
-    action: () =>
-      navigate(PROFILE_ROUTE.settingRoute, {
-        screen: SETTING_ROUTE.personalInformation,
-      }),
-  },
-  {
-    text: 'common.cancel',
-    action: () => null,
-  },
-];
 
 export const chooseColorGradient = (params: {
   listGradients: TypeGradient;

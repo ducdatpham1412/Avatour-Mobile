@@ -100,7 +100,7 @@ const login = {
     learnMore: '. Learn more about how we process your data in our',
     privacyPolicy: 'Privacy Policy',
     yourAccountIsBeingLock:
-      'Your account is temporarily locked.\nBy tapping Continue, you confirm unlock your account.',
+      'Your account is temporarily locked.\nBy tapping "Continue", you confirm unlock your account.',
     continue: 'Continue',
     openAccountSuccess: 'Open account successfully!',
   },
@@ -197,7 +197,7 @@ const discovery = {
   theMoneyIs: 'The money deposit is: ',
   goToDeposit: 'Go to deposit',
   hotLocation: '🔥 Hot location',
-  travelCamping: 'Experience travel',
+  travelCamping: 'Experience',
   travelVolunteer: 'Volunteer',
   travelTeamBuilding: 'Team building',
   travelFood: 'Food tour',
@@ -494,7 +494,7 @@ const alert = {
   require: 'This is a required field',
   minLength: 'Please enter from {{min}} to {{max}} characters',
   regexPass:
-    'Must be more than 8 characters, and include at least one uppercase letter and one special character',
+    'Password must be more than 8 characters, and include at least one uppercase letter and one special character',
   passNotMatch: 'Password not match',
   inValidEmail: 'Invalid email',
   inValidPhone: 'Invalid phone number',

@@ -77,7 +77,6 @@ enum MESS_ROUTE {
 enum PROFILE_ROUTE {
   myProfile = '@PROFILE_ROUTE/myProfile',
   editProfile = '@PROFILE_ROUTE/editProfile',
-  settingRoute = '@PROFILE_ROUTE/settingRoute',
   createPostPreview = '@PROFILE_ROUTE/createPostPreview',
   createPostPickImg = '@PROFILE_ROUTE/createPostPickImg',
   detailGroupBuying = '@PROFILE_ROUTE/detailGroupBuying',
@@ -97,7 +96,7 @@ enum SETTING_ROUTE {
   sendOTPChangeInfo = '@SETTING_ROUTE/sendOTPChangeInfo',
   enterPassword = '@SETTING_ROUTE/enterPassword',
   aboutUs = '@SETTING_ROUTE/aboutUs',
-  setTheme = '@SETTING_ROUTE/setTheme',
+  extendSetting = '@SETTING_ROUTE/extendSetting',
 }
 
 enum REPUTATION_ROUTE {

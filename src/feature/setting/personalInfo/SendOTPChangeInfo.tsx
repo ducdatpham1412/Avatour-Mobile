@@ -1,6 +1,5 @@
 import {useIsFocused} from '@react-navigation/native';
 import {apiCheckOTP, apiRequestOTP} from 'api/authentication';
-import {TypeRequestOTPRequest} from 'api/interface';
 import {apiChangeInformation} from 'api/setting';
 import {FONT_SIZE, standValue} from 'asset/standardValue';
 import {
@@ -14,6 +13,7 @@ import HeaderLogo from 'feature/login/components/HeaderLogo';
 import useCountdown from 'hook/useCountdown';
 import Redux from 'hook/useRedux';
 import StyleHeader from 'navigation/components/StyleHeader';
+import {AppParamsList} from 'navigation/config';
 import {SETTING_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -21,20 +21,9 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ScaledSheet} from 'react-native-size-matters';
 
-interface Props {
-  route: {
-    params: {
-      name: string;
-      newInfo: {
-        email?: string;
-        phone?: string;
-      };
-      paramsOTP: TypeRequestOTPRequest;
-    };
-  };
-}
-
-const SendOTPChangeInfo = ({route}: Props) => {
+const SendOTPChangeInfo = ({
+  route,
+}: RouteParams<AppParamsList[SETTING_ROUTE.sendOTPChangeInfo]>) => {
   const {name, newInfo, paramsOTP} = route.params;
 
   const theme = Redux.getTheme();

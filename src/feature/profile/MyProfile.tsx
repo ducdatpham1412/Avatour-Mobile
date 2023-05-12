@@ -1,46 +1,19 @@
+import {useRoute} from '@react-navigation/native';
 import {useAppSelector} from 'app-redux/store';
-import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {TabView} from 'components';
-import {StyleContainer, StyleIcon, StyleTouchable} from 'components/base';
+import {StyleContainer, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
-import {PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet, TypeShowActionSheet} from 'navigation/screen/modals';
+import {PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
 import React from 'react';
 import {View, ViewStyle} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdate, useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
-import {scale} from 'utility/scale';
+import {moderateScale, scale} from 'utility/scale';
 import {IconTabBarProfile, InformationProfile} from './components';
 import {ListFavorites, ListJoiningAndJoined, ListSales} from './screens';
-import {useRoute} from '@react-navigation/native';
-
-const listModalMyProfileShop: Array<TypeShowActionSheet> = [
-  {
-    title: 'profile.editProfile',
-    onPress: () => navigate(ROOT_SCREEN.editProfile),
-  },
-  {
-    title: 'setting.title',
-    onPress: () => navigate(PROFILE_ROUTE.settingRoute),
-  },
-];
-
-const listModalMyProfileConsumer: Array<TypeShowActionSheet> = [
-  {
-    title: 'profile.editProfile',
-    onPress: () => navigate(ROOT_SCREEN.editProfile),
-  },
-  {
-    title: 'profile.upgradeAccount',
-    onPress: () => navigate(ROOT_SCREEN.upgradeAccount),
-  },
-  {
-    title: 'setting.title',
-    onPress: () => navigate(PROFILE_ROUTE.settingRoute),
-  },
-];
 
 const MyProfile = () => {
   const update = useUpdate();
@@ -68,19 +41,10 @@ const MyProfile = () => {
         title: profile?.name as I18Normalize,
         showIconBack: route.name !== PROFILE_ROUTE.myProfile,
         RightComponent: (
-          <StyleTouchable
-            onPress={() =>
-              ModalActionSheet.show({
-                options:
-                  profile?.account_type === ACCOUNT.shop
-                    ? listModalMyProfileShop
-                    : listModalMyProfileConsumer,
-              })
-            }>
-            <StyleIcon
-              source={Images.icons.more}
-              size={20}
-              customStyle={{tintColor: theme.black}}
+          <StyleTouchable onPress={() => navigate(SETTING_ROUTE.settingScreen)}>
+            <AntDesign
+              name="setting"
+              style={{fontSize: moderateScale(17), color: theme.black}}
             />
           </StyleTouchable>
         ),

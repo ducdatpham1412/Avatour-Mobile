@@ -1,187 +1,147 @@
-import {yupResolver} from '@hookform/resolvers/yup';
 import {apiChangePassword} from 'api/setting';
-import {FONT_SIZE} from 'asset/standardValue';
-import {StyleButton, StyleInputForm} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useAppSelector} from 'app-redux/store';
+import {AppInput, StyleButton} from 'components/base';
+import {useLoading, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {memo, useEffect, useRef, useState} from 'react';
-import {FormProvider, useForm} from 'react-hook-form';
+import React, {useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Animated, Platform} from 'react-native';
+import {Animated, TextInput} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import FindmeAsyncStorage from 'utility/asyncStore';
-import {yupValidate} from 'utility/validate';
-import * as yup from 'yup';
+import {useAsync} from 'react-use';
+import {borderWidthTiny} from 'utility/assistant';
+import AppAsyncStorage from 'utility/asyncStore';
+import {scale} from 'utility/scale';
+import {validatePassword} from 'utility/validate';
 
 interface Props {
   isOpening: boolean;
+  onChangeOpening: (value: boolean) => void;
 }
 
-const ChangingPassword = ({isOpening}: Props) => {
+const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
   const {t} = useTranslation();
-  const isModeExp = Redux.getModeExp();
-  const theme = Redux.getTheme();
+  const {modeExp} = useAppSelector(state => state.accountSlice);
+  const theme = useTheme();
+  const {loading, setLoading} = useLoading();
 
   const aim = useRef(new Animated.Value(0)).current;
   const [height, setHeight] = useState(0);
   aim.addListener(({value}) => setHeight(value));
 
-  const ref_newPassword = useRef<any>(null);
-  const ref_passwordCf = useRef<any>(null);
+  const ref_newPassword = useRef<TextInput>(null);
+  const ref_passwordCf = useRef<TextInput>(null);
 
-  const [password, setPassword] = useState<any>();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const getPassword = async () => {
-    const temp = (await FindmeAsyncStorage.getActiveUser()).password;
-    setPassword(temp);
-  };
-
-  useEffect(() => {
-    getPassword();
-  }, []);
-
-  useEffect(() => {
+  useAsync(async () => {
     Animated.timing(aim, {
-      toValue: isOpening ? verticalScale(200) : 0,
+      toValue: isOpening ? verticalScale(250) : 0,
       duration: 300,
       useNativeDriver: true,
     }).start();
   }, [isOpening]);
 
-  const passwordSchema = yup.object().shape({
-    // nowPass: yup.string().test('no', t('alert.nowPassError'), value => {
-    //     return value === password;
-    // }),
-    nowPass: yupValidate.default(),
-    newPass: yupValidate.password(),
-    confirmPass: yupValidate.password('newPass'),
-  });
-  const form = useForm({
-    mode: 'all',
-    resolver: yupResolver(passwordSchema),
-  });
-  const {
-    setValue,
-    getValues,
-    formState: {errors},
-  } = form;
-
   const confirmChangePassword = async () => {
-    if (errors.nowPass || errors.newPass || errors.confirmPass) {
-      if (errors.nowPass) {
-        ModalAlert.error({
-          content: errors.nowPass.message,
-        });
-      } else if (errors.newPass) {
-        ModalAlert.error({
-          content: errors.newPass.message,
-        });
-      } else if (errors.confirmPass) {
-        ModalAlert.error({
-          content: errors.confirmPass.message,
-        });
-      }
-      return;
-    }
+    const savedPassword = (await AppAsyncStorage.getActiveUser()).password;
     try {
-      Redux.setIsLoading(true);
+      setLoading(true);
 
-      const oldPassword = getValues('nowPass');
-      const newPassword = getValues('newPass');
-      const confirmPassword = getValues('confirmPass');
-
-      if (oldPassword !== password) {
+      if (currentPassword !== savedPassword) {
         ModalAlert.error({
           i18Content: 'alert.nowPassError',
         });
         return;
       }
 
-      if (!isModeExp) {
-        await apiChangePassword({
-          oldPassword,
-          newPassword,
-          confirmPassword,
+      if (!validatePassword(newPassword)) {
+        ModalAlert.error({
+          i18Content: 'alert.regexPass',
         });
-        await FindmeAsyncStorage.updateActiveUser({
-          password: newPassword,
-        });
-        await FindmeAsyncStorage.editIndexNowAccount({
-          password: newPassword,
-        });
+        return;
+      }
 
-        setPassword(getValues('newPass'));
-        setValue('nowPass', '');
-        setValue('newPass', '');
-        setValue('confirmPass', '');
+      if (!modeExp) {
+        await apiChangePassword({
+          old_password: currentPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        });
+        await AppAsyncStorage.updateActiveUser({
+          password: newPassword,
+        });
+        await AppAsyncStorage.editIndexNowAccount({
+          password: newPassword,
+        });
       }
       ModalAlert.success({
         i18Content: 'alert.successChange',
+        onClose: () => {
+          setCurrentPassword('');
+          setNewPassword('');
+          setConfirmPassword('');
+          onChangeOpening(false);
+        },
       });
     } catch (err) {
       ModalAlert.error({
         content: err,
       });
     } finally {
-      Redux.setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <Animated.View style={[styles.container, {height}]}>
-      <FormProvider {...form}>
-        <StyleInputForm
-          name="nowPass"
-          placeholder={t('setting.securityAndLogin.nowPass')}
-          placeholderTextColor={theme.holderColor}
-          containerStyle={[
-            styles.moduleInput,
-            {
-              borderColor: theme.borderColor,
-            },
-          ]}
-          inputStyle={[styles.inputStyle, {color: theme.textHightLight}]}
-          hasErrorBox={false}
-          onSubmitEditing={() => ref_newPassword.current.focus()}
-          secureTextEntry
-        />
-
-        <StyleInputForm
-          ref={ref_newPassword}
-          name="newPass"
-          placeholder={t('setting.securityAndLogin.newPass')}
-          placeholderTextColor={theme.holderColor}
-          containerStyle={[
-            styles.moduleInput,
-            {borderColor: theme.borderColor},
-          ]}
-          inputStyle={[styles.inputStyle, {color: theme.textHightLight}]}
-          hasErrorBox={false}
-          onSubmitEditing={() => ref_passwordCf.current.focus()}
-          secureTextEntry
-        />
-
-        <StyleInputForm
-          ref={ref_passwordCf}
-          name="confirmPass"
-          placeholder={t('setting.securityAndLogin.confirmPass')}
-          placeholderTextColor={theme.holderColor}
-          containerStyle={[
-            styles.moduleInput,
-            {borderColor: theme.borderColor},
-          ]}
-          inputStyle={[styles.inputStyle, {color: theme.textHightLight}]}
-          hasErrorBox={false}
-          returnKeyType="done"
-          secureTextEntry
-        />
-      </FormProvider>
+      <AppInput
+        value={currentPassword}
+        placeholder={t('setting.securityAndLogin.nowPass')}
+        style={[
+          styles.moduleInput,
+          {
+            borderColor: theme.gray_500,
+          },
+        ]}
+        secureTextEntry
+        onSubmitEditing={() => ref_newPassword.current?.focus()}
+        onChangeText={text => setCurrentPassword(text)}
+      />
+      <AppInput
+        value={newPassword}
+        ref={ref_newPassword}
+        placeholder={t('setting.securityAndLogin.newPass')}
+        style={[
+          styles.moduleInput,
+          {
+            borderColor: theme.gray_500,
+          },
+        ]}
+        secureTextEntry
+        onSubmitEditing={() => ref_passwordCf.current?.focus()}
+        onChangeText={text => setNewPassword(text)}
+      />
+      <AppInput
+        value={confirmPassword}
+        ref={ref_passwordCf}
+        placeholder={t('setting.securityAndLogin.confirmPass')}
+        style={[
+          styles.moduleInput,
+          {
+            borderColor: theme.gray_500,
+          },
+        ]}
+        secureTextEntry
+        onChangeText={text => setConfirmPassword(text)}
+      />
 
       <StyleButton
         containerStyle={styles.buttonConfirm}
         titleStyle={styles.textButtonCf}
         title="setting.securityAndLogin.buttonChangePass"
         onPress={confirmChangePassword}
+        isLoading={loading}
       />
     </Animated.View>
   );
@@ -193,15 +153,16 @@ const styles = ScaledSheet.create({
     paddingHorizontal: '20@s',
     alignItems: 'center',
     overflow: 'hidden',
+    alignSelf: 'center',
   },
   moduleInput: {
     width: '100%',
-    borderWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
+    borderWidth: borderWidthTiny,
     borderRadius: '10@ms',
     marginVertical: '5@vs',
+    paddingTop: verticalScale(8),
+    paddingBottom: verticalScale(8),
+    paddingHorizontal: scale(10),
   },
   buttonConfirm: {
     marginVertical: '15@vs',
@@ -212,7 +173,6 @@ const styles = ScaledSheet.create({
     fontSize: '14@ms',
   },
   inputStyle: {
-    fontSize: FONT_SIZE.normal,
     paddingHorizontal: '10@s',
     backgroundColor: 'transparent',
     paddingTop: '7@vs',
@@ -220,4 +180,4 @@ const styles = ScaledSheet.create({
   },
 });
 
-export default memo(ChangingPassword);
+export default ChangingPassword;
