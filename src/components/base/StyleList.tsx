@@ -1,9 +1,16 @@
 import {useTheme} from 'hook';
-import React, {forwardRef, useRef} from 'react';
+import React, {
+  JSXElementConstructor,
+  ReactElement,
+  ReactNode,
+  forwardRef,
+  useRef,
+} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   FlatListProps,
+  ListRenderItem,
   RefreshControl,
   TextStyle,
   View,
@@ -12,8 +19,8 @@ import {
 import {moderateScale, verticalScale} from 'utility/scale';
 import StyleText from './StyleText';
 
-interface StyleListProps extends FlatListProps<any> {
-  data: Array<any>;
+interface StyleListProps<T = any> extends FlatListProps<T> {
+  data: Array<T>;
   ListHeaderComponent?: any;
   loading?: boolean;
   loadingMore?: boolean;
@@ -22,6 +29,13 @@ interface StyleListProps extends FlatListProps<any> {
   onRefresh?: () => void;
   onLoadMore?: () => void;
   initLoading?: boolean;
+  renderItem: ({
+    item,
+    index,
+  }: {
+    item: T;
+    index: number;
+  }) => ReactElement<any, string | JSXElementConstructor<any>> | null;
 }
 
 const StyleList = (props: StyleListProps, ref: any) => {

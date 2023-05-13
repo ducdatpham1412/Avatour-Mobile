@@ -31,6 +31,7 @@ const common = {
   confirm: 'Xác nhận',
   ok: 'Ok',
   alert: 'Thông báo',
+  type: 'Loại',
 };
 
 const login = {
@@ -310,7 +311,7 @@ const profile = {
     archive: 'Tạm ẩn',
     unArchive: 'Hiện lại bảng tin',
     delete: 'Xoá',
-    sureDeletePost: 'Bạn chắc chắn muốn xoá\nbài đăng này chứ?',
+    sureDeletePost: 'Bạn chắc chắn muốn xoá chứ?',
     enterTopic: 'Tự nhập chủ đề',
     pickImage: 'Chọn ảnh',
     addLink: 'Thêm link',
@@ -337,7 +338,6 @@ const profile = {
   goToPost: 'Đi tới đăng bài',
   reviewProvider: 'Viết review',
   postsArchived: 'Bài viết lưu trữ',
-  upgradeAccount: 'Chế độ nhà cung cấp',
   gotToCreateGb: 'Tạo chiến dịch mua chung đầu tiên',
   createReviewPost: 'Bài review',
   createGroupBuying: 'Chiến dịch mua chung',
@@ -375,6 +375,11 @@ const profile = {
   confirmWithVendor: 'Xác nhận với người bán',
   havingRequestUpdate: 'Bạn đang có một yêu cầu cập nhật',
   review: 'Đánh giá',
+  thisIsAccountReceive:
+    'Chúng tôi dựa trên thông tin này để hàng tuần chuyển tiền các đơn hàng phát sinh trên cửa hàng bạn.',
+  myRequests: 'Yêu cầu của tôi',
+  upgradeToShop: 'Chuyển sang tài khoản cửa hàng',
+  created: 'Ngày tạo',
 };
 
 // MESS ROUTE

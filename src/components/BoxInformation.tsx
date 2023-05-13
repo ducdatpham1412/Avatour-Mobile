@@ -16,9 +16,14 @@ type TypeInfoContent = {
 interface Props {
   listInformation: Array<TypeInfoContent | Element | null>;
   containerStyle?: StyleProp<ViewStyle>;
+  titleBoxFlex?: number;
 }
 
-const BoxInformation = ({listInformation, containerStyle}: Props) => {
+const BoxInformation = ({
+  listInformation,
+  containerStyle,
+  titleBoxFlex = 0.75,
+}: Props) => {
   const theme = useTheme();
 
   return (
@@ -53,7 +58,7 @@ const BoxInformation = ({listInformation, containerStyle}: Props) => {
                 borderBottomWidth: isLatest ? 0 : borderWidthTiny,
               },
             ]}>
-            <View style={$leftView}>
+            <View style={[$leftView, {flex: titleBoxFlex}]}>
               {itemContent?.icon}
               <StyleText
                 i18Text={itemContent?.title}
@@ -88,7 +93,6 @@ const $boxContainer: ViewStyle = {
   paddingVertical: verticalScale(12),
 };
 const $leftView: ViewStyle = {
-  flex: 0.75,
   flexDirection: 'row',
   alignItems: 'center',
 };

@@ -6,6 +6,7 @@ import {I18Normalize} from 'utility/I18Next';
 import {scale, verticalScale} from 'utility/scale';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
+import {detectFromStyle} from 'utility/assistant';
 
 interface StyleTouchableProps {
   title: I18Normalize;
@@ -20,6 +21,7 @@ const StyleButton = (props: StyleTouchableProps) => {
   const {title, containerStyle, titleStyle, disable, onPress, isLoading} =
     props;
   const theme = useTheme();
+  const tintColor = detectFromStyle(titleStyle, 'color');
 
   return (
     <StyleTouchable
@@ -32,7 +34,7 @@ const StyleButton = (props: StyleTouchableProps) => {
       disable={disable || isLoading}
       disableOpacity={isLoading ? 1 : 0.4}>
       {isLoading ? (
-        <ActivityIndicator color={theme.white} />
+        <ActivityIndicator color={(tintColor as string) ?? theme.white} />
       ) : (
         <StyleText
           i18Text={title || 'common.done'}

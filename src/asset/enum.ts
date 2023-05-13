@@ -354,6 +354,7 @@ export enum APP_EVENT {
 }
 
 export enum TYPE_AUTH_REQUEST {
+  all = -1,
   lock_account = 0,
   delete_account = 1,
   upgrade_to_shop = 2,

@@ -26,6 +26,7 @@ const SearchListTour = () => {
     onRefresh,
     loading,
     loadingMore,
+    initLoading,
   } = usePaging<TypeSearchResponse, TypeSearchRequest>({
     request: apiSearch,
     params: {
@@ -57,6 +58,7 @@ const SearchListTour = () => {
         onLoadMore={onLoadMore}
         loading={loading}
         loadingMore={loadingMore}
+        initLoading={initLoading}
         contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
         ListEmptyComponent={null}
       />

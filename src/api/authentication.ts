@@ -2,7 +2,11 @@ import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import request from './request';
 
 export const apiUpgradeAccount = (body: TypeUpgradeAccount) => {
-  return request.put('auth/upgrade-account', body);
+  return request.put('auth/request', body, {
+    params: {
+      type: TYPE_AUTH_REQUEST.upgrade_to_shop,
+    },
+  });
 };
 
 export const apiRequestOTP = (
@@ -115,4 +119,16 @@ export const apiGetUpdateBank = (): Promise<
       },
     },
   );
+};
+
+export const apiGetAllMyRequest = (): Promise<
+  TemplateApiResponse<TypeGetRequestResponse<any>[]>
+> => {
+  return request.post('auth/request', null, {
+    params: {type: TYPE_AUTH_REQUEST.all},
+  });
+};
+
+export const apiDeleteRequest = (requestId: number) => {
+  return request.delete('auth/request', {params: {request_id: requestId}});
 };

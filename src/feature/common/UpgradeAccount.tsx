@@ -1,52 +1,32 @@
 import {apiUpgradeAccount} from 'api/authentication';
+import {useAppSelector} from 'app-redux/store';
 import {Metrics} from 'asset/metrics';
-import {FONT_SIZE} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
 import AutoHeightImage from 'components/AutoHeightImage';
-import LoadingScreen from 'components/LoadingScreen';
-import StyleKeyboardAwareView from 'components/StyleKeyboardAwareView';
-import {
-  StyleButton,
-  StyleImage,
-  StyleText,
-  StyleTouchable,
-} from 'components/base';
-import ButtonBack from 'components/common/ButtonBack';
+import {StyleButton, StyleText, StyleTouchable} from 'components/base';
 import InputBox from 'components/common/InputBox';
-import Redux from 'hook/useRedux';
+import {useLoading, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
-import {ModalAlert} from 'navigation/screen/modals';
+import {StyleHeader} from 'navigation/components';
+import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
-import {Platform, ScrollView, TextInput, View} from 'react-native';
+import {ScrollView, TextInput, View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
+import {borderWidthTiny} from 'utility/assistant';
+import {verticalScale} from 'utility/scale';
 import {validateIsPhone} from 'utility/validate';
 import ModalBankAccount from './components/ModalBankAccount';
 import ModalChooseBank from './components/ModalChooseBank';
 
-const {width, height, safeTopPadding} = Metrics;
-
-const onConfirm = async (params: TypeUpgradeAccount) => {
-  try {
-    Redux.setIsLoading(true);
-    await apiUpgradeAccount(params);
-    ModalAlert.success({
-      i18Content: 'profile.requestUpgradeSuccess',
-      onClose: () => goBack(),
-    });
-  } catch (err) {
-    ModalAlert.error({
-      content: err,
-    });
-  } finally {
-    Redux.setIsLoading(false);
-  }
-};
+const {width, height} = Metrics;
 
 const UpgradeAccount = () => {
-  const {imageBackground} = Redux.getResource();
-  const theme = Redux.getTheme();
-  const {email} = Redux.getPassport().information;
-  const isLoading = Redux.getIsLoading();
+  const {top} = useSafeAreaInsets();
+  const {loading, setLoading} = useLoading();
+  const theme = useTheme();
+  const {email} = useAppSelector(
+    state => state.accountSlice.passport.profile.information,
+  );
 
   const scrollRef = useRef<ScrollView>(null);
   const locationInputRef = useRef<TextInput>(null);
@@ -59,7 +39,29 @@ const UpgradeAccount = () => {
   const [chosenBank, setChosenBank] = useState<any>();
   const [bankAccount, setBankAccount] = useState('');
 
-  const Header = () => {
+  const onConfirm = async () => {
+    try {
+      setLoading(true);
+      await apiUpgradeAccount({
+        location,
+        phone,
+        bank_code: chosenBank?.code || chosenBank?.shortName || '',
+        bank_account: bankAccount,
+      });
+      ModalAlert.success({
+        i18Content: 'profile.requestUpgradeSuccess',
+        onClose: () => goBack(),
+      });
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderHeader = () => {
     return (
       <View style={styles.elementView}>
         <StyleText
@@ -83,82 +85,85 @@ const UpgradeAccount = () => {
     );
   };
 
-  const EnterLocation = () => {
+  const enterLocation = () => {
     return (
       <View style={styles.elementView}>
-        <StyleKeyboardAwareView innerStyle={{justifyContent: 'center'}}>
-          <StyleText
-            i18Text="profile.firstEnterLocation"
-            customStyle={styles.titleBecome}
-          />
-          <InputBox
-            ref={locationInputRef}
-            containerStyle={styles.inputContainer}
-            selectionColor={Theme.common.white}
-            i18Placeholder="profile.location"
-            defaultValue={location}
-            onChangeText={text => setLocation(text)}
-          />
-          <StyleButton
-            title="common.next"
-            onPress={() => {
-              scrollRef.current?.scrollTo({
-                y: height * 2,
-                animated: true,
-              });
-              if (!phone) {
-                phoneNumberRef.current?.focus();
-              }
-            }}
-            containerStyle={styles.buttonView}
-            disable={!location}
-          />
-        </StyleKeyboardAwareView>
+        <StyleText
+          i18Text="profile.firstEnterLocation"
+          customStyle={styles.titleBecome}
+        />
+        <InputBox
+          ref={locationInputRef}
+          style={[styles.inputContainer, {backgroundColor: theme.background}]}
+          i18Placeholder="profile.location"
+          defaultValue={location}
+          onChangeText={text => setLocation(text)}
+        />
+        <StyleButton
+          title="common.next"
+          onPress={() => {
+            scrollRef.current?.scrollTo({
+              y: height * 2,
+              animated: true,
+            });
+            if (!phone) {
+              phoneNumberRef.current?.focus();
+            }
+          }}
+          containerStyle={styles.buttonView}
+          disable={!location}
+        />
       </View>
     );
   };
 
-  const EnterPhoneNumber = () => {
+  const enterPhoneNumber = () => {
     return (
       <View style={styles.elementView}>
-        <StyleKeyboardAwareView innerStyle={{justifyContent: 'center'}}>
-          <StyleText
-            i18Text="profile.phoneNumber"
-            customStyle={styles.titleBecome}
-          />
-          <InputBox
-            ref={phoneNumberRef}
-            containerStyle={styles.inputContainer}
-            selectionColor={Theme.common.white}
-            i18Placeholder="profile.phoneNumber"
-            defaultValue={phone}
-            onChangeText={text => setPhone(text)}
-            keyboardType="numeric"
-          />
-          <StyleButton
-            title="common.next"
-            onPress={() => {
-              scrollRef.current?.scrollTo({
-                y: height * 3,
-                animated: true,
-              });
-            }}
-            containerStyle={styles.buttonView}
-            disable={!validateIsPhone(phone)}
-          />
-        </StyleKeyboardAwareView>
+        <StyleText
+          i18Text="profile.phoneNumber"
+          customStyle={styles.titleBecome}
+        />
+        <InputBox
+          ref={phoneNumberRef}
+          style={[styles.inputContainer, {backgroundColor: theme.background}]}
+          i18Placeholder="profile.phoneNumber"
+          defaultValue={phone}
+          onChangeText={text => setPhone(text)}
+          keyboardType="numeric"
+        />
+        <StyleButton
+          title="common.next"
+          onPress={() => {
+            scrollRef.current?.scrollTo({
+              y: height * 3,
+              animated: true,
+            });
+          }}
+          containerStyle={styles.buttonView}
+          disable={!validateIsPhone(phone)}
+        />
       </View>
     );
   };
 
-  const ChooseBanking = () => {
+  const chooseBanking = () => {
     return (
       <View style={styles.elementView}>
+        <StyleText
+          i18Text="profile.updateBankAccount"
+          customStyle={styles.titleBecome}
+        />
+        <StyleText i18Text="profile.thisIsAccountReceive" />
+
         {!chosenBank ? (
           <StyleTouchable
-            customStyle={styles.chooseBankBox}
+            customStyle={[
+              styles.chooseBankBox,
+              {borderColor: theme.black, marginTop: verticalScale(30)},
+            ]}
             onPress={() => modalChooseBankRef.current?.show()}>
-            <StyleText i18Text="profile.bank" customStyle={styles.textBank} />
+            <StyleText i18Text="profile.bank" />
           </StyleTouchable>
         ) : (
           <StyleTouchable onPress={() => modalChooseBankRef.current?.show()}>
@@ -172,17 +177,17 @@ const UpgradeAccount = () => {
         <View style={styles.accountNumberView}>
           <StyleTouchable
             customStyle={styles.chooseBankBox}
-            onPress={() => modalBankAccountRef.current?.show()}>
+            onPress={() =>
+              ModalInputEdit.show({
+                defaultValue: bankAccount,
+                placeholder: 'profile.accountNumber',
+                onSave: text => setBankAccount(text),
+              })
+            }>
             {!bankAccount ? (
-              <StyleText
-                i18Text="profile.accountNumber"
-                customStyle={styles.textBank}
-              />
+              <StyleText i18Text="profile.accountNumber" />
             ) : (
-              <StyleText
-                originValue={bankAccount}
-                customStyle={styles.textBank}
-              />
+              <StyleText originValue={bankAccount} />
             )}
           </StyleTouchable>
         </View>
@@ -202,7 +207,7 @@ const UpgradeAccount = () => {
     );
   };
 
-  const ConfirmAll = () => {
+  const confirmAll = () => {
     return (
       <View style={styles.elementView}>
         <StyleText
@@ -223,40 +228,39 @@ const UpgradeAccount = () => {
         </StyleText>
         <StyleButton
           title="setting.personalInfo.confirm"
-          onPress={() => {
-            onConfirm({
-              location,
-              phone,
-              bankCode: chosenBank?.code || chosenBank?.shortName || '',
-              bankAccount,
-            });
-          }}
+          onPress={onConfirm}
           containerStyle={styles.buttonView}
           disable={!location || !phone || !chosenBank || !bankAccount}
+          isLoading={loading}
         />
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <StyleImage
-        source={{uri: imageBackground}}
-        customStyle={styles.imageBackground}
-      />
+    <View style={[styles.container, {backgroundColor: theme.white}]}>
       <ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         snapToInterval={height}
         decelerationRate="fast">
-        {Header()}
-        {EnterLocation()}
-        {EnterPhoneNumber()}
-        {ChooseBanking()}
-        {ConfirmAll()}
+        {renderHeader()}
+        {enterLocation()}
+        {enterPhoneNumber()}
+        {chooseBanking()}
+        {confirmAll()}
       </ScrollView>
 
-      <ButtonBack containerStyle={styles.buttonBack} onPress={goBack} />
+      <View
+        style={[
+          styles.header,
+          {paddingTop: top, backgroundColor: theme.white},
+        ]}>
+        <StyleHeader
+          containerStyle={{backgroundColor: theme.white}}
+          title="profile.upgradeToShop"
+        />
+      </View>
 
       <ModalChooseBank
         ref={modalChooseBankRef}
@@ -270,8 +274,6 @@ const UpgradeAccount = () => {
         onChangeValue={value => setBankAccount(value)}
         theme={theme}
       />
-
-      {isLoading && <LoadingScreen />}
     </View>
   );
 };
@@ -279,12 +281,14 @@ const UpgradeAccount = () => {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.darkTheme.backgroundColor,
+  },
+  header: {
+    width: '100%',
+    position: 'absolute',
   },
   buttonBack: {
     position: 'absolute',
-    left: '10@s',
-    top: safeTopPadding + 7,
+    left: '20@s',
   },
   imageBackground: {
     position: 'absolute',
@@ -298,8 +302,6 @@ const styles = ScaledSheet.create({
     paddingHorizontal: '20@s',
   },
   titleBecome: {
-    fontSize: FONT_SIZE.normal,
-    color: Theme.common.white,
     lineHeight: '20@ms',
     fontWeight: 'bold',
   },
@@ -308,29 +310,19 @@ const styles = ScaledSheet.create({
   },
   inputContainer: {
     width: '100%',
-    marginTop: '30@vs',
+    marginTop: '15@vs',
   },
   chooseBankBox: {
     paddingVertical: '10@vs',
-    borderWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    borderColor: Theme.common.textMe,
     alignItems: 'center',
     width: '70%',
     alignSelf: 'center',
     borderRadius: '10@ms',
-  },
-  textBank: {
-    fontSize: FONT_SIZE.normal,
-    fontWeight: 'bold',
-    color: Theme.common.textMe,
+    borderWidth: borderWidthTiny,
   },
   iconChosenBank: {
     width: '30%',
     borderRadius: '10@ms',
-    backgroundColor: Theme.common.white,
     alignSelf: 'center',
   },
   accountNumberView: {
@@ -339,8 +331,6 @@ const styles = ScaledSheet.create({
     marginTop: '20@vs',
   },
   titleConfirm: {
-    fontSize: FONT_SIZE.small,
-    color: Theme.common.white,
     lineHeight: '20@ms',
   },
 });

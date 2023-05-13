@@ -16,8 +16,8 @@ export interface StyleHeaderProps {
   containerStyle?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
   iconStyle?: StyleProp<TextStyle>;
-  showIconBack?: boolean;
   RightComponent?: ReactNode;
+  LeftComponent?: ReactNode;
 }
 
 const StyleHeader = (props: StyleHeaderProps) => {
@@ -28,8 +28,8 @@ const StyleHeader = (props: StyleHeaderProps) => {
     containerStyle,
     titleStyle,
     iconStyle,
-    showIconBack = true,
     RightComponent,
+    LeftComponent,
   } = props;
   const theme = useTheme();
 
@@ -49,13 +49,13 @@ const StyleHeader = (props: StyleHeaderProps) => {
         customStyle={[$titleText, titleStyle]}
       />
 
-      {!!showIconBack && (
-        <HeaderLeftIcon
-          style={$headerLeft}
-          onPress={onGoBack || goBack}
-          iconStyle={iconStyle}
-        />
-      )}
+      <View style={$headerLeft}>
+        {LeftComponent !== undefined ? (
+          LeftComponent
+        ) : (
+          <HeaderLeftIcon onPress={onGoBack || goBack} iconStyle={iconStyle} />
+        )}
+      </View>
 
       {!!RightComponent && (
         <View style={$rightComponent}>{RightComponent}</View>

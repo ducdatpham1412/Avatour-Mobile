@@ -24,7 +24,9 @@ import {
   CreatePostPreview,
   EditProfile,
   ListFollows,
+  ListMyRequests,
   MyProfile,
+  MyQRCode,
   OtherProfile,
 } from 'feature/profile';
 import {
@@ -130,6 +132,12 @@ const AppStack = () => {
         name={PROFILE_ROUTE.updatePrices}
         component={UpdatePrices}
       />
+      <Stack.Screen
+        name={PROFILE_ROUTE.listMyRequests}
+        component={ListMyRequests}
+      />
+      <Stack.Screen name={PROFILE_ROUTE.myQRCode} component={MyQRCode} />
+
       <Stack.Screen name={MESS_ROUTE.chatDetail} component={ChatDetail} />
       {/* <Stack.Screen
                 name={MESS_ROUTE.chatDetailGroup}

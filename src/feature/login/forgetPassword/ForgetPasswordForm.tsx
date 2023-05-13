@@ -52,7 +52,7 @@ const ForgetPasswordForm = ({route}: any) => {
       customStyle={styles.container}
       headerProps={{
         title: 'login.forgetPassword.form.header',
-        showIconBack: false,
+        LeftComponent: null,
       }}>
       <View style={$inputView}>
         <InputBox

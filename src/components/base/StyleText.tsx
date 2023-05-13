@@ -17,7 +17,7 @@ interface StyleTextProps extends TextProps {
 const StyleText = (props: StyleTextProps) => {
   const {i18Text, i18Params, originValue, customStyle, children} = props;
   const {t} = useTranslation();
-  const theme = useTheme();
+  const {black} = useTheme();
 
   let valueText;
   if (i18Text) {
@@ -29,7 +29,7 @@ const StyleText = (props: StyleTextProps) => {
   }
 
   return (
-    <Text style={[$textDefault, {color: theme.black}, customStyle]} {...props}>
+    <Text style={[$textDefault, {color: black}, customStyle]} {...props}>
       {valueText}
       {children}
     </Text>

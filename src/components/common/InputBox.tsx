@@ -1,15 +1,15 @@
 import {FONT_SIZE} from 'asset/standardValue';
-import {StyleText} from 'components/base';
+import {AppInput, StyleText} from 'components/base';
 import {useTheme} from 'hook';
 import React, {forwardRef} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, ViewStyle} from 'react-native';
 import {
   Platform,
   StyleProp,
-  TextInput,
   TextInputProps,
   TextStyle,
+  View,
+  ViewStyle,
 } from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {ms, s, vs} from 'utility/scale';
@@ -31,10 +31,8 @@ const InputBox = (
   if (isError !== undefined) {
     return (
       <View style={[$container, containerStyle]}>
-        <TextInput
+        <AppInput
           ref={ref}
-          placeholderTextColor={theme.gray_500}
-          selectionColor={theme.p_900}
           {...rest}
           placeholder={i18Placeholder ? t(i18Placeholder) : rest.placeholder}
           style={[
@@ -53,7 +51,7 @@ const InputBox = (
   }
 
   return (
-    <TextInput
+    <AppInput
       ref={ref}
       placeholderTextColor={theme.gray_500}
       selectionColor={theme.p_900}
@@ -75,7 +73,6 @@ const $container: ViewStyle = {
 const $input: TextStyle = {
   width: '80%',
   borderRadius: 100,
-  fontSize: FONT_SIZE.f2,
   paddingTop: Platform.select({
     ios: vs(14),
     android: vs(8),
@@ -85,7 +82,6 @@ const $input: TextStyle = {
     android: vs(8),
   }),
   paddingHorizontal: s(15),
-  alignSelf: 'center',
 };
 const $textError: TextStyle = {
   fontSize: FONT_SIZE.f4,

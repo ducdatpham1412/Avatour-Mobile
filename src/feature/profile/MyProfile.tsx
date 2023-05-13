@@ -1,18 +1,23 @@
 import {useRoute} from '@react-navigation/native';
 import {useAppSelector} from 'app-redux/store';
+import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {TabView} from 'components';
 import {StyleContainer, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
-import {PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
+import {SETTING_ROUTE} from 'navigation/config';
 import React from 'react';
 import {View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdate, useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, scale} from 'utility/scale';
-import {IconTabBarProfile, InformationProfile} from './components';
+import {
+  IconLeftMyProfile,
+  IconTabBarProfile,
+  InformationProfile,
+} from './components';
 import {ListFavorites, ListJoiningAndJoined, ListSales} from './screens';
 
 const MyProfile = () => {
@@ -39,7 +44,7 @@ const MyProfile = () => {
     <StyleContainer
       headerProps={{
         title: profile?.name as I18Normalize,
-        showIconBack: route.name !== PROFILE_ROUTE.myProfile,
+        LeftComponent: <IconLeftMyProfile />,
         RightComponent: (
           <StyleTouchable onPress={() => navigate(SETTING_ROUTE.settingScreen)}>
             <AntDesign
@@ -72,6 +77,7 @@ const MyProfile = () => {
             icon={Images.icons.review}
           />,
         ]}
+        initialIndex={profile.account_type === ACCOUNT.shop ? 0 : 1}
       />
     </StyleContainer>
   );

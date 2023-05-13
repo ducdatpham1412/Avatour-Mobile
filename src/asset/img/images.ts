@@ -64,6 +64,7 @@ const Images = {
     review: require('./ic_review.png'),
     heartBold: require('./ic_heart_bold.png'),
     tour: require('./ic_tour.png'),
+    tourTabBar: require('./ic_tour_tab_bar.png'),
   },
   images: {
     logo: require('./img_logo.png'),

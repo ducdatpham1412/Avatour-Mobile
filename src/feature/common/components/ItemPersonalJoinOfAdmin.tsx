@@ -8,10 +8,10 @@ import {
 } from 'components/base';
 import {useLoading, useTheme} from 'hook';
 import React, {Dispatch, SetStateAction} from 'react';
-import {TextStyle, View, ViewStyle} from 'react-native';
+import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {onGoToProfile} from 'utility/assistant';
 import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
-import {verticalScale} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 
 export type TypeConfirmBought = (
   list_joins_id: number[],
@@ -68,15 +68,22 @@ const ItemPersonalJoinOfAdmin = ({item, onConfirmBought}: Props) => {
   return (
     <BoxInformation
       listInformation={[
-        {
-          icon: (
-            <StyleTouchable onPress={() => onGoToProfile(item?.creator)}>
-              <StyleIcon source={{uri: item?.creator_avatar}} size={22} />
-            </StyleTouchable>
-          ),
-          title: item?.creator_name,
-          content: '',
-        },
+        <View style={$creator}>
+          <StyleTouchable
+            customStyle={$creatorView}
+            onPress={() => onGoToProfile(item?.creator)}>
+            <StyleIcon
+              source={{uri: item?.creator_avatar}}
+              size={22}
+              customStyle={$avatar}
+            />
+            <StyleText
+              originValue={item?.creator_name}
+              customStyle={{color: theme.gray_600}}
+              numberOfLines={1}
+            />
+          </StyleTouchable>
+        </View>,
         {
           title: 'discovery.arrivalTime',
           content: formatddddDDMMYYYY(item?.time_will_buy),
@@ -97,6 +104,17 @@ const ItemPersonalJoinOfAdmin = ({item, onConfirmBought}: Props) => {
 
 const $contentNote: TextStyle = {
   marginTop: verticalScale(5),
+};
+const $creator: ViewStyle = {
+  width: '100%',
+};
+const $avatar: ImageStyle = {
+  marginRight: scale(4),
+  borderRadius: 30,
+};
+const $creatorView: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
 };
 const $note: ViewStyle = {
   width: '100%',
