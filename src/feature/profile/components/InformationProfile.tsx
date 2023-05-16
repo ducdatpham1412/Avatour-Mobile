@@ -43,6 +43,7 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
   } = profile;
 
   const isShopAccount = account_type === ACCOUNT.shop;
+  const isShareTourAccount = account_type === ACCOUNT.shareTour;
   const isMyProfile = myId === id;
 
   const onNavigateFollow = (type: number) => {
@@ -110,6 +111,26 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
               <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
               <StyleText
                 i18Text="profile.postGroupBuying"
+                customStyle={[$textPostNew, {color: theme.white}]}
+              />
+            </StyleTouchable>
+          )}
+          {isShareTourAccount && (
+            <StyleTouchable
+              customStyle={[
+                $buttonTouch,
+                {
+                  backgroundColor: theme.p_600,
+                  marginLeft: 5,
+                },
+              ]}
+              onPress={() => {
+                navigate(PROFILE_ROUTE.createTour);
+              }}
+              hitSlop={{right: 20}}>
+              <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+              <StyleText
+                i18Text="profile.createTour"
                 customStyle={[$textPostNew, {color: theme.white}]}
               />
             </StyleTouchable>

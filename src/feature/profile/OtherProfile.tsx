@@ -20,6 +20,7 @@ const OtherProfile = ({
   const [{data, isFollowing, isBlocked}, {follow, block, report}] =
     useOtherProfile(params.id);
   const isShopAccount = data?.account_type === ACCOUNT.shop;
+  const isLocationAccount = data?.account_type === ACCOUNT.location;
 
   const onShowModalOptions = () => {
     if (!isBlocked) {
@@ -105,7 +106,7 @@ const OtherProfile = ({
                 icon={Images.icons.review}
               />,
             ]}
-            initialIndex={isShopAccount ? 0 : 1}
+            initialIndex={isShopAccount ? 0 : isLocationAccount ? 2 : 0}
           />
         </>
       )}

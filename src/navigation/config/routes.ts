@@ -24,6 +24,7 @@ enum ROOT_SCREEN {
   updateBankAccount = '@ROOT_SCREEN/updateBankAccount',
   detailSale = '@ROOT_SCREEN/detailSale',
   detailMeJoin = '@ROOT_SCREEN/detailMeJoin',
+  detailTour = '@ROOT_SCREEN/detailTour',
 }
 /**
  * ||
@@ -84,6 +85,7 @@ enum PROFILE_ROUTE {
   updatePrices = '@PROFILE_ROUTE/updatePrice',
   listMyRequests = '@PROFILE_ROUTE/listMyRequest',
   myQRCode = '@PROFILE_ROUTE/myQRCode',
+  createTour = '@PROFILE_ROUTE/createTour',
 }
 /**
  * ||

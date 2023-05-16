@@ -3,7 +3,7 @@ import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
 import {FONT_SIZE} from 'asset/standardValue';
 import {TabView} from 'components';
-import {SafeView, StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {SafeView, StyleIcon, StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
 import {IconTabBar} from 'components/common';
 import {useTheme} from 'hook';
@@ -13,14 +13,13 @@ import {DISCOVERY_ROUTE} from 'navigation/config/routes';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
-import {ScrollView, TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useUpdateEffect} from 'react-use';
-import {borderWidthTiny, chooseTextTopic} from 'utility/assistant';
-import {formatLocaleNumber} from 'utility/format';
+import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {ModalSearchFilter} from './components';
+import {ModalSearchFilter, ToolSearch} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
 import {SearchListGroupBuying, SearchListTour} from './screens';
 
@@ -121,105 +120,18 @@ const SearchScreen = ({
       return null;
     }
     return (
-      <View style={$toolView}>
-        <ScrollView
-          horizontal
-          contentContainerStyle={$contentToolView}
-          showsHorizontalScrollIndicator={false}>
-          <StyleTouchable
-            customStyle={[$toolBox, {borderColor: theme.gray_600}]}
-            onPress={() => {
-              inputRef.current?.blur();
-              modalFilterRef.current?.show();
-            }}>
-            <StyleIcon
-              source={Images.icons.location}
-              size={11}
-              customStyle={{tintColor: theme.gray_600}}
-            />
-            <StyleText
-              originValue={searchParams?.location || 'Ha Noi'}
-              customStyle={[$textTool, {color: theme.gray_600}]}
-            />
-          </StyleTouchable>
-
-          {!!searchParams.number_people && (
-            <StyleTouchable
-              customStyle={[
-                $toolBox,
-                {borderColor: theme.gray_600, marginLeft: scale(8)},
-              ]}
-              onPress={() => {
-                inputRef.current?.blur();
-                modalFilterRef.current?.show();
-              }}>
-              <StyleIcon
-                source={Images.icons.username}
-                size={11}
-                customStyle={{tintColor: theme.gray_600}}
-              />
-              <StyleText
-                i18Text="discovery.valuePeople"
-                i18Params={{
-                  value: searchParams.number_people,
-                }}
-                customStyle={[$textTool, {color: theme.gray_600}]}
-              />
-            </StyleTouchable>
-          )}
-
-          {(!!searchParams.start_price || !!searchParams.end_price) && (
-            <StyleTouchable
-              customStyle={[
-                $toolBox,
-                {marginLeft: scale(8), borderColor: theme.gray_600},
-              ]}
-              onPress={() => {
-                inputRef.current?.blur();
-                modalFilterRef.current?.show();
-              }}>
-              <StyleIcon
-                source={Images.icons.price}
-                size={11}
-                customStyle={{tintColor: theme.gray_600}}
-              />
-              <StyleText
-                originValue={`${formatLocaleNumber(
-                  String(searchParams.start_price),
-                )} - ${formatLocaleNumber(String(searchParams.end_price))} vnd`}
-                customStyle={[$textTool, {color: theme.gray_600}]}
-              />
-            </StyleTouchable>
-          )}
-
-          {!!searchParams?.services?.length && (
-            <StyleTouchable
-              customStyle={[
-                $toolBox,
-                {marginLeft: scale(8), borderColor: theme.gray_600},
-              ]}
-              onPress={() => {
-                inputRef.current?.blur();
-                modalFilterRef.current?.show();
-              }}>
-              <StyleIcon
-                source={Images.icons.category}
-                size={11}
-                customStyle={{tintColor: theme.gray_600}}
-              />
-              {searchParams?.services?.map(item => {
-                return (
-                  <StyleText
-                    key={item}
-                    i18Text={chooseTextTopic(item)}
-                    customStyle={[$textTool, {color: theme.gray_600}]}
-                  />
-                );
-              })}
-            </StyleTouchable>
-          )}
-        </ScrollView>
-      </View>
+      <ToolSearch
+        location={searchParams?.location || 'Ha Noi'}
+        numberPeople={searchParams?.number_people}
+        startPrice={searchParams?.start_price}
+        endPrice={searchParams?.end_price}
+        services={searchParams?.services}
+        onPress={() => {
+          inputRef.current?.blur();
+          modalFilterRef.current?.show();
+        }}
+        containerStyle={$toolView}
+      />
     );
   };
 
@@ -261,6 +173,7 @@ const SearchScreen = ({
         ref={modalFilterRef}
         onChangeSearch={value => setSearchParams({...value, location})}
         initSearchParams={initSearchParams.current}
+        isGetFromAsync
       />
     </>
   );
@@ -291,24 +204,8 @@ const $iconClear: TextStyle = {
   fontSize: moderateScale(20),
 };
 const $toolView: ViewStyle = {
-  width: '100%',
   paddingTop: verticalScale(8),
   paddingBottom: verticalScale(8),
-};
-const $contentToolView: ViewStyle = {
-  paddingHorizontal: scale(12),
-};
-const $toolBox: ViewStyle = {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingVertical: verticalScale(2),
-  borderWidth: borderWidthTiny,
-  paddingHorizontal: scale(8),
-  borderRadius: 30,
-};
-const $textTool: TextStyle = {
-  fontSize: FONT_SIZE.f3,
-  marginLeft: scale(7),
 };
 const $resultView: ViewStyle = {
   flex: 1,

@@ -9,9 +9,10 @@ interface Props {
   containerStyle?: StyleProp<ViewStyle>;
   iconStyle?: StyleProp<TextStyle>;
   onPress?(): void;
+  size?: number;
 }
 
-const ButtonX = ({containerStyle, onPress, iconStyle}: Props) => {
+const ButtonX = ({containerStyle, onPress, iconStyle, size}: Props) => {
   const theme = useTheme();
 
   return (
@@ -23,7 +24,15 @@ const ButtonX = ({containerStyle, onPress, iconStyle}: Props) => {
       ]}
       onPress={onPress}
       hitSlop={10}>
-      <Feather name="x" style={[$iconX, {color: theme.black}, iconStyle]} />
+      <Feather
+        name="x"
+        style={[
+          $iconX,
+          {color: theme.black},
+          iconStyle,
+          size && {fontSize: moderateScale(size)},
+        ]}
+      />
     </StyleTouchable>
   );
 };

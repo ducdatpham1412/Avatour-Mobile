@@ -38,10 +38,22 @@ import {formatDDMMMM, formatUTCDate} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
+import {I18Normalize} from 'utility/I18Next';
 
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
   initSearchParams: TypeSearchParams;
+  titleButton?: I18Normalize;
+  notIncludes?: Array<
+    | 'location'
+    | 'transport'
+    | 'number_people'
+    | 'date_time'
+    | 'services'
+    | 'price'
+  >;
+  isGetFromAsync: boolean;
+  searchPlaceHolder?: I18Normalize;
 }
 
 interface IndicatorProps {
@@ -73,7 +85,14 @@ export const chosenPrice = (
 };
 
 const ModalSearchFilter = (
-  {onChangeSearch, initSearchParams}: Props,
+  {
+    onChangeSearch,
+    initSearchParams,
+    titleButton,
+    notIncludes = [],
+    isGetFromAsync,
+    searchPlaceHolder,
+  }: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const {t} = useTranslation();
@@ -86,7 +105,9 @@ const ModalSearchFilter = (
 
   const [closeOnOverlayEnable, setCloseOnOverlayEnable] = useState(true);
 
-  const [startLocation, setStartLocation] = useState('');
+  const [startLocation, setStartLocation] = useState(
+    initSearchParams?.start_location ?? '',
+  );
   const [startPrice, setStartPrice] = useState('');
   const [endPrice, setEndPrice] = useState('');
 
@@ -99,7 +120,7 @@ const ModalSearchFilter = (
       onPressVehicle,
       onSavePrice,
     },
-  } = useFilterSearch({onChangeSearch, initSearchParams});
+  } = useFilterSearch({onChangeSearch, initSearchParams, isGetFromAsync});
 
   const onSearch = async () => {
     const newValue = {...searchParams, start_location: startLocation};
@@ -120,7 +141,11 @@ const ModalSearchFilter = (
         onOpen={() => Keyboard.dismiss()}
         containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
         <InputSearch
-          placeholder={t('discovery.startLocation')}
+          placeholder={
+            searchPlaceHolder
+              ? t(searchPlaceHolder)
+              : t('discovery.startLocation')
+          }
           onFocus={() => setCloseOnOverlayEnable(false)}
           onBlur={() => setCloseOnOverlayEnable(true)}
           icon={
@@ -134,20 +159,23 @@ const ModalSearchFilter = (
           onChangeText={text => setStartLocation(text)}
         />
 
-        <TickBox
-          title="discovery.vehicle"
-          containerStyle={$contentBox}
-          listOptions={LIST_TRANSPORTS.map(item => ({
-            id: item.id,
-            text: item.text,
-          }))}
-          listChosen={LIST_TRANSPORTS.filter(item =>
-            searchParams?.transports?.includes(item.id),
-          )}
-          onPressOption={onPressVehicle}
-        />
-
-        <Indicator color={theme.gray_300} />
+        {!notIncludes?.includes('transport') && (
+          <>
+            <TickBox
+              title="discovery.vehicle"
+              containerStyle={$contentBox}
+              listOptions={LIST_TRANSPORTS.map(item => ({
+                id: item.id,
+                text: item.text,
+              }))}
+              listChosen={LIST_TRANSPORTS.filter(item =>
+                searchParams?.transports?.includes(item.id),
+              )}
+              onPressOption={onPressVehicle}
+            />
+            <Indicator color={theme.gray_300} />
+          </>
+        )}
 
         <View style={$numberPeopleView}>
           <StyleText i18Text="discovery.people" customStyle={$textTitle} />
@@ -174,61 +202,66 @@ const ModalSearchFilter = (
             </StyleTouchable>
           </View>
         </View>
-
         <Indicator color={theme.gray_300} />
 
-        <View style={$contentBox}>
-          <StyleText i18Text="discovery.timeTravel" customStyle={$textTitle} />
-          <View style={[$timeBox, {borderColor: theme.gray_300}]}>
-            <StyleIcon
-              source={Images.icons.calendar}
-              size={20}
-              customStyle={$iconCalendar}
-            />
-            <StyleTouchable
-              style={$timePart}
-              onPress={() =>
-                ModalDateRangePicker.show({
-                  startDate: searchParams.start_time || '',
-                  endDate: searchParams.end_time || '',
-                  onChangeRange: value => {
-                    setSearchParams(pre => ({
-                      ...pre,
-                      start_time: formatUTCDate(value.startDate),
-                      end_time: formatUTCDate(value.endDate),
-                    }));
-                  },
-                  validRange: {
-                    startDate: new Date(),
-                  },
-                })
-              }>
-              <View>
-                <StyleText
-                  i18Text="discovery.departure"
-                  customStyle={{color: theme.gray_500}}
-                />
-                <StyleText
-                  originValue={formatDDMMMM(searchParams?.start_time || '')}
-                />
-              </View>
-              <View
-                style={[$indicatorTime, {backgroundColor: theme.gray_300}]}
+        {!notIncludes?.includes('date_time') && (
+          <>
+            <View style={$contentBox}>
+              <StyleText
+                i18Text="discovery.timeTravel"
+                customStyle={$textTitle}
               />
-              <View>
-                <StyleText
-                  i18Text="discovery.comeback"
-                  customStyle={{color: theme.gray_500}}
+              <View style={[$timeBox, {borderColor: theme.gray_300}]}>
+                <StyleIcon
+                  source={Images.icons.calendar}
+                  size={20}
+                  customStyle={$iconCalendar}
                 />
-                <StyleText
-                  originValue={formatDDMMMM(searchParams?.end_time || '')}
-                />
+                <StyleTouchable
+                  style={$timePart}
+                  onPress={() =>
+                    ModalDateRangePicker.show({
+                      startDate: searchParams.start_time || '',
+                      endDate: searchParams.end_time || '',
+                      onChangeRange: value => {
+                        setSearchParams(pre => ({
+                          ...pre,
+                          start_time: formatUTCDate(value.startDate),
+                          end_time: formatUTCDate(value.endDate),
+                        }));
+                      },
+                      validRange: {
+                        startDate: new Date(),
+                      },
+                    })
+                  }>
+                  <View>
+                    <StyleText
+                      i18Text="discovery.departure"
+                      customStyle={{color: theme.gray_500}}
+                    />
+                    <StyleText
+                      originValue={formatDDMMMM(searchParams?.start_time || '')}
+                    />
+                  </View>
+                  <View
+                    style={[$indicatorTime, {backgroundColor: theme.gray_300}]}
+                  />
+                  <View>
+                    <StyleText
+                      i18Text="discovery.comeback"
+                      customStyle={{color: theme.gray_500}}
+                    />
+                    <StyleText
+                      originValue={formatDDMMMM(searchParams?.end_time || '')}
+                    />
+                  </View>
+                </StyleTouchable>
               </View>
-            </StyleTouchable>
-          </View>
-        </View>
-
-        <Indicator color={theme.gray_300} />
+            </View>
+            <Indicator color={theme.gray_300} />
+          </>
+        )}
 
         <TickBox
           title="discovery.chooseTopic"
@@ -275,7 +308,7 @@ const ModalSearchFilter = (
         </View>
 
         <StyleButton
-          title="common.search"
+          title={titleButton ?? 'common.search'}
           containerStyle={$buttonView}
           onPress={onSearch}
         />

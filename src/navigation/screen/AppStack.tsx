@@ -22,6 +22,7 @@ import {
   CreateGroupBuying,
   CreatePostPickImage,
   CreatePostPreview,
+  CreateTour,
   EditProfile,
   ListFollows,
   ListMyRequests,
@@ -50,6 +51,7 @@ import ROOT_SCREEN, {
 } from 'navigation/config/routes';
 import React from 'react';
 import MainAndChat from './MainAndChat';
+import {DetailTour} from 'feature/discovery';
 
 const modalPreviewLinkRef = React.createRef<ModalPreviewLink>();
 export const showPreviewLink = (item: TypeBubblePalace) => {
@@ -137,6 +139,7 @@ const AppStack = () => {
         component={ListMyRequests}
       />
       <Stack.Screen name={PROFILE_ROUTE.myQRCode} component={MyQRCode} />
+      <Stack.Screen name={PROFILE_ROUTE.createTour} component={CreateTour} />
 
       <Stack.Screen name={MESS_ROUTE.chatDetail} component={ChatDetail} />
       {/* <Stack.Screen
@@ -181,6 +184,13 @@ const AppStack = () => {
       <Stack.Screen
         name={ROOT_SCREEN.detailMeJoin}
         component={DetailMeJoin}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ROOT_SCREEN.detailTour}
+        component={DetailTour}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}

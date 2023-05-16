@@ -2,6 +2,8 @@ import {BORDER_RADIUS, FONT_SIZE, ratioImageTour} from 'asset';
 import Images from 'asset/img/images';
 import Theme from 'asset/theme/Theme';
 import {useTheme} from 'hook';
+import {push} from 'navigation/NavigationService';
+import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {
@@ -40,7 +42,13 @@ const ItemTour = ({item, containerStyle}: Props) => {
         end={{x: 0.5, y: 0}}
       />
 
-      <StyleTouchable customStyle={$body}>
+      <StyleTouchable
+        customStyle={$body}
+        onPress={() =>
+          push(ROOT_SCREEN.detailTour, {
+            tour: item,
+          })
+        }>
         <View style={$scheduleView}>
           <View
             style={[$scheduleBox, {backgroundColor: theme.white_opacity(0.2)}]}>

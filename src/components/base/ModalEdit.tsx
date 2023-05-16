@@ -16,6 +16,7 @@ import {scale, verticalScale} from 'utility/scale';
 import StyleButton from './StyleButton';
 import StyleText from './StyleText';
 import {ScaleView} from 'components/common';
+import {impactLight} from 'utility/haptic';
 
 interface Props {
   children?: ReactNode;
@@ -45,6 +46,7 @@ const ModalEdit = (
     ref,
     () => ({
       show: () => {
+        impactLight();
         setVisible(true);
       },
       hide: () => setVisible(false),

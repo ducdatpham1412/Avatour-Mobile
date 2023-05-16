@@ -101,7 +101,8 @@ type TypeSearchParams = Omit<TypeSearchRequest, 'post_search'>;
 
 interface TourDetail {
   id: number;
-  transport: null;
+  services: number[];
+  transport: Array<number>;
   hotel: null;
   location: string;
   start_location: string;
@@ -131,5 +132,33 @@ type Tour = Pick<
 > & {
   schedule: string[][];
 };
+
+type TypeCreateTour = {
+  schedule: number[][];
+  input_tour: Pick<
+    TourDetail,
+    | 'location'
+    | 'start_location'
+    | 'number_people'
+    | 'start_price'
+    | 'end_price'
+    | 'start_time'
+    | 'end_time'
+    | 'services'
+  >;
+};
+
+type TypeEditTour = Partial<
+  Pick<
+    TourDetail,
+    | 'location'
+    | 'start_location'
+    | 'number_people'
+    | 'start_price'
+    | 'end_price'
+  > & {
+    schedule: number[][];
+  }
+>;
 
 type TypeSearchResponse = TemplateApiResponse<Tour[]>;

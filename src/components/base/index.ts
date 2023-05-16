@@ -10,6 +10,7 @@ import StyleTouchable from './StyleTouchable';
 export {default as AppInput} from './AppInput';
 export {default as ModalEdit} from './ModalEdit';
 export {default as StyleList} from './StyleList';
+export {default as StyleWebView} from './StyleWebView';
 export {
   StyleText,
   StyleImage,

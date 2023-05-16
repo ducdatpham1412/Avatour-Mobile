@@ -31,4 +31,11 @@ const useAppEvent = <T extends APP_EVENT>(
   };
 };
 
+export const emitAppEvent = <T extends APP_EVENT>(
+  name: T,
+  params?: T extends keyof AppEventList ? AppEventList[T] : undefined,
+) => {
+  NativeAppEventEmitter.emit(name, params);
+};
+
 export default useAppEvent;

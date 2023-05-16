@@ -2,6 +2,7 @@ import StatusPostCreated from 'navigation/components/StatusPostCreated';
 import React from 'react';
 import {
   ModalActionSheet,
+  ModalAddLocation,
   ModalAlert,
   ModalCommentLike,
   ModalCommentLikeAllApp,
@@ -23,6 +24,7 @@ const AppModal = () => {
       <ModalScanQr />
       <ModalActionSheet />
       <ModalAlert />
+      <ModalAddLocation />
     </>
   );
 };

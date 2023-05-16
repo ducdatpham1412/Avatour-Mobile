@@ -3,6 +3,7 @@ import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
 import {ImageStyle, TextStyle, ViewStyle} from 'react-native';
+import {onGoToProfile} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
@@ -14,7 +15,9 @@ const ItemHotLocation = ({item, isLast}: Props) => {
   const theme = useTheme();
 
   return (
-    <StyleTouchable customStyle={[$container, isLast && {marginBottom: 0}]}>
+    <StyleTouchable
+      customStyle={[$container, isLast && {marginBottom: 0}]}
+      onPress={() => onGoToProfile(item?.id)}>
       <StyleImage source={{uri: item?.avatar}} customStyle={$image} />
       <StyleText originValue={item?.name} customStyle={$textName} />
       <StyleText

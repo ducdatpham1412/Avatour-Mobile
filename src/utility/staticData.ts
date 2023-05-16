@@ -1,3 +1,5 @@
+import {TOPIC} from 'asset/enum';
+
 export const fakeDataListGroupsJoined: Array<TypeGroupJoin> = [
   {
     id: 1,
@@ -575,4 +577,14 @@ export const fakeSale: TypeGroupBuying = {
   created: '2023-03-23 17:26:12.747394+00:00',
   status: 1,
   is_liked: false,
+};
+
+export const defaultSearchParams: TypeSearchParams = {
+  location: 'Ha Noi',
+  start_location: 'Ha Noi',
+  number_people: 4,
+  services: [TOPIC.food, TOPIC.volunteer],
+  transports: [],
+  start_price: 0,
+  end_price: 2000000,
 };

@@ -351,6 +351,10 @@ export enum APP_EVENT {
   requestBoughtJoin = 'request-bought-join',
   reactSale = 'react-sale',
   reactTour = 'react-tour',
+  tourEditMode = 'tour-edit-tour',
+  tourWantToSave = 'tour-want-to-save',
+  tourSave = 'tour-save',
+  tourUpdateSchedule = 'tour-update-schedule',
 }
 
 export enum TYPE_AUTH_REQUEST {

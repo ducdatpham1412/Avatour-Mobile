@@ -1,7 +1,7 @@
 import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
+import {push} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
@@ -85,7 +85,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         containerStyle,
       ]}
       onPress={() =>
-        navigate(ROOT_SCREEN.detailSale, {
+        push(ROOT_SCREEN.detailSale, {
           sale: item,
         })
       }>

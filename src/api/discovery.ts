@@ -159,3 +159,11 @@ export const apiGetListToursFavorite = ({params}: TypeParamsPaging<{}>) => {
     },
   });
 };
+
+export const apiEditTour = (tourId: number, body: TypeEditTour) => {
+  return request.put(`/common/tours/${tourId}`, body);
+};
+
+export const apiCreateTour = (body: TypeCreateTour) => {
+  return request.post('/common/tours', body);
+};
