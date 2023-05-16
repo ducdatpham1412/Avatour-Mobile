@@ -1,5 +1,5 @@
 import {StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import React from 'react';
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -12,19 +12,15 @@ interface Props {
 }
 
 const ButtonBack = ({containerStyle, onPress, iconStyle}: Props) => {
-  const theme = Redux.getTheme();
+  const {white, black} = useTheme();
 
   return (
     <StyleTouchable
-      customStyle={[
-        styles.container,
-        {backgroundColor: theme.backgroundButtonColor},
-        containerStyle,
-      ]}
+      customStyle={[styles.container, {backgroundColor: white}, containerStyle]}
       onPress={onPress}>
       <MaterialIcons
         name="arrow-back"
-        style={[styles.iconX, {color: theme.textHightLight}, iconStyle]}
+        style={[styles.iconX, {color: black}, iconStyle]}
       />
     </StyleTouchable>
   );

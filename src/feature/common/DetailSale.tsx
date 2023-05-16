@@ -93,6 +93,8 @@ const DetailSale = ({
     sale,
   });
 
+  const isMySale = data?.creator === myId;
+
   const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
 
@@ -260,23 +262,25 @@ const DetailSale = ({
           </View>
         )}
 
-        <LinearGradient
-          colors={[theme.p_800, theme.p_600]}
-          style={$interactView}>
-          <StyleTouchable
-            customStyle={$buttonInteract}
-            onPress={() => modalConfirmJoinRef.current?.show()}>
-            <StyleIcon
-              source={Images.icons.createGroup}
-              size={15}
-              customStyle={{tintColor: theme.white}}
-            />
-            <StyleText
-              i18Text="discovery.joinGroupBuying"
-              customStyle={[$textJoin, {color: theme.white}]}
-            />
-          </StyleTouchable>
-        </LinearGradient>
+        {!isMySale && (
+          <LinearGradient
+            colors={[theme.p_800, theme.p_600]}
+            style={$interactView}>
+            <StyleTouchable
+              customStyle={$buttonInteract}
+              onPress={() => modalConfirmJoinRef.current?.show()}>
+              <StyleIcon
+                source={Images.icons.createGroup}
+                size={15}
+                customStyle={{tintColor: theme.white}}
+              />
+              <StyleText
+                i18Text="discovery.joinGroupBuying"
+                customStyle={[$textJoin, {color: theme.white}]}
+              />
+            </StyleTouchable>
+          </LinearGradient>
+        )}
 
         {!!data?.total_members && (
           <>
@@ -290,10 +294,10 @@ const DetailSale = ({
             <StyleTouchable
               customStyle={$listPeopleView}
               onPress={() => modalJoinedRef.current?.show()}>
-              {listPersonalJoins.map(member => {
+              {listPersonalJoins.map((member, index) => {
                 return (
                   <StyleIcon
-                    key={member.id}
+                    key={index}
                     source={{uri: member?.creator_avatar}}
                     size={30}
                     customStyle={$avatarJoin}
@@ -407,7 +411,7 @@ const DetailSale = ({
         groups={data?.groups || []}
         refreshing={loading}
         onRefresh={onRefresh}
-        isMySale={data?.creator === myId}
+        isMySale={isMySale}
       />
 
       <ModalConfirmJoinGb

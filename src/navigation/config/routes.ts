@@ -82,6 +82,8 @@ enum PROFILE_ROUTE {
   detailGroupBuying = '@PROFILE_ROUTE/detailGroupBuying',
   createGroupBuying = '@PROFILE_ROUTE/createGroupBuying',
   updatePrices = '@PROFILE_ROUTE/updatePrice',
+  listMyRequests = '@PROFILE_ROUTE/listMyRequest',
+  myQRCode = '@PROFILE_ROUTE/myQRCode',
 }
 /**
  * ||

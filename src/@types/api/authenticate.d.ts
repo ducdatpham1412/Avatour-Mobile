@@ -83,8 +83,8 @@ interface TypeOpenAccountRequest {
 interface TypeUpgradeAccount {
   location: string;
   phone: string;
-  bankCode: string;
-  bankAccount: string;
+  bank_code: string;
+  bank_account: string;
 }
 
 interface TypeUpdateBankAccount {

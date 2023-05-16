@@ -1,7 +1,7 @@
-import {StyleContainer} from 'components/base';
+import {StyleContainer, StyleIcon} from 'components/base';
 import Redux from 'hook/useRedux';
 import StyleHeader from 'navigation/components/StyleHeader';
-import ROOT_SCREEN from 'navigation/config/routes';
+import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import React, {useState} from 'react';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -14,6 +14,8 @@ import {scale} from 'utility/scale';
 import {useTheme} from 'hook';
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
+import Images from 'asset/img/images';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const ExtendSetting = () => {
   const theme = useTheme();
@@ -22,9 +24,12 @@ const ExtendSetting = () => {
   );
 
   const [isSettingTheme, setIsSettingTheme] = useState(false);
+  const [isSettingLanguage, setIsSettingLanguage] = useState(false);
+
+  const isShopAccount = account_type === ACCOUNT.shop;
+
   const openCloseSettingTheme = () => setIsSettingTheme(!isSettingTheme);
 
-  const [isSettingLanguage, setIsSettingLanguage] = useState(false);
   const openCloseSettingLanguage = () =>
     setIsSettingLanguage(!isSettingLanguage);
 
@@ -59,7 +64,21 @@ const ExtendSetting = () => {
       />
       {isSettingLanguage && <LanguageSetting />}
 
-      {account_type === ACCOUNT.shop && (
+      {!isShopAccount && (
+        <TypeDetailSetting
+          title="profile.upgradeToShop"
+          onPress={() => navigate(ROOT_SCREEN.upgradeAccount)}
+          icon={
+            <StyleIcon
+              source={Images.icons.shop}
+              size={17}
+              customStyle={{tintColor: theme.blue}}
+            />
+          }
+        />
+      )}
+
+      {isShopAccount && (
         <TypeDetailSetting
           title="profile.updateBankAccount"
           onPress={() => navigate(ROOT_SCREEN.updateBankAccount)}
@@ -71,6 +90,17 @@ const ExtendSetting = () => {
           }
         />
       )}
+
+      <TypeDetailSetting
+        title="profile.myRequests"
+        onPress={() => navigate(PROFILE_ROUTE.listMyRequests)}
+        icon={
+          <AntDesign
+            name="mail"
+            style={[styles.stylesIcon, {color: theme.red}]}
+          />
+        }
+      />
     </StyleContainer>
   );
 };

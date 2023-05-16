@@ -1,6 +1,6 @@
 import {apiConfirmUserBought} from 'api/discovery';
 import {GROUP_BUYING_STATUS} from 'asset/enum';
-import {Metrics} from 'asset/metrics';
+import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleList} from 'components/base';
 import {useApiImmutable, useTheme} from 'hook';
@@ -14,6 +14,7 @@ import React, {
   useState,
 } from 'react';
 import {View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {formatDDMMMMYY} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import ItemPersonalJoin from './ItemPersonalJoin';
@@ -35,17 +36,20 @@ const Separator = () => {
 };
 
 const ListPeople = ({group}: Props) => {
+  const {bottom} = useSafeAreaInsets();
   return (
     <StyleList
       data={group?.members}
       renderItem={({item}) => <ItemPersonalJoin item={item} />}
       keyExtractor={item => String(item?.id)}
       ItemSeparatorComponent={Separator}
+      contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
     />
   );
 };
 
 const ListPeopleOfAdmin = ({group}: Props) => {
+  const {bottom} = useSafeAreaInsets();
   const {data, loading, validating, mutate} = useApiImmutable<
     TypePersonalJoinOfAdmin[]
   >({
@@ -86,7 +90,7 @@ const ListPeopleOfAdmin = ({group}: Props) => {
 
   return (
     <StyleList
-      data={data}
+      data={data ?? []}
       renderItem={({item}) => (
         <ItemPersonalJoinOfAdmin
           item={item}
@@ -99,6 +103,7 @@ const ListPeopleOfAdmin = ({group}: Props) => {
       loading={loading || validating}
       refreshing={validating}
       onRefresh={mutate}
+      contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
     />
   );
 };

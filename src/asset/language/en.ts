@@ -31,6 +31,7 @@ const common = {
   confirm: 'Confirm',
   ok: 'Ok',
   alert: 'Alert',
+  type: 'Type',
 };
 
 const login = {
@@ -333,7 +334,7 @@ const profile = {
     archive: 'Archive',
     unArchive: 'Show on profile',
     delete: 'Delete',
-    sureDeletePost: 'Are you sure delete this post?',
+    sureDeletePost: 'Are you sure to delete?',
     enterTopic: 'Enter topic yourself',
     pickImage: 'Pick images',
     addLink: 'Add link',
@@ -360,7 +361,6 @@ const profile = {
   goToPost: 'Go to post',
   reviewProvider: 'Write review',
   postsArchived: 'Post archived',
-  upgradeAccount: 'Supplier account',
   gotToCreateGb: 'Create first group buying campaign',
   createReviewPost: 'Review post',
   createGroupBuying: 'Group booking campaign',
@@ -398,6 +398,11 @@ const profile = {
   confirmWithVendor: 'Confirm with vendor',
   havingRequestUpdate: "You're having an update request",
   review: 'Review',
+  thisIsAccountReceive:
+    'We use this information to weekly transfer money on orders that arise on your store.',
+  myRequests: 'My requests',
+  upgradeToShop: 'Upgrade to shop',
+  created: 'Date created',
 };
 
 // SETTING ROUTE

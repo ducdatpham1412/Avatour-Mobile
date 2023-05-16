@@ -1,14 +1,11 @@
 import {apiGetListGroupBuying} from 'api/profile';
-import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
-import {StyleButton, StyleList} from 'components/base';
-import {usePaging, useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
-import {ROOT_SCREEN} from 'navigation/config';
+import {StyleList} from 'components/base';
+import {usePaging} from 'hook';
 import React, {useCallback} from 'react';
-import {ViewStyle, View} from 'react-native';
+import {View, ViewStyle} from 'react-native';
 import {borderWidthTiny, onReactSale} from 'utility/assistant';
 import {scale} from 'utility/scale';
 
@@ -66,21 +63,17 @@ const ListSalesSupplier = ({userId}: Props) => {
   );
 };
 
-const ListSaleConsumer = ({userId}: Props) => {
-  const theme = useTheme();
-  const {id: myId} = useAppSelector(
-    state => state.accountSlice.passport.profile,
-  );
+const ListSaleConsumer = (_: Props) => {
   return (
     <View style={$container}>
-      {userId === myId && (
+      {/* {userId === myId && (
         <StyleButton
           title="profile.upgradeAccount"
           onPress={() => navigate(ROOT_SCREEN.upgradeAccount)}
           containerStyle={[$buttonUpgrade, {borderColor: theme.black}]}
           titleStyle={{color: theme.black, fontWeight: 'normal'}}
         />
-      )}
+      )} */}
     </View>
   );
 };

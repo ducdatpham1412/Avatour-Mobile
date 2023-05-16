@@ -65,18 +65,20 @@ const TabNavigator = (props: any) => {
   }, [isFocusDiscovery]);
 
   const FavoriteButton = useMemo(() => {
-    const tintColor = isFocusHeart ? theme.pink : theme.gray_500;
+    const tintColor = isFocusHeart ? theme.p_700 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={styles.buttonView}
         onPress={() => navigate(MAIN_SCREEN.favorite)}>
         <StyleIcon
-          source={isFocusHeart ? Images.icons.heartFocus : Images.icons.heart}
+          source={
+            isFocusHeart ? Images.icons.tourTabBar : Images.icons.tourTabBar
+          }
           size={iconSize}
           customStyle={{tintColor}}
         />
         <StyleText
-          i18Text="profile.favorite"
+          i18Text="discovery.tour"
           customStyle={[$textTitle, {color: tintColor}]}
         />
       </StyleTouchable>
