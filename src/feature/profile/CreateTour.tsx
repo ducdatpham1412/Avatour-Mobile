@@ -1,18 +1,12 @@
-import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {APP_EVENT} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
-import {TabView} from 'components';
-import {
-  StyleButton,
-  StyleText,
-  StyleTouchable,
-  StyleWebView,
-} from 'components/base';
+import {MapTour, TabView} from 'components';
+import {StyleButton, StyleText, StyleTouchable} from 'components/base';
 import {ButtonX} from 'components/common';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DaySchedule} from 'feature/discovery/screens';
 import {emitAppEvent, useAppEvent, useTheme} from 'hook';
-import {goBack} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useRef, useState} from 'react';
 import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
@@ -20,8 +14,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {useCreateTour} from './hooks';
 import {defaultSearchParams} from 'utility/staticData';
+import {useCreateTour} from './hooks';
 
 const CreateTour = () => {
   const {top, bottom} = useSafeAreaInsets();
@@ -167,20 +161,7 @@ const CreateTour = () => {
 
   return (
     <View style={[$container, {backgroundColor: theme.background}]}>
-      <View style={$map}>
-        <StyleWebView
-          source={{
-            uri: 'https://www.google.com/maps/@21.0228147,105.795678,13z?hl=vi-VN',
-          }}
-        />
-        <View
-          style={[$overlayMap, {backgroundColor: theme.black_opacity(0.6)}]}
-        />
-        <ButtonX
-          containerStyle={[$iconX, {top: top || verticalScale(3)}]}
-          onPress={goBack}
-        />
-      </View>
+      <MapTour />
 
       <View style={$body}>
         <ToolSearch
@@ -225,18 +206,6 @@ const CreateTour = () => {
 
 const $container: ViewStyle = {
   flex: 1,
-};
-const $iconX: ViewStyle = {
-  left: scale(12),
-  right: undefined,
-};
-const $map: ViewStyle = {
-  flex: 0.2,
-};
-const $overlayMap: ViewStyle = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
 };
 const $body: ViewStyle = {
   flex: 1,

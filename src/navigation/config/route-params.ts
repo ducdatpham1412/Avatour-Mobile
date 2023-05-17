@@ -2,7 +2,7 @@ import {ReactNode} from 'react';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
-  FAVORITE_ROUTE,
+  TOUR_ROUTE,
   LOGIN_ROUTE,
   MAIN_SCREEN,
   MESS_ROUTE,
@@ -21,7 +21,7 @@ export type AllRoutes =
   | PROFILE_ROUTE
   | SETTING_ROUTE
   | REPUTATION_ROUTE
-  | FAVORITE_ROUTE;
+  | TOUR_ROUTE;
 
 export type AppParamsList = {
   [key: string]: any;
@@ -32,8 +32,7 @@ export type AppParamsList = {
   [ROOT_SCREEN.listFollows]: {
     userId: number;
     name: string;
-    type: number;
-    onGoBack?: () => void;
+    initTab?: 'follower' | 'following';
   };
   [ROOT_SCREEN.detailBubble]: {
     bubbleId?: string;

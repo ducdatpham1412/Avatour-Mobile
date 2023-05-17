@@ -3,17 +3,16 @@ import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {APP_EVENT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
-import {TabView} from 'components';
+import {MapTour, TabView} from 'components';
 import {
   StyleButton,
   StyleIcon,
   StyleText,
   StyleTouchable,
-  StyleWebView,
 } from 'components/base';
 import {ButtonX} from 'components/common';
 import {emitAppEvent, useAppEvent, useTheme} from 'hook';
-import {goBack, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
@@ -231,19 +230,7 @@ const DetailTour = ({
 
   return (
     <View style={[$container, {backgroundColor: theme.background}]}>
-      <View style={$map}>
-        <StyleWebView
-          source={{
-            uri: 'https://www.google.com/maps/@21.0228147,105.795678,13z?hl=vi-VN',
-          }}
-        />
-        <View
-          style={[$overlayMap, {backgroundColor: theme.black_opacity(0.6)}]}
-        />
-        <ButtonX
-          containerStyle={[$iconX, {top: top || verticalScale(3)}]}
-          onPress={goBack}
-        />
+      <MapTour>
         <StyleTouchable
           customStyle={[
             $iconMore,
@@ -285,7 +272,7 @@ const DetailTour = ({
             customStyle={{tintColor: theme.black}}
           />
         </StyleTouchable>
-      </View>
+      </MapTour>
 
       <View style={$body}>
         <View
@@ -378,18 +365,6 @@ const DetailTour = ({
 
 const $container: ViewStyle = {
   flex: 1,
-};
-const $iconX: ViewStyle = {
-  left: scale(12),
-  right: undefined,
-};
-const $map: ViewStyle = {
-  flex: 0.2,
-};
-const $overlayMap: ViewStyle = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
 };
 const $body: ViewStyle = {
   flex: 1,

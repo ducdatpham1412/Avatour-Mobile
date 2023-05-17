@@ -266,6 +266,14 @@ const reputation = {
   experience: 'Experience',
 };
 
+// TOURS
+const tour = {
+  tours: 'Tours',
+  myTours: 'My tours',
+  favoriteTour: 'Favorite tours',
+  viewTourOnMapDeveloping: 'View the tour schedule on map will come soon 😁',
+};
+
 // MESS ROUTE
 const mess = {
   component: {},
@@ -553,6 +561,7 @@ const en = {
   setting,
   notification,
   reputation,
+  tour,
 };
 
 export default en;

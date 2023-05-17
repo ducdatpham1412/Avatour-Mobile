@@ -1,5 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
-import {ACCOUNT, TYPE_FOLLOW} from 'asset/enum';
+import {ACCOUNT} from 'asset/enum';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {BORDER_RADIUS, FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
@@ -46,11 +46,11 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
   const isShareTourAccount = account_type === ACCOUNT.shareTour;
   const isMyProfile = myId === id;
 
-  const onNavigateFollow = (type: number) => {
+  const onNavigateFollow = (type: 'follower' | 'following') => {
     push(ROOT_SCREEN.listFollows, {
       userId: id,
       name,
-      type,
+      initTab: type,
     });
   };
 
@@ -208,7 +208,7 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
         {/* Follower */}
         <StyleTouchable
           customStyle={styles.elementFollow}
-          onPress={() => onNavigateFollow(TYPE_FOLLOW.follower)}>
+          onPress={() => onNavigateFollow('follower')}>
           <StyleText
             i18Text="profile.follower"
             customStyle={{color: theme.gray_500}}
@@ -222,7 +222,7 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
         {/* Following */}
         <StyleTouchable
           customStyle={styles.elementFollow}
-          onPress={() => onNavigateFollow(TYPE_FOLLOW.following)}>
+          onPress={() => onNavigateFollow('following')}>
           <StyleText
             i18Text="profile.following"
             customStyle={{color: theme.gray_500}}
