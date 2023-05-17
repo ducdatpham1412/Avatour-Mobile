@@ -149,7 +149,7 @@ const DetailSale = ({
         </View>
         {data?.prices?.map(item => {
           return (
-            <View style={$pricePart}>
+            <View style={$pricePart} key={item?.number_people}>
               <StyleText
                 i18Text="discovery.numberPeople"
                 i18Params={{value: item?.number_people}}

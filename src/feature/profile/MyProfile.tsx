@@ -6,7 +6,7 @@ import {TabView} from 'components';
 import {StyleContainer, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
-import {SETTING_ROUTE} from 'navigation/config';
+import {PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
 import React from 'react';
 import {View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -40,11 +40,18 @@ const MyProfile = () => {
     return <View />;
   };
 
+  const renderIconLeft = () => {
+    if (route.name === PROFILE_ROUTE.myProfile) {
+      return <IconLeftMyProfile />;
+    }
+    return undefined;
+  };
+
   return (
     <StyleContainer
       headerProps={{
         title: profile?.name as I18Normalize,
-        LeftComponent: <IconLeftMyProfile />,
+        LeftComponent: renderIconLeft(),
         RightComponent: (
           <StyleTouchable onPress={() => navigate(SETTING_ROUTE.settingScreen)}>
             <AntDesign

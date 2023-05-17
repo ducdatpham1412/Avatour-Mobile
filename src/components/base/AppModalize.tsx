@@ -19,9 +19,11 @@ type Props = {
   modalHeight?: number;
   panGestureEnabled?: boolean;
   onOpen?: () => void;
+  onClose?: () => void;
   onClosed?: () => void;
   title?: I18Normalize;
   titleParams?: Record<string, any>;
+  adjustToContentHeight?: boolean;
 };
 
 const AppModalize = forwardRef(
@@ -32,9 +34,11 @@ const AppModalize = forwardRef(
       modalHeight,
       panGestureEnabled = true,
       onOpen,
+      onClose,
       onClosed,
       title,
       titleParams,
+      adjustToContentHeight = true,
     }: Props,
     ref: ForwardedRef<TypeShowModalize>,
   ) => {
@@ -53,10 +57,11 @@ const AppModalize = forwardRef(
     return (
       <Modalize
         ref={modalRef}
-        adjustToContentHeight
+        adjustToContentHeight={adjustToContentHeight}
         scrollViewProps={{
           keyboardShouldPersistTaps: 'handled',
           nestedScrollEnabled: true,
+          scrollEnabled: false,
         }}
         handlePosition="inside"
         modalStyle={$modalStyle}
@@ -64,7 +69,9 @@ const AppModalize = forwardRef(
         closeOnOverlayTap={panGestureEnabled}
         panGestureEnabled={panGestureEnabled}
         onOpen={onOpen}
-        onClosed={onClosed}>
+        onClosed={onClosed}
+        onClose={onClose}
+        modalHeight={adjustToContentHeight ? undefined : modalHeight}>
         <View
           style={[
             $container,

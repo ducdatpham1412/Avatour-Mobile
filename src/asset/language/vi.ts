@@ -32,6 +32,7 @@ const common = {
   ok: 'Ok',
   alert: 'Thông báo',
   type: 'Loại',
+  editFilter: 'Chỉnh sửa bộ lọc',
 };
 
 const login = {
@@ -253,6 +254,11 @@ const discovery = {
   please: 'Bạn vui lòng ',
   confirmJoinSuccess: ' để xác nhận tham gia thành công nha.',
   notRequestConfirm: 'Chưa gửi yêu cầu xác nhận',
+  dayNumber: 'Ngày {{value}}',
+  timeHere: 'Thời gian ở đây',
+  free: 'Miễn phí',
+  addLocation: 'Thêm địa điểm',
+  addDay: 'Thêm ngày',
 };
 
 // REPUTATION
@@ -380,6 +386,9 @@ const profile = {
   myRequests: 'Yêu cầu của tôi',
   upgradeToShop: 'Chuyển sang tài khoản cửa hàng',
   created: 'Ngày tạo',
+  createTour: 'Tạo tour mới',
+  createTourSuccess: 'Tạo tour thành công',
+  createNameForYourTour: 'Đặt tên cho tour của bạn',
 };
 
 // MESS ROUTE

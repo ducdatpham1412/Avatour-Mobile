@@ -9,28 +9,35 @@ import {OptionTickBox} from '../components';
 interface Params {
   onChangeSearch: (value: TypeSearchParams) => void;
   initSearchParams: TypeSearchParams;
+  isGetFromAsync: boolean;
 }
 
-const useFilterSearch = ({onChangeSearch, initSearchParams}: Params) => {
+const useFilterSearch = ({
+  onChangeSearch,
+  initSearchParams,
+  isGetFromAsync = false,
+}: Params) => {
   const [searchParams, setSearchParams] =
     useState<TypeSearchParams>(initSearchParams);
 
   useAsync(async () => {
-    const res = await AppAsyncStorage.getSearchParams();
-    if (isEqual(searchParams, {})) {
-      onChangeSearch(res);
-      setSearchParams(res);
-    } else {
-      const newSearchParams = {
-        ...res,
-        ...searchParams,
-      };
-      onChangeSearch(newSearchParams);
-      setSearchParams(newSearchParams);
-      await AsyncStorage.setItem(
-        ASYNC_TYPE.searchParams,
-        JSON.stringify(newSearchParams),
-      );
+    if (isGetFromAsync) {
+      const res = await AppAsyncStorage.getSearchParams();
+      if (isEqual(searchParams, {})) {
+        onChangeSearch(res);
+        setSearchParams(res);
+      } else {
+        const newSearchParams = {
+          ...res,
+          ...searchParams,
+        };
+        onChangeSearch(newSearchParams);
+        setSearchParams(newSearchParams);
+        await AsyncStorage.setItem(
+          ASYNC_TYPE.searchParams,
+          JSON.stringify(newSearchParams),
+        );
+      }
     }
   }, []);
 

@@ -2,7 +2,7 @@ const common = {
   yes: 'Yes',
   no: 'No',
   imageUpload: {
-    selected: 'Selected',
+    selected: 'Select',
     cancel: 'Cancel',
   },
   // option image picker
@@ -32,6 +32,7 @@ const common = {
   ok: 'Ok',
   alert: 'Alert',
   type: 'Type',
+  editFilter: 'Edit filter',
 };
 
 const login = {
@@ -249,6 +250,11 @@ const discovery = {
   please: 'Please ',
   confirmJoinSuccess: ' to confirm successful participation.',
   notRequestConfirm: 'No confirmation request yet',
+  dayNumber: 'Day {{value}}',
+  timeHere: 'Duration in here',
+  free: 'Free',
+  addLocation: 'Add location',
+  addDay: 'Add day',
 };
 
 // REPUTATION
@@ -390,7 +396,7 @@ const profile = {
   joining: 'Joining',
   waitingConfirm: "Waiting for supplier's confirmation",
   joinedSuccess: 'Joined successfully',
-  gbOrder: 'Group booking orders',
+  gbOrder: 'Orders',
   maxGroups: 'Maximum number of groups',
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
@@ -403,6 +409,9 @@ const profile = {
   myRequests: 'My requests',
   upgradeToShop: 'Upgrade to shop',
   created: 'Date created',
+  createTour: 'Create new tour',
+  createTourSuccess: 'Create tour successfully',
+  createNameForYourTour: 'Create name for your tour',
 };
 
 // SETTING ROUTE
