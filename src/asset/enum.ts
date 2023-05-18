@@ -214,6 +214,11 @@ export enum POST_TYPE {
   groupBuying = 1,
 }
 
+export enum TOUR_TYPE {
+  list = 0,
+  favorite = 1,
+}
+
 export enum ACCOUNT {
   user = 0,
   shop = 1,

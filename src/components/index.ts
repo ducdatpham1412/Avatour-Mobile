@@ -5,6 +5,7 @@ export {default as ItemReview} from './ItemReview';
 export {default as ItemSale} from './ItemSale';
 export {default as ItemTour} from './ItemTour';
 export {default as LoadingScreen} from './LoadingScreen';
+export {default as MapTour} from './MapTour';
 export {default as StyleTabView} from './StyleTabView';
 export {default as TabView} from './TabView';
 export {default as AppModalize} from './base/AppModalize';

@@ -1,41 +1,29 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import {
-  createMaterialTopTabNavigator,
-  MaterialTopTabBarProps,
-} from '@react-navigation/material-top-tabs';
 import {TypeFollowResponse} from 'api/interface';
 import {apiGetListFollow} from 'api/profile';
 import {TYPE_FOLLOW} from 'asset/enum';
+import {TabView} from 'components';
+import {StyleContainer, StyleText} from 'components/base';
 import StyleList from 'components/base/StyleList';
-import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import usePaging from 'hook/usePaging';
 import Redux from 'hook/useRedux';
-import StyleHeader from 'navigation/components/StyleHeader';
-import TopTabNavigator from 'navigation/components/TopTabNavigator';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
-import {navigate} from 'navigation/NavigationService';
-import React, {useEffect, useMemo} from 'react';
-import {useTranslation} from 'react-i18next';
-import {View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import React, {useEffect} from 'react';
+import {ViewStyle} from 'react-native';
 import {modeExpUsePaging} from 'utility/assistant';
+import {I18Normalize} from 'utility/I18Next';
 import ItemFollow from './components/ItemFollow';
 
 interface Props {
-  route: {
-    params: AppParamsList[ROOT_SCREEN.listFollows];
-  };
+  userId: number;
 }
-
-const Tab = createMaterialTopTabNavigator();
 
 const RenderItem = (item: TypeFollowResponse) => {
   return <ItemFollow item={item} />;
 };
 
-const FollowerScreen = ({route}: any) => {
-  const {userId} = route.params;
+const FollowerScreen = ({userId}: Props) => {
   const theme = Redux.getTheme();
   const isModeExp = Redux.getModeExp();
 
@@ -47,6 +35,7 @@ const FollowerScreen = ({route}: any) => {
           userId,
           typeFollow: TYPE_FOLLOW.follower,
         },
+        isInitNotRunRequest: true,
       });
 
   useEffect(() => {
@@ -66,8 +55,7 @@ const FollowerScreen = ({route}: any) => {
   );
 };
 
-const FollowingScreen = ({route}: any) => {
-  const {userId} = route.params;
+const FollowingScreen = ({userId}: Props) => {
   const theme = Redux.getTheme();
   const isModeExp = Redux.getModeExp();
 
@@ -79,6 +67,7 @@ const FollowingScreen = ({route}: any) => {
           userId,
           typeFollow: TYPE_FOLLOW.following,
         },
+        isInitNotRunRequest: true,
       });
 
   useEffect(() => {
@@ -101,82 +90,39 @@ const FollowingScreen = ({route}: any) => {
 /**
  * Boss here
  */
-const ListFollows = ({route}: Props) => {
-  const {userId, name, type, onGoBack} = route.params;
-  const {t} = useTranslation();
-  const theme = Redux.getTheme();
+const ListFollows = ({
+  route,
+}: RouteParams<AppParamsList[ROOT_SCREEN.listFollows]>) => {
+  const {userId, name, initTab} = route.params;
 
-  const listTopTab = useMemo(() => {
-    return [t('profile.follow.follower'), t('profile.follow.following')];
-  }, []);
+  const follower = () => {
+    return <FollowerScreen userId={userId} />;
+  };
 
-  const initRoute = useMemo(() => {
-    if (type === TYPE_FOLLOW.follower) {
-      return 'Follower';
-    }
-    if (type === TYPE_FOLLOW.following) {
-      return 'Following';
-    }
-    return '';
-  }, [type]);
-
-  useEffect(() => {
-    if (type === TYPE_FOLLOW.follower) {
-      navigate(ROOT_SCREEN.followers, {
-        userId,
-      });
-    } else {
-      navigate(ROOT_SCREEN.followings, {
-        userId,
-      });
-    }
-  }, [type, userId]);
+  const following = () => {
+    return <FollowingScreen userId={userId} />;
+  };
 
   return (
-    <>
-      <ViewSafeTopPadding />
-      <StyleHeader title={name} onGoBack={onGoBack} />
-
-      <View
-        style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-        <Tab.Navigator
-          tabBar={(props: MaterialTopTabBarProps) => (
-            <TopTabNavigator
-              materialProps={props}
-              listRouteName={listTopTab}
-              listRouteParams={[
-                {
-                  userId,
-                },
-                {
-                  userId,
-                },
-              ]}
-            />
-          )}
-          initialRouteName={initRoute}>
-          <Tab.Screen
-            name={ROOT_SCREEN.followers}
-            component={FollowerScreen}
-            initialParams={{userId}}
-          />
-
-          <Tab.Screen
-            name={ROOT_SCREEN.followings}
-            component={FollowingScreen}
-            initialParams={{userId}}
-          />
-        </Tab.Navigator>
-      </View>
-    </>
+    <StyleContainer
+      headerProps={{
+        title: name as I18Normalize,
+      }}
+      contentContainerStyle={$container}>
+      <TabView
+        listElements={[follower, following]}
+        listIconTabBar={[
+          <StyleText i18Text="profile.follower" />,
+          <StyleText i18Text="profile.following" />,
+        ]}
+        initialIndex={initTab === 'following' ? 1 : 0}
+      />
+    </StyleContainer>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: '30@s',
-  },
-});
+const $container: ViewStyle = {
+  paddingHorizontal: 0,
+};
 
 export default ListFollows;

@@ -270,6 +270,14 @@ const reputation = {
   experience: 'Trải nghiệm',
 };
 
+const tour = {
+  tours: 'Tour',
+  myTours: 'Tour của tôi',
+  favoriteTour: 'Tour yêu thích',
+  viewTourOnMapDeveloping:
+    'Xem lịch trình của bạn trên map sẽ sớm đưa đến tay bạn 😁',
+};
+
 // PROFILE SCREEN
 const profile = {
   title: 'Cá nhân',
@@ -562,5 +570,6 @@ const vi = {
   setting,
   notification,
   reputation,
+  tour,
 };
 export default vi;

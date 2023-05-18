@@ -15,25 +15,27 @@ import {Platform, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {logger} from 'utility/assistant';
 import ItemNotification from './components/ItemNotification';
+import {useAppSelector} from 'app-redux/store';
+import {useTheme} from 'hook';
 
 /** ------------------------
  * Notification Enjoy
  * -------------------------
  */
 const NotificationEnjoy = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      <View style={[styles.titleView, {borderBottomColor: theme.holderColor}]}>
+    <View style={[styles.container, {backgroundColor: theme.background}]}>
+      <View style={[styles.titleView, {borderBottomColor: theme.gray_300}]}>
         <StyleIcon
           source={Images.icons.notification}
           size={20}
-          customStyle={{tintColor: theme.textHightLight}}
+          customStyle={{tintColor: theme.black}}
         />
         <StyleText
           i18Text="notification.title"
-          customStyle={[styles.textTitle, {color: theme.borderColor}]}
+          customStyle={styles.textTitle}
         />
       </View>
     </View>
@@ -45,7 +47,7 @@ const NotificationEnjoy = () => {
  * -------------------------
  */
 const NotificationAccount = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const {id, name} = Redux.getPassport().profile;
 
   const {list, setList, onRefresh, onLoadMore, refreshing} =
@@ -111,21 +113,21 @@ const NotificationAccount = () => {
   }, []);
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      <View style={[styles.titleView, {borderBottomColor: theme.holderColor}]}>
+    <View style={[styles.container, {backgroundColor: theme.background}]}>
+      <View style={[styles.titleView, {borderBottomColor: theme.gray_300}]}>
         <StyleIcon
           source={Images.icons.notification}
           size={20}
-          customStyle={{tintColor: theme.textHightLight}}
+          customStyle={{tintColor: theme.black}}
         />
         <StyleText
           i18Text="notification.title"
-          customStyle={[styles.textTitle, {color: theme.textHightLight}]}
+          customStyle={styles.textTitle}
         />
       </View>
 
       <StyleList
-        data={list}
+        data={[]}
         renderItem={({item}) => renderItem(item)}
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -142,10 +144,8 @@ const NotificationAccount = () => {
  * BOSS HERE
  */
 const NotificationScreen = () => {
-  const isModeExp = Redux.getModeExp();
-  const token = Redux.getToken();
-
-  if (!isModeExp && token) {
+  const {modeExp} = useAppSelector(state => state.accountSlice);
+  if (!modeExp) {
     return <NotificationAccount />;
   }
   return <NotificationEnjoy />;
@@ -167,7 +167,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   textTitle: {
-    fontSize: FONT_SIZE.big,
+    fontSize: FONT_SIZE.f1,
     fontWeight: 'bold',
     marginLeft: '10@s',
   },
