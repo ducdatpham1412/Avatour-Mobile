@@ -47,6 +47,7 @@ const EditProfile = () => {
   const [description, setDescription] = useState(profile?.description);
 
   const isShopAccount = profile.account_type === ACCOUNT.shop;
+
   let disableButton = true;
   if (isShopAccount) {
     disableButton =
@@ -83,7 +84,7 @@ const EditProfile = () => {
           location === profile.location ? undefined : location;
 
         await apiEditProfile({
-          avatar: newAvatar,
+          //   avatar: newAvatar,
           name: newName,
           description: newDescription,
           location: newLocation,
@@ -193,7 +194,7 @@ const EditProfile = () => {
           />
         </View>
 
-        {!isShopAccount && (
+        {isShopAccount && (
           <View style={[$nameBox, {backgroundColor: theme.white}]}>
             <Ionicons
               name="location-outline"
@@ -224,7 +225,7 @@ const EditProfile = () => {
           />
         </StyleTouchable>
 
-        {!isShopAccount && (
+        {isShopAccount && (
           <StyleTouchable
             customStyle={[$bankBox, {backgroundColor: theme.white}]}
             onPress={() =>

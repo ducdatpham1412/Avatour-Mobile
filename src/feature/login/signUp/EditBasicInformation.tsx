@@ -11,8 +11,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import InputBox from 'components/common/InputBox';
-import Redux from 'hook/useRedux';
-import {goBack} from 'navigation/NavigationService';
+import {useLoading} from 'hook';
 import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
 import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
@@ -34,10 +33,11 @@ const EditBasicInformation = ({
   const {isLoginSocial = false, itemLoginSuccess} = route.params;
   const scrollPickerRef = useRef<ScrollView>(null);
 
+  const {loading, setLoading} = useLoading();
+
   const [gender, setGender] = useState(GENDER_TYPE.woman);
   const [name, setName] = useState('');
   const [birthday, setBirthday] = useState<Date | undefined>(undefined);
-
   const [index, setIndex] = useState(0);
 
   const textBirthday = birthday
@@ -59,9 +59,8 @@ const EditBasicInformation = ({
       });
     } else if (birthday && name) {
       const onEditProfileAndGo = async (isKeep: boolean) => {
-        goBack();
         try {
-          Redux.setIsLoading(true);
+          setLoading(true);
           await AsyncStore.updateActiveUser(itemLoginSuccess);
           const updateObject = {
             gender,
@@ -70,7 +69,7 @@ const EditBasicInformation = ({
           };
 
           await apiChangeInformation(updateObject);
-          AuthenticateService.loginSuccess({
+          await AuthenticateService.loginSuccess({
             itemLoginSuccess,
             isKeepSign: isKeep,
             isLoginSocial,
@@ -80,7 +79,7 @@ const EditBasicInformation = ({
             content: err,
           });
         } finally {
-          Redux.setIsLoading(false);
+          setLoading(false);
         }
       };
 
@@ -160,6 +159,7 @@ const EditBasicInformation = ({
           onPress={onPressButton}
           containerStyle={{marginTop: verticalScale(80)}}
           disable={disableButton}
+          isLoading={loading}
         />
       </StyleContainer>
     </SafeView>

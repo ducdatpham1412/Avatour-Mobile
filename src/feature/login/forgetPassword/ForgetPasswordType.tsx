@@ -95,6 +95,7 @@ const styles = ScaledSheet.create({
     height: '100%',
     width: '100%',
     marginTop: '170@vs',
+    alignItems: 'center',
   },
   btnSendBox: {
     paddingHorizontal: '30@s',

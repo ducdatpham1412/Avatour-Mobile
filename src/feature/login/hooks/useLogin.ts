@@ -14,7 +14,7 @@ import AuthenticateService from 'utility/login/loginService';
 const loginForm = __DEV__
   ? {
       username: 'ducdat@gmail.com',
-      password: 'ducdat123',
+      password: 'Ducdat@123',
     }
   : {username: '', password: ''};
 

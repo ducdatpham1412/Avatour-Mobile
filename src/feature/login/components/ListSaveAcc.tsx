@@ -67,11 +67,11 @@ const ListSaveAcc = (props: ListSaveAccProps) => {
 
 const styles = ScaledSheet.create({
   container: {
-    width: '80%',
+    width: '90%',
     maxHeight: '200@vs',
     position: 'absolute',
     paddingBottom: '20@vs',
-    top: '95@vs',
+    top: '360@vs',
     alignSelf: 'center',
   },
   moduleAcc: {

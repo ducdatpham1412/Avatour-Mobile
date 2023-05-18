@@ -19,7 +19,7 @@ import {useLoading, useTheme} from 'hook';
 import useCountdown from 'hook/useCountdown';
 import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE, SETTING_ROUTE} from 'navigation/config/routes';
-import {navigate} from 'navigation/NavigationService';
+import {navigate, replace} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Keyboard, Text, TextInput, Vibration, View} from 'react-native';
@@ -117,7 +117,7 @@ const SendOTP = ({
           token: res.data.token,
           refreshToken: res.data.refreshToken,
         };
-        navigate(LOGIN_ROUTE.agreeTermOfService, {
+        replace(LOGIN_ROUTE.agreeTermOfService, {
           itemLoginSuccess,
         });
       } catch (err) {

@@ -576,7 +576,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = A77ZZFBT58;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4PKRGKSNLM;
 				INFOPLIST_FILE = avatour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -588,10 +588,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.wallacy.cryptowallet.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = io.wallacy.dev;
 				PRODUCT_NAME = avatour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Wallacy Crypto Wallet Dev";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Wallacy Dev";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

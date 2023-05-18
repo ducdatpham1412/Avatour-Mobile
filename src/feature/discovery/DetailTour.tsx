@@ -290,15 +290,17 @@ const DetailTour = ({
             <StyleIcon source={{uri: data?.creator_avatar}} size={30} />
             <StyleText originValue={data?.creator_name} customStyle={$name} />
           </StyleTouchable>
-          <StyleTouchable onPress={() => setIsEditMode(pre => !pre)}>
-            <StyleText
-              i18Text={isEditMode ? 'common.cancel' : 'profile.post.edit'}
-              customStyle={[
-                $textEdit,
-                {color: isEditMode ? theme.red : theme.blue},
-              ]}
-            />
-          </StyleTouchable>
+          {isMyTour && (
+            <StyleTouchable onPress={() => setIsEditMode(pre => !pre)}>
+              <StyleText
+                i18Text={isEditMode ? 'common.cancel' : 'profile.post.edit'}
+                customStyle={[
+                  $textEdit,
+                  {color: isEditMode ? theme.red : theme.blue},
+                ]}
+              />
+            </StyleTouchable>
+          )}
         </View>
 
         <ToolSearch

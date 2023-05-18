@@ -11,10 +11,7 @@ import {
 import Store from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
 import {closeSocket} from 'hook/useSocketIO';
-import ROOT_SCREEN, {
-  DISCOVERY_ROUTE,
-  LOGIN_ROUTE,
-} from 'navigation/config/routes';
+import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import {isIOS} from 'utility/assistant';
@@ -71,10 +68,6 @@ const AuthenticateService = {
     // const temp = chooseLanguageFromId(passport.data.setting.language);
     I18Next.changeLanguage('vi');
     // await AsyncStorage.editLanguageModeExp(temp);
-
-    navigate(ROOT_SCREEN.mainScreen, {
-      screen: DISCOVERY_ROUTE.discoveryScreen,
-    });
   },
 
   requestLogin: async (params: requestLoginParams) => {

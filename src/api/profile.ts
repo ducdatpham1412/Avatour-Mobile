@@ -72,7 +72,7 @@ export const apiGetProfile = (
 export const apiEditProfile = (
   params: TypeEditProfileRequest,
 ): Promise<TypeEditProfileResponse> => {
-  return request.put('/profile', params);
+  return request.put('/profile/edit', params);
 };
 
 export const apiFollowUser = (id: number) => {
