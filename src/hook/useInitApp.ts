@@ -1,5 +1,6 @@
 import {apiGetPassport, apiGetResource} from 'api/discovery';
 import {
+  logOut,
   setIsLogOut,
   setModeExp,
   setNumberNewNotifications,
@@ -60,10 +61,11 @@ const useInitApp = () => {
         } else {
           await handleNotHaveActiveUser();
         }
-        setLoading(false);
       } catch (err) {
         setError(true);
         logger(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -78,10 +80,19 @@ const useInitApp = () => {
     }
   }, [isLogOut]);
 
+  const forceLogOut = async () => {
+    setLoading(true);
+    await AsyncStorage.logOut();
+    logOut();
+    setError(false);
+    setLoading(false);
+  };
+
   return {
     loading,
     error,
     isInApp,
+    forceLogOut,
   };
 };
 

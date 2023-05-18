@@ -1,5 +1,7 @@
 import {
   createNavigationContainerRef,
+  NavigationState,
+  PartialState,
   StackActions,
 } from '@react-navigation/native';
 import ROOT_SCREEN from 'navigation/config/routes';
@@ -31,6 +33,23 @@ export const push = <T extends AllRoutes>(
 ) => {
   navigationRef.dispatch(StackActions.push(name, params));
 };
+
+export function resetRoot(
+  params?: PartialState<NavigationState> | NavigationState,
+) {
+  if (navigationRef.isReady()) {
+    navigationRef.resetRoot(params);
+  }
+}
+
+export function replace<T extends AllRoutes>(
+  name: T,
+  params?: T extends keyof AppParamsList ? AppParamsList[T] : undefined,
+) {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(StackActions.replace(name, params));
+  }
+}
 
 export const getCurrentRoute = () => {
   return navigationRef.getCurrentRoute();

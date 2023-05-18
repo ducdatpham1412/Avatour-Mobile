@@ -1,5 +1,5 @@
 import {apiResetPassword} from 'api/authentication';
-import {FONT_SIZE, standValue} from 'asset/standardValue';
+import {standValue} from 'asset/standardValue';
 import {StyleButton, StyleContainer} from 'components/base';
 import {InputBox} from 'components/common';
 import {useLoading} from 'hook';
@@ -7,7 +7,7 @@ import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
-import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {TextInput, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {vs} from 'utility/scale';
 import {validatePassword} from 'utility/validate';
@@ -88,14 +88,10 @@ const ForgetPasswordForm = ({route}: any) => {
   );
 };
 
-const $headerTitle: TextStyle = {
-  fontSize: FONT_SIZE.f1,
-  fontWeight: 'bold',
-  marginTop: vs(5),
-};
 const $inputView: ViewStyle = {
   width: '100%',
   marginTop: vs(30),
+  alignItems: 'center',
 };
 const $inputPassword: ViewStyle = {
   marginTop: vs(15),

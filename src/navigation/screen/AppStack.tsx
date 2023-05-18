@@ -11,6 +11,7 @@ import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
 import UpdatePrices from 'feature/common/UpdatePrices';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
+import {DetailTour} from 'feature/discovery';
 import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
@@ -50,8 +51,8 @@ import ROOT_SCREEN, {
   SETTING_ROUTE,
 } from 'navigation/config/routes';
 import React from 'react';
-import MainAndChat from './MainAndChat';
-import {DetailTour} from 'feature/discovery';
+import MainTabs from './MainTabs';
+import MessRoute from './tabs/MessRoute';
 
 const modalPreviewLinkRef = React.createRef<ModalPreviewLink>();
 export const showPreviewLink = (item: TypeBubblePalace) => {
@@ -70,13 +71,9 @@ const AppStack = () => {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen
-        name="main_and_chat"
-        component={MainAndChat}
-        options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        }}
-      />
+      <Stack.Screen name={ROOT_SCREEN.mainScreen} component={MainTabs} />
+      <Stack.Screen name={ROOT_SCREEN.chatRoute} component={MessRoute} />
+
       <Stack.Screen name={ROOT_SCREEN.otherProfile} component={OtherProfile} />
       <Stack.Screen name={ROOT_SCREEN.listFollows} component={ListFollows} />
       <Stack.Screen name={ROOT_SCREEN.detailBubble} component={DetailBubble} />

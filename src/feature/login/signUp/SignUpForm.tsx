@@ -149,7 +149,7 @@ const $container: ViewStyle = {
 };
 const $inputView: ViewStyle = {
   width: '100%',
-  marginTop: vs(50),
+  marginTop: vs(20),
 };
 const $inputPassword: ViewStyle = {
   marginTop: vs(5),

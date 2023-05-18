@@ -5,17 +5,18 @@ import {
 } from '@react-navigation/native';
 import {
   CardStyleInterpolators,
-  createStackNavigator,
   StackNavigationOptions,
+  createStackNavigator,
 } from '@react-navigation/stack';
-import Alert from 'components/Alert';
 import AlertYesNo from 'components/AlerYesNo';
-import StylePicker from 'components/base/picker/StylePicker';
+import Alert from 'components/Alert';
 import LoadingScreen from 'components/LoadingScreen';
+import StylePicker from 'components/base/picker/StylePicker';
+import ErrorScreen from 'feature/common/ErrorScreen';
 import {useInitApp, useTheme} from 'hook';
+import {navigationRef} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
-import {navigationRef} from 'navigation/NavigationService';
 import React from 'react';
 import AppStack from './AppStack';
 import LoginRoute from './LoginRoute';
@@ -43,13 +44,13 @@ const trackActiveRoute = (
 
 const RootScreen = () => {
   const theme = useTheme();
-  const {loading, error, isInApp} = useInitApp();
+  const {loading, error, isInApp, forceLogOut} = useInitApp();
 
   if (loading) {
     return <LoadingScreen />;
   }
   if (error) {
-    return <LoadingScreen />;
+    return <ErrorScreen onPress={forceLogOut} />;
   }
 
   const ChooseRoute = isInApp ? AppStack : LoginRoute;

@@ -1,15 +1,21 @@
-import {FONT_SIZE} from 'asset';
-import {StyleButton, StyleText} from 'components/base';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {
+  SafeView,
+  StyleButton,
+  StyleContainer,
+  StyleImage,
+  StyleText,
+} from 'components/base';
 import StyleTouchable from 'components/base/StyleTouchable';
 import InputBox from 'components/common/InputBox';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import React, {useRef, useState} from 'react';
-import {TextStyle, View, ViewStyle} from 'react-native';
+import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {ms, s, vs} from 'utility/scale';
+import {moderateScale, ms, s, scale, verticalScale, vs} from 'utility/scale';
 import ListSaveAcc from './components/ListSaveAcc';
 import {useLogin} from './hooks';
 
@@ -31,7 +37,23 @@ const LoginScreen = () => {
   const [isKeepSign, setIsKeepSign] = useState(false);
 
   return (
-    <View style={$container}>
+    <StyleContainer contentContainerStyle={$container}>
+      <StyleText
+        originValue="We make your trip as easy as possible"
+        customStyle={{
+          fontWeight: 'bold',
+          fontSize: moderateScale(30),
+          width: '80%',
+        }}
+      />
+      <StyleImage
+        source={{
+          uri: 'https://www.radfordmedicalpractice.co.uk/wp-content/uploads/sites/622/2022/02/travel.jpeg',
+        }}
+        customStyle={$imageBanner}
+        defaultImageSource="image"
+      />
+
       <View style={$inputView}>
         <InputBox
           i18Placeholder="login.loginScreen.username"
@@ -40,6 +62,7 @@ const LoginScreen = () => {
           onFocus={() => setUserRef(true)}
           onBlur={() => setUserRef(false)}
           onSubmitEditing={() => inputPasswordRef.current.focus()}
+          style={$input}
         />
 
         <InputBox
@@ -82,7 +105,18 @@ const LoginScreen = () => {
         onPress={() => navigate(LOGIN_ROUTE.forgetPasswordType)}>
         <StyleText
           i18Text="login.forgotPassword"
-          customStyle={[styles.forgotPasswordText, {color: theme.gray_500}]}
+          customStyle={[styles.forgotPasswordText, {color: theme.black}]}
+        />
+      </StyleTouchable>
+      <StyleTouchable
+        customStyle={[
+          styles.forgotPasswordView,
+          {marginTop: verticalScale(15)},
+        ]}
+        onPress={() => navigate(LOGIN_ROUTE.signUpForm)}>
+        <StyleText
+          i18Text="login.signUp.form.header"
+          customStyle={[styles.forgotPasswordText, {color: theme.black}]}
         />
       </StyleTouchable>
 
@@ -119,22 +153,26 @@ const LoginScreen = () => {
           deleteAcc={deleteSavedAccount}
         />
       )}
-    </View>
+    </StyleContainer>
   );
 };
 
 const $container: ViewStyle = {
-  flex: 1,
+  paddingHorizontal: scale(20),
 };
 const $inputView: ViewStyle = {
   width: '100%',
-  marginTop: vs(50),
+  alignItems: 'center',
+  marginTop: verticalScale(20),
+};
+const $input: TextStyle = {
+  width: '100%',
 };
 const $rememberView: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
-  marginLeft: '10%',
   marginTop: vs(20),
+  alignSelf: 'flex-start',
 };
 const $rememberButton: ViewStyle = {
   width: vs(20),
@@ -148,23 +186,31 @@ const $rememberButton: ViewStyle = {
 const $checkIcon: TextStyle = {
   fontSize: ms(20),
 };
+const $imageBanner: ImageStyle = {
+  width: '100%',
+  height: verticalScale(200),
+  borderRadius: 30,
+  marginTop: 20,
+};
 
 const styles = ScaledSheet.create({
   inputForm: {
     marginTop: '15@vs',
+    width: '100%',
   },
   // button login
   loginButton: {
-    marginTop: '30@vs',
+    marginTop: '20@vs',
   },
   // forgot password
   forgotPasswordView: {
-    alignSelf: 'center',
-    marginTop: '20@vs',
+    marginTop: '40@vs',
+    alignSelf: 'flex-start',
   },
   forgotPasswordText: {
     fontSize: FONT_SIZE.f3,
     textDecorationLine: 'underline',
+    fontWeight: FONT_WEIGHT_MEDIUM,
   },
   // question sign up
   signUpView: {

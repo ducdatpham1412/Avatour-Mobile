@@ -6,6 +6,7 @@ import ConfirmOpenAccount from 'feature/login/ConfirmOpenAccount';
 import ForgetPasswordForm from 'feature/login/forgetPassword/ForgetPasswordForm';
 import ForgetPasswordSend from 'feature/login/forgetPassword/ForgetPasswordSend';
 import ForgetPasswordType from 'feature/login/forgetPassword/ForgetPasswordType';
+import LoginScreen from 'feature/login/LoginScreen';
 import SendOTP from 'feature/login/SendOTP';
 import AgreeTermOfService from 'feature/login/signUp/AgreeTermOfService';
 import EditBasicInformation from 'feature/login/signUp/EditBasicInformation';
@@ -48,8 +49,8 @@ const LoginRoute: React.FunctionComponent = () => {
     >
       <Stack.Screen
         options={{headerShown: false}}
-        name={LOGIN_ROUTE.starter}
-        component={Starter}
+        name={LOGIN_ROUTE.loginScreen}
+        component={LoginScreen}
       />
 
       <Stack.Screen

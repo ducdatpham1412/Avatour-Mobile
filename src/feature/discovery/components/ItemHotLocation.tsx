@@ -18,7 +18,11 @@ const ItemHotLocation = ({item, isLast}: Props) => {
     <StyleTouchable
       customStyle={[$container, isLast && {marginBottom: 0}]}
       onPress={() => onGoToProfile(item?.id)}>
-      <StyleImage source={{uri: item?.avatar}} customStyle={$image} />
+      <StyleImage
+        source={{uri: item?.avatar}}
+        customStyle={$image}
+        defaultImageSource="image"
+      />
       <StyleText originValue={item?.name} customStyle={$textName} />
       <StyleText
         originValue={item?.description}
