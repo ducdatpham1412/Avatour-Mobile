@@ -17,18 +17,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  Modal,
-  StyleProp,
-  TextStyle,
-  Vibration,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {StyleProp, TextStyle, Vibration, View, ViewStyle} from 'react-native';
 import {Path, Svg} from 'react-native-svg';
 import {I18Normalize} from 'utility/I18Next';
 import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
+import Modal from 'react-native-modal';
 
 const modalRef = createRef<ElementRef<typeof ModalAlert>>();
 
@@ -211,8 +205,8 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
 
   return (
     <Modal
-      visible={visible}
-      onDismiss={() => {
+      isVisible={visible}
+      onModalHide={() => {
         setVisible(false);
         onCloseFunction.current = undefined;
         onContinueFunction.current = undefined;
@@ -222,16 +216,9 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
         setContent('common.null');
         resolveForNextShow?.('');
       }}
-      transparent
-      animationType="fade">
-      <View
-        style={[
-          $container,
-          {
-            backgroundColor: theme.black_opacity(0.4),
-          },
-        ]}
-        onLayout={() => scaleRef.current?.zoomOut()}>
+      animationIn="fadeIn"
+      animationOutTiming={1000}>
+      <View style={$container} onLayout={() => scaleRef.current?.zoomOut()}>
         <ScaleView ref={scaleRef} style={[$body, {backgroundColor: tintColor}]}>
           <View style={$upView} />
           <View style={[$bottomView, {backgroundColor: theme.white}]}>
@@ -261,8 +248,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
 });
 
 const $container: ViewStyle = {
-  width: '100%',
-  height: '100%',
+  flex: 1,
   alignItems: 'center',
   justifyContent: 'center',
 };
