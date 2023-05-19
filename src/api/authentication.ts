@@ -12,7 +12,9 @@ export const apiUpgradeAccount = (body: TypeUpgradeAccount) => {
 export const apiRequestOTP = (
   params: TypeRequestOTPRequest,
 ): Promise<TypeRequestOTPResponse> => {
-  return request.post('/auth/otp', params);
+  return request.post('/auth/otp', params, {
+    timeout: 15000,
+  });
 };
 
 export const apiCheckOTP = (

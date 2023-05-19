@@ -543,7 +543,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = S4W5L8KCWL;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G6GSBZ7T4Z;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = avatour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -556,7 +556,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = travel.avatour.life.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = travel.avatour.life;
 				PRODUCT_NAME = avatour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Avatour Distribution";
@@ -572,11 +572,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 4PKRGKSNLM;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G6GSBZ7T4Z;
 				INFOPLIST_FILE = avatour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -588,10 +588,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.wallacy.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = travel.avatour.life;
 				PRODUCT_NAME = avatour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Wallacy Dev";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Avatour Distribution";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

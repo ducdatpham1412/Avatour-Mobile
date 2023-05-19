@@ -124,7 +124,11 @@ const DetailSale = ({
                 onGoToProfile(data?.creator);
               }
             }}>
-            <StyleIcon source={{uri: data?.creator_avatar}} size={25} />
+            <StyleIcon
+              source={{uri: data?.creator_avatar}}
+              size={25}
+              customStyle={{borderRadius: 100}}
+            />
             <StyleText
               originValue={data?.creator_name}
               customStyle={$textName}

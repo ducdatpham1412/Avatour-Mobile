@@ -60,14 +60,14 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
       {TopComponent}
       <KeyboardAwareScrollView
         ref={ref}
-        contentContainerStyle={[$contentContainer, customStyle]}
         scrollEnabled={false}
         extraHeight={extraHeight}
         extraScrollHeight={extraHeight}
         enableOnAndroid
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        {...props}>
+        {...props}
+        contentContainerStyle={[$contentContainer, customStyle]}>
         {children}
       </KeyboardAwareScrollView>
       {BottomComponent}

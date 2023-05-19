@@ -87,9 +87,11 @@ const SendOTP = ({
         await apiCheckOTP({
           username: paramsOTP.username,
           code,
+          type: TYPE_OTP.resetPassword,
         });
         navigate(LOGIN_ROUTE.forgetPasswordForm, {
           username: paramsOTP.username,
+          code,
         });
       } catch (err) {
         handleWrongOtp();
@@ -226,11 +228,11 @@ const SendOTP = ({
     <StyleContainer
       customStyle={styles.container}
       headerProps={{
-        title: 'login.component.sendOTP.header',
+        title: 'login.confirmOTP',
       }}>
       <View style={styles.wrapTextNotification}>
         <StyleText
-          i18Text="login.component.sendOTP.notiOTP"
+          i18Text="login.notiOTP"
           customStyle={styles.textNotification}
         />
         <StyleText

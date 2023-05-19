@@ -44,12 +44,12 @@ export const DEFAULT_IMAGE_BACKGROUND =
 
 export const TIMING_BUBBLE_FLY = 40000;
 
-export const SUPPORT_URL = 'http://www.avatour.life/about-us/support';
-export const PRIVACY_URL = 'http://www.avatour.life/about-us/policy';
-export const TERMS_URL = 'http://www.avatour.life/about-us/terms';
+export const SUPPORT_URL = 'https://www.avatour.life/about-us/support';
+export const PRIVACY_URL = 'https://www.avatour.life/about-us/policy';
+export const TERMS_URL = 'https://www.avatour.life/about-us/terms';
 export const FEEDBACK_URL =
   'https://docs.google.com/forms/d/1Yb-OzSMJbJxG_RZYtPwkKZGjw4AZOsC2IvJlac-1ydI/edit?usp=sharing';
-export const LANDING_PAGE_URL = 'https://www.doffy.xyz/';
+export const LANDING_PAGE_URL = 'https://www.avatour.life/';
 export const REPORT_REASONS = [
   {
     id: 0,

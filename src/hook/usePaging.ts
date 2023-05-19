@@ -62,11 +62,14 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
     paramsPaging?.onError?.(err, cbParams);
   };
 
-  const umiRequest = useRequest<Array<TResult>, any>(paramsPaging.request, {
-    manual: true,
-    onSuccess: handleOnSuccess,
-    onError: handleOnError,
-  });
+  const umiRequest = useRequest<TypePagingResponse<TResult[]>, any>(
+    paramsPaging.request,
+    {
+      manual: true,
+      onSuccess: handleOnSuccess,
+      onError: handleOnError,
+    },
+  );
 
   const runRequest = (requestPageIndex: number, otherParams?: any) => {
     umiRequest.run({

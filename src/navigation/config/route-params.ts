@@ -156,6 +156,10 @@ export type AppParamsList = {
   [LOGIN_ROUTE.forgetPasswordSend]: {
     username: string;
   };
+  [LOGIN_ROUTE.forgetPasswordForm]: {
+    username: string;
+    code: string;
+  };
   [ROOT_SCREEN.detailSale]: {
     saleId?: number;
     sale?: TypeGroupBuying;

@@ -1,38 +1,51 @@
 import {TypeFollowResponse} from 'api/interface';
 import {apiFollowUser} from 'api/profile';
+import {updatePassport} from 'app-redux';
+import Store from 'app-redux/store';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {RELATIONSHIP} from 'asset/enum';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useState} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {onGoToProfile} from 'utility/assistant';
+import {impactLight} from 'utility/haptic';
 
 interface Props {
   item: TypeFollowResponse;
 }
 
-const ItemFollow = (props: Props) => {
-  const {item} = props;
-  const theme = Redux.getTheme();
+const onFollowUser = async (
+  userId: number,
+  setHadNotFollow: Dispatch<SetStateAction<boolean>>,
+) => {
+  try {
+    impactLight();
+    setHadNotFollow(false);
+    await apiFollowUser(userId);
+    const {followings} = Store.getState().accountSlice.passport.profile;
+    updatePassport({
+      profile: {
+        followings: followings + 1,
+      },
+    });
+  } catch (err) {
+    setHadNotFollow(true);
+    ModalAlert.error({
+      content: err,
+    });
+  }
+};
+
+const ItemFollow = ({item}: Props) => {
+  const theme = useTheme();
 
   const [hadNotFollow, setHadNotFollow] = useState(
     item.relationship === RELATIONSHIP.notFollowing,
   );
-
-  const onFollowUser = async () => {
-    try {
-      setHadNotFollow(false);
-      await apiFollowUser(item.id);
-    } catch (err) {
-      setHadNotFollow(true);
-      ModalAlert.error({
-        content: err,
-      });
-    }
-  };
 
   return (
     <StyleTouchable
@@ -44,13 +57,13 @@ const ItemFollow = (props: Props) => {
       <View style={styles.nameDescriptionView}>
         <StyleText
           originValue={item.name}
-          customStyle={[styles.textName, {color: theme.textColor}]}
+          customStyle={styles.textName}
           numberOfLines={1}
         />
         {!!item.description && (
           <StyleText
             originValue={item.description}
-            customStyle={[styles.textDescription, {color: theme.borderColor}]}
+            customStyle={styles.textDescription}
             numberOfLines={1}
           />
         )}
@@ -59,14 +72,11 @@ const ItemFollow = (props: Props) => {
       <View style={styles.buttonFollowView}>
         {hadNotFollow && !!item.id && (
           <StyleTouchable
-            customStyle={[
-              styles.buttonFollow,
-              {borderColor: theme.borderColor},
-            ]}
-            onPress={onFollowUser}>
+            customStyle={[styles.buttonFollow, {backgroundColor: theme.p_200}]}
+            onPress={() => onFollowUser(item?.id, setHadNotFollow)}>
             <StyleText
-              i18Text="profile.follow.follow"
-              customStyle={[styles.textFollow, {color: theme.borderColor}]}
+              i18Text="profile.follow"
+              customStyle={styles.textFollow}
             />
           </StyleTouchable>
         )}
@@ -86,7 +96,7 @@ const styles = ScaledSheet.create({
     width: '100%',
     height: '50@vs',
     paddingHorizontal: '5@s',
-    marginVertical: '7@vs',
+    marginTop: '8@vs',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -108,7 +118,7 @@ const styles = ScaledSheet.create({
   textDescription: {
     fontSize: '12@ms',
     opacity: 0.7,
-    marginTop: '5@vs',
+    marginTop: '1@vs',
   },
   buttonFollowView: {
     width: '70@s',
@@ -118,13 +128,13 @@ const styles = ScaledSheet.create({
   },
   buttonFollow: {
     width: '100%',
-    paddingVertical: '3@vs',
+    paddingVertical: '5@vs',
     alignItems: 'center',
-    borderWidth: 1,
     borderRadius: '5@ms',
   },
   textFollow: {
-    fontSize: '11@ms',
+    fontSize: FONT_SIZE.f4,
+    fontWeight: FONT_WEIGHT_MEDIUM,
   },
   iconIncognito: {
     fontSize: '20@ms',

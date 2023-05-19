@@ -7,26 +7,20 @@ import {useLoading} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useEffect, useRef, useState} from 'react';
-import {TextInput, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 
 const ForgetPasswordType = () => {
-  const usernameRef = useRef<TextInput>(null);
+  const timeOut = useRef<number>(0);
   const {loading, setLoading} = useLoading();
   const [username, setUsername] = useState('');
-  const trimUsername = username.trim();
-
-  const disable =
-    !validateIsEmail(trimUsername) && !validateIsPhone(trimUsername);
-
-  useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
+  const [disable, setDisable] = useState(true);
 
   const onRequestOTP = async () => {
     try {
+      const trimUsername = username.trim();
       setLoading(true);
       await apiRequestOTP({
         username: trimUsername,
@@ -55,10 +49,19 @@ const ForgetPasswordType = () => {
       }}>
       <View style={styles.contentView}>
         <InputBox
-          ref={usernameRef}
           i18Placeholder="login.forgetPassword.type.username"
           value={username}
-          onChangeText={text => setUsername(text)}
+          onChangeText={text => {
+            setUsername(text);
+            clearTimeout(timeOut.current);
+            timeOut.current = setTimeout(() => {
+              const textTrim = text.trim();
+              setDisable(
+                !validateIsEmail(textTrim) && !validateIsPhone(textTrim),
+              );
+            }, 200);
+          }}
+          autoFocus
         />
 
         <StyleButton

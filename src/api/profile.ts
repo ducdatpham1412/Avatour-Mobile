@@ -141,11 +141,11 @@ export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
 };
 
 export const apiGetListFollow = ({params}: TypeParamsPaging) => {
-  return request.get(`/profile/follow/get-list/${params.userId}`, {
+  return request.get(`/profile/follow/${params.userId}`, {
     params: {
-      pageIndex: params.pageIndex,
+      page_index: params.pageIndex,
       take: params.take,
-      typeFollow: params.typeFollow,
+      type: params.type,
     },
   });
 };
