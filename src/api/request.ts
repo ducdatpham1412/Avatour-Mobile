@@ -72,7 +72,7 @@ request.interceptors.response.use(
     const {data} = response || {};
     const {errorMessage, errorKey} = data || {};
 
-    logger('Response error: ', response);
+    logger('Response error: ', errorMessage);
 
     if (errorKey === ERROR_KEY_ENUM.token_expired && !config.retry) {
       // if is refreshing token in other request
