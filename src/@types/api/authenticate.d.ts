@@ -16,6 +16,7 @@ interface TypeRequestOTPResponse {
 interface TypeCheckOTPRequest {
   username: string;
   code: string;
+  type?: number;
 }
 interface TypeCheckOTPResponse {
   success: boolean;
@@ -69,6 +70,7 @@ interface TypeResetPasswordRequest {
   username: string;
   password: string;
   confirm_password: string;
+  code: string;
 }
 interface TypeResetPasswordResponse {
   success: boolean;

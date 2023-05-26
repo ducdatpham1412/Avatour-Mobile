@@ -36,14 +36,15 @@ const common = {
 };
 
 const login = {
+  notiOTP: 'Vui lòng nhập mã xác minh Avatour đã gửi đến',
+  confirmOTP: 'Xác nhận OTP',
+  resetPassword: 'Đặt lại mật khẩu',
   component: {
     sendOTP: {
-      header: 'Xác nhận OTP',
       enterCode: 'Nhập mã',
       confirmButton: 'Xác nhận',
       sendAgain: 'Gửi lại ({{countdown}})',
       sendAgainNoCount: 'Gửi lại',
-      notiOTP: 'Vui lòng nhập mã xác minh Doffy đã gửi đến',
     },
   },
   forgetPassword: {
@@ -59,10 +60,6 @@ const login = {
       header: 'Quên mật khẩu',
       receiveThrow: 'Nhận OTP qua',
       phone: 'Số điện thoại',
-    },
-    form: {
-      header: 'Đặt lại mật khẩu',
-      buttonDone: 'Đã xong',
     },
   },
   signUp: {
@@ -203,7 +200,7 @@ const discovery = {
   theMoneyIs: 'Số tiền đặt cọc là: ',
   goToDeposit: 'Đi tới đặt cọc',
   hotLocation: '🔥 Địa điểm nổi bật',
-  travelCamping: 'Cám trại',
+  travelCamping: 'Cắm trại',
   travelVolunteer: 'Tình nguyện',
   travelTeamBuilding: 'Team building',
   travelFood: 'Food tour',

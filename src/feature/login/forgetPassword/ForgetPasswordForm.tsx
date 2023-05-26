@@ -3,6 +3,7 @@ import {standValue} from 'asset/standardValue';
 import {StyleButton, StyleContainer} from 'components/base';
 import {InputBox} from 'components/common';
 import {useLoading} from 'hook';
+import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -12,8 +13,10 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {vs} from 'utility/scale';
 import {validatePassword} from 'utility/validate';
 
-const ForgetPasswordForm = ({route}: any) => {
-  const {username} = route.params;
+const ForgetPasswordForm = ({
+  route,
+}: RouteParams<AppParamsList[LOGIN_ROUTE.forgetPasswordForm]>) => {
+  const {username, code} = route.params;
   const {loading, setLoading} = useLoading();
 
   const passwordRef = useRef<TextInput>(null);
@@ -33,6 +36,7 @@ const ForgetPasswordForm = ({route}: any) => {
         username,
         password,
         confirm_password: confirmPassword,
+        code,
       });
       ModalAlert.success({
         i18Content: 'alert.successChangePass',
@@ -51,8 +55,7 @@ const ForgetPasswordForm = ({route}: any) => {
     <StyleContainer
       customStyle={styles.container}
       headerProps={{
-        title: 'login.forgetPassword.form.header',
-        LeftComponent: null,
+        title: 'login.resetPassword',
       }}>
       <View style={$inputView}>
         <InputBox
@@ -78,7 +81,7 @@ const ForgetPasswordForm = ({route}: any) => {
       </View>
 
       <StyleButton
-        title="login.forgetPassword.form.buttonDone"
+        title="common.done"
         containerStyle={styles.buttonConfirm}
         disable={!isValidButton}
         onPress={submitChangePass}

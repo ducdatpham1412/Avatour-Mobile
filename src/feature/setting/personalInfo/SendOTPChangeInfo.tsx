@@ -78,14 +78,14 @@ const SendOTPChangeInfo = ({
 
   return (
     <>
-      <StyleHeader title="login.component.sendOTP.header" />
+      <StyleHeader title="login.confirmOTP" />
 
       <StyleContainer customStyle={styles.container}>
         <HeaderLogo />
 
         {/* Notification */}
         <StyleText
-          i18Text="login.component.sendOTP.notiOTP"
+          i18Text="login.notiOTP"
           customStyle={[
             styles.textNotification,
             {

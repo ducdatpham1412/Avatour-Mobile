@@ -36,14 +36,15 @@ const common = {
 };
 
 const login = {
+  notiOTP: 'Please enter verification code Avatour have sent to',
+  confirmOTP: 'Confirm OTP',
+  resetPassword: 'Reset password',
   component: {
     sendOTP: {
-      header: 'Confirm OTP',
       enterCode: 'Enter',
       confirmButton: 'Confirm',
       sendAgain: 'Re-send ({{countdown}})',
       sendAgainNoCount: 'Re-send',
-      notiOTP: 'Please enter verification code Doffy have sent to',
     },
   },
   forgetPassword: {
@@ -59,10 +60,6 @@ const login = {
       header: 'Forgot password',
       receiveThrow: 'Receive OTP via',
       phone: 'Phone',
-    },
-    form: {
-      header: 'Set up password',
-      buttonDone: 'Done',
     },
   },
   signUp: {

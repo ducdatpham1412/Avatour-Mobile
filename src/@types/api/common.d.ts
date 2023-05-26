@@ -112,6 +112,15 @@ interface TypeParamsPaging<T = any> {
   [key: string]: any;
 }
 
+interface TypePagingResponse<T = any> {
+  success: boolean;
+  totalPages: number;
+  totalItems: number;
+  take: number;
+  pageIndex: number;
+  data: T;
+}
+
 interface TypeReportUserRequest {
   reason: number;
   description: string;

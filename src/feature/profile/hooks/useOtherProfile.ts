@@ -6,6 +6,7 @@ import {useApi} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
+import {impactLight} from 'utility/haptic';
 
 const useOtherProfile = (id: number) => {
   const mutex = withTimeout(new Mutex(), 30000);
@@ -26,6 +27,7 @@ const useOtherProfile = (id: number) => {
       }
       const release = await mutex.acquire();
       try {
+        impactLight();
         if (!isFollowing) {
           await apiFollowUser(data?.id);
           mutate(

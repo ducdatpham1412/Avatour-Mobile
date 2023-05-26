@@ -1,88 +1,123 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import {TypeFollowResponse} from 'api/interface';
 import {apiGetListFollow} from 'api/profile';
+import {updatePassport} from 'app-redux';
+import {useAppSelector} from 'app-redux/store';
+import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {TYPE_FOLLOW} from 'asset/enum';
 import {TabView} from 'components';
 import {StyleContainer, StyleText} from 'components/base';
 import StyleList from 'components/base/StyleList';
+import {useTheme} from 'hook';
 import usePaging from 'hook/usePaging';
-import Redux from 'hook/useRedux';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
 import React, {useEffect} from 'react';
-import {ViewStyle} from 'react-native';
-import {modeExpUsePaging} from 'utility/assistant';
+import {TextStyle, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
+import {scale} from 'utility/scale';
 import ItemFollow from './components/ItemFollow';
 
 interface Props {
   userId: number;
 }
 
-const RenderItem = (item: TypeFollowResponse) => {
+const renderItem = (item: TypeFollowResponse) => {
   return <ItemFollow item={item} />;
 };
 
 const FollowerScreen = ({userId}: Props) => {
-  const theme = Redux.getTheme();
-  const isModeExp = Redux.getModeExp();
+  const {modeExp} = useAppSelector(state => state.accountSlice);
 
-  const {list, refreshing, onRefresh, onLoadMore, setParams} = isModeExp
-    ? modeExpUsePaging()
-    : usePaging({
-        request: apiGetListFollow,
-        params: {
-          userId,
-          typeFollow: TYPE_FOLLOW.follower,
-        },
-        isInitNotRunRequest: true,
-      });
+  if (modeExp) {
+    return null;
+  }
+
+  const {
+    list,
+    refreshing,
+    onRefresh,
+    onLoadMore,
+    initLoading,
+    loadingMore,
+    data,
+  } = usePaging({
+    request: apiGetListFollow,
+    params: {
+      userId,
+      type: TYPE_FOLLOW.follower,
+    },
+  });
 
   useEffect(() => {
-    setParams({userId, typeFollow: TYPE_FOLLOW.follower});
-  }, [userId]);
+    if (data?.totalItems) {
+      updatePassport({
+        profile: {
+          followers: data?.totalItems,
+        },
+      });
+    }
+  }, [data?.totalItems]);
 
   return (
     <StyleList
       data={list}
-      renderItem={({item}: any) => RenderItem(item)}
-      style={{backgroundColor: theme.backgroundColor}}
+      renderItem={({item}: any) => renderItem(item)}
       keyExtractor={item => item.id}
       refreshing={refreshing}
       onRefresh={onRefresh}
       onLoadMore={onLoadMore}
+      loading={initLoading}
+      loadingMore={loadingMore}
+      contentContainerStyle={$contentContainer}
     />
   );
 };
 
 const FollowingScreen = ({userId}: Props) => {
-  const theme = Redux.getTheme();
-  const isModeExp = Redux.getModeExp();
+  const {modeExp} = useAppSelector(state => state.accountSlice);
 
-  const {list, refreshing, onRefresh, onLoadMore, setParams} = isModeExp
-    ? modeExpUsePaging()
-    : usePaging({
-        request: apiGetListFollow,
-        params: {
-          userId,
-          typeFollow: TYPE_FOLLOW.following,
-        },
-        isInitNotRunRequest: true,
-      });
+  if (modeExp) {
+    return null;
+  }
+
+  const {
+    list,
+    refreshing,
+    onRefresh,
+    onLoadMore,
+    loadingMore,
+    initLoading,
+    data,
+  } = usePaging({
+    request: apiGetListFollow,
+    params: {
+      userId,
+      type: TYPE_FOLLOW.following,
+    },
+  });
 
   useEffect(() => {
-    setParams({userId, typeFollow: TYPE_FOLLOW.following});
-  }, [userId]);
+    if (data?.totalItems) {
+      updatePassport({
+        profile: {
+          followings: data?.totalItems,
+        },
+      });
+    }
+  }, [data?.totalItems]);
 
   return (
     <StyleList
       data={list}
-      renderItem={({item}: any) => RenderItem(item)}
-      style={{backgroundColor: theme.backgroundColor}}
+      renderItem={({item}: any) => renderItem(item)}
       keyExtractor={item => item.id}
       refreshing={refreshing}
       onRefresh={onRefresh}
       onLoadMore={onLoadMore}
+      loading={initLoading}
+      loadingMore={loadingMore}
+      contentContainerStyle={$contentContainer}
     />
   );
 };
@@ -94,6 +129,7 @@ const ListFollows = ({
   route,
 }: RouteParams<AppParamsList[ROOT_SCREEN.listFollows]>) => {
   const {userId, name, initTab} = route.params;
+  const theme = useTheme();
 
   const follower = () => {
     return <FollowerScreen userId={userId} />;
@@ -108,14 +144,17 @@ const ListFollows = ({
       headerProps={{
         title: name as I18Normalize,
       }}
-      contentContainerStyle={$container}>
+      customStyle={$container}
+      scrollEnabled={false}
+      backgroundColor={theme.white}>
       <TabView
         listElements={[follower, following]}
         listIconTabBar={[
-          <StyleText i18Text="profile.follower" />,
-          <StyleText i18Text="profile.following" />,
+          <StyleText i18Text="profile.follower" customStyle={$titleTabBar} />,
+          <StyleText i18Text="profile.following" customStyle={$titleTabBar} />,
         ]}
         initialIndex={initTab === 'following' ? 1 : 0}
+        tabBarStyle={$tabBar}
       />
     </StyleContainer>
   );
@@ -123,6 +162,15 @@ const ListFollows = ({
 
 const $container: ViewStyle = {
   paddingHorizontal: 0,
+};
+const $tabBar: ViewStyle = {
+  paddingHorizontal: scale(70),
+};
+const $titleTabBar: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $contentContainer: ViewStyle = {
+  paddingHorizontal: scale(20),
 };
 
 export default ListFollows;
