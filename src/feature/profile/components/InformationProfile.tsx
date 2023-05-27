@@ -8,7 +8,13 @@ import {useTheme} from 'hook';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {navigate, push} from 'navigation/NavigationService';
 import React from 'react';
-import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  ImageStyle,
+  LayoutChangeEvent,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -19,11 +25,17 @@ interface Props {
   profile?: TypeGetProfileResponse;
   isFollowing?: boolean;
   onFollow?: () => Promise<void>;
+  onLayOut?: (e: LayoutChangeEvent) => void;
 }
 
 const avatarSize = Metrics.width / 3.5;
 
-const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
+const InformationProfile = ({
+  profile,
+  isFollowing,
+  onFollow,
+  onLayOut,
+}: Props) => {
   const theme = useTheme();
   const myId = useAppSelector(state => state.accountSlice.passport.profile.id);
 
@@ -174,7 +186,7 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
   };
 
   return (
-    <View style={$container}>
+    <View style={$container} onLayout={onLayOut}>
       <View style={$introduceView}>
         <StyleImage source={{uri: avatar}} customStyle={$avatarHeader} />
         <View style={$boxNameAndDescription}>
@@ -193,46 +205,45 @@ const InformationProfile = ({profile, isFollowing, onFollow}: Props) => {
               />
             </View>
           )}
-          {!!description && (
-            <StyleText
-              originValue={description}
-              customStyle={[$textDescription, {color: theme.gray_500}]}
-              numberOfLines={3}
-            />
-          )}
           {renderStars()}
+          <View style={$followBox}>
+            {/* Follower */}
+            <StyleTouchable
+              customStyle={styles.elementFollow}
+              onPress={() => onNavigateFollow('follower')}>
+              <StyleText
+                i18Text="profile.follower"
+                customStyle={{color: theme.gray_500}}
+              />
+              <StyleText
+                originValue={String(followers)}
+                customStyle={styles.numberFollow}
+              />
+            </StyleTouchable>
+
+            {/* Following */}
+            <StyleTouchable
+              customStyle={styles.elementFollow}
+              onPress={() => onNavigateFollow('following')}>
+              <StyleText
+                i18Text="profile.following"
+                customStyle={{color: theme.gray_500}}
+              />
+              <StyleText
+                originValue={String(followings)}
+                customStyle={styles.numberFollow}
+              />
+            </StyleTouchable>
+          </View>
         </View>
       </View>
 
-      <View style={$followBox}>
-        {/* Follower */}
-        <StyleTouchable
-          customStyle={styles.elementFollow}
-          onPress={() => onNavigateFollow('follower')}>
-          <StyleText
-            i18Text="profile.follower"
-            customStyle={{color: theme.gray_500}}
-          />
-          <StyleText
-            originValue={String(followers)}
-            customStyle={styles.numberFollow}
-          />
-        </StyleTouchable>
-
-        {/* Following */}
-        <StyleTouchable
-          customStyle={styles.elementFollow}
-          onPress={() => onNavigateFollow('following')}>
-          <StyleText
-            i18Text="profile.following"
-            customStyle={{color: theme.gray_500}}
-          />
-          <StyleText
-            originValue={String(followings)}
-            customStyle={styles.numberFollow}
-          />
-        </StyleTouchable>
-      </View>
+      {!!description && (
+        <StyleText
+          originValue={description}
+          customStyle={[$textDescription, {color: theme.gray_500}]}
+        />
+      )}
 
       {renderButton()}
     </View>
@@ -264,12 +275,12 @@ const $textName: TextStyle = {
   fontWeight: 'bold',
 };
 const $textDescription: TextStyle = {
-  marginTop: verticalScale(7),
+  marginTop: verticalScale(12),
 };
 const $followBox: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(7),
 };
 const $textNumberStar: TextStyle = {
   fontSize: FONT_SIZE.f4,
@@ -321,7 +332,6 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
   },
   elementFollow: {
-    flexDirection: 'row',
     alignItems: 'center',
     marginRight: '15@s',
   },
