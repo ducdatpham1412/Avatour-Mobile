@@ -8,7 +8,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {Animated, ScrollView, StyleProp, View, ViewStyle} from 'react-native';
+import {
+  Animated,
+  LayoutChangeEvent,
+  ScrollView,
+  StyleProp,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {SceneMap, TabView as TabViewRoot} from 'react-native-tab-view';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleTouchable} from './base';
@@ -28,6 +35,7 @@ interface TabViewProps {
   indicatorWidthRatio?: number;
   tabBarType?: 'fix-width' | 'scroll';
   lazy?: boolean;
+  onLayOut?: (e: LayoutChangeEvent) => void;
 }
 
 interface TypeTabViewRef {
@@ -50,6 +58,7 @@ const TabView = (
     indicatorWidthRatio = 0.5,
     tabBarType = 'fix-width',
     lazy = true,
+    onLayOut,
   }: TabViewProps,
   ref: ForwardedRef<TypeTabViewRef>,
 ) => {
@@ -214,6 +223,7 @@ const TabView = (
         }
       }}
       lazy={lazy}
+      onLayout={onLayOut}
     />
   );
 };

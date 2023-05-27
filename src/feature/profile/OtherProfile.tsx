@@ -4,7 +4,7 @@ import {StyleContainer, StyleIcon, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet} from 'navigation/screen/modals';
-import React from 'react';
+import React, {useState} from 'react';
 import {ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {scale} from 'utility/scale';
@@ -19,6 +19,9 @@ const OtherProfile = ({
   const theme = useTheme();
   const [{data, isFollowing, isBlocked}, {follow, block, report}] =
     useOtherProfile(params.id);
+
+  const [tabViewHeight, setTabViewHeight] = useState(0);
+
   const isShopAccount = data?.account_type === ACCOUNT.shop;
   const isLocationAccount = data?.account_type === ACCOUNT.location;
 
@@ -80,7 +83,11 @@ const OtherProfile = ({
           </StyleTouchable>
         ),
       }}
-      customStyle={$content}>
+      customStyle={$content}
+      onLayout={e => {
+        setTabViewHeight(e.nativeEvent.layout.height);
+      }}
+      scrollEnabled>
       {!isBlocked && data && (
         <>
           <InformationProfile
@@ -89,7 +96,7 @@ const OtherProfile = ({
             onFollow={follow}
           />
           <TabView
-            style={$body}
+            style={[$body, {height: tabViewHeight}]}
             tabBarStyle={$tabBar}
             listElements={[renderShop, renderTour, renderListReviews]}
             listIconTabBar={[
@@ -115,7 +122,7 @@ const OtherProfile = ({
 };
 
 const $body: ViewStyle = {
-  flex: 1,
+  width: '100%',
 };
 const $tabBar: ViewStyle = {
   paddingHorizontal: scale(16),

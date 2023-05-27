@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import {TypeFollowResponse} from 'api/interface';
 import {apiGetListFollow} from 'api/profile';
 import {updatePassport} from 'app-redux';

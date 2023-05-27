@@ -7,7 +7,7 @@ import {StyleContainer, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdate, useUpdateEffect} from 'react-use';
@@ -25,6 +25,7 @@ const MyProfile = () => {
   const theme = useTheme();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const route = useRoute();
+  const [tabViewHeight, setTabViewHeight] = useState(0);
 
   useUpdateEffect(() => {
     update();
@@ -61,10 +62,15 @@ const MyProfile = () => {
           </StyleTouchable>
         ),
       }}
-      customStyle={$content}>
+      customStyle={$content}
+      stickyHeaderIndices={[1]}
+      onLayout={e => {
+        setTabViewHeight(e.nativeEvent.layout.height);
+      }}
+      scrollEnabled>
       <InformationProfile profile={profile} />
       <TabView
-        style={$body}
+        style={[$body, {height: tabViewHeight}]}
         listElements={[
           renderShop,
           ListJoiningAndJoined,
@@ -91,7 +97,7 @@ const MyProfile = () => {
 };
 
 const $body: ViewStyle = {
-  flex: 1,
+  width: '100%',
 };
 const $tabBar: ViewStyle = {
   paddingHorizontal: scale(16),
