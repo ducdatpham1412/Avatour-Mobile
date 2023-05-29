@@ -44,7 +44,7 @@ const $container: ViewStyle = {
   alignItems: 'center',
 };
 const $buttonQr: ViewStyle = {
-  marginRight: scale(20),
+  marginRight: scale(12),
 };
 const $iconQr: TextStyle = {
   fontSize: moderateScale(17),

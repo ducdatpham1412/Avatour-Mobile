@@ -28,6 +28,12 @@ const ItemRequest = ({item}: Props) => {
       if (type === TYPE_AUTH_REQUEST.update_bank) {
         return t('profile.updateBankAccount');
       }
+      if (type === TYPE_AUTH_REQUEST.update_price) {
+        return t('discovery.updatePrice');
+      }
+      if (type === TYPE_AUTH_REQUEST.delete_gb) {
+        return t('discovery.deleteSale');
+      }
       return t('common.null');
     },
     [t],
@@ -40,9 +46,9 @@ const ItemRequest = ({item}: Props) => {
           {Object.entries(item?.data)?.map(([key, value]) => {
             return (
               <StyleText>
-                <StyleText originValue={key} customStyle={$keyText} />
+                <StyleText originValue={String(key)} customStyle={$keyText} />
                 <StyleText originValue=": " />
-                <StyleText originValue={value} />
+                <StyleText originValue={String(value)} />
               </StyleText>
             );
           })}

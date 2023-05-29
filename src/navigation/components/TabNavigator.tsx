@@ -72,7 +72,9 @@ const TabNavigator = (props: any) => {
         onPress={() => navigate(MAIN_SCREEN.favorite)}>
         <StyleIcon
           source={
-            isFocusHeart ? Images.icons.tourTabBar : Images.icons.tourTabBar
+            isFocusHeart
+              ? Images.icons.tourTabBarFocus
+              : Images.icons.tourTabBar
           }
           size={iconSize}
           customStyle={{tintColor}}

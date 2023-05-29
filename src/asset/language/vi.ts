@@ -223,6 +223,8 @@ const discovery = {
   numberRetailTurns: '{{value}} lượt mua riêng',
   addPhoneNumber: 'Thêm số điện thoại',
   openAvailable: 'Mở nhận đặt đơn',
+  deleteSale: 'Xoá bài mua chung',
+  updatePrice: 'Cập nhật giá',
   reviewUpdatePrice: 'Đang duyệt cập nhật giá',
   cancelRequest: 'Huỷ yêu cầu',
   historyEdit: 'Lịch sử chỉnh sửa',
@@ -394,6 +396,10 @@ const profile = {
   createTour: 'Tạo tour mới',
   createTourSuccess: 'Tạo tour thành công',
   createNameForYourTour: 'Đặt tên cho tour của bạn',
+  qrConfirm: 'QR Xác nhận',
+  scanWhenGoToShop:
+    'Quét mã khi đến cửa hàng để xác nhận tham gia thành công nhé bạn',
+  shopName: 'Tên cửa hàng',
 };
 
 // MESS ROUTE
@@ -555,6 +561,9 @@ const alert = {
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',
   permissionMicro: 'Cho phép Doffy truy cập vào micro',
   permissionPhoto: 'Cho phép Doffy truy cập vào thư viện ảnh',
+  cameraHadBeenDisable:
+    'Đang không có quyền truy cập camera\nĐi tới cài đặt và mở quyền truy cập',
+  openSetting: 'Mở cài đặt',
 };
 
 const vi = {
