@@ -2,7 +2,7 @@ import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import {apiUploadFile} from 'api/discovery';
 import ImagePicker from 'react-native-image-crop-picker';
 import I18Next from 'utility/I18Next';
-import {checkPhoto} from './permission/permission';
+import {checkCamera, checkPhoto} from './permission/permission';
 import {checkIsVideo} from './validate';
 
 const MAX_WIDTH = 1500;
@@ -11,11 +11,17 @@ const MAX_HEIGHT = 1500;
 export interface ImagePickerParamsType {
   crop?: boolean;
   freeStyleCrop?: boolean;
-  multiple?: boolean;
   maxFiles?: number;
   maxWidth?: number;
   maxHeight?: number;
 }
+
+// export interface TypeImagePicker {
+//   maxWidth?: number;
+//   maxHeight?: number;
+//   includeBase64?: boolean;
+//   quality?: PhotoQuality;
+// }
 
 interface ImageReadLibraryType {
   first: number;
@@ -23,42 +29,125 @@ interface ImageReadLibraryType {
 }
 
 const ImageUploader = {
-  chooseImageFromCamera: (params?: ImagePickerParamsType) =>
-    ImagePicker.openCamera({
-      mediaType: 'photo',
-      width: params?.maxWidth || MAX_WIDTH,
-      height: params?.maxHeight || MAX_HEIGHT,
-      waitAnimationEnd: true,
-      cropping: params?.crop === undefined ? true : params?.crop,
-      freeStyleCropEnabled: params?.freeStyleCrop || false,
-      multiple: params?.multiple || false,
-      cropperChooseText: I18Next.t('common.imageUpload.selected'),
-      cropperCancelText: I18Next.t('common.imageUpload.cancel'),
-      compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
-      compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
-      compressImageQuality: 1,
-    }),
-  chooseImageFromLibrary: (params?: ImagePickerParamsType) =>
-    ImagePicker.openPicker({
-      mediaType: 'photo',
-      width: params?.maxWidth || MAX_WIDTH,
-      height: params?.maxHeight || MAX_HEIGHT,
-      waitAnimationEnd: true,
-      cropping: params?.crop === undefined ? true : params?.crop,
-      freeStyleCropEnabled: params?.freeStyleCrop || false,
-      maxFiles: params?.maxFiles || 1,
-      multiple: params?.multiple || false,
-      cropperChooseText: I18Next.t('common.imageUpload.selected'),
-      cropperCancelText: I18Next.t('common.imageUpload.cancel'),
-      compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
-      compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
-      compressImageQuality: 1,
-    }),
-  chooseVideoFromLibrary: () =>
-    ImagePicker.openPicker({
-      mediaType: 'video',
-      maxFiles: 1,
-    }),
+  //   chooseImageFromCamera: (params?: ImagePickerParamsType) =>
+  //     ImagePicker.openCamera({
+  //       mediaType: 'photo',
+  //       width: params?.maxWidth || MAX_WIDTH,
+  //       height: params?.maxHeight || MAX_HEIGHT,
+  //       waitAnimationEnd: true,
+  //       cropping: params?.crop === undefined ? true : params?.crop,
+  //       freeStyleCropEnabled: params?.freeStyleCrop || false,
+  //       //   multiple: params?.multiple || false,
+  //       cropperChooseText: I18Next.t('common.imageUpload.selected'),
+  //       cropperCancelText: I18Next.t('common.imageUpload.cancel'),
+  //       compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
+  //       compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
+  //       compressImageQuality: 1,
+  //     }),
+  //   chooseImageFromLibrary: (params?: ImagePickerParamsType) =>
+  //     ImagePicker.openPicker({
+  //       mediaType: 'photo',
+  //       width: params?.maxWidth || MAX_WIDTH,
+  //       height: params?.maxHeight || MAX_HEIGHT,
+  //       waitAnimationEnd: true,
+  //       cropping: params?.crop === undefined ? true : params?.crop,
+  //       freeStyleCropEnabled: params?.freeStyleCrop || false,
+  //       maxFiles: params?.maxFiles || 1,
+  //       //   multiple: params?.multiple || false,
+  //       cropperChooseText: I18Next.t('common.imageUpload.selected'),
+  //       cropperCancelText: I18Next.t('common.imageUpload.cancel'),
+  //       compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
+  //       compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
+  //       compressImageQuality: 1,
+  //     }),
+  //   pickImage: async (params?: TypeImagePicker) => {
+  //     const check = await checkPhoto();
+  //     if (check) {
+  //       const res = await launchImageLibrary({
+  //         mediaType: 'photo',
+  //         maxWidth: params?.maxWidth || MAX_WIDTH,
+  //         maxHeight: params?.maxHeight || MAX_HEIGHT,
+  //         quality: params?.quality || 0.3,
+  //         includeBase64: params?.includeBase64,
+  //       });
+  //       return res?.assets?.[0];
+  //     }
+  //     throw new Error('Error while read image from library');
+  //   },
+
+  pickCamera: async (params?: ImagePickerParamsType) => {
+    const check = await checkCamera();
+    if (check) {
+      const res = await ImagePicker.openCamera({
+        mediaType: 'photo',
+        width: params?.maxWidth || MAX_WIDTH,
+        height: params?.maxHeight || MAX_HEIGHT,
+        waitAnimationEnd: true,
+        cropping: params?.crop === undefined ? true : params?.crop,
+        freeStyleCropEnabled: params?.freeStyleCrop || false,
+        cropperChooseText: I18Next.t('common.imageUpload.selected'),
+        cropperCancelText: I18Next.t('common.imageUpload.cancel'),
+        compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
+        compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
+        compressImageQuality: 1,
+      });
+      return res?.path;
+    }
+    throw new Error('Error while check camera');
+  },
+  pickLibrary: async (params?: ImagePickerParamsType) => {
+    const check = await checkPhoto();
+    if (check) {
+      const res = await ImagePicker.openPicker({
+        mediaType: 'photo',
+        width: params?.maxWidth || MAX_WIDTH,
+        height: params?.maxHeight || MAX_HEIGHT,
+        waitAnimationEnd: true,
+        cropping: params?.crop === undefined ? true : params?.crop,
+        freeStyleCropEnabled: params?.freeStyleCrop || false,
+        cropperChooseText: I18Next.t('common.imageUpload.selected'),
+        cropperCancelText: I18Next.t('common.imageUpload.cancel'),
+        compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
+        compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
+        compressImageQuality: 1,
+      });
+      return res?.path;
+    }
+    throw new Error('Error while read image from library');
+  },
+  pickMultipleLibrary: async (params?: ImagePickerParamsType) => {
+    const check = await checkPhoto();
+    if (check) {
+      const res = await ImagePicker.openPicker({
+        mediaType: 'photo',
+        width: params?.maxWidth || MAX_WIDTH,
+        height: params?.maxHeight || MAX_HEIGHT,
+        waitAnimationEnd: true,
+        cropping: params?.crop === undefined ? true : params?.crop,
+        freeStyleCropEnabled: params?.freeStyleCrop || false,
+        cropperChooseText: I18Next.t('common.imageUpload.selected'),
+        cropperCancelText: I18Next.t('common.imageUpload.cancel'),
+        compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
+        compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
+        compressImageQuality: 1,
+        multiple: true,
+        maxFiles: params?.maxFiles ?? 5,
+      });
+      return res.map(item => item?.path);
+    }
+    throw new Error('Error while read image from library');
+  },
+  pickVideo: async () => {
+    const check = await checkPhoto();
+    if (check) {
+      const res = await ImagePicker.openPicker({
+        mediaType: 'video',
+        maxFiles: 1,
+      });
+      return res?.path;
+    }
+    throw new Error('Error while read video from library');
+  },
 
   readImageFromLibrary: async (params: ImageReadLibraryType) => {
     await checkPhoto();

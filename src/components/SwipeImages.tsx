@@ -1,19 +1,19 @@
 import {Metrics} from 'asset/metrics';
-import Redux from 'hook/useRedux';
-import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
+import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
+import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import {StyleTouchable} from './base';
 import PanZoomImage from './PanZoomImage';
 import StyleTabView from './StyleTabView';
+import {StyleTouchable} from './base';
 
 type Props = RouteParams<AppParamsList[ROOT_SCREEN.swipeImages]>;
 
 const SwipeImages = ({route}: Props) => {
   const {listImages, initIndex = 0} = route.params;
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   return (
     <>
@@ -28,16 +28,10 @@ const SwipeImages = ({route}: Props) => {
       </StyleTabView>
 
       <StyleTouchable
-        customStyle={[
-          styles.comebackView,
-          {backgroundColor: theme.backgroundButtonColor},
-        ]}
+        customStyle={[styles.comebackView, {backgroundColor: theme.background}]}
         onPress={goBack}
         hitSlop={15}>
-        <Feather
-          name="x"
-          style={[styles.iconComeBack, {color: theme.textColor}]}
-        />
+        <Feather name="x" style={[styles.iconComeBack, {color: theme.black}]} />
       </StyleTouchable>
     </>
   );
