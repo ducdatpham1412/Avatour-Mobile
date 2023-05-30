@@ -35,9 +35,7 @@ import {
 } from 'react-native';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
-import ImageUploader, {ImagePickerParamsType} from './ImageUploader';
 import AuthenticateService from './login/loginService';
-import {checkCamera, checkPhoto} from './permission/permission';
 
 export const interactBubble = (params: TypeInteractBubble) => {
   navigate(ROOT_SCREEN.interactBubble, params);
@@ -62,51 +60,51 @@ export const choosePrivateAvatar = (_gender?: number) => {
 /**
  * FOR EDIT PROFILE THAT IMAGE PICKER
  */
-export const chooseImageFromLibrary = async (
-  action: Function,
-  params?: ImagePickerParamsType,
-  callBackFunction?: Function,
-) => {
-  try {
-    const permission = await checkPhoto();
-    if (permission) {
-      const localPath: any = await ImageUploader.chooseImageFromLibrary(params);
+// export const chooseImageFromLibrary = async (
+//   action: Function,
+//   params?: ImagePickerParamsType,
+//   callBackFunction?: Function,
+// ) => {
+//   try {
+//     const permission = await checkPhoto();
+//     if (permission) {
+//       const localPath: any = await ImageUploader.chooseImageFromLibrary(params);
 
-      callBackFunction?.();
+//       callBackFunction?.();
 
-      if (params?.multiple) {
-        action(localPath.map((item: any) => item.path));
-      } else {
-        action(localPath.path);
-      }
-    }
-  } catch (err) {
-    logger(err);
-  }
-};
+//       if (params?.multiple) {
+//         action(localPath.map((item: any) => item.path));
+//       } else {
+//         action(localPath.path);
+//       }
+//     }
+//   } catch (err) {
+//     logger(err);
+//   }
+// };
 
-export const chooseImageFromCamera = async (
-  action: Function,
-  params?: ImagePickerParamsType,
-  callBackFunction?: Function,
-) => {
-  try {
-    const permission = await checkCamera();
-    if (permission) {
-      const localPath: any = await ImageUploader.chooseImageFromCamera(params);
+// export const chooseImageFromCamera = async (
+//   action: Function,
+//   params?: ImagePickerParamsType,
+//   callBackFunction?: Function,
+// ) => {
+//   try {
+//     const permission = await checkCamera();
+//     if (permission) {
+//       const localPath: any = await ImageUploader.chooseImageFromCamera(params);
 
-      callBackFunction?.();
+//       callBackFunction?.();
 
-      if (params?.multiple) {
-        action(localPath.map((item: any) => item.path));
-      } else {
-        action(localPath.path);
-      }
-    }
-  } catch (err) {
-    logger(err);
-  }
-};
+//       if (params?.multiple) {
+//         action(localPath.map((item: any) => item.path));
+//       } else {
+//         action(localPath.path);
+//       }
+//     }
+//   } catch (err) {
+//     logger(err);
+//   }
+// };
 
 /**
  * OTHERS

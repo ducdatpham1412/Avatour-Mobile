@@ -3,7 +3,6 @@ import {updatePassport} from 'app-redux';
 import Store, {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
-import {AVATAR_SIZE} from 'asset/standardValue';
 import {
   AppInput,
   StyleButton,
@@ -23,12 +22,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ImageUploader from 'utility/ImageUploader';
-import {
-  borderWidthTiny,
-  chooseImageFromCamera,
-  chooseImageFromLibrary,
-  seeDetailImage,
-} from 'utility/assistant';
+import {logger, seeDetailImage} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import BtnPenEdit from './components/BtnPenEdit';
 
@@ -68,14 +62,14 @@ const EditProfile = () => {
       const {token} = Store.getState().logicSlice;
 
       if (!modeExp && token) {
-        let newAvatar;
-        if (avatar !== profile.avatar) {
-          if (avatar === '') {
-            newAvatar = '';
-          } else {
-            newAvatar = await ImageUploader.upLoad(avatar, 1000);
-          }
-        }
+        // let newAvatar;
+        // if (avatar !== profile.avatar) {
+        //   if (avatar === '') {
+        //     newAvatar = '';
+        //   } else {
+        //     newAvatar = await ImageUploader.upLoad(avatar, 1000);
+        //   }
+        // }
 
         const newName = name === profile.name ? undefined : name;
         const newDescription =
@@ -113,24 +107,29 @@ const EditProfile = () => {
       options: [
         {
           title: 'common.chooseFromCamera',
-          onPress: () =>
-            chooseImageFromCamera((path: string) => setAvatar(path), {
-              maxWidth: AVATAR_SIZE.width,
-              maxHeight: AVATAR_SIZE.height,
-            }),
+          onPress: async () => {
+            try {
+              setTimeout(async () => {
+                const res = await ImageUploader.pickCamera();
+                setAvatar(res);
+              }, 200);
+            } catch (err) {
+              logger(err);
+            }
+          },
         },
         {
           title: 'common.chooseFromLibrary',
-          onPress: () =>
-            chooseImageFromLibrary(
-              (path: string) => {
-                setAvatar(path);
-              },
-              {
-                maxWidth: AVATAR_SIZE.width,
-                maxHeight: AVATAR_SIZE.height,
-              },
-            ),
+          onPress: async () => {
+            try {
+              setTimeout(async () => {
+                const res = await ImageUploader.pickLibrary();
+                setAvatar(res);
+              }, 200);
+            } catch (err) {
+              logger(err);
+            }
+          },
         },
         {
           title: 'profile.removeAvatar',
@@ -149,7 +148,10 @@ const EditProfile = () => {
         BottomComponent={
           <StyleButton
             title="profile.edit.confirmButton"
-            containerStyle={{marginBottom: bottom || safePaddingNotZero}}
+            containerStyle={{
+              marginBottom: bottom || safePaddingNotZero,
+              width: '80%',
+            }}
             onPress={onSaveChange}
             disable={disableButton}
             isLoading={loading}
@@ -160,7 +162,7 @@ const EditProfile = () => {
             customStyle={[
               $avatar,
               {
-                borderColor: theme.gray_400,
+                borderColor: theme.p_600,
               },
             ]}
             onPress={() => {
@@ -270,7 +272,7 @@ const $avatarBox: ViewStyle = {
 const $avatar: ImageStyle = {
   width: '100%',
   height: '100%',
-  borderWidth: borderWidthTiny,
+  borderWidth: moderateScale(2.5),
   borderRadius: 150,
 };
 const $avatarImg: ImageStyle = {

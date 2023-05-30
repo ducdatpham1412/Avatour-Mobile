@@ -1,18 +1,14 @@
 import {StyleImage, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import React, {memo, useCallback, useMemo, useRef, useState} from 'react';
+import {ModalActionSheet} from 'navigation/screen/modals';
+import React, {memo, useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, View, ViewStyle} from 'react-native';
-import ActionSheet from 'react-native-actionsheet';
 import {ScaledSheet, scale} from 'react-native-size-matters';
 import AntDesgin from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import {
-  chooseImageFromCamera,
-  chooseImageFromLibrary,
-  optionsImagePicker,
-  seeDetailImage,
-} from 'utility/assistant';
+import ImageUploader from 'utility/ImageUploader';
+import {logger, seeDetailImage} from 'utility/assistant';
 
 interface Props {
   numberImages: number;
@@ -26,14 +22,9 @@ const RowPickImages = (props: Props) => {
   const {t} = useTranslation();
   const theme = useTheme();
 
-  const actionRef = useRef<any>(null);
-
   const [width, setWidth] = useState(0);
   const elementWidth = width / numberImages;
 
-  const optionsImgPicker = useMemo(() => {
-    return optionsImagePicker.map(item => t(item));
-  }, []);
   const checkArray = () => {
     const temp = [];
     for (let i = 0; i < numberImages; i++) {
@@ -51,22 +42,41 @@ const RowPickImages = (props: Props) => {
       setListImages(concatList);
     }
   };
-  const chooseAction = useCallback(
-    async (index: number) => {
-      if (index === 0) {
-        await chooseImageFromCamera(onSetAgainListImages, {
-          multiple: true,
-          maxFiles: numberImages - listImages.length,
-        });
-      } else if (index === 1) {
-        await chooseImageFromLibrary(onSetAgainListImages, {
-          multiple: true,
-          maxFiles: numberImages - listImages.length,
-        });
-      }
-    },
-    [listImages, numberImages],
-  );
+
+  const onOpenActionSheet = () => {
+    ModalActionSheet.show({
+      options: [
+        {
+          title: 'common.chooseFromCamera',
+          onPress: async () => {
+            try {
+              setTimeout(async () => {
+                const res = await ImageUploader.pickCamera({crop: false});
+                onSetAgainListImages([res]);
+              }, 200);
+            } catch (err) {
+              logger(err);
+            }
+          },
+        },
+        {
+          title: 'common.chooseFromLibrary',
+          onPress: async () => {
+            try {
+              setTimeout(async () => {
+                const res = await ImageUploader.pickMultipleLibrary({
+                  maxFiles: 3,
+                });
+                onSetAgainListImages(res);
+              }, 200);
+            } catch (err) {
+              logger(err);
+            }
+          },
+        },
+      ],
+    });
+  };
 
   const onDeleteImageAtIndex = useCallback(
     (index: number) => {
@@ -125,10 +135,7 @@ const RowPickImages = (props: Props) => {
                   />
                 </StyleTouchable>
               ) : (
-                <StyleTouchable
-                  onPress={() => {
-                    actionRef.current?.show();
-                  }}>
+                <StyleTouchable onPress={onOpenActionSheet}>
                   <AntDesgin
                     name="upload"
                     style={[styles.iconUpload, {color: theme.black}]}
@@ -154,13 +161,6 @@ const RowPickImages = (props: Props) => {
           </View>
         );
       })}
-
-      <ActionSheet
-        ref={actionRef}
-        options={optionsImgPicker}
-        cancelButtonIndex={2}
-        onPress={chooseAction}
-      />
     </View>
   );
 };
