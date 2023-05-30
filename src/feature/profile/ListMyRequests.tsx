@@ -1,8 +1,7 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import {useMyRequests} from './hooks';
 import {StyleContainer, StyleList} from 'components/base';
+import React from 'react';
 import {ItemRequest} from './components';
+import {useMyRequests} from './hooks';
 
 const ListMyRequests = () => {
   const [{data, initLoading, validating}, {mutate}] = useMyRequests();

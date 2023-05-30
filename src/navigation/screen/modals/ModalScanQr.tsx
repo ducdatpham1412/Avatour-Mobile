@@ -1,12 +1,9 @@
-import {
-  View,
-  Text,
-  Modal,
-  ViewStyle,
-  StyleSheet,
-  ImageStyle,
-  TextStyle,
-} from 'react-native';
+import {FONT_WEIGHT_MEDIUM} from 'asset';
+import Images from 'asset/img/images';
+import {BoxView} from 'components';
+import {StyleButton, StyleImage, StyleText} from 'components/base';
+import {ButtonX} from 'components/common';
+import {useTheme} from 'hook';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -15,15 +12,24 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import {useTheme} from 'hook';
-import {StyleIcon, StyleImage, StyleText} from 'components/base';
-import {RNCamera, BarCodeReadEvent} from 'react-native-camera';
-import Images from 'asset/img/images';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {ButtonX} from 'components/common';
+import {
+  ImageStyle,
+  Modal,
+  StyleSheet,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
+import {BarCodeReadEvent, RNCamera} from 'react-native-camera';
+import {openSettings} from 'react-native-permissions';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 const modalRef = createRef<ElementRef<typeof ModalScanQr>>();
+
+const onBarCodeRead = (e: BarCodeReadEvent) => {
+  console.log('Bar code: ', e);
+};
 
 const ModalScanQr = forwardRef(
   (_: any, ref: ForwardedRef<TypeShowModalize>) => {
@@ -46,10 +52,6 @@ const ModalScanQr = forwardRef(
       [],
     );
 
-    const onBarCodeRead = (e: BarCodeReadEvent) => {
-      console.log('Bar code: ', e);
-    };
-
     return (
       <Modal visible={visible} animationType="slide" transparent>
         <View style={[$container, {backgroundColor: theme.background}]}>
@@ -66,10 +68,24 @@ const ModalScanQr = forwardRef(
               notAuthorizedView={<View />}
             />
           )}
-          <StyleImage
-            source={Images.icons.fingerScan}
-            customStyle={$iconFingerScan}
-          />
+
+          {showOpenSetting ? (
+            <BoxView containerStyle={$openSetting}>
+              <StyleText
+                i18Text="alert.cameraHadBeenDisable"
+                customStyle={$textCamera}
+              />
+              <StyleButton
+                title="alert.openSetting"
+                onPress={() => openSettings()}
+              />
+            </BoxView>
+          ) : (
+            <StyleImage
+              source={Images.icons.fingerScan}
+              customStyle={$iconFingerScan}
+            />
+          )}
 
           <ButtonX
             containerStyle={[
@@ -103,6 +119,14 @@ const $iconX: ViewStyle = {
 };
 const $icon: TextStyle = {
   fontSize: moderateScale(17),
+};
+const $openSetting: ViewStyle = {
+  width: '80%',
+};
+const $textCamera: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  textAlign: 'center',
+  marginBottom: verticalScale(12),
 };
 
 export default Object.assign(ModalScanQr, {

@@ -49,6 +49,12 @@ const ItemPersonalJoinOfAdmin = ({item, onConfirmBought}: Props) => {
             i18Text="discovery.notRequestConfirm"
             customStyle={{color: theme.gray_600}}
           />
+          <StyleButton
+            title="discovery.confirmBought"
+            onPress={() => onConfirmBought([item?.id], {setLoading})}
+            isLoading={loading}
+            containerStyle={$buttonConfirm}
+          />
         </View>
       );
     }
@@ -122,6 +128,9 @@ const $note: ViewStyle = {
 const $notRequest: ViewStyle = {
   width: '100%',
   alignItems: 'center',
+};
+const $buttonConfirm: ViewStyle = {
+  marginTop: verticalScale(8),
 };
 
 export default ItemPersonalJoinOfAdmin;

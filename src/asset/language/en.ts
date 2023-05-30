@@ -219,6 +219,8 @@ const discovery = {
   numberRetailTurns: '{{value}} buying separately turns',
   addPhoneNumber: 'Add phone number',
   openAvailable: 'Open receiving booking',
+  deleteSale: 'Delete group buying',
+  updatePrice: 'Update prices',
   reviewUpdatePrice: 'Reviewing update prices',
   cancelRequest: 'Cancel requesting',
   historyEdit: 'Editing history',
@@ -417,6 +419,10 @@ const profile = {
   createTour: 'Create new tour',
   createTourSuccess: 'Create tour successfully',
   createNameForYourTour: 'Create name for your tour',
+  qrConfirm: 'QR Confirming',
+  scanWhenGoToShop:
+    'Scan the code upon arrival at the store to confirm successfully participate',
+  shopName: "Shop's name",
 };
 
 // SETTING ROUTE
@@ -546,6 +552,9 @@ const alert = {
   permissionCamera: 'Access camera',
   permissionMicro: 'Access microphone',
   permissionPhoto: 'Access photo library',
+  cameraHadBeenDisable:
+    'Camera had been disable\nGo to setting and open camera access',
+  openSetting: 'Open setting',
 };
 
 const en = {

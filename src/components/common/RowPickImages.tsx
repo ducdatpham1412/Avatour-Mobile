@@ -1,10 +1,10 @@
 import {StyleImage, StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import React, {memo, useCallback, useMemo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, View, ViewStyle} from 'react-native';
 import ActionSheet from 'react-native-actionsheet';
-import {scale, ScaledSheet} from 'react-native-size-matters';
+import {ScaledSheet, scale} from 'react-native-size-matters';
 import AntDesgin from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {
@@ -24,7 +24,7 @@ interface Props {
 const RowPickImages = (props: Props) => {
   const {numberImages, listImages, setListImages, containerStyle} = props;
   const {t} = useTranslation();
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   const actionRef = useRef<any>(null);
 
@@ -105,7 +105,7 @@ const RowPickImages = (props: Props) => {
               style={[
                 styles.imageBoxIn,
                 {
-                  borderColor: theme.borderColor,
+                  borderColor: theme.gray_400,
                   borderWidth: listImages[index] ? 0 : scale(0.5),
                 },
               ]}>
@@ -131,22 +131,22 @@ const RowPickImages = (props: Props) => {
                   }}>
                   <AntDesgin
                     name="upload"
-                    style={[styles.iconUpload, {color: theme.textColor}]}
+                    style={[styles.iconUpload, {color: theme.black}]}
                   />
                 </StyleTouchable>
               )}
 
               {/* Button delete */}
-              {listImages[index] && (
+              {!!listImages[index] && (
                 <StyleTouchable
                   customStyle={[
                     styles.touchIconX,
-                    {backgroundColor: theme.textColor},
+                    {backgroundColor: theme.white},
                   ]}
                   onPress={() => onDeleteImageAtIndex(index)}>
                   <Feather
                     name="x"
-                    style={[styles.iconX, {color: theme.backgroundColor}]}
+                    style={[styles.iconX, {color: theme.black}]}
                   />
                 </StyleTouchable>
               )}

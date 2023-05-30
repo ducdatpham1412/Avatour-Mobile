@@ -87,7 +87,8 @@ const OtherProfile = ({
       onLayout={e => {
         setTabViewHeight(e.nativeEvent.layout.height);
       }}
-      scrollEnabled>
+      scrollEnabled
+      stickyHeaderIndices={[1]}>
       {!isBlocked && data && (
         <>
           <InformationProfile
