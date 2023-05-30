@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import {apiEditGroupBooking} from 'api/discovery';
-import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleText, StyleTouchable} from 'components/base';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
@@ -12,37 +11,24 @@ import {borderWidthTiny} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 
 interface Props {
-  postId: string;
-  retailPrice: string;
+  postId: number;
   prices: Array<TypePrice>;
 }
 
 const UpdatePriceStatus = (props: Props) => {
-  const {postId, retailPrice, prices} = props;
-  const theme = Redux.getTheme();
+  const {postId, prices} = props;
+  const theme = useTheme();
 
   const onCancelRequesting = async () => {
     try {
-      Redux.setIsLoading(true);
       await apiEditGroupBooking({
         postId,
-        data: {
-          reject_request_update_price: true,
-        },
-      });
-      Redux.setBubblePalaceAction({
-        action: TYPE_BUBBLE_PALACE_ACTION.editGroupBuying,
-        payload: {
-          id: postId,
-          requestUpdatePrice: null,
-        },
+        data: {},
       });
     } catch (err) {
       ModalAlert.error({
         content: err,
       });
-    } finally {
-      Redux.setIsLoading(false);
     }
   };
 
@@ -53,14 +39,14 @@ const UpdatePriceStatus = (props: Props) => {
         i18Text="discovery.reviewUpdatePrice"
         customStyle={[styles.textReviewingPrice, {color: theme.borderColor}]}
       />
-      <StyleText
+      {/* <StyleText
         i18Text="discovery.retailPrice"
         customStyle={[styles.textUpdatePrice, {color: theme.borderColor}]}>
         <StyleText
           originValue={`: ${retailPrice}`}
           customStyle={[styles.textUpdatePrice, {color: theme.borderColor}]}
         />
-      </StyleText>
+      </StyleText> */}
 
       <StyleText
         i18Text="discovery.groupBuyingPrice"
@@ -71,7 +57,7 @@ const UpdatePriceStatus = (props: Props) => {
         />
       </StyleText>
       {prices.map(p => (
-        <View key={p.value} style={styles.updatePriceBox}>
+        <View key={p.price} style={styles.updatePriceBox}>
           <StyleText
             i18Text="discovery.numberPeople"
             i18Params={{
@@ -96,7 +82,7 @@ const UpdatePriceStatus = (props: Props) => {
             ]}
           />
           <StyleText
-            originValue={`${formatLocaleNumber(p.value)} vnd`}
+            originValue={`${formatLocaleNumber(String(p.price))} vnd`}
             style={[styles.peoplePriceText, {color: theme.borderColor}]}
           />
         </View>

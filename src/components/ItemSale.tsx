@@ -44,9 +44,21 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
   if (!listPersonalJoins.length) {
     RenderPeopleJoined = (
       <>
-        <StyleIcon source={Images.images.defaultAvatar} size={15} />
-        <StyleIcon source={Images.images.defaultAvatar} size={15} />
-        <StyleIcon source={Images.images.defaultAvatar} size={15} />
+        <StyleIcon
+          source={Images.images.defaultAvatar}
+          size={15}
+          customStyle={$iconBorder}
+        />
+        <StyleIcon
+          source={Images.images.defaultAvatar}
+          size={15}
+          customStyle={$iconBorder}
+        />
+        <StyleIcon
+          source={Images.images.defaultAvatar}
+          size={15}
+          customStyle={$iconBorder}
+        />
         <StyleText
           i18Text="discovery.beTheFirstJoin"
           customStyle={[$textInfo, {color: theme.gray_500}]}
@@ -62,6 +74,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
               key={index}
               source={{uri: personal?.creator_avatar}}
               size={15}
+              customStyle={$iconBorder}
             />
           );
         })}
@@ -116,8 +129,16 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
 
       {!hidingElements?.includes('name') && (
         <View style={$informationView}>
-          <StyleIcon source={{uri: item?.creator_avatar}} size={17} />
-          <StyleText originValue={item?.creator_name} customStyle={$textName} />
+          <StyleIcon
+            source={{uri: item?.creator_avatar}}
+            size={17}
+            customStyle={$iconBorder}
+          />
+          <StyleText
+            originValue={item?.creator_name}
+            customStyle={$textName}
+            numberOfLines={1}
+          />
         </View>
       )}
 
@@ -194,6 +215,9 @@ const $textInfo: TextStyle = {
 };
 const $textPrice: TextStyle = {
   fontWeight: 'bold',
+};
+const $iconBorder: ImageStyle = {
+  borderRadius: 50,
 };
 
 export default memo(ItemSale, (pre: Props, next: Props) => {

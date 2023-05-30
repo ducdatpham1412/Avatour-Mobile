@@ -5,6 +5,7 @@ import React from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
+import {ModalProfile} from 'navigation/screen/modals';
 
 interface Props {
   profile: TypeGetProfileResponse;
@@ -16,7 +17,8 @@ const ItemModalProfile = ({profile, onSelect}: Props) => {
 
   return (
     <StyleTouchable
-      customStyle={[$container, {backgroundColor: theme.background}]}>
+      customStyle={[$container, {backgroundColor: theme.background}]}
+      onPress={() => ModalProfile.show({userId: profile?.id})}>
       <StyleImage source={{uri: profile?.avatar}} customStyle={$avatar} />
 
       <View style={$body}>
@@ -58,6 +60,7 @@ const $container: ViewStyle = {
 const $avatar: ImageStyle = {
   width: moderateScale(40),
   height: moderateScale(40),
+  borderRadius: 40,
 };
 const $body: ViewStyle = {
   flex: 1,

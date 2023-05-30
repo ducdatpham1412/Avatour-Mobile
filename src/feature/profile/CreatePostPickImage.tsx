@@ -5,13 +5,13 @@ import {
   MAX_NUMBER_IMAGES_POST,
   ratioImageGroupBuying,
 } from 'asset/standardValue';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import StyleTabView from 'components/StyleTabView';
+import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import ModalPickImage from 'feature/mess/components/ModalPickImage';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
-import {goBack, navigate} from 'navigation/NavigationService';
 import React, {useRef, useState} from 'react';
 import {Platform, View} from 'react-native';
 import ImageZoomAndCrop from 'react-native-image-zoom-and-crop';
@@ -20,8 +20,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
-import {chooseImageFromCamera, logger} from 'utility/assistant';
 import ImageUploader from 'utility/ImageUploader';
+import {logger} from 'utility/assistant';
 import ScrollCropImages from './components/ScrollCropImages';
 
 interface Props {
@@ -37,9 +37,9 @@ const containerPreviewImage = {
 };
 
 const CreatePostPickImage = ({route}: Props) => {
-  const isCreateGB = route.params?.isCreateGB;
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const isFocused = useIsFocused();
+  const isCreateSale = route.params?.mode === 'sale';
 
   const tabPickRef = useRef<StyleTabView>(null);
 
@@ -91,18 +91,22 @@ const CreatePostPickImage = ({route}: Props) => {
     if (tabIndex === 1) {
       tabPickRef.current?.navigateToIndex(0);
     }
-    await chooseImageFromCamera((path: string) =>
-      setImages(images.concat(path)),
-    );
+
+    try {
+      const path = await ImageUploader.pickCamera();
+      setImages(images.concat(path));
+    } catch (err) {
+      logger(err);
+    }
   };
 
   const onChooseVideo = async () => {
     if (tabIndex === 0) {
       if (!video) {
         try {
-          const res = await ImageUploader.chooseVideoFromLibrary();
+          const res = await ImageUploader.pickVideo();
           tabPickRef.current?.navigateToIndex(1);
-          setVideo(res.path);
+          setVideo(res);
         } catch (err) {
           logger(err);
         }
@@ -111,8 +115,8 @@ const CreatePostPickImage = ({route}: Props) => {
       }
     } else {
       try {
-        const res = await ImageUploader.chooseVideoFromLibrary();
-        setVideo(res.path);
+        const res = await ImageUploader.pickVideo();
+        setVideo(res);
       } catch (err) {
         logger(err);
       }
@@ -130,34 +134,36 @@ const CreatePostPickImage = ({route}: Props) => {
             cropSize,
             cropAreaSize: cropSize,
           });
-          return temp;
+          return temp ?? '';
         }
         return url;
       }),
     );
 
-    if (isCreateGB) {
-      navigate(PROFILE_ROUTE.createGroupBuying, {
-        itemNew: {
-          images: tabIndex === 0 ? results : [video],
-          isVideo: tabIndex === 1,
-        },
-      });
-    } else {
-      navigate(PROFILE_ROUTE.createPostPreview, {
-        itemNew: {
-          images: tabIndex === 0 ? results : [video],
-          isVideo: tabIndex === 1,
-          userReviewed: route.params?.userReviewed,
-        },
-      });
+    if (results) {
+      if (isCreateSale) {
+        navigate(PROFILE_ROUTE.createSale, {
+          itemNew: {
+            images: tabIndex === 0 ? results : [video],
+            isVideo: tabIndex === 1,
+          },
+        });
+      } else {
+        navigate(PROFILE_ROUTE.createPostPreview, {
+          itemNew: {
+            images: tabIndex === 0 ? results : [video],
+            isVideo: tabIndex === 1,
+            userReviewed: route.params?.userReviewed,
+          },
+        });
+      }
     }
   };
 
   /**
    * Render views
    */
-  const Header = () => {
+  const renderHeader = () => {
     return (
       <View style={[styles.headerView, {borderBottomColor: theme.borderColor}]}>
         <StyleTouchable customStyle={styles.iconCloseView} onPress={goBack}>
@@ -182,7 +188,7 @@ const CreatePostPickImage = ({route}: Props) => {
     );
   };
 
-  const ImagePreview = () => {
+  const renderImages = () => {
     if (tabIndex === 1) {
       if (!video) {
         return null;
@@ -202,7 +208,7 @@ const CreatePostPickImage = ({route}: Props) => {
       );
     }
 
-    if (isCreateGB) {
+    if (isCreateSale) {
       return (
         <ScrollCropImages
           images={images}
@@ -220,9 +226,9 @@ const CreatePostPickImage = ({route}: Props) => {
               }),
             );
           }}
-          initRatio={isCreateGB ? ratioImageGroupBuying : 1}
+          initRatio={isCreateSale ? ratioImageGroupBuying : 1}
           onChangeCropperSize={value => setCropSize(value)}
-          havingZoomButton={!isCreateGB}
+          havingZoomButton={!isCreateSale}
         />
       );
     }
@@ -255,15 +261,15 @@ const CreatePostPickImage = ({route}: Props) => {
               }),
             );
           }}
-          initRatio={isCreateGB ? ratioImageGroupBuying : 1}
+          initRatio={isCreateSale ? ratioImageGroupBuying : 1}
           onChangeCropperSize={value => setCropSize(value)}
-          havingZoomButton={!isCreateGB}
+          havingZoomButton={!isCreateSale}
         />
       </View>
     );
   };
 
-  const Tool = () => {
+  const renderTool = () => {
     return (
       <View
         style={[
@@ -334,9 +340,9 @@ const CreatePostPickImage = ({route}: Props) => {
 
   return (
     <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      {Header()}
-      {ImagePreview()}
-      {Tool()}
+      {renderHeader()}
+      {renderImages()}
+      {renderTool()}
       <StyleTabView
         ref={tabPickRef}
         containerStyle={styles.tabView}

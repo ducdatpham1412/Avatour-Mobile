@@ -24,13 +24,13 @@ import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
 import AuthenticateService from 'utility/login/loginService';
 import GenderSwipe from '../components/GenderSwipe';
 
-export const scrollItemHeight = verticalScale(140);
+export const scrollItemHeight = verticalScale(200);
 const defaultDate = new Date(2000, 0, 1);
 
 const EditBasicInformation = ({
   route,
 }: RouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
-  const {isLoginSocial = false, itemLoginSuccess} = route.params;
+  const {isLoginSocial = false, itemLoginSuccess} = route?.params ?? {};
   const scrollPickerRef = useRef<ScrollView>(null);
 
   const {loading, setLoading} = useLoading();
@@ -61,14 +61,13 @@ const EditBasicInformation = ({
       const onEditProfileAndGo = async (isKeep: boolean) => {
         try {
           setLoading(true);
-          await AsyncStore.updateActiveUser(itemLoginSuccess);
           const updateObject = {
             gender,
             name,
             birthday: formatUTCDate(birthday),
           };
-
           await apiChangeInformation(updateObject);
+          await AsyncStore.updateActiveUser(itemLoginSuccess);
           await AuthenticateService.loginSuccess({
             itemLoginSuccess,
             isKeepSign: isKeep,
@@ -115,10 +114,8 @@ const EditBasicInformation = ({
             }}
             decelerationRate={isIOS ? 0 : 0.8}
             scrollEventThrottle={40}>
-            {/* Gender */}
             <GenderSwipe gender={gender} setGender={setGender} />
 
-            {/* Name */}
             <View style={styles.pickerBox}>
               <StyleText i18Text="login.detailInformation.enterYourName" />
               <InputBox
@@ -131,7 +128,6 @@ const EditBasicInformation = ({
               />
             </View>
 
-            {/* Birthday */}
             <View style={styles.pickerBox}>
               <StyleTouchable
                 hitSlop={20}

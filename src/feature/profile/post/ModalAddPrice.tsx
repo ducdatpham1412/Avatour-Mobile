@@ -19,13 +19,13 @@ interface Props {
 }
 
 interface States {
-  numberPeople: string;
-  priceValue: string;
+  numberPeople: number;
+  priceValue: number;
 }
 
 interface TypeShow {
-  numberPeople: string;
-  priceValue: string;
+  numberPeople: number;
+  price: number;
   indexEdit: number;
 }
 
@@ -41,15 +41,15 @@ class ModalAddPrice extends Component<Props, States> {
   indexEdit: number | null = null;
 
   state: States = {
-    numberPeople: '',
-    priceValue: '',
+    numberPeople: 0,
+    priceValue: 0,
   };
 
   show(params?: TypeShow) {
     if (params) {
       this.setState({
         numberPeople: params.numberPeople,
-        priceValue: params.priceValue,
+        priceValue: params.price,
       });
       this.indexEdit = params.indexEdit;
     }
@@ -64,20 +64,20 @@ class ModalAddPrice extends Component<Props, States> {
     if (this.indexEdit === null) {
       this.props.onAddPrice({
         number_people: Number(this.state.numberPeople),
-        value: this.state.priceValue,
+        price: this.state.priceValue,
       });
     } else {
       this.props.onChangePrice({
         indexEdit: this.indexEdit,
         value: {
           number_people: Number(this.state.numberPeople),
-          value: this.state.priceValue,
+          price: this.state.priceValue,
         },
       });
     }
     this.setState({
-      numberPeople: '',
-      priceValue: '',
+      numberPeople: 0,
+      priceValue: 0,
     });
     this.indexEdit = null;
     this.modalRef.current?.close();
@@ -88,8 +88,8 @@ class ModalAddPrice extends Component<Props, States> {
       this.modalRef.current?.close();
     } else {
       this.setState({
-        numberPeople: '',
-        priceValue: '',
+        numberPeople: 0,
+        priceValue: 0,
       });
       this.modalRef.current?.close();
     }
@@ -119,8 +119,8 @@ class ModalAddPrice extends Component<Props, States> {
         }
 
         isValidPriceValue =
-          Number(priceValue) < Number(lastPrice.value) && !!priceValue;
-        paramsPrice.value = lastPrice.value;
+          Number(priceValue) < Number(lastPrice.price) && !!priceValue;
+        paramsPrice.value = lastPrice.price;
         textAlertPrice = 'alert.priceLessThan';
       } else if (Number(numberPeople) <= 1) {
         isValidNumberPeople = false;
@@ -141,19 +141,19 @@ class ModalAddPrice extends Component<Props, States> {
         paramsNumberPeople.end = end.number_people;
 
         isValidPriceValue =
-          Number(priceValue) < Number(start.value) &&
-          Number(priceValue) > Number(end.value);
+          Number(priceValue) < Number(start.price) &&
+          Number(priceValue) > Number(end.price);
         textAlertPrice = 'alert.priceMoreLessThan';
-        paramsPrice.start = start.value;
-        paramsPrice.end = end.value;
+        paramsPrice.start = start.price;
+        paramsPrice.end = end.price;
       } else if (start) {
         isValidNumberPeople = Number(numberPeople) > start.number_people;
         textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-        paramsNumberPeople.value = start.number_people;
+        paramsNumberPeople.price = start.number_people;
 
-        isValidPriceValue = Number(priceValue) < Number(start.value);
+        isValidPriceValue = Number(priceValue) < Number(start.price);
         textAlertPrice = 'alert.priceLessThan';
-        paramsPrice.value = start.value;
+        paramsPrice.price = start.price;
       } else if (end) {
         isValidNumberPeople = Number(numberPeople) < end.number_people;
         if (!isValidNumberPeople) {
@@ -165,9 +165,9 @@ class ModalAddPrice extends Component<Props, States> {
           textAlertNumberPeople = 'alert.numberPeopleMoreThan';
         }
 
-        isValidPriceValue = Number(priceValue) > Number(end.value);
+        isValidPriceValue = Number(priceValue) > Number(end.price);
         textAlertPrice = 'alert.priceMoreThan';
-        paramsPrice.value = end.value;
+        paramsPrice.value = end.price;
       } else if (Number(numberPeople) <= 1) {
         isValidNumberPeople = false;
         paramsNumberPeople.value = 1;

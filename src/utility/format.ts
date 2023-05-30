@@ -98,11 +98,11 @@ export const formatDayGroupBuying = (date: string) => {
   return dayjs(date).locale('jp').format('dddd, DD/MM/YYYY');
 };
 
-export const formatLocaleNumber = (value: string) => {
+export const formatLocaleNumber = (value: string | number) => {
   if (!value) {
     return '';
   }
-  return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 export const formatDayFromNow = (date: Date | string) => {

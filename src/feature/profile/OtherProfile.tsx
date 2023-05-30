@@ -14,11 +14,13 @@ import {ListReviews, ListSales, ListTours} from './screens';
 import {ACCOUNT} from 'asset/enum';
 
 const OtherProfile = ({
-  route: {params},
+  route: {
+    params: {id, showHeader = true},
+  },
 }: RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>) => {
   const theme = useTheme();
   const [{data, isFollowing, isBlocked}, {follow, block, report}] =
-    useOtherProfile(params.id);
+    useOtherProfile(id);
 
   const [tabViewHeight, setTabViewHeight] = useState(0);
 
@@ -71,18 +73,22 @@ const OtherProfile = ({
 
   return (
     <StyleContainer
-      headerProps={{
-        title: data?.name as I18Normalize,
-        RightComponent: !isBlocked && (
-          <StyleTouchable onPress={onShowModalOptions}>
-            <StyleIcon
-              source={Images.icons.more}
-              size={20}
-              customStyle={{tintColor: theme.black}}
-            />
-          </StyleTouchable>
-        ),
-      }}
+      headerProps={
+        showHeader
+          ? {
+              title: data?.name as I18Normalize,
+              RightComponent: !isBlocked && (
+                <StyleTouchable onPress={onShowModalOptions}>
+                  <StyleIcon
+                    source={Images.icons.more}
+                    size={20}
+                    customStyle={{tintColor: theme.black}}
+                  />
+                </StyleTouchable>
+              ),
+            }
+          : undefined
+      }
       customStyle={$content}
       onLayout={e => {
         setTabViewHeight(e.nativeEvent.layout.height);
