@@ -423,7 +423,7 @@ const DetailSale = ({
         ref={modalConfirmJoinRef}
         onConfirm={value => {
           if (data) {
-            navigate(ROOT_SCREEN.detailMeJoin, {
+            push(ROOT_SCREEN.detailMeJoin, {
               saleId: data?.id,
               itemJoinRequest: {
                 ...value,

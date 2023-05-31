@@ -1,17 +1,15 @@
 import {apiChangeInformation} from 'api/setting';
 import {GENDER_TYPE} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
-import {FONT_SIZE} from 'asset/standardValue';
+import {BORDER_RADIUS} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import {
-  SafeView,
   StyleButton,
   StyleContainer,
   StyleText,
   StyleTouchable,
 } from 'components/base';
 import InputBox from 'components/common/InputBox';
-import {useLoading} from 'hook';
+import {useLoading, useTheme} from 'hook';
 import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
 import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
@@ -31,6 +29,7 @@ const EditBasicInformation = ({
   route,
 }: RouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
   const {isLoginSocial = false, itemLoginSuccess} = route?.params ?? {};
+  const theme = useTheme();
   const scrollPickerRef = useRef<ScrollView>(null);
 
   const {loading, setLoading} = useLoading();
@@ -95,90 +94,79 @@ const EditBasicInformation = ({
   };
 
   return (
-    <SafeView>
-      <StyleText
-        i18Text="login.detailInformation.title"
-        customStyle={styles.titleText}
-      />
-      <StyleContainer containerStyle={styles.pickerPart} extraHeight={50}>
-        <View style={styles.pickerView}>
-          <ScrollView
-            ref={scrollPickerRef}
-            snapToInterval={scrollItemHeight}
-            pagingEnabled
-            indicatorStyle="white"
-            showsVerticalScrollIndicator={false}
-            onMomentumScrollEnd={e => {
-              const offSet = e.nativeEvent.contentOffset.y;
-              setIndex(Math.round(offSet / scrollItemHeight));
-            }}
-            decelerationRate={isIOS ? 0 : 0.8}
-            scrollEventThrottle={40}>
-            <GenderSwipe gender={gender} setGender={setGender} />
+    <StyleContainer
+      extraHeight={50}
+      headerProps={{
+        LeftComponent: null,
+        title: 'login.detailInformation.title',
+      }}>
+      <View style={[styles.pickerView, {backgroundColor: theme.white}]}>
+        <ScrollView
+          ref={scrollPickerRef}
+          snapToInterval={scrollItemHeight}
+          pagingEnabled
+          onMomentumScrollEnd={e => {
+            const offSet = e.nativeEvent.contentOffset.y;
+            setIndex(Math.round(offSet / scrollItemHeight));
+          }}
+          decelerationRate={isIOS ? 0 : 0.8}
+          scrollEventThrottle={40}>
+          <GenderSwipe gender={gender} setGender={setGender} />
 
-            <View style={styles.pickerBox}>
-              <StyleText i18Text="login.detailInformation.enterYourName" />
-              <InputBox
-                value={name}
-                onChangeText={text => setName(text)}
-                style={{marginTop: verticalScale(30)}}
-                i18Placeholder="profile.edit.name"
-                onSubmitEditing={onPressButton}
-                selectionColor={Theme.darkTheme.textHightLight}
+          <View style={styles.pickerBox}>
+            <StyleText i18Text="login.detailInformation.enterYourName" />
+            <InputBox
+              value={name}
+              onChangeText={text => setName(text)}
+              style={{
+                marginTop: verticalScale(30),
+                backgroundColor: theme.background,
+              }}
+              i18Placeholder="profile.edit.name"
+              onSubmitEditing={onPressButton}
+            />
+          </View>
+
+          <View style={styles.pickerBox}>
+            <StyleTouchable
+              hitSlop={20}
+              onPress={() => {
+                ModalDatePicker.show({
+                  date: String(birthday ?? defaultDate),
+                  onChangeRange(value) {
+                    setBirthday(value.date);
+                  },
+                });
+              }}>
+              <StyleText
+                i18Text={textBirthday as I18Normalize}
+                customStyle={
+                  birthday ? styles.textBirthday : styles.textChooseBirthday
+                }
               />
-            </View>
+            </StyleTouchable>
+          </View>
+        </ScrollView>
+      </View>
 
-            <View style={styles.pickerBox}>
-              <StyleTouchable
-                hitSlop={20}
-                onPress={() => {
-                  ModalDatePicker.show({
-                    date: String(birthday ?? defaultDate),
-                    onChangeRange(value) {
-                      setBirthday(value.date);
-                    },
-                  });
-                }}>
-                <StyleText
-                  i18Text={textBirthday as I18Normalize}
-                  customStyle={
-                    birthday ? styles.textBirthday : styles.textChooseBirthday
-                  }
-                />
-              </StyleTouchable>
-            </View>
-          </ScrollView>
-        </View>
-
-        <StyleButton
-          title={titleButton}
-          onPress={onPressButton}
-          containerStyle={{marginTop: verticalScale(80)}}
-          disable={disableButton}
-          isLoading={loading}
-        />
-      </StyleContainer>
-    </SafeView>
+      <StyleButton
+        title={titleButton}
+        onPress={onPressButton}
+        containerStyle={{marginTop: verticalScale(80)}}
+        disable={disableButton}
+        isLoading={loading}
+      />
+    </StyleContainer>
   );
 };
 
 const styles = ScaledSheet.create({
-  titleText: {
-    fontSize: FONT_SIZE.f1,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    marginTop: safePaddingNotZero,
-  },
-  // picker
-  pickerPart: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
   pickerView: {
     width: '80%',
     height: scrollItemHeight,
     alignSelf: 'center',
     marginTop: '70@vs',
+    borderRadius: BORDER_RADIUS.f2,
   },
   pickerBox: {
     width: '100%',

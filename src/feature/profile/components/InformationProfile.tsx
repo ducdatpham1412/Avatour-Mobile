@@ -197,10 +197,13 @@ const InformationProfile = ({
           />
           {!!profile.location && isShopAccount && (
             <View style={styles.locationBox}>
-              <Ionicons name="location" style={styles.iconLocation} />
+              <Ionicons
+                name="location"
+                style={[styles.iconLocation, {color: theme.blue}]}
+              />
               <StyleText
                 originValue={profile.location}
-                customStyle={[styles.textLocation, {color: theme.borderColor}]}
+                customStyle={[styles.textLocation, {color: theme.gray_700}]}
                 numberOfLines={1}
               />
             </View>
@@ -318,7 +321,6 @@ const styles = ScaledSheet.create({
   },
   iconLocation: {
     fontSize: '13@ms',
-    color: Theme.common.commentGreen,
   },
   textLocation: {
     fontSize: FONT_SIZE.small,
