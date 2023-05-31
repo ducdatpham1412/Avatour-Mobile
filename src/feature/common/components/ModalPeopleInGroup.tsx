@@ -32,7 +32,7 @@ interface Props {
 }
 
 const Separator = () => {
-  return <View style={{height: verticalScale(20)}} />;
+  return <View style={{height: verticalScale(12)}} />;
 };
 
 const ListPeople = ({group}: Props) => {

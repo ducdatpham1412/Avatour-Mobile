@@ -1,4 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
+import {BORDER_RADIUS} from 'asset';
 import {SESSION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {FONT_SIZE} from 'asset/standardValue';
@@ -8,7 +9,7 @@ import {useTheme} from 'hook';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import React from 'react';
-import {Platform, TextStyle, View, ViewStyle} from 'react-native';
+import {ImageStyle, Platform, TextStyle, View, ViewStyle} from 'react-native';
 import {getSessionOfDay} from 'utility/format';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
@@ -36,7 +37,7 @@ const HeaderDiscovery = () => {
         <StyleIcon
           source={{uri: profile.avatar}}
           size={48}
-          customStyle={{tintColor: theme.white}}
+          customStyle={$avatar}
         />
         <View style={$sessionBox}>
           <StyleText
@@ -86,6 +87,9 @@ const $leftView: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
 };
+const $avatar: ImageStyle = {
+  borderRadius: BORDER_RADIUS.f3,
+};
 const $sessionBox: ViewStyle = {
   marginLeft: scale(14),
 };
@@ -98,7 +102,7 @@ const $buttonMessage: ViewStyle = {
   height: moderateScale(45),
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: moderateScale(12),
+  borderRadius: BORDER_RADIUS.f3,
 };
 const $newMessageBox: ViewStyle = {
   position: 'absolute',
