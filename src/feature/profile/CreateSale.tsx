@@ -1,10 +1,10 @@
 import {apiCreateGroupBuying, apiEditGroupBooking} from 'api/discovery';
-import {STATUS, TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
+import {useAppSelector} from 'app-redux/store';
+import {STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
-import LoadingScreen from 'components/LoadingScreen';
 import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import {
   StyleContainer,
@@ -14,127 +14,85 @@ import {
 } from 'components/base';
 import ScrollSyncSizeImage from 'components/common/ScrollSyncSizeImage';
 import UpdatePriceStatus from 'feature/common/components/UpdatePriceStatus';
+import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {TextInput, Vibration, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Modalize} from 'react-native-modalize';
 import {ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {I18Normalize} from 'utility/I18Next';
 import ImageUploader from 'utility/ImageUploader';
-import {
-  borderWidthTiny,
-  chooseIconTopic,
-  onGoToSignUp,
-} from 'utility/assistant';
+import {borderWidthTiny, onGoToSignUp} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 import AddInfoButton from './components/AddInfoButton';
 import PreviewVideo from './components/PreviewVideo';
 import ModalAddPrice from './post/ModalAddPrice';
-import ModalRetailPrice from './post/ModalRetailPrice';
-import ModalTopic from './post/ModalTopic';
 
 interface Props {
   route: {
-    params: AppParamsList[PROFILE_ROUTE.createGroupBuying];
+    params: AppParamsList[PROFILE_ROUTE.createSale];
   };
 }
 
 const {width, safeBottomPadding} = Metrics;
 
-const CreateGroupBuying = ({route}: Props) => {
-  const itemNew = useRef(route.params?.itemNew).current;
-  const itemEdit = useRef(route.params?.itemEdit).current;
+const CreateSale = ({route}: Props) => {
+  const itemNew = useRef(route.params?.itemNew);
+  const itemEdit = useRef(route.params?.itemEdit);
   const itemError = useRef(route.params?.itemError).current;
-  const itemDraft = useRef(route.params?.itemDraft).current;
-  const theme = Redux.getTheme();
-  const isModeExp = Redux.getModeExp();
-  const token = Redux.getToken();
-  const isLoading = Redux.getIsLoading();
-  const {location} = Redux.getPassport().profile;
+
+  const theme = useTheme();
+  const {
+    accountSlice: {
+      modeExp,
+      passport: {
+        profile: {location},
+      },
+    },
+  } = useAppSelector(state => state);
   const {t} = useTranslation();
 
-  const initValue = useMemo(() => {
-    return {
-      topics: itemEdit?.topic || itemError?.topic || itemDraft?.topic || [],
-      content:
-        itemEdit?.content || itemError?.content || itemDraft?.content || '',
-      images:
-        itemEdit?.images ||
-        itemError?.images ||
-        itemDraft?.images ||
-        itemNew?.images ||
-        [],
-      retailPrice:
-        itemEdit?.retailPrice ||
-        itemError?.retailPrice ||
-        itemDraft?.retailPrice ||
-        '',
-      groupPrices:
-        itemEdit?.prices || itemError?.prices || itemDraft?.prices || [],
-      postStatus:
-        itemEdit?.postStatus || itemDraft?.postStatus || STATUS.active,
-    };
-  }, []);
+  const initValue = useRef({
+    content: itemEdit.current?.content || itemError?.content || '',
+    images:
+      itemEdit.current?.images ||
+      itemError?.images ||
+      itemNew.current?.images ||
+      [],
+    prices: itemEdit.current?.prices || itemError?.prices || [],
+  }).current;
 
-  const [topics, setTopics] = useState(initValue.topics);
   const [content, setContent] = useState(initValue.content);
   const [images] = useState(initValue.images);
-  const [retailPrice, setRetailPrice] = useState(initValue.retailPrice);
-  const [groupPrices, setGroupPrices] = useState(initValue.groupPrices);
-  const [postStatus, setPostStatus] = useState(initValue.postStatus);
-  const [requestUpdatePrice, setRequestUpdatePrice] = useState(
-    itemEdit?.requestUpdatePrice,
-  );
+  const [prices, setPrices] = useState(initValue.prices);
 
-  const modalTopicRef = useRef<Modalize>(null);
-  const modalRetailPriceRef = useRef<ModalRetailPrice>(null);
   const modalPriceRef = useRef<ModalAddPrice>(null);
   const scrollRef = useRef<KeyboardAwareScrollView>(null);
 
-  const buttonTopicRef = useRef<AddInfoButton>(null);
-  const buttonRetailPriceRef = useRef<AddInfoButton>(null);
   const buttonAddPriceRef = useRef<AddInfoButton>(null);
 
-  const onConfirmPost = async (isDraft: boolean) => {
-    if (!topics.length) {
-      Vibration.vibrate();
-      buttonTopicRef.current?.slug();
-      return;
-    }
-    if (!retailPrice) {
-      Vibration.vibrate();
-      buttonRetailPriceRef.current?.slug();
-      return;
-    }
-    if (groupPrices.length === 0) {
+  const onConfirmPost = async () => {
+    if (!prices?.length) {
       Vibration.vibrate();
       buttonAddPriceRef.current?.slug();
       return;
     }
 
-    if (!isModeExp && token) {
+    if (!modeExp) {
       const newGroupBuying: TypeCreateGroupBuying = {
-        topic: topics,
         content,
         images,
-        retailPrice,
-        prices: groupPrices,
-        isDraft,
+        prices,
       };
       try {
-        Redux.setPostCreatedHandling({
-          status: 'loading',
-          data: newGroupBuying,
-        });
         navigate(ROOT_SCREEN.mainScreen);
         const listNameImages = await ImageUploader.upLoadManyImg(
           newGroupBuying.images,
@@ -145,19 +103,7 @@ const CreateGroupBuying = ({route}: Props) => {
           ...newGroupBuying,
           images: listNameImages,
         });
-        Redux.setBubblePalaceAction({
-          action: TYPE_BUBBLE_PALACE_ACTION.createNewGroupBuying,
-          payload: res.data,
-        });
-        Redux.setPostCreatedHandling({
-          status: 'success',
-          data: newGroupBuying,
-        });
       } catch (err) {
-        Redux.setPostCreatedHandling({
-          status: 'error',
-          data: newGroupBuying,
-        });
         ModalAlert.error({
           content: err,
         });
@@ -171,71 +117,22 @@ const CreateGroupBuying = ({route}: Props) => {
   };
 
   const onEditPost = async () => {
-    if (itemEdit) {
+    if (itemEdit.current) {
       try {
-        Redux.setIsLoading(true);
         const dataEdit: TypeEditGroupBooking = {
-          postId: itemEdit.id,
+          postId: itemEdit.current.id,
           data: {},
         };
         if (content !== initValue.content) {
           dataEdit.data.content = content;
         }
-        if (!isEqual(topics, initValue.topics)) {
-          dataEdit.data.topic = topics;
+        if (!isEqual(images, initValue.images)) {
+          dataEdit.data.images = images;
+        }
+        if (!isEqual(prices, initValue.prices)) {
+          dataEdit.data.prices = prices;
         }
         await apiEditGroupBooking(dataEdit);
-        Redux.setBubblePalaceAction({
-          action: TYPE_BUBBLE_PALACE_ACTION.editGroupBuying,
-          payload: {
-            id: itemEdit.id,
-            content,
-            topic: topics,
-          },
-        });
-        goBack();
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      } finally {
-        Redux.setIsLoading(false);
-      }
-    } else if (itemDraft) {
-      try {
-        Redux.setIsLoading(true);
-        const dataEdit: TypeEditGroupBooking = {
-          postId: itemDraft.id,
-          data: {},
-        };
-        if (content !== initValue.content) {
-          dataEdit.data.content = content;
-        }
-        if (!isEqual(topics, initValue.topics)) {
-          dataEdit.data.topic = topics;
-        }
-        dataEdit.data.status = STATUS.active;
-        if (retailPrice !== initValue.retailPrice) {
-          dataEdit.data.retail_price = retailPrice;
-        }
-        if (!isEqual(groupPrices, initValue.groupPrices)) {
-          dataEdit.data.prices = groupPrices;
-        }
-
-        await apiEditGroupBooking(dataEdit);
-        Redux.setBubblePalaceAction({
-          action: TYPE_BUBBLE_PALACE_ACTION.editGroupBuying,
-          payload: {
-            id: itemDraft.id,
-            content,
-            topic: topics,
-            isDraft: false,
-            retailPrice,
-            prices: groupPrices,
-            postStatus: STATUS.active,
-          },
-        });
-        goBack();
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -248,12 +145,9 @@ const CreateGroupBuying = ({route}: Props) => {
 
   const onGoBack = () => {
     const temp: typeof initValue = {
-      topics,
       content,
       images,
-      retailPrice,
-      groupPrices,
-      postStatus: initValue.postStatus,
+      prices,
     };
     if (!isEqual(temp, initValue)) {
       ModalAlert.options({
@@ -265,48 +159,16 @@ const CreateGroupBuying = ({route}: Props) => {
     }
   };
 
-  const onChangePostStatus = useCallback(
-    async (newPostStatus: number, postId: string) => {
-      try {
-        Redux.setIsLoading(true);
-        await apiEditGroupBooking({
-          postId,
-          data: {
-            status: newPostStatus,
-          },
-        });
-        setPostStatus(newPostStatus);
-        Redux.setBubblePalaceAction({
-          action: TYPE_BUBBLE_PALACE_ACTION.editGroupBuying,
-          payload: {
-            id: postId,
-            postStatus: newPostStatus,
-          },
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      } finally {
-        Redux.setIsLoading(false);
-      }
-    },
-    [],
-  );
-
   /**
    * Render views
    */
   const Header = () => {
     let disableButtonEdit = true;
-    if (itemEdit) {
+    if (itemEdit.current) {
       const temp: typeof initValue = {
-        topics,
         content,
         images,
-        retailPrice,
-        groupPrices,
-        postStatus: initValue.postStatus,
+        prices,
       };
       disableButtonEdit = isEqual(temp, initValue);
     }
@@ -327,7 +189,7 @@ const CreateGroupBuying = ({route}: Props) => {
           />
         </StyleTouchable>
 
-        {(itemNew || itemError || itemDraft) && (
+        {(itemNew || itemError) && (
           <StyleTouchable
             customStyle={[
               styles.postBox,
@@ -335,13 +197,7 @@ const CreateGroupBuying = ({route}: Props) => {
                 backgroundColor: theme.highlightColor,
               },
             ]}
-            onPress={() => {
-              if (itemDraft) {
-                onEditPost();
-              } else {
-                onConfirmPost(false);
-              }
-            }}>
+            onPress={onConfirmPost}>
             <StyleText
               i18Text="profile.post.post"
               customStyle={[styles.textPost, {color: theme.backgroundColor}]}
@@ -357,7 +213,7 @@ const CreateGroupBuying = ({route}: Props) => {
                 backgroundColor: theme.borderColor,
               },
             ]}
-            onPress={() => onConfirmPost(true)}>
+            onPress={onConfirmPost}>
             <StyleText
               i18Text="profile.post.draft"
               customStyle={[styles.textDraft, {color: theme.backgroundColor}]}
@@ -365,7 +221,7 @@ const CreateGroupBuying = ({route}: Props) => {
           </StyleTouchable>
         )}
 
-        {itemEdit && (
+        {itemEdit.current && (
           <StyleTouchable
             customStyle={[
               styles.postBox,
@@ -384,61 +240,61 @@ const CreateGroupBuying = ({route}: Props) => {
   };
 
   const ImagePreview = useMemo(() => {
-    if (itemNew?.isVideo) {
+    if (itemNew.current?.isVideo) {
       return <PreviewVideo uri={images[0]} />;
     }
     return <ScrollSyncSizeImage images={images} syncWidth={width} />;
   }, []);
 
-  const Topic = () => {
-    const disableChooseTopic =
-      itemEdit && itemEdit.postStatus === STATUS.requestingDelete;
+  //   const Topic = () => {
+  //     const disableChooseTopic =
+  //       itemEdit.current && itemEdit.current.postStatus === STATUS.requestingDelete;
 
-    if (topics.length === 0) {
-      return (
-        <AddInfoButton
-          ref={buttonTopicRef}
-          borderColor={theme.borderColor}
-          titleColor={theme.textHightLight}
-          title="profile.post.topic"
-          onPress={() => modalTopicRef.current?.open()}
-        />
-      );
-    }
+  //     if (topics.length === 0) {
+  //       return (
+  //         <AddInfoButton
+  //           ref={buttonTopicRef}
+  //           borderColor={theme.borderColor}
+  //           titleColor={theme.textHightLight}
+  //           title="profile.post.topic"
+  //           onPress={() => modalTopicRef.current?.open()}
+  //         />
+  //       );
+  //     }
 
-    return (
-      <StyleTouchable
-        customStyle={styles.topicView}
-        onPress={() => modalTopicRef.current?.open()}
-        disable={disableChooseTopic}>
-        {topics.map(id => {
-          const chosenTopic = chooseIconTopic(id);
-          return (
-            <StyleIcon
-              key={id}
-              source={chosenTopic}
-              size={25}
-              customStyle={styles.iconTopicView}
-            />
-          );
-        })}
-      </StyleTouchable>
-    );
-  };
+  //     return (
+  //       <StyleTouchable
+  //         customStyle={styles.topicView}
+  //         onPress={() => modalTopicRef.current?.open()}
+  //         disable={disableChooseTopic}>
+  //         {topics.map(id => {
+  //           const chosenTopic = chooseIconTopic(id);
+  //           return (
+  //             <StyleIcon
+  //               key={id}
+  //               source={chosenTopic}
+  //               size={25}
+  //               customStyle={styles.iconTopicView}
+  //             />
+  //           );
+  //         })}
+  //       </StyleTouchable>
+  //     );
+  //   };
 
-  const InfoBox = () => {
+  const renderInfoBox = () => {
     let textStatus: I18Normalize = 'discovery.available';
     let textButton: I18Normalize = 'discovery.temporarilyClosed';
     let textButtonColor = theme.borderColor;
 
-    const isClosingOrRequestingDelete =
-      postStatus === STATUS.temporarilyClose ||
-      postStatus === STATUS.requestingDelete;
-    if (isClosingOrRequestingDelete) {
-      textStatus = 'discovery.temporarilyClosed';
-      textButton = 'discovery.openAvailable';
-      textButtonColor = theme.highlightColor;
-    }
+    // const isClosingOrRequestingDelete =
+    //   postStatus === STATUS.temporarilyClose ||
+    //   postStatus === STATUS.requestingDelete;
+    // if (isClosingOrRequestingDelete) {
+    //   textStatus = 'discovery.temporarilyClosed';
+    //   textButton = 'discovery.openAvailable';
+    //   textButtonColor = theme.highlightColor;
+    // }
 
     return (
       <>
@@ -461,17 +317,17 @@ const CreateGroupBuying = ({route}: Props) => {
               customStyle={[styles.textLocation, {color: theme.textHightLight}]}
             />
           </View>
-          {!!itemEdit && (
+          {!!itemEdit.current && (
             <StyleTouchable
               customStyle={styles.editStatusBox}
-              onPress={() =>
-                onChangePostStatus(
-                  isClosingOrRequestingDelete
-                    ? STATUS.active
-                    : STATUS.temporarilyClose,
-                  itemEdit.id,
-                )
-              }>
+              onPress={() => {
+                // onChangePostStatus(
+                //   isClosingOrRequestingDelete
+                //     ? STATUS.active
+                //     : STATUS.temporarilyClose,
+                //   itemEdit.current.id,
+                // );
+              }}>
               <StyleText
                 i18Text={textButton}
                 customStyle={[styles.textEditStatus, {color: textButtonColor}]}
@@ -483,81 +339,13 @@ const CreateGroupBuying = ({route}: Props) => {
     );
   };
 
-  const RetailPrice = () => {
-    const disableEditRetail = !!itemEdit;
-
-    return (
-      <View style={[styles.priceView, {borderTopColor: theme.holderColor}]}>
-        <View style={styles.titlePriceView}>
-          <StyleIcon source={Images.icons.username} size={18} />
-          <StyleText
-            i18Text="discovery.retailPrice"
-            customStyle={[styles.textTitlePrice, {color: theme.textHightLight}]}
-          />
-        </View>
-
-        {retailPrice ? (
-          <View style={styles.priceBox}>
-            <View
-              style={[
-                styles.priceValue,
-                {
-                  borderColor: theme.highlightColor,
-                  flex: undefined,
-                },
-              ]}>
-              <StyleText
-                originValue={`${formatLocaleNumber(retailPrice)} vnd`}
-                customStyle={[
-                  styles.textNumberPeople,
-                  {
-                    color: theme.highlightColor,
-                    fontWeight: 'bold',
-                  },
-                ]}
-              />
-            </View>
-
-            {!disableEditRetail && (
-              <StyleTouchable
-                customStyle={styles.buttonEditRetail}
-                onPress={() => modalRetailPriceRef.current?.show()}>
-                <StyleText
-                  i18Text="profile.post.edit"
-                  customStyle={[
-                    styles.textEditRetail,
-                    {color: theme.textColor},
-                  ]}
-                />
-              </StyleTouchable>
-            )}
-          </View>
-        ) : (
-          <AddInfoButton
-            ref={buttonRetailPriceRef}
-            title="profile.addPrice"
-            titleColor={theme.textHightLight}
-            borderColor={theme.borderColor}
-            onPress={() => {
-              if (!itemEdit) {
-                modalRetailPriceRef.current?.show();
-              }
-            }}
-          />
-        )}
-      </View>
-    );
-  };
-
-  const GroupBuyingPrices = () => {
-    const onDeletePrice = (valuePrice: string) => {
-      setGroupPrices(preValue =>
-        preValue.filter(item => item.value !== valuePrice),
-      );
+  const renderPrices = () => {
+    const onDeletePrice = (valuePrice: number) => {
+      setPrices(pre => pre.filter(item => item.price !== valuePrice));
     };
 
     const ButtonPrice = () => {
-      if (!itemEdit) {
+      if (!itemEdit.current) {
         return (
           <AddInfoButton
             ref={buttonAddPriceRef}
@@ -569,44 +357,43 @@ const CreateGroupBuying = ({route}: Props) => {
         );
       }
 
-      if (itemEdit.postStatus === STATUS.requestingDelete) {
+      if (itemEdit.current.status === STATUS.requestingDelete) {
         return null;
       }
 
-      if (!requestUpdatePrice) {
-        return (
-          <View style={styles.titlePriceView}>
-            <StyleTouchable
-              customStyle={styles.editPriceBox}
-              hitSlop={{
-                right: 15,
-                bottom: 15,
-              }}
-              onPress={() =>
-                navigate(PROFILE_ROUTE.updatePrices, {
-                  item: itemEdit,
-                  onUpdatePrice: (value: TypeGroupBuying) => {
-                    setRequestUpdatePrice({
-                      retailPrice: value.retailPrice,
-                      prices: value.prices,
-                    });
-                  },
-                })
-              }>
-              <StyleText
-                i18Text="profile.editPrice"
-                customStyle={[styles.textEditPrice, {color: theme.borderColor}]}
-              />
-            </StyleTouchable>
-          </View>
-        );
-      }
+      //   if (!requestUpdatePrice) {
+      //     return (
+      //       <View style={styles.titlePriceView}>
+      //         <StyleTouchable
+      //           customStyle={styles.editPriceBox}
+      //           hitSlop={{
+      //             right: 15,
+      //             bottom: 15,
+      //           }}
+      //           onPress={() =>
+      //             navigate(PROFILE_ROUTE.updatePrices, {
+      //               item: itemEdit.current,
+      //               onUpdatePrice: (value: TypeGroupBuying) => {
+      //                 setRequestUpdatePrice({
+      //                   retailPrice: value.retailPrice,
+      //                   prices: value.prices,
+      //                 });
+      //               },
+      //             })
+      //           }>
+      //           <StyleText
+      //             i18Text="profile.editPrice"
+      //             customStyle={[styles.textEditPrice, {color: theme.borderColor}]}
+      //           />
+      //         </StyleTouchable>
+      //       </View>
+      //     );
+      //   }
 
       return (
         <UpdatePriceStatus
-          postId={itemEdit.id}
-          retailPrice={itemEdit.retailPrice}
-          prices={itemEdit.prices}
+          postId={itemEdit.current.id}
+          prices={itemEdit.current.prices}
         />
       );
     };
@@ -621,19 +408,19 @@ const CreateGroupBuying = ({route}: Props) => {
           />
         </View>
 
-        {groupPrices.map((price, index) => {
+        {prices.map((price, index) => {
           return (
             <StyleTouchable
               key={price.number_people}
               customStyle={styles.priceBox}
               onPress={() => {
                 modalPriceRef.current?.show({
-                  numberPeople: String(price.number_people),
-                  priceValue: price.value,
+                  numberPeople: price.number_people,
+                  price: price.price,
                   indexEdit: index,
                 });
               }}
-              disable={!!itemEdit}
+              disable={!!itemEdit.current}
               disableOpacity={1}>
               <View
                 style={[
@@ -658,7 +445,7 @@ const CreateGroupBuying = ({route}: Props) => {
                   {borderColor: theme.highlightColor},
                 ]}>
                 <StyleText
-                  originValue={`${formatLocaleNumber(price.value)} vnd`}
+                  originValue={`${formatLocaleNumber(price.price)} vnd`}
                   customStyle={[
                     styles.textNumberPeople,
                     {
@@ -668,11 +455,11 @@ const CreateGroupBuying = ({route}: Props) => {
                   ]}
                 />
               </View>
-              {!itemEdit && (
+              {!itemEdit.current && (
                 <StyleTouchable
                   customStyle={styles.deleteBox}
                   hitSlop={10}
-                  onPress={() => onDeletePrice(price.value)}>
+                  onPress={() => onDeletePrice(price.price)}>
                   <Feather
                     name="x"
                     style={[styles.iconDelete, {color: theme.borderColor}]}
@@ -690,7 +477,7 @@ const CreateGroupBuying = ({route}: Props) => {
 
   const Content = () => {
     const disableEditCaption =
-      !!itemEdit && itemEdit.postStatus === STATUS.requestingDelete;
+      !!itemEdit.current && itemEdit.current.status === STATUS.requestingDelete;
 
     return (
       <View style={[styles.priceView, {borderTopColor: theme.holderColor}]}>
@@ -725,50 +512,47 @@ const CreateGroupBuying = ({route}: Props) => {
         keyboardDismissMode="on-drag">
         {ImagePreview}
         <View style={styles.contentView}>
-          {Topic()}
-          {InfoBox()}
-          {RetailPrice()}
-          {GroupBuyingPrices()}
+          {renderInfoBox()}
+          {renderPrices()}
           {Content()}
         </View>
       </StyleContainer>
 
-      <ModalTopic
-        ref={modalTopicRef}
-        topics={topics}
-        onChangeListTopics={value => {
-          setTopics(value);
-        }}
-      />
-
-      <ModalRetailPrice
-        ref={modalRetailPriceRef}
-        theme={theme}
-        price={retailPrice}
-        onChangePrice={value => setRetailPrice(value)}
-      />
       <ModalAddPrice
         ref={modalPriceRef}
         theme={theme}
-        prices={groupPrices}
-        onAddPrice={value => setGroupPrices(groupPrices.concat(value))}
+        prices={prices}
+        onAddPrice={value => setPrices(pre => pre.concat(value))}
         onChangePrice={e => {
-          setGroupPrices(preValue =>
-            preValue.map((item, index) => {
+          setPrices(pre =>
+            pre.map((item, index) => {
               if (index !== e.indexEdit) {
                 return item;
               }
               return {
                 ...item,
                 number_people: e.value.number_people,
-                value: e.value.value,
+                price: e.value.price,
               };
             }),
           );
         }}
       />
 
-      {isLoading && <LoadingScreen />}
+      {/* <ModalTopic
+        ref={modalTopicRef}
+        topics={topics}
+        onChangeListTopics={value => {
+          setTopics(value);
+        }}
+      /> */}
+
+      {/* <ModalRetailPrice
+        ref={modalRetailPriceRef}
+        theme={theme}
+        price={retailPrice}
+        onChangePrice={value => setRetailPrice(value)}
+      /> */}
     </>
   );
 };
@@ -933,4 +717,4 @@ const styles = ScaledSheet.create({
   },
 });
 
-export default CreateGroupBuying;
+export default CreateSale;

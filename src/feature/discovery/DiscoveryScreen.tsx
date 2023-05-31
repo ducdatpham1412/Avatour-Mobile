@@ -76,7 +76,10 @@ const DiscoveryScreen = () => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={$contentBanner}>
             {banners.map((url, index) => (
-              <StyleTouchable key={index} customStyle={$itemBannerView}>
+              <StyleTouchable
+                key={index}
+                customStyle={$itemBannerView}
+                onPress={() => navigate(DISCOVERY_ROUTE.searchScreen)}>
                 <StyleImage
                   source={{uri: url}}
                   customStyle={$image}

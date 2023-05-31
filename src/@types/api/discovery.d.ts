@@ -11,12 +11,18 @@ interface TypeReactRequest {
 }
 
 type TypeCreateGroupBuying = {
-  topic: Array<number>;
   content: string;
   images: Array<string>;
-  retailPrice: string;
   prices: Array<TypePrice>;
-  isDraft: boolean;
+};
+
+type TypeEditGroupBooking = {
+  postId: number;
+  data: {
+    content?: string;
+    images?: Array<string>;
+    prices?: Array<TypePrice>;
+  };
 };
 
 type TypeMeJoinResponse = {
@@ -34,21 +40,6 @@ type TypeMeJoinResponse = {
     creator: number;
     name: string;
     avatar: string;
-  };
-};
-
-type TypeEditGroupBooking = {
-  postId: string;
-  data: {
-    // for update price
-    retail_price?: string;
-    prices?: Array<TypePrice>;
-    // for normal edit
-    topic?: Array<number>;
-    content?: string;
-    status?: number;
-    // for reject updating price
-    reject_request_update_price?: boolean;
   };
 };
 

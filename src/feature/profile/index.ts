@@ -1,4 +1,4 @@
-export {default as CreateGroupBuying} from './CreateGroupBuying';
+export {default as CreateSale} from './CreateSale';
 export {default as CreatePostPickImage} from './CreatePostPickImage';
 export {default as CreatePostPreview} from './CreatePostPreview';
 export {default as CreateTour} from './CreateTour';

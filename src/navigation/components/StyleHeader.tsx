@@ -66,8 +66,8 @@ const StyleHeader = (props: StyleHeaderProps) => {
 
 const $container: ViewStyle = {
   width: '100%',
-  paddingBottom: verticalScale(7),
-  paddingTop: verticalScale(3),
+  paddingBottom: verticalScale(8),
+  paddingTop: verticalScale(8),
   alignItems: 'center',
   justifyContent: 'center',
   borderBottomWidth: borderWidthTiny,

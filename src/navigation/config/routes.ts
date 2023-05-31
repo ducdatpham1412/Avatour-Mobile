@@ -81,7 +81,7 @@ enum PROFILE_ROUTE {
   createPostPreview = '@PROFILE_ROUTE/createPostPreview',
   createPostPickImg = '@PROFILE_ROUTE/createPostPickImg',
   detailGroupBuying = '@PROFILE_ROUTE/detailGroupBuying',
-  createGroupBuying = '@PROFILE_ROUTE/createGroupBuying',
+  createSale = '@PROFILE_ROUTE/createSale',
   updatePrices = '@PROFILE_ROUTE/updatePrice',
   listMyRequests = '@PROFILE_ROUTE/listMyRequest',
   myQRCode = '@PROFILE_ROUTE/myQRCode',

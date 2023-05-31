@@ -341,7 +341,7 @@ const DetailGroupBuying = ({route}: Props) => {
       {
         text: 'profile.post.edit',
         action: () =>
-          navigate(PROFILE_ROUTE.createGroupBuying, {
+          navigate(PROFILE_ROUTE.createSale, {
             itemEdit: item,
           }),
       },

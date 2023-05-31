@@ -116,7 +116,7 @@ const InformationProfile = ({
               ]}
               onPress={() => {
                 navigate(PROFILE_ROUTE.createPostPickImg, {
-                  isCreateGB: true,
+                  mode: 'sale',
                 });
               }}
               hitSlop={{right: 20}}>

@@ -20,7 +20,7 @@ import ChatDetail from 'feature/mess/ChatDetail';
 import ChatDetailSetting from 'feature/mess/ChatDetailSetting';
 import DetailBubble from 'feature/notification/DetailBubble';
 import {
-  CreateGroupBuying,
+  CreateSale,
   CreatePostPickImage,
   CreatePostPreview,
   CreateTour,
@@ -121,8 +121,8 @@ const AppStack = () => {
         }}
       />
       <Stack.Screen
-        name={PROFILE_ROUTE.createGroupBuying}
-        component={CreateGroupBuying}
+        name={PROFILE_ROUTE.createSale}
+        component={CreateSale}
         options={{
           gestureEnabled: false,
         }}

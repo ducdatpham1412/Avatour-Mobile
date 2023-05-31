@@ -27,6 +27,7 @@ export type AppParamsList = {
   [key: string]: any;
   [ROOT_SCREEN.otherProfile]: {
     id: number;
+    showHeader?: boolean;
     initTabIndex?: number;
   };
   [ROOT_SCREEN.listFollows]: {
@@ -80,9 +81,9 @@ export type AppParamsList = {
       name: string;
       avatar: string;
     };
-    isCreateGB?: boolean;
+    mode: 'sale' | 'review';
   };
-  [PROFILE_ROUTE.createGroupBuying]: {
+  [PROFILE_ROUTE.createSale]: {
     itemNew?: {
       images: Array<string>;
       isVideo: boolean;

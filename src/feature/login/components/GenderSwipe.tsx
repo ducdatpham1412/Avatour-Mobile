@@ -1,10 +1,11 @@
 import {GENDER_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
-import Theme from 'asset/theme/Theme';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import React, {useEffect, useRef} from 'react';
-import {Animated, View} from 'react-native';
-import {scale, ScaledSheet} from 'react-native-size-matters';
+import {Animated, ImageStyle, View, ViewStyle} from 'react-native';
+import {scale} from 'react-native-size-matters';
+import {verticalScale} from 'utility/scale';
+import {scrollItemHeight} from '../signUp/EditBasicInformation';
 
 const listGender = [
   {
@@ -49,20 +50,20 @@ const GenderSwipe = (props: Props) => {
   }, [gender]);
 
   return (
-    <View style={styles.container}>
+    <View style={$container}>
       <StyleText i18Text="login.detailInformation.firstChooseGender" />
-      <Animated.View style={[styles.animateView, {transform: [{translateX}]}]}>
+      <Animated.View style={[$animatedView, {transform: [{translateX}]}]}>
         {listGender.map(item => {
           const isChoose = item.id === gender;
           const opacity = isChoose ? 1 : 0.4;
           return (
             <StyleTouchable
               key={item.id}
-              customStyle={styles.genderBox}
+              customStyle={$genderBox}
               onPress={() => setGender(item.id)}>
               <StyleImage
                 source={item.source}
-                customStyle={[styles.iconGender, {opacity}]}
+                customStyle={[$iconGender, {opacity}]}
               />
             </StyleTouchable>
           );
@@ -72,27 +73,25 @@ const GenderSwipe = (props: Props) => {
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '100%',
-    height: '140@vs',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  animateView: {
-    width: genderBoxSize * 3,
-    height: genderBoxSize,
-    flexDirection: 'row',
-    marginTop: '20@vs',
-  },
-  genderBox: {
-    width: '80@s',
-    height: '80@s',
-  },
-  iconGender: {
-    width: '90%',
-    height: '90%',
-  },
-});
+const $container: ViewStyle = {
+  width: '100%',
+  height: scrollItemHeight,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+const $animatedView: ViewStyle = {
+  width: genderBoxSize * 3,
+  height: genderBoxSize,
+  flexDirection: 'row',
+  marginTop: verticalScale(20),
+};
+const $genderBox: ViewStyle = {
+  width: genderBoxSize,
+  height: genderBoxSize,
+};
+const $iconGender: ImageStyle = {
+  width: '90%',
+  height: '90%',
+};
 
 export default GenderSwipe;
