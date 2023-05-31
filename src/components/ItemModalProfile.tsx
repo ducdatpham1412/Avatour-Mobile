@@ -1,11 +1,12 @@
 import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
-import React from 'react';
-import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 import {ModalProfile} from 'navigation/screen/modals';
+import React from 'react';
+import {TextStyle, View, ViewStyle} from 'react-native';
+import {scale, verticalScale} from 'utility/scale';
+import {StyleIcon, StyleText, StyleTouchable} from './base';
+import {Avatar} from './common';
 
 interface Props {
   profile: TypeGetProfileResponse;
@@ -19,7 +20,7 @@ const ItemModalProfile = ({profile, onSelect}: Props) => {
     <StyleTouchable
       customStyle={[$container, {backgroundColor: theme.background}]}
       onPress={() => ModalProfile.show({userId: profile?.id})}>
-      <StyleImage source={{uri: profile?.avatar}} customStyle={$avatar} />
+      <Avatar source={{uri: profile?.avatar}} size={40} />
 
       <View style={$body}>
         <StyleText originValue={profile?.name} customStyle={$textName} />
@@ -56,11 +57,6 @@ const $container: ViewStyle = {
   borderRadius: BORDER_RADIUS.f2,
   flexDirection: 'row',
   alignItems: 'center',
-};
-const $avatar: ImageStyle = {
-  width: moderateScale(40),
-  height: moderateScale(40),
-  borderRadius: 40,
 };
 const $body: ViewStyle = {
   flex: 1,

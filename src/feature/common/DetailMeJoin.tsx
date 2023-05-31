@@ -11,7 +11,7 @@ import {
   StyleImage,
   StyleText,
 } from 'components/base';
-import {RightIcon} from 'components/common';
+import {Avatar, RightIcon} from 'components/common';
 import {useAppEvent, useTheme} from 'hook';
 import {goBack, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
@@ -121,10 +121,10 @@ const DetailMeJoin = ({
         <View style={$listPeopleJoin}>
           {listPersonalJoins.map(join => {
             return (
-              <StyleIcon
-                key={join.id}
-                source={{uri: join.creator_avatar}}
+              <Avatar
+                source={{uri: join?.creator_avatar}}
                 size={30}
+                key={join?.id}
               />
             );
           })}

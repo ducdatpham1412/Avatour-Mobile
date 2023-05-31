@@ -4,7 +4,12 @@ import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
-import {IconLiked, IconNotLiked, ScrollSyncSizeImage} from 'components/common';
+import {
+  Avatar,
+  IconLiked,
+  IconNotLiked,
+  ScrollSyncSizeImage,
+} from 'components/common';
 import {useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
@@ -124,11 +129,7 @@ const DetailSale = ({
                 onGoToProfile(data?.creator);
               }
             }}>
-            <StyleIcon
-              source={{uri: data?.creator_avatar}}
-              size={25}
-              customStyle={{borderRadius: 100}}
-            />
+            <Avatar source={{uri: data?.creator_avatar}} size={25} />
             <StyleText
               originValue={data?.creator_name}
               customStyle={$textName}

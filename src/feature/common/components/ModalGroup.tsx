@@ -1,6 +1,7 @@
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
-import {StyleIcon, StyleList, StyleText, StyleTouchable} from 'components/base';
+import {StyleList, StyleText, StyleTouchable} from 'components/base';
+import {Avatar} from 'components/common';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -44,7 +45,7 @@ const ModalGroup = (
           />
           <View style={$listPeople}>
             {item?.members?.map((mem, index) => (
-              <StyleIcon
+              <Avatar
                 key={index}
                 source={{uri: mem?.creator_avatar}}
                 size={40}

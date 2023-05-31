@@ -1,11 +1,12 @@
+export {default as Avatar} from './Avatar';
 export {default as ButtonX} from './ButtonX';
 export {default as CardInformation} from './CardInformation';
 export {default as IconLiked} from './IconLiked';
 export {default as IconNotLiked} from './IconNotLiked';
+export {default as IconTabBar} from './IconTabBar';
 export {default as InputBox} from './InputBox';
 export {default as InputSearch} from './InputSearch';
 export {default as LeftIcon} from './LeftIcon';
 export {default as RightIcon} from './RightIcon';
 export {default as ScaleView} from './ScaleView';
 export {default as ScrollSyncSizeImage} from './ScrollSyncSizeImage';
-export {default as IconTabBar} from './IconTabBar';
