@@ -1,6 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable @typescript-eslint/no-unsafe-argument  */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access  */
 import {Metrics} from 'asset/metrics';
 import React, {Children, Component, ReactNode} from 'react';
 import {
@@ -34,20 +31,20 @@ export interface TabViewProps {
   onIsScrolling?: (value: boolean) => void;
   containerStyle?: StyleProp<ViewStyle>;
   enableScroll?: boolean;
+  lazy?: boolean;
   //   containerWidth?: number;
 }
 
 interface States {
   listCheckLazy: Array<boolean>;
+  elementWidth: number;
 }
 
 const {width: screenWidth} = Metrics;
 const swipeDistanceThreshold = screenWidth / 1.75;
 
 class StyleTabView extends Component<TabViewProps, States> {
-  elementWidth = screenWidth;
-
-  panX = new Animated.Value(-(this.props.initIndex || 0) * this.elementWidth);
+  panX = new Animated.Value(-(this.props.initIndex || 0) * screenWidth);
 
   currentIndexRef = this.props.initIndex || 0;
 
@@ -56,10 +53,9 @@ class StyleTabView extends Component<TabViewProps, States> {
     maxTranslateX: 0,
   };
 
-  listCheckLazyRef: Array<boolean> = [];
-
   state: States = {
     listCheckLazy: [],
+    elementWidth: screenWidth,
   };
 
   __canMoveScreen = true;
@@ -108,8 +104,8 @@ class StyleTabView extends Component<TabViewProps, States> {
   private jumpToIndex = (index: number) => {
     this.props.onChangeTabIndex?.(index);
     this.currentIndexRef = index;
-    const offset = -index * this.elementWidth;
-    if (this.listCheckLazyRef[index] === false) {
+    const offset = -index * this.state.elementWidth;
+    if (this.state.listCheckLazy[index] === false) {
       this.setState(preValue => ({
         listCheckLazy: preValue.listCheckLazy.map((value, ind) => {
           if (ind !== index) {
@@ -129,9 +125,9 @@ class StyleTabView extends Component<TabViewProps, States> {
       }),
     ]).start(({finished}) => {
       if (finished) {
-        if (this.listCheckLazyRef[index] === false) {
+        if (this.state.listCheckLazy[index] === false) {
           this.props.onFirstNavigateToIndex?.(index);
-          this.listCheckLazyRef[index] = true;
+          this.state.listCheckLazy[index] = true;
         }
       }
     });
@@ -207,16 +203,17 @@ class StyleTabView extends Component<TabViewProps, States> {
   }
 
   onLayOut(width: number) {
-    this.elementWidth = width;
+    this.setState({
+      elementWidth: width,
+    });
     const {initIndex = 0, children} = this.props;
     const numberTabs = Children.toArray(children).length;
     const temp = [];
     for (let i = 0; i < numberTabs; i++) {
       temp.push(initIndex === i);
     }
-    const layOutWidth = this.elementWidth * numberTabs;
+    const layOutWidth = width * numberTabs;
     const maxTranslateX = layOutWidth * (numberTabs - 1);
-    this.listCheckLazyRef = temp;
 
     this.animation = {
       numberTabs,
@@ -240,8 +237,32 @@ class StyleTabView extends Component<TabViewProps, States> {
     });
   }
 
+  onLayOutAnimatedView() {
+    const numberTabs = Children.toArray(this.props.children).length;
+    const maxTranslateX = this.state.elementWidth * (numberTabs - 1);
+    this.animation = {
+      numberTabs,
+      maxTranslateX,
+    };
+
+    // const newListCheckLazy: boolean[] = [];
+    // Children.toArray(this.props.children).forEach((_, index) => {
+    //   newListCheckLazy.push(this.state.listCheckLazy[index] ?? false);
+    // });
+
+    // this.setState(
+    //   {
+    //     listCheckLazy: newListCheckLazy,
+    //   },
+    //   () => {
+    //     this.jumpToIndex(newListCheckLazy.length - 1);
+    //   },
+    // );
+  }
+
   render() {
-    const {children, containerStyle} = this.props;
+    const {children, containerStyle, lazy = true} = this.props;
+    const {elementWidth} = this.state;
 
     const translateX = Animated.multiply(
       this.panX.interpolate({
@@ -263,15 +284,21 @@ class StyleTabView extends Component<TabViewProps, States> {
             $tabContainer,
             {
               transform: [{translateX}],
+              width: Children.toArray(children).length * elementWidth,
             },
           ]}
           {...this.panResponder.panHandlers}
-          onTouchEnd={() => this.onPanResponseEnd()}>
-          {Children.toArray(children).map((view, ind) => (
-            <View key={ind} style={$elementWidth}>
-              {this.state.listCheckLazy[ind] && view}
-            </View>
-          ))}
+          onTouchEnd={() => this.onPanResponseEnd()}
+          onLayout={e => {
+            this.onLayOutAnimatedView();
+          }}>
+          {Children.toArray(children).map((view, ind) => {
+            return (
+              <View key={ind} style={{width: elementWidth}}>
+                {lazy ? this.state.listCheckLazy[ind] && view : view}
+              </View>
+            );
+          })}
         </Animated.View>
       </View>
     );
@@ -285,9 +312,6 @@ const $container: ViewStyle = {
 const $tabContainer: ViewStyle = {
   flexDirection: 'row',
   height: '100%',
-};
-const $elementWidth: ViewStyle = {
-  width: '100%',
 };
 
 export default StyleTabView;

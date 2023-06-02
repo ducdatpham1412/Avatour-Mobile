@@ -1,28 +1,33 @@
 import {apiChangeInformation} from 'api/setting';
 import {GENDER_TYPE} from 'asset/enum';
-import {BORDER_RADIUS} from 'asset/standardValue';
+import {BORDER_RADIUS, scrollItemHeight} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import {
   StyleButton,
   StyleContainer,
+  StyleList,
   StyleText,
   StyleTouchable,
 } from 'components/base';
+import {CircleButton} from 'components/common';
 import InputBox from 'components/common/InputBox';
 import {useLoading, useTheme} from 'hook';
 import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
 import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {FlatList, TextInput, View} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
 import {isIOS} from 'utility/assistant';
 import AsyncStore from 'utility/asyncStore';
 import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
 import AuthenticateService from 'utility/login/loginService';
+import {moderateScale} from 'utility/scale';
 import GenderSwipe from '../components/GenderSwipe';
+import {impactLight} from 'utility/haptic';
 
-export const scrollItemHeight = verticalScale(200);
 const defaultDate = new Date(2000, 0, 1);
 
 const EditBasicInformation = ({
@@ -30,9 +35,10 @@ const EditBasicInformation = ({
 }: RouteParams<AppParamsList[LOGIN_ROUTE.editBasicInformation]>) => {
   const {isLoginSocial = false, itemLoginSuccess} = route?.params ?? {};
   const theme = useTheme();
-  const scrollPickerRef = useRef<ScrollView>(null);
-
   const {loading, setLoading} = useLoading();
+
+  const flatListRef = useRef<FlatList>(null);
+  const inputRef = useRef<TextInput>(null);
 
   const [gender, setGender] = useState(GENDER_TYPE.woman);
   const [name, setName] = useState('');
@@ -52,10 +58,7 @@ const EditBasicInformation = ({
 
   const onPressButton = () => {
     if (index < 2) {
-      scrollPickerRef.current?.scrollTo({
-        y: scrollItemHeight * (index + 1),
-        animated: true,
-      });
+      setIndex(index + 1);
     } else if (birthday && name) {
       const onEditProfileAndGo = async (isKeep: boolean) => {
         try {
@@ -65,14 +68,19 @@ const EditBasicInformation = ({
             name,
             birthday: formatUTCDate(birthday),
           };
-          await apiChangeInformation(updateObject);
+          /**
+           * Have to update active user first
+           * In order to set token for "apiChangeInformation" later
+           */
           await AsyncStore.updateActiveUser(itemLoginSuccess);
+          await apiChangeInformation(updateObject);
           await AuthenticateService.loginSuccess({
             itemLoginSuccess,
             isKeepSign: isKeep,
             isLoginSocial,
           });
         } catch (err) {
+          await AsyncStore.logOut();
           ModalAlert.error({
             content: err,
           });
@@ -93,6 +101,21 @@ const EditBasicInformation = ({
     }
   };
 
+  useUpdateEffect(() => {
+    if (index >= 0 && index <= 2) {
+      impactLight();
+      flatListRef.current?.scrollToIndex({
+        index: index,
+        animated: true,
+      });
+    }
+    if (index === 1) {
+      inputRef.current?.focus();
+    } else {
+      inputRef.current?.blur();
+    }
+  }, [index]);
+
   return (
     <StyleContainer
       extraHeight={50}
@@ -101,52 +124,100 @@ const EditBasicInformation = ({
         title: 'login.detailInformation.title',
       }}>
       <View style={[styles.pickerView, {backgroundColor: theme.white}]}>
-        <ScrollView
-          ref={scrollPickerRef}
-          snapToInterval={scrollItemHeight}
-          pagingEnabled
-          onMomentumScrollEnd={e => {
-            const offSet = e.nativeEvent.contentOffset.y;
-            setIndex(Math.round(offSet / scrollItemHeight));
+        <StyleList
+          ref={flatListRef}
+          data={[0, 1, 2]}
+          renderItem={({item}) => {
+            if (item === 0) {
+              return <GenderSwipe gender={gender} setGender={setGender} />;
+            }
+            if (item === 1) {
+              return (
+                <View style={styles.pickerBox}>
+                  <StyleText i18Text="login.detailInformation.enterYourName" />
+                  <InputBox
+                    ref={inputRef}
+                    value={name}
+                    onChangeText={text => setName(text)}
+                    style={{
+                      marginTop: verticalScale(12),
+                      backgroundColor: theme.background,
+                    }}
+                    i18Placeholder="profile.edit.name"
+                    onSubmitEditing={onPressButton}
+                  />
+                </View>
+              );
+            }
+            if (item === 2) {
+              return (
+                <View style={styles.pickerBox}>
+                  <StyleTouchable
+                    hitSlop={20}
+                    onPress={() => {
+                      ModalDatePicker.show({
+                        date: String(birthday ?? defaultDate),
+                        onChangeRange(value) {
+                          setBirthday(value.date);
+                        },
+                      });
+                    }}>
+                    <StyleText
+                      i18Text={textBirthday as I18Normalize}
+                      customStyle={
+                        birthday
+                          ? styles.textBirthday
+                          : styles.textChooseBirthday
+                      }
+                    />
+                  </StyleTouchable>
+                </View>
+              );
+            }
+            return null;
           }}
-          decelerationRate={isIOS ? 0 : 0.8}
-          scrollEventThrottle={40}>
-          <GenderSwipe gender={gender} setGender={setGender} />
+          keyExtractor={(_, __index) => String(__index)}
+          snapToInterval={scrollItemHeight}
+          onEndReachedThreshold={40}
+          decelerationRate={isIOS ? 0.1 : 0.75}
+          scrollEnabled={false}
+        />
 
-          <View style={styles.pickerBox}>
-            <StyleText i18Text="login.detailInformation.enterYourName" />
-            <InputBox
-              value={name}
-              onChangeText={text => setName(text)}
-              style={{
-                marginTop: verticalScale(30),
-                backgroundColor: theme.background,
-              }}
-              i18Placeholder="profile.edit.name"
-              onSubmitEditing={onPressButton}
-            />
-          </View>
-
-          <View style={styles.pickerBox}>
-            <StyleTouchable
-              hitSlop={20}
-              onPress={() => {
-                ModalDatePicker.show({
-                  date: String(birthday ?? defaultDate),
-                  onChangeRange(value) {
-                    setBirthday(value.date);
-                  },
-                });
-              }}>
-              <StyleText
-                i18Text={textBirthday as I18Normalize}
-                customStyle={
-                  birthday ? styles.textBirthday : styles.textChooseBirthday
-                }
+        {index > 0 && (
+          <CircleButton
+            icon={
+              <AntDesign
+                name="up"
+                style={{fontSize: moderateScale(20), color: theme.gray_700}}
               />
-            </StyleTouchable>
-          </View>
-        </ScrollView>
+            }
+            containerStyle={styles.buttonUp}
+            onPress={() => {
+              if (index > 0) {
+                setIndex(pre => pre - 1);
+              }
+            }}
+            disable={disableButton}
+          />
+        )}
+
+        {index < 2 && (
+          <CircleButton
+            icon={
+              <AntDesign
+                name="down"
+                style={{fontSize: moderateScale(20), color: theme.gray_700}}
+              />
+            }
+            containerStyle={styles.buttonDown}
+            onPress={() => {
+              if (index < 2) {
+                setIndex(pre => pre + 1);
+              }
+            }}
+            disable={disableButton}
+          />
+        )}
       </View>
 
       <StyleButton
@@ -161,11 +232,24 @@ const EditBasicInformation = ({
 };
 
 const styles = ScaledSheet.create({
+  buttonUp: {
+    position: 'absolute',
+    alignSelf: 'center',
+    top: '5@vs',
+  },
+  iconUp: {
+    fontSize: '20@ms',
+  },
+  buttonDown: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: '5@vs',
+  },
   pickerView: {
     width: '80%',
     height: scrollItemHeight,
     alignSelf: 'center',
-    marginTop: '70@vs',
+    marginTop: '28@vs',
     borderRadius: BORDER_RADIUS.f2,
   },
   pickerBox: {

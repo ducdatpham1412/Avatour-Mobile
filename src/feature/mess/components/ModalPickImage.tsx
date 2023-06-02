@@ -1,198 +1,229 @@
-/* eslint-disable no-underscore-dangle */
+import {FONT_SIZE} from 'asset';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
-import Theme, {TypeTheme} from 'asset/theme/Theme';
-import {StyleImage, StyleTouchable} from 'components/base';
+import Theme from 'asset/theme/Theme';
+import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
-import Redux from 'hook/useRedux';
-import React, {useEffect, useState} from 'react';
-import {Platform, StyleProp, View, ViewStyle} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Platform, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {isIOS} from 'utility/assistant';
+import {isIOS, logger} from 'utility/assistant';
 import ImageUploader from 'utility/ImageUploader';
+import {moderateScale} from 'utility/scale';
 
 interface Props {
-    images: Array<string>;
-    onChooseImage(image: string): void;
-    containerStyle?: StyleProp<ViewStyle>;
-    numberColumns?: number;
-    initIndexImage?: number;
-    urlFocusing?: string;
+  images: Array<string>;
+  onChooseImage(image: string): void;
+  containerStyle?: StyleProp<ViewStyle>;
+  numberColumns?: number;
+  initIndexImage?: number;
+  urlFocusing?: string;
 }
 interface StatusLibrary {
-    endCursor: string | undefined;
-    hasNext: boolean;
+  endCursor: string | undefined;
+  hasNext: boolean;
 }
 
 interface RenderImageParams {
-    item: string;
-    images: Array<string>;
-    onChooseImage(image: string): void;
-    theme: TypeTheme;
-    numberColumns: number;
-    isFocusing: boolean;
+  item: string;
+  images: Array<string>;
+  onChooseImage(image: string): void;
+  numberColumns: number;
+  isFocusing: boolean;
 }
 
-const RenderImage = (params: RenderImageParams) => {
-    const {item, images, onChooseImage, theme, numberColumns, isFocusing} =
-        params;
-    const isChosen = images.includes(item);
-    const size = Metrics.width / numberColumns;
+const firstLoad = 40;
 
-    return (
-        <StyleTouchable
-            onPress={() => onChooseImage(item)}
-            customStyle={[styles.imageBox, {width: size, height: size}]}>
-            <StyleImage
-                source={{uri: item}}
-                style={styles.image}
-                defaultSource={Images.images.defaultImage}
-            />
+const renderImage = (params: RenderImageParams) => {
+  const {item, images, onChooseImage, numberColumns, isFocusing} = params;
+  const isChosen = images.includes(item);
+  const index = isChosen ? images.indexOf(item) + 1 : 0;
+  const size = Metrics.width / numberColumns;
 
-            {isChosen && (
-                <>
-                    <View
-                        style={[
-                            styles.layoutChosen,
-                            {backgroundColor: Theme.common.black},
-                        ]}
-                    />
-                    <AntDesign
-                        name="check"
-                        style={[
-                            styles.checkIcon,
-                            {
-                                color: isFocusing
-                                    ? Theme.common.white
-                                    : theme.highlightColor,
-                            },
-                        ]}
-                    />
-                </>
-            )}
-        </StyleTouchable>
-    );
+  return (
+    <StyleTouchable
+      onPress={() => onChooseImage(item)}
+      customStyle={[styles.imageBox, {width: size, height: size}]}>
+      <StyleImage
+        source={{uri: item}}
+        style={styles.image}
+        defaultSource={Images.images.defaultImage}
+      />
+
+      {isChosen && (
+        <>
+          {isFocusing && <View style={styles.layoutChosen} />}
+          <View
+            style={[
+              $indexBox,
+              {
+                backgroundColor: isFocusing
+                  ? Theme.newTheme.red
+                  : Theme.newTheme.blue,
+              },
+            ]}>
+            <StyleText originValue={index} customStyle={$textIndex} />
+          </View>
+        </>
+      )}
+    </StyleTouchable>
+  );
+};
+
+const defaultStatusLibrary: StatusLibrary = {
+  endCursor: undefined,
+  hasNext: true,
 };
 
 const ModalPickImage = (props: Props) => {
-    const theme = Redux.getTheme();
-    const {
-        images,
-        onChooseImage,
-        containerStyle,
-        numberColumns = 4,
-        initIndexImage,
-        urlFocusing,
-    } = props;
+  const {
+    images,
+    onChooseImage,
+    containerStyle,
+    numberColumns = 4,
+    initIndexImage,
+    urlFocusing,
+  } = props;
 
-    const [libraryImages, setLibraryImages] = useState<Array<any>>([]);
-    const [hadSetIndexImage, setHadSetIndexImage] = useState(false);
+  const loading = useRef(false);
 
-    const [pageIndex, setPageIndex] = useState(1);
-    const [statusLibrary, setStatusLibrary] = useState<StatusLibrary>({
-        endCursor: undefined,
-        hasNext: true,
-    });
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [libraryImages, setLibraryImages] = useState<Array<any>>([]);
+  const [hadSetIndexImage, setHadSetIndexImage] = useState(false);
 
-    const [firstLoad, setFirstLoad] = useState(20);
+  const [pageIndex, setPageIndex] = useState(1);
+  const statusLibrary = useRef<StatusLibrary>(defaultStatusLibrary);
 
-    const getData = async () => {
-        const res = await ImageUploader.readImageFromLibrary({
-            first: firstLoad,
-            after: statusLibrary.endCursor,
-        });
+  const getData = useCallback(async () => {
+    if (loading.current) {
+      return;
+    }
 
-        // check have next page
-        const endCursor = res.page_info.end_cursor;
-        const haveNextPage = res.page_info.has_next_page;
-        setStatusLibrary({
-            endCursor,
-            hasNext: haveNextPage,
-        });
+    try {
+      loading.current = true;
+      const res = await ImageUploader.readImageFromLibrary({
+        first: firstLoad,
+        after: statusLibrary.current.endCursor,
+      });
 
-        // set to state libraryImages
-        const moreImages = res.edges.map(item => {
-            if (isIOS) {
-                return item.node.image.uri.concat(
-                    `/${item.node.image.filename}`,
-                );
-            }
-            return item.node.image.uri;
-        });
-        const temp = libraryImages.concat(moreImages);
-        if (!hadSetIndexImage && initIndexImage !== undefined) {
-            onChooseImage(temp[initIndexImage]);
-            setHadSetIndexImage(true);
+      // check have next page
+      const endCursor = res.page_info.end_cursor;
+      const haveNextPage = res.page_info.has_next_page;
+      statusLibrary.current = {
+        endCursor,
+        hasNext: haveNextPage,
+      };
+
+      // set to state libraryImages
+      const moreImages = res.edges.map(item => {
+        if (isIOS) {
+          return item.node.image.uri.concat(`/${item.node.image.filename}`);
         }
-        setLibraryImages(temp);
-        setFirstLoad(80);
-    };
+        return item.node.image.uri;
+      });
+      const temp = libraryImages.concat(moreImages);
+      if (!hadSetIndexImage && initIndexImage !== undefined) {
+        onChooseImage(temp[initIndexImage]);
+        setHadSetIndexImage(true);
+      }
+      setLibraryImages(temp);
+    } catch (err) {
+      logger('Loading image from library error: ', err);
+    } finally {
+      setLoadingMore(false);
+      setRefreshing(false);
+      loading.current = false;
+    }
+  }, [pageIndex]);
 
-    useEffect(() => {
-        if (statusLibrary.hasNext) {
-            getData();
+  useEffect(() => {
+    if (statusLibrary.current.hasNext) {
+      getData();
+    }
+  }, [pageIndex]);
+
+  const onLoadMore = () => {
+    if (statusLibrary.current.hasNext) {
+      setLoadingMore(true);
+      setPageIndex(pageIndex + 1);
+    }
+  };
+
+  const onRefresh = () => {
+    statusLibrary.current = defaultStatusLibrary;
+    setRefreshing(true);
+    setPageIndex(1);
+    getData();
+  };
+
+  return (
+    <View style={[styles.container, containerStyle]}>
+      <StyleList
+        data={libraryImages}
+        renderItem={({item}) =>
+          renderImage({
+            item,
+            images,
+            onChooseImage,
+            numberColumns,
+            isFocusing: urlFocusing === item,
+          })
         }
-    }, [pageIndex]);
-
-    const onLoadMoreImage = () => {
-        if (statusLibrary.hasNext) {
-            setPageIndex(pageIndex + 1);
-        }
-    };
-
-    return (
-        <View style={[styles.container, containerStyle]}>
-            <StyleList
-                data={libraryImages}
-                renderItem={({item}: any) =>
-                    RenderImage({
-                        item,
-                        images,
-                        onChooseImage,
-                        theme,
-                        numberColumns,
-                        isFocusing: urlFocusing === item,
-                    })
-                }
-                numColumns={numberColumns}
-                onLoadMore={onLoadMoreImage}
-                contentContainerStyle={styles.contentContainer}
-            />
-        </View>
-    );
+        numColumns={numberColumns}
+        contentContainerStyle={styles.contentContainer}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        loadingMore={loadingMore}
+        onLoadMore={onLoadMore}
+      />
+    </View>
+  );
 };
 
 const styles = ScaledSheet.create({
-    container: {
-        width: '100%',
-        height: Metrics.height / 2,
-    },
-    imageBox: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: Platform.select({
-            ios: '0.25@ms',
-            android: '0.25@ms',
-        }),
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-    },
-    layoutChosen: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        opacity: 0.6,
-    },
-    checkIcon: {
-        position: 'absolute',
-        fontSize: '60@ms',
-    },
-    contentContainer: {
-        paddingBottom: Metrics.safeBottomPadding + verticalScale(10),
-    },
+  container: {
+    width: '100%',
+    height: Metrics.height / 2,
+  },
+  imageBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Platform.select({
+      ios: '0.25@ms',
+      android: '0.25@ms',
+    }),
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  layoutChosen: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: Theme.newTheme.black_opacity(0.4),
+  },
+  contentContainer: {
+    paddingBottom: Metrics.safeBottomPadding + verticalScale(10),
+  },
 });
+
+const $indexBox: ViewStyle = {
+  position: 'absolute',
+  top: moderateScale(5),
+  right: moderateScale(5),
+  width: moderateScale(20),
+  height: moderateScale(20),
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderWidth: moderateScale(0.5),
+  borderColor: Theme.newTheme.white,
+  borderRadius: 20,
+};
+const $textIndex: TextStyle = {
+  color: Theme.newTheme.white,
+  fontSize: FONT_SIZE.f3,
+};
 
 export default ModalPickImage;

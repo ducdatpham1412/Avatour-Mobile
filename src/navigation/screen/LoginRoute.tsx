@@ -12,7 +12,6 @@ import AgreeTermOfService from 'feature/login/signUp/AgreeTermOfService';
 import EditBasicInformation from 'feature/login/signUp/EditBasicInformation';
 import SignUpForm from 'feature/login/signUp/SignUpForm';
 import SignUpType from 'feature/login/signUp/SignUpType';
-import Starter from 'feature/login/Starter';
 import {useTheme} from 'hook';
 import HeaderLeftIcon from 'navigation/components/HeaderLeftIcon';
 import {AppParamsList} from 'navigation/config';
@@ -45,8 +44,7 @@ const LoginRoute: React.FunctionComponent = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerLeft: (props: any) => <HeaderLeftIcon {...props} />,
       }}
-      //   initialRouteName={LOGIN_ROUTE.editBasicInformation}
-    >
+      initialRouteName={LOGIN_ROUTE.editBasicInformation}>
       <Stack.Screen
         options={{headerShown: false}}
         name={LOGIN_ROUTE.loginScreen}

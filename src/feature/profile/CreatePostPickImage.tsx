@@ -1,7 +1,8 @@
-/* eslint-disable no-shadow */
 import {useIsFocused} from '@react-navigation/native';
 import {Metrics} from 'asset/metrics';
 import {
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
   MAX_NUMBER_IMAGES_POST,
   ratioImageGroupBuying,
 } from 'asset/standardValue';
@@ -13,7 +14,7 @@ import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
 import React, {useRef, useState} from 'react';
-import {Platform, View} from 'react-native';
+import {View} from 'react-native';
 import ImageZoomAndCrop from 'react-native-image-zoom-and-crop';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -21,7 +22,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
 import ImageUploader from 'utility/ImageUploader';
-import {logger} from 'utility/assistant';
+import {borderWidthTiny, logger} from 'utility/assistant';
 import ScrollCropImages from './components/ScrollCropImages';
 
 interface Props {
@@ -93,7 +94,10 @@ const CreatePostPickImage = ({route}: Props) => {
     }
 
     try {
-      const path = await ImageUploader.pickCamera();
+      const path = await ImageUploader.pickCamera({
+        maxWidth: width,
+        maxHeight: width * ratioImageGroupBuying,
+      });
       setImages(images.concat(path));
     } catch (err) {
       logger(err);
@@ -163,31 +167,6 @@ const CreatePostPickImage = ({route}: Props) => {
   /**
    * Render views
    */
-  const renderHeader = () => {
-    return (
-      <View style={[styles.headerView, {borderBottomColor: theme.borderColor}]}>
-        <StyleTouchable customStyle={styles.iconCloseView} onPress={goBack}>
-          <AntDesign
-            name="close"
-            style={[styles.iconClose, {color: theme.textColor}]}
-          />
-        </StyleTouchable>
-        <StyleText
-          i18Text="profile.post.pickImage"
-          customStyle={[styles.textHeader, {color: theme.textColor}]}
-        />
-        <StyleTouchable
-          customStyle={styles.nextView}
-          onPress={onNavigatePreview}>
-          <StyleText
-            i18Text="common.next"
-            customStyle={[styles.textNext, {color: theme.highlightColor}]}
-          />
-        </StyleTouchable>
-      </View>
-    );
-  };
-
   const renderImages = () => {
     if (tabIndex === 1) {
       if (!video) {
@@ -275,7 +254,7 @@ const CreatePostPickImage = ({route}: Props) => {
         style={[
           styles.toolView,
           {
-            borderColor: theme.holderColor,
+            borderColor: theme.gray_300,
           },
         ]}>
         <StyleTouchable
@@ -287,7 +266,7 @@ const CreatePostPickImage = ({route}: Props) => {
             style={[
               styles.iconImage,
               {
-                color: theme.textColor,
+                color: theme.black,
               },
             ]}
           />
@@ -301,7 +280,7 @@ const CreatePostPickImage = ({route}: Props) => {
             style={[
               styles.iconCamera,
               {
-                color: theme.textColor,
+                color: theme.black,
               },
             ]}
           />
@@ -310,28 +289,22 @@ const CreatePostPickImage = ({route}: Props) => {
         {tabIndex === 0 && (
           <StyleText
             originValue={`${images.length}`}
-            customStyle={[styles.indexText, {color: theme.textColor}]}
+            customStyle={[styles.indexText, {color: theme.black}]}
           />
         )}
 
         <StyleTouchable
-          customStyle={[styles.videoTouch, {borderColor: theme.textColor}]}
-          hitSlop={10}
+          customStyle={[
+            styles.videoTouch,
+            {
+              borderColor: theme.gray_400,
+              backgroundColor: theme.black_opacity(0.08),
+            },
+          ]}
           onPress={onChooseVideo}>
-          <View
-            style={[
-              styles.spaceBackground,
-              {backgroundColor: theme.backgroundButtonColor},
-            ]}
-          />
           <Ionicons
             name="ios-videocam-outline"
-            style={[
-              styles.iconVideo,
-              {
-                color: theme.textHightLight,
-              },
-            ]}
+            style={[styles.iconVideo, {color: theme.black}]}
           />
         </StyleTouchable>
       </View>
@@ -339,8 +312,27 @@ const CreatePostPickImage = ({route}: Props) => {
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      {renderHeader()}
+    <View style={[styles.container, {backgroundColor: theme.white}]}>
+      <View style={[styles.headerView, {borderBottomColor: theme.gray_400}]}>
+        <StyleTouchable customStyle={styles.iconCloseView} onPress={goBack}>
+          <AntDesign
+            name="close"
+            style={[styles.iconClose, {color: theme.black}]}
+          />
+        </StyleTouchable>
+        <StyleText
+          i18Text="profile.post.pickImage"
+          customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
+        />
+        <StyleTouchable
+          customStyle={styles.nextView}
+          onPress={onNavigatePreview}>
+          <StyleText
+            i18Text="common.next"
+            customStyle={[styles.textNext, {color: theme.p_800}]}
+          />
+        </StyleTouchable>
+      </View>
       {renderImages()}
       {renderTool()}
       <StyleTabView
@@ -376,10 +368,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderBottomWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
+    borderBottomWidth: borderWidthTiny,
   },
   iconCloseView: {
     position: 'absolute',
@@ -388,15 +377,12 @@ const styles = ScaledSheet.create({
   iconClose: {
     fontSize: '25@ms',
   },
-  textHeader: {
-    fontSize: '15@ms',
-  },
   nextView: {
     position: 'absolute',
     right: '20@s',
   },
   textNext: {
-    fontSize: '16@ms',
+    fontSize: FONT_SIZE.f1,
     fontWeight: 'bold',
   },
   // image preview
@@ -411,14 +397,8 @@ const styles = ScaledSheet.create({
     height: '35@ms',
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    borderBottomWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
+    borderTopWidth: borderWidthTiny,
+    borderBottomWidth: borderWidthTiny,
   },
   touchImage: {
     position: 'absolute',
@@ -441,10 +421,7 @@ const styles = ScaledSheet.create({
     height: '25@ms',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
+    borderWidth: borderWidthTiny,
     borderRadius: 20,
   },
   spaceBackground: {
@@ -458,7 +435,8 @@ const styles = ScaledSheet.create({
     fontSize: '14@ms',
   },
   indexText: {
-    fontSize: '10@ms',
+    fontSize: FONT_SIZE.f3,
+    fontWeight: FONT_WEIGHT_MEDIUM,
   },
   // modal pick image view
   tabView: {

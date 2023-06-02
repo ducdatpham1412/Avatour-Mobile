@@ -1,6 +1,7 @@
 export {default as Avatar} from './Avatar';
 export {default as ButtonX} from './ButtonX';
 export {default as CardInformation} from './CardInformation';
+export {default as CircleButton} from './CircleButton';
 export {default as IconLiked} from './IconLiked';
 export {default as IconNotLiked} from './IconNotLiked';
 export {default as IconTabBar} from './IconTabBar';

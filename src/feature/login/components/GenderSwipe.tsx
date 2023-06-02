@@ -1,3 +1,4 @@
+import {scrollItemHeight} from 'asset';
 import {GENDER_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
@@ -5,7 +6,6 @@ import React, {useEffect, useRef} from 'react';
 import {Animated, ImageStyle, View, ViewStyle} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import {verticalScale} from 'utility/scale';
-import {scrollItemHeight} from '../signUp/EditBasicInformation';
 
 const listGender = [
   {
@@ -83,7 +83,7 @@ const $animatedView: ViewStyle = {
   width: genderBoxSize * 3,
   height: genderBoxSize,
   flexDirection: 'row',
-  marginTop: verticalScale(20),
+  marginTop: verticalScale(12),
 };
 const $genderBox: ViewStyle = {
   width: genderBoxSize,

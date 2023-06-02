@@ -8,4 +8,5 @@ export {default as LoadingScreen} from './LoadingScreen';
 export {default as MapTour} from './MapTour';
 export {default as StyleTabView} from './StyleTabView';
 export {default as TabView} from './TabView';
+export {default as TabViewDynamic} from './TabViewDynamic';
 export {default as AppModalize} from './base/AppModalize';

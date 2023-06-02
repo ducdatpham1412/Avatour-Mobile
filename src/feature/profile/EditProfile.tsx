@@ -243,14 +243,14 @@ const EditProfile = () => {
             <StyleText i18Text="profile.bankName">
               <StyleText originValue=": " />
               <StyleText
-                originValue={`${profile?.information?.bank_code || '34232'}`}
+                originValue={profile?.information?.bank_code}
                 customStyle={$textBank}
               />
             </StyleText>
             <StyleText i18Text="profile.accountNumber">
               <StyleText originValue=": " />
               <StyleText
-                originValue={`${profile?.information?.bank_code}`}
+                originValue={`${profile?.information?.bank_account}`}
                 customStyle={$textBank}
               />
             </StyleText>

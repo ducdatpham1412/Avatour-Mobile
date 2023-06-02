@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 import {Platform} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {moderateScale, scale} from 'utility/scale';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
 import Images from './img/images';
 
@@ -206,6 +206,8 @@ export const LINE_HEIGHT = {
   }),
 };
 
-export const ratioImageGroupBuying = 1; // height / width
+export const ratioImageGroupBuying = 0.8; // height / width
 export const ratioImageTour = 144 / 200;
 export const ratioImageSale = 232 / 319;
+
+export const scrollItemHeight = verticalScale(250);
