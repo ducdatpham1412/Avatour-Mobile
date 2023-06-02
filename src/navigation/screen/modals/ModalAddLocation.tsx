@@ -8,7 +8,6 @@ import {useApiImmutable, useTheme} from 'hook';
 import React, {
   ElementRef,
   ForwardedRef,
-  createRef,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -21,14 +20,12 @@ import {useUpdate} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 
-type TypeShow = {
+export type TypeShowModalAddLocation = {
   onSave: (value: TypeGetProfileResponse) => void;
   listCurrentIds: number[];
 };
 
-const modalAddLocationRef = createRef<ElementRef<typeof ModalAddLocation>>();
-
-const ListLocation = ({onSave, listCurrentIds}: TypeShow) => {
+const ListLocation = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
   const {bottom} = useSafeAreaInsets();
   const {
     data: savedData,
@@ -74,7 +71,7 @@ const ListLocation = ({onSave, listCurrentIds}: TypeShow) => {
   );
 };
 
-const ListShop = ({onSave, listCurrentIds}: TypeShow) => {
+const ListShop = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
   const {bottom} = useSafeAreaInsets();
   const {
     data: savedData,
@@ -120,88 +117,86 @@ const ListShop = ({onSave, listCurrentIds}: TypeShow) => {
   );
 };
 
-const ModalAddLocation = forwardRef(
-  (_: any, ref: ForwardedRef<TypeShowModalize<TypeShow>>) => {
-    const theme = useTheme();
-    const update = useUpdate();
+const ModalAddLocation = (
+  _: any,
+  ref: ForwardedRef<TypeShowModalize<TypeShowModalAddLocation>>,
+) => {
+  const theme = useTheme();
+  const update = useUpdate();
 
-    const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
-    const onSaveRef = useRef<TypeShow['onSave']>();
-    const listCurrentIds = useRef<number[]>();
-    const saveIndexTab = useRef(0);
+  const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const onSaveRef = useRef<TypeShowModalAddLocation['onSave']>();
+  const listCurrentIds = useRef<number[]>();
+  const saveIndexTab = useRef(0);
 
-    useImperativeHandle(
-      ref ?? modalAddLocationRef,
-      () => ({
-        show: value => {
-          onSaveRef.current = value?.onSave;
-          listCurrentIds.current = value?.listCurrentIds;
-          modalRef.current?.show();
-        },
-        hide: () => modalRef.current?.hide(),
-      }),
-      [],
-    );
+  useImperativeHandle(
+    ref,
+    () => ({
+      show: value => {
+        onSaveRef.current = value?.onSave;
+        listCurrentIds.current = value?.listCurrentIds;
+        modalRef.current?.show();
+      },
+      hide: () => modalRef.current?.hide(),
+    }),
+    [],
+  );
 
-    const renderLocations = () => {
-      if (onSaveRef.current && listCurrentIds.current) {
-        return (
-          <ListLocation
-            onSave={onSaveRef.current}
-            listCurrentIds={listCurrentIds.current}
-          />
-        );
-      }
-      return null;
-    };
+  const renderLocations = () => {
+    if (onSaveRef.current && listCurrentIds.current) {
+      return (
+        <ListLocation
+          onSave={onSaveRef.current}
+          listCurrentIds={listCurrentIds.current}
+        />
+      );
+    }
+    return null;
+  };
 
-    const renderShops = () => {
-      if (onSaveRef.current && listCurrentIds.current) {
-        return (
-          <ListShop
-            onSave={onSaveRef.current}
-            listCurrentIds={listCurrentIds.current}
-          />
-        );
-      }
-      return null;
-    };
+  const renderShops = () => {
+    if (onSaveRef.current && listCurrentIds.current) {
+      return (
+        <ListShop
+          onSave={onSaveRef.current}
+          listCurrentIds={listCurrentIds.current}
+        />
+      );
+    }
+    return null;
+  };
 
-    return (
-      <AppModalize
-        ref={modalRef}
-        modalHeight={Metrics.height * 0.8}
-        adjustToContentHeight={false}
-        containerStyle={$container}
-        onClose={() => {
-          onSaveRef.current = undefined;
-          listCurrentIds.current = undefined;
+  return (
+    <AppModalize
+      ref={modalRef}
+      modalHeight={Metrics.height * 0.8}
+      adjustToContentHeight={false}
+      containerStyle={$container}
+      onClose={() => {
+        onSaveRef.current = undefined;
+        listCurrentIds.current = undefined;
+      }}
+      onClosed={() => update()}>
+      <InputBox
+        style={[$input, {borderColor: theme.gray_600}]}
+        i18Placeholder="discovery.searchAround"
+      />
+      <TabView
+        listElements={[renderLocations, renderShops]}
+        listIconTabBar={[
+          <IconTabBar icon={Images.icons.location} title="profile.location" />,
+          <IconTabBar icon={Images.icons.shop} title="profile.shop" />,
+        ]}
+        style={$body}
+        tabBarStyle={$tabBar}
+        initialIndex={saveIndexTab.current}
+        onChangeIndex={index => {
+          saveIndexTab.current = index;
         }}
-        onClosed={() => update()}>
-        <InputBox
-          style={[$input, {borderColor: theme.gray_600}]}
-          i18Placeholder="discovery.searchAround"
-        />
-        <TabView
-          listElements={[renderLocations, renderShops]}
-          listIconTabBar={[
-            <IconTabBar
-              icon={Images.icons.location}
-              title="profile.location"
-            />,
-            <IconTabBar icon={Images.icons.shop} title="profile.shop" />,
-          ]}
-          style={$body}
-          tabBarStyle={$tabBar}
-          initialIndex={saveIndexTab.current}
-          onChangeIndex={index => {
-            saveIndexTab.current = index;
-          }}
-        />
-      </AppModalize>
-    );
-  },
-);
+      />
+    </AppModalize>
+  );
+};
 
 const $container: ViewStyle = {
   paddingHorizontal: 0,
@@ -224,7 +219,4 @@ const $content: ViewStyle = {
   paddingHorizontal: horizontalPadding,
 };
 
-export default Object.assign(ModalAddLocation, {
-  show: (value: TypeShow) => modalAddLocationRef.current?.show(value),
-  hide: () => modalAddLocationRef.current?.hide(),
-});
+export default forwardRef(ModalAddLocation);

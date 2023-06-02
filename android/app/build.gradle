@@ -95,11 +95,11 @@ android {
 
     namespace "com.avatour"
     defaultConfig {
-        applicationId "travel.avatour.life"
+        applicationId "com.doffy.android.production"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 8
+        versionName "1.0.0"
         missingDimensionStrategy "store", "play"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
     }

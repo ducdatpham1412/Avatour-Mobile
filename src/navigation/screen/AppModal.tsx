@@ -2,14 +2,12 @@ import StatusPostCreated from 'navigation/components/StatusPostCreated';
 import React from 'react';
 import {
   ModalActionSheet,
-  ModalAddLocation,
   ModalAlert,
   ModalCommentLike,
   ModalCommentLikeAllApp,
   ModalDatePicker,
   ModalDateRangePicker,
   ModalInputEdit,
-  ModalProfile,
   ModalScanQr,
 } from './modals';
 
@@ -25,8 +23,8 @@ const AppModal = () => {
       <ModalScanQr />
       <ModalActionSheet />
       <ModalAlert />
-      <ModalAddLocation />
-      <ModalProfile />
+      {/* <ModalAddLocation />
+      <ModalProfile /> */}
     </>
   );
 };

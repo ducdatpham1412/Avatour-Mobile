@@ -1,9 +1,9 @@
 import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
-import {ModalProfile} from 'navigation/screen/modals';
 import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
+import {onGoToProfile} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleText, StyleTouchable} from './base';
 import {Avatar} from './common';
@@ -19,7 +19,8 @@ const ItemModalProfile = ({profile, onSelect}: Props) => {
   return (
     <StyleTouchable
       customStyle={[$container, {backgroundColor: theme.background}]}
-      onPress={() => ModalProfile.show({userId: profile?.id})}>
+      //   onPress={() => ModalProfile.show({userId: profile?.id})}
+      onPress={() => onGoToProfile(profile?.id)}>
       <Avatar source={{uri: profile?.avatar}} size={40} />
 
       <View style={$body}>

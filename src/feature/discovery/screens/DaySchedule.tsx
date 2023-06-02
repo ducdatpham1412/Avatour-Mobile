@@ -1,11 +1,12 @@
 import {APP_EVENT} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {emitAppEvent, useAppEvent} from 'hook';
-import {ModalAddLocation} from 'navigation/screen/modals';
+import {TypeShowModalAddLocation} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {impactLight} from 'utility/haptic';
 import {scale, verticalScale} from 'utility/scale';
 import {ButtonAddLocation, ItemLocation} from '../components';
 import {ItemLocationProps} from '../components/ItemLocation';
@@ -15,6 +16,7 @@ interface Props {
   schedule: TypeGetProfileResponse[];
   tourId: number;
   initEditMode: boolean;
+  onShowModalAddLocation: (value: TypeShowModalAddLocation) => void;
 }
 
 const renderItemLocation = (
@@ -46,6 +48,7 @@ const DaySchedule = ({
   tourId,
   dayIndex,
   initEditMode,
+  onShowModalAddLocation,
 }: Props) => {
   const {bottom} = useSafeAreaInsets();
 
@@ -91,10 +94,11 @@ const DaySchedule = ({
           getIndex,
           isEditMode,
           onAddLocation: () =>
-            ModalAddLocation.show({
+            onShowModalAddLocation({
               onSave: newLocation => {
                 const index = getIndex();
                 if (index !== undefined) {
+                  impactLight();
                   setListSchedule(pre => {
                     const updateList = [...pre];
                     updateList.splice(index + 1, 0, newLocation);
@@ -132,8 +136,9 @@ const DaySchedule = ({
           <ButtonAddLocation
             isActive={false}
             onPress={() =>
-              ModalAddLocation.show({
+              onShowModalAddLocation({
                 onSave: newLocation => {
+                  impactLight();
                   setListSchedule(
                     [newLocation].concat(listScheduleRef.current),
                   );

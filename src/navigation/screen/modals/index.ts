@@ -2,7 +2,10 @@ export {
   default as ModalActionSheet,
   type TypeShowActionSheet,
 } from './ModalActionSheet';
-export {default as ModalAddLocation} from './ModalAddLocation';
+export {
+  default as ModalAddLocation,
+  type TypeShowModalAddLocation,
+} from './ModalAddLocation';
 export {default as ModalAlert} from './ModalAlert';
 export {default as ModalCommentLike} from './ModalCommentLike';
 export {

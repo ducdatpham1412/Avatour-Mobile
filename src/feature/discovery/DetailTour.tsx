@@ -14,7 +14,12 @@ import {ButtonX} from 'components/common';
 import {emitAppEvent, useAppEvent, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
+import {
+  ModalActionSheet,
+  ModalAddLocation,
+  ModalAlert,
+  TypeShowModalAddLocation,
+} from 'navigation/screen/modals';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -43,6 +48,7 @@ const DetailTour = ({
   const savedSearchParams = useRef<TypeSearchParams>();
   const timeOut = useRef<number>(0);
   const searchRef = useRef<ElementRef<typeof ModalSearchFilter>>(null);
+  const modalAddLocation = useRef<ElementRef<typeof ModalAddLocation>>(null);
 
   const [
     {data, loadingEditTour, shouldRenderTab, isEditMode, loading, validating},
@@ -119,6 +125,10 @@ const DetailTour = ({
     }
   }, [data]);
 
+  const showModalAddLocation = (params: TypeShowModalAddLocation) => {
+    modalAddLocation.current?.show(params);
+  };
+
   const listSchedules = () => {
     if (!schedules || !data) {
       return [];
@@ -130,6 +140,7 @@ const DetailTour = ({
           tourId={data?.id}
           dayIndex={index}
           initEditMode={isEditMode}
+          onShowModalAddLocation={showModalAddLocation}
         />
       );
     });
@@ -361,6 +372,8 @@ const DetailTour = ({
           searchPlaceHolder="profile.createNameForYourTour"
         />
       )}
+
+      {isEditMode && <ModalAddLocation ref={modalAddLocation} />}
     </View>
   );
 };
