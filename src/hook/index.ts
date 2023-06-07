@@ -4,7 +4,8 @@ import useInitApp from './useInitApp';
 import useLoading from './useLoading';
 import useNotification from './useNotification';
 import useTheme from './useTheme';
-export {default as useAppEvent, emitAppEvent} from './useAppEvent';
+export {emitAppEvent, default as useAppEvent} from './useAppEvent';
+export {default as useLibraryImages} from './useLibraryImages';
 export {default as usePaging} from './usePaging';
 export {
   useTheme,

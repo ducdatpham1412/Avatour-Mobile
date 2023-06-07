@@ -57,7 +57,7 @@ const MyProfile = () => {
           <StyleTouchable onPress={() => navigate(SETTING_ROUTE.settingScreen)}>
             <AntDesign
               name="setting"
-              style={{fontSize: moderateScale(17), color: theme.black}}
+              style={{fontSize: moderateScale(20), color: theme.black}}
             />
           </StyleTouchable>
         ),

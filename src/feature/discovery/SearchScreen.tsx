@@ -72,7 +72,7 @@ const SearchScreen = ({
       <StyleTouchable customStyle={$backView} onPress={goBack}>
         <Ionicons
           name="arrow-back"
-          style={[$iconBack, {color: theme.gray_500}]}
+          style={[$iconBack, {color: theme.gray_800}]}
         />
       </StyleTouchable>
       <AppInput
@@ -100,7 +100,7 @@ const SearchScreen = ({
             inputRef.current?.clear();
           }}
           customStyle={$backView}>
-          <Feather name="x" style={[$iconClear, {color: theme.gray_600}]} />
+          <Feather name="x" style={[$iconClear, {color: theme.gray_800}]} />
         </StyleTouchable>
       )}
       <StyleTouchable
@@ -109,7 +109,7 @@ const SearchScreen = ({
         <StyleIcon
           source={Images.icons.filter}
           size={17}
-          customStyle={{tintColor: theme.gray_500}}
+          customStyle={{tintColor: theme.gray_800}}
         />
       </StyleTouchable>
     </View>

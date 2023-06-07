@@ -47,7 +47,7 @@ const $buttonQr: ViewStyle = {
   marginRight: scale(12),
 };
 const $iconQr: TextStyle = {
-  fontSize: moderateScale(17),
+  fontSize: moderateScale(20),
 };
 const $buttonRequest: ViewStyle = {
   height: moderateScale(27),

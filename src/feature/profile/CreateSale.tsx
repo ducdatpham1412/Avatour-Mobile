@@ -7,6 +7,7 @@ import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
 import {
+  AppInput,
   StyleContainer,
   StyleIcon,
   StyleText,
@@ -23,7 +24,7 @@ import {ModalAlert} from 'navigation/screen/modals';
 import React, {useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
-import {TextInput, Vibration, View} from 'react-native';
+import {Vibration, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
@@ -47,7 +48,7 @@ const {width, safeBottomPadding} = Metrics;
 const CreateSale = ({route}: Props) => {
   const itemNew = useRef(route.params?.itemNew);
   const itemEdit = useRef(route.params?.itemEdit);
-  const itemError = useRef(route.params?.itemError).current;
+  const itemError = useRef(route.params?.itemError);
 
   const theme = useTheme();
   const {
@@ -61,13 +62,13 @@ const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
 
   const initValue = useRef({
-    content: itemEdit.current?.content || itemError?.content || '',
+    content: itemEdit.current?.content || itemError?.current?.content || '',
     images:
       itemEdit.current?.images ||
-      itemError?.images ||
+      itemError?.current?.images ||
       itemNew.current?.images ||
       [],
-    prices: itemEdit.current?.prices || itemError?.prices || [],
+    prices: itemEdit.current?.prices || itemError.current?.prices || [],
   }).current;
 
   const [content, setContent] = useState(initValue.content);
@@ -162,7 +163,7 @@ const CreateSale = ({route}: Props) => {
   /**
    * Render views
    */
-  const Header = () => {
+  const renderHeader = () => {
     let disableButtonEdit = true;
     if (itemEdit.current) {
       const temp: typeof initValue = {
@@ -246,55 +247,10 @@ const CreateSale = ({route}: Props) => {
     return <ScrollSyncSizeImage images={images} syncWidth={width} />;
   }, []);
 
-  //   const Topic = () => {
-  //     const disableChooseTopic =
-  //       itemEdit.current && itemEdit.current.postStatus === STATUS.requestingDelete;
-
-  //     if (topics.length === 0) {
-  //       return (
-  //         <AddInfoButton
-  //           ref={buttonTopicRef}
-  //           borderColor={theme.borderColor}
-  //           titleColor={theme.textHightLight}
-  //           title="profile.post.topic"
-  //           onPress={() => modalTopicRef.current?.open()}
-  //         />
-  //       );
-  //     }
-
-  //     return (
-  //       <StyleTouchable
-  //         customStyle={styles.topicView}
-  //         onPress={() => modalTopicRef.current?.open()}
-  //         disable={disableChooseTopic}>
-  //         {topics.map(id => {
-  //           const chosenTopic = chooseIconTopic(id);
-  //           return (
-  //             <StyleIcon
-  //               key={id}
-  //               source={chosenTopic}
-  //               size={25}
-  //               customStyle={styles.iconTopicView}
-  //             />
-  //           );
-  //         })}
-  //       </StyleTouchable>
-  //     );
-  //   };
-
   const renderInfoBox = () => {
     let textStatus: I18Normalize = 'discovery.available';
     let textButton: I18Normalize = 'discovery.temporarilyClosed';
     let textButtonColor = theme.borderColor;
-
-    // const isClosingOrRequestingDelete =
-    //   postStatus === STATUS.temporarilyClose ||
-    //   postStatus === STATUS.requestingDelete;
-    // if (isClosingOrRequestingDelete) {
-    //   textStatus = 'discovery.temporarilyClosed';
-    //   textButton = 'discovery.openAvailable';
-    //   textButtonColor = theme.highlightColor;
-    // }
 
     return (
       <>
@@ -475,13 +431,13 @@ const CreateSale = ({route}: Props) => {
     );
   };
 
-  const Content = () => {
+  const renderContent = () => {
     const disableEditCaption =
       !!itemEdit.current && itemEdit.current.status === STATUS.requestingDelete;
 
     return (
       <View style={[styles.priceView, {borderTopColor: theme.holderColor}]}>
-        <TextInput
+        <AppInput
           onChangeText={text => {
             scrollRef.current?.scrollToEnd();
             setContent(text);
@@ -500,7 +456,7 @@ const CreateSale = ({route}: Props) => {
   return (
     <>
       <ViewSafeTopPadding />
-      {Header()}
+      {renderHeader()}
 
       <StyleContainer
         ref={scrollRef}
@@ -510,11 +466,11 @@ const CreateSale = ({route}: Props) => {
         extraHeight={80}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag">
-        {ImagePreview}
+        {/* {ImagePreview} */}
         <View style={styles.contentView}>
           {renderInfoBox()}
           {renderPrices()}
-          {Content()}
+          {renderContent()}
         </View>
       </StyleContainer>
 
