@@ -1,3 +1,4 @@
+import {Metrics} from 'asset/metrics';
 import {useRef} from 'react';
 import {
   Animated,
@@ -32,3 +33,5 @@ export const DefaultTransitionSpec = {
   overshootClamping: true,
 };
 export const swipeVelocityThreshold = 0.15;
+
+export const swipeDistanceThreshold = Metrics.width / 1.75;

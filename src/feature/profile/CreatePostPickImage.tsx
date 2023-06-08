@@ -1,10 +1,11 @@
+import ImageEditor from '@react-native-community/image-editor';
 import {useIsFocused} from '@react-navigation/native';
 import {Metrics} from 'asset/metrics';
 import {
   FONT_SIZE,
   FONT_WEIGHT_MEDIUM,
   MAX_NUMBER_IMAGES_POST,
-  ratioImageGroupBuying,
+  ratioImageSale,
 } from 'asset/standardValue';
 import StyleTabView from 'components/StyleTabView';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
@@ -14,8 +15,9 @@ import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
 import React, {useRef, useState} from 'react';
-import {View} from 'react-native';
-import ImageZoomAndCrop from 'react-native-image-zoom-and-crop';
+import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
+import {ICropperParams} from 'react-native-image-zoom-and-crop';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -23,6 +25,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
 import ImageUploader from 'utility/ImageUploader';
 import {borderWidthTiny, logger} from 'utility/assistant';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 import ScrollCropImages from './components/ScrollCropImages';
 
 interface Props {
@@ -40,51 +43,53 @@ const containerPreviewImage = {
 const CreatePostPickImage = ({route}: Props) => {
   const theme = useTheme();
   const isFocused = useIsFocused();
+  const {top} = useSafeAreaInsets();
   const isCreateSale = route.params?.mode === 'sale';
 
   const tabPickRef = useRef<StyleTabView>(null);
 
-  const [images, setImages] = useState<Array<string>>([]);
+  const [images, setImages] = useState<LibraryImage[]>([]);
   const [imageFocusing, setImageFocusing] = useState('');
+  const [renderingBase64, setRenderingBase64] = useState(false);
   const [video, setVideo] = useState('');
   const [tabIndex, setTabIndex] = useState(0);
-  const [indexScroll, setIndexScroll] = useState(0);
+  const [indexImageFocus, setIndexImageFocus] = useState(0);
   const [cropSize, setCropSize] = useState({
-    width: 0,
-    height: 0,
+    width,
+    height: width * ratioImageSale,
   });
-
   const [cropperParams, setCropperParams] = useState<
-    Array<{url: string; value: any}>
+    Array<{url: string; value: ICropperParams | null}>
   >([]);
 
-  const onChooseImage = (url: string) => {
-    if (images.length === MAX_NUMBER_IMAGES_POST && !images.includes(url)) {
+  const onChooseImage = (img: LibraryImage) => {
+    const findIndex = images.findIndex(item => item.url === img.url);
+    const included = findIndex >= 0;
+
+    if (images.length === MAX_NUMBER_IMAGES_POST && !included) {
       return;
     }
 
-    if (images.includes(url)) {
-      const currentIndex = images.indexOf(url);
-      if (imageFocusing === url) {
+    if (included) {
+      if (imageFocusing === img.url) {
         if (images.length === 1) {
           return;
         }
-        const chosenIndex =
-          currentIndex === 0 ? currentIndex + 1 : currentIndex - 1;
-        setImageFocusing(images[chosenIndex]);
-        setImages(images.filter(item => item !== url));
-        setCropperParams(cropperParams.filter(item => item.url !== url));
-        setIndexScroll(chosenIndex);
+        const chosenIndex = findIndex === 0 ? findIndex + 1 : findIndex - 1;
+        setImageFocusing(images[chosenIndex].url);
+        setImages(images.filter(item => item.url !== img.url));
+        setCropperParams(cropperParams.filter(item => item.url !== img.url));
+        setIndexImageFocus(chosenIndex);
       } else {
-        setImageFocusing(url);
-        setIndexScroll(currentIndex);
+        setImageFocusing(img.url);
+        setIndexImageFocus(findIndex);
       }
     } else {
       const lastIndex = images.length;
-      setImageFocusing(url);
-      setImages(images.concat(url));
-      setCropperParams(cropperParams.concat({url, value: null}));
-      setIndexScroll(lastIndex);
+      setImageFocusing(img.url);
+      setImages(images.concat(img));
+      setCropperParams(cropperParams.concat({url: img.url, value: null}));
+      setIndexImageFocus(lastIndex);
     }
   };
 
@@ -94,11 +99,17 @@ const CreatePostPickImage = ({route}: Props) => {
     }
 
     try {
-      const path = await ImageUploader.pickCamera({
+      const image = await ImageUploader.pickCamera({
         maxWidth: width,
-        maxHeight: width * ratioImageGroupBuying,
+        maxHeight: width * ratioImageSale,
       });
-      setImages(images.concat(path));
+      const newListImages = images.concat({
+        url: image.sourceURL ?? image.path,
+        width: image.width,
+        height: image.height,
+      });
+      setImages(newListImages);
+      setIndexImageFocus(newListImages.length - 1);
     } catch (err) {
       logger(err);
     }
@@ -128,39 +139,82 @@ const CreatePostPickImage = ({route}: Props) => {
   };
 
   const onNavigatePreview = async () => {
-    const results = await Promise.all(
-      images.map(async url => {
-        const cropperCheck = cropperParams.find(item => item.url === url);
-        if (cropperCheck?.value) {
-          const temp = await ImageZoomAndCrop.crop({
-            ...cropperCheck.value,
-            imageUri: url,
-            cropSize,
-            cropAreaSize: cropSize,
-          });
-          return temp ?? '';
-        }
-        return url;
-      }),
-    );
+    try {
+      setRenderingBase64(true);
+      const results = await Promise.all(
+        images.map(async img => {
+          // const cropperCheck = cropperParams.find(item => item.url === url);
+          // if (cropperCheck?.value) {
+          //   const temp = await ImageZoomAndCrop.crop({
+          //     ...cropperCheck.value,
+          //     imageUri: url,
+          //     cropSize,
+          //     cropAreaSize: cropSize,
+          //   });
+          //   return temp ?? '';
+          // }
 
-    if (results) {
-      if (isCreateSale) {
-        navigate(PROFILE_ROUTE.createSale, {
-          itemNew: {
-            images: tabIndex === 0 ? results : [video],
-            isVideo: tabIndex === 1,
-          },
-        });
-      } else {
-        navigate(PROFILE_ROUTE.createPostPreview, {
-          itemNew: {
-            images: tabIndex === 0 ? results : [video],
-            isVideo: tabIndex === 1,
-            userReviewed: route.params?.userReviewed,
-          },
-        });
+          // const croppedUrl = await ImageZoomAndCrop.crop({
+          //   cropSize: {
+          //     width: img.width,
+          //     height: img.height,
+          //   },
+          //   cropAreaSize: {
+          //     width: img.width,
+          //     height: img.height,
+          //   },
+          //   imageUri: img.url,
+          //   positionX: 0,
+          //   positionY: 0,
+          //   scale: 1,
+          //   srcSize: {
+          //     width: img.width,
+          //     height: img.height,
+          //   },
+          //   fittedSize: {
+          //     width: 100,
+          //     height: 70,
+          //   },
+          // }).catch(err => {
+          //   console.log('crop error: ', err);
+          // });
+
+          const croppedUrl = await ImageEditor.cropImage(img.url, {
+            offset: {
+              x: 0,
+              y: 0,
+            },
+            size: {
+              width: img.width,
+              height: img.height,
+            },
+          });
+          return croppedUrl;
+        }),
+      );
+
+      if (results.length) {
+        if (isCreateSale) {
+          navigate(PROFILE_ROUTE.createSale, {
+            itemNew: {
+              images: tabIndex === 0 ? results : [video],
+              isVideo: tabIndex === 1,
+            },
+          });
+        } else {
+          navigate(PROFILE_ROUTE.createPostPreview, {
+            itemNew: {
+              images: tabIndex === 0 ? results : [video],
+              isVideo: tabIndex === 1,
+              userReviewed: route.params?.userReviewed,
+            },
+          });
+        }
       }
+    } catch (err) {
+      logger('Error render base64: ', err);
+    } finally {
+      setRenderingBase64(false);
     }
   };
 
@@ -190,11 +244,11 @@ const CreatePostPickImage = ({route}: Props) => {
     if (isCreateSale) {
       return (
         <ScrollCropImages
-          images={images}
+          images={images.map(item => item.url)}
           imageFocusing={imageFocusing}
-          index={indexScroll}
+          index={indexImageFocus}
           width={width}
-          height={width * ratioImageGroupBuying}
+          height={width * ratioImageSale}
           onChangeCropperParams={value => {
             setCropperParams(preValue =>
               preValue.map(item => {
@@ -205,9 +259,15 @@ const CreatePostPickImage = ({route}: Props) => {
               }),
             );
           }}
-          initRatio={isCreateSale ? ratioImageGroupBuying : 1}
+          initRatio={isCreateSale ? ratioImageSale : 1}
           onChangeCropperSize={value => setCropSize(value)}
           havingZoomButton={!isCreateSale}
+          onRemoveImage={url => {
+            const findImage = images.find(item => item.url === url);
+            if (findImage) {
+              onChooseImage(findImage);
+            }
+          }}
         />
       );
     }
@@ -220,14 +280,14 @@ const CreatePostPickImage = ({route}: Props) => {
           alignItems: 'center',
         }}>
         <StyleImage
-          source={{uri: images[0]}}
+          source={{uri: images[0].url}}
           customStyle={styles.imageBehind}
           blurRadius={10}
         />
         <ScrollCropImages
-          images={images}
+          images={images.map(item => item.url)}
           imageFocusing={imageFocusing}
-          index={indexScroll}
+          index={indexImageFocus}
           width={containerPreviewImage.height}
           height={containerPreviewImage.height}
           onChangeCropperParams={value => {
@@ -240,9 +300,15 @@ const CreatePostPickImage = ({route}: Props) => {
               }),
             );
           }}
-          initRatio={isCreateSale ? ratioImageGroupBuying : 1}
+          initRatio={isCreateSale ? ratioImageSale : 1}
           onChangeCropperSize={value => setCropSize(value)}
           havingZoomButton={!isCreateSale}
+          onRemoveImage={url => {
+            const findImage = images.find(item => item.url === url);
+            if (findImage) {
+              onChooseImage(findImage);
+            }
+          }}
         />
       </View>
     );
@@ -293,7 +359,7 @@ const CreatePostPickImage = ({route}: Props) => {
           />
         )}
 
-        <StyleTouchable
+        {/* <StyleTouchable
           customStyle={[
             styles.videoTouch,
             {
@@ -306,35 +372,40 @@ const CreatePostPickImage = ({route}: Props) => {
             name="ios-videocam-outline"
             style={[styles.iconVideo, {color: theme.black}]}
           />
-        </StyleTouchable>
+        </StyleTouchable> */}
       </View>
     );
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.white}]}>
-      <View style={[styles.headerView, {borderBottomColor: theme.gray_400}]}>
-        <StyleTouchable customStyle={styles.iconCloseView} onPress={goBack}>
-          <AntDesign
-            name="close"
-            style={[styles.iconClose, {color: theme.black}]}
-          />
+    <View style={[$container, {backgroundColor: theme.white, paddingTop: top}]}>
+      <View style={[$headerView, {borderBottomColor: theme.gray_400}]}>
+        <StyleTouchable customStyle={$iconCloseView} onPress={goBack}>
+          <AntDesign name="close" style={[$iconClose, {color: theme.black}]} />
         </StyleTouchable>
         <StyleText
           i18Text="profile.post.pickImage"
           customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
         />
-        <StyleTouchable
-          customStyle={styles.nextView}
-          onPress={onNavigatePreview}>
-          <StyleText
-            i18Text="common.next"
-            customStyle={[styles.textNext, {color: theme.p_800}]}
+        {renderingBase64 ? (
+          <ActivityIndicator
+            color={theme.p_800}
+            size="small"
+            style={$nextView}
           />
-        </StyleTouchable>
+        ) : (
+          <StyleTouchable customStyle={$nextView} onPress={onNavigatePreview}>
+            <StyleText
+              i18Text="common.next"
+              customStyle={[$textNext, {color: theme.p_800}]}
+            />
+          </StyleTouchable>
+        )}
       </View>
+
       {renderImages()}
       {renderTool()}
+
       <StyleTabView
         ref={tabPickRef}
         containerStyle={styles.tabView}
@@ -356,36 +427,34 @@ const CreatePostPickImage = ({route}: Props) => {
   );
 };
 
+const $container: ViewStyle = {
+  flex: 1,
+};
+const $headerView: ViewStyle = {
+  width: '100%',
+  paddingVertical: verticalScale(10),
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderBottomWidth: borderWidthTiny,
+};
+const $iconCloseView: ViewStyle = {
+  position: 'absolute',
+  left: scale(20),
+};
+const $iconClose: TextStyle = {
+  fontSize: moderateScale(25),
+};
+const $nextView: ViewStyle = {
+  position: 'absolute',
+  right: scale(20),
+};
+const $textNext: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+};
+
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Metrics.safeTopPadding,
-  },
-  // header
-  headerView: {
-    width: '100%',
-    paddingVertical: '10@vs',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: borderWidthTiny,
-  },
-  iconCloseView: {
-    position: 'absolute',
-    left: '20@s',
-  },
-  iconClose: {
-    fontSize: '25@ms',
-  },
-  nextView: {
-    position: 'absolute',
-    right: '20@s',
-  },
-  textNext: {
-    fontSize: FONT_SIZE.f1,
-    fontWeight: 'bold',
-  },
-  // image preview
   videoView: {
     width,
     minHeight: width,

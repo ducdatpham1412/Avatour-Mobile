@@ -3,7 +3,7 @@ import {apiLikePost, apiRequestBought, apiUnLikePost} from 'api/profile';
 import {useAppSelector} from 'app-redux/store';
 import {APP_EVENT, GROUP_BUYING_STATUS, REACT} from 'asset/enum';
 import dayjs from 'dayjs';
-import {useApiImmutable, useAppEvent} from 'hook';
+import {emitAppEvent, useApiImmutable, useAppEvent} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import {useEffect, useState} from 'react';
 import {formatUTCDate, getDateTimeNow} from 'utility/format';
@@ -30,7 +30,6 @@ const useDetailSale = ({saleId, sale}: Params) => {
     path: `/profile/sales/join/${saleId ?? sale?.id}`,
   });
   const appEvent = useAppEvent(APP_EVENT.requestBoughtJoin);
-  const appEventReact = useAppEvent(APP_EVENT.reactSale);
   const [loadingJoin, setLoadingJoin] = useState(false);
 
   useEffect(() => {
@@ -53,14 +52,21 @@ const useDetailSale = ({saleId, sale}: Params) => {
   const onReaction = async () => {
     if (data) {
       const currentLiked = !!data?.is_liked;
+      let newTotalLikes = currentLiked
+        ? data.total_likes - 1
+        : data.total_likes + 1;
+      newTotalLikes = newTotalLikes >= 0 ? newTotalLikes : 0;
       try {
-        await mutate({...data, is_liked: !currentLiked}, {revalidate: false});
+        await mutate(
+          {...data, is_liked: !currentLiked, total_likes: newTotalLikes},
+          {revalidate: false},
+        );
         if (currentLiked) {
           await apiUnLikePost({
             type: REACT.sale,
             reactedId: data?.id,
           });
-          appEventReact.emit({
+          emitAppEvent(APP_EVENT.reactSale, {
             saleId: data?.id,
             type: 'dislike',
           });
@@ -69,7 +75,7 @@ const useDetailSale = ({saleId, sale}: Params) => {
             type: REACT.sale,
             reactedId: data?.id,
           });
-          appEventReact.emit({
+          emitAppEvent(APP_EVENT.reactSale, {
             saleId: data?.id,
             type: 'like',
           });

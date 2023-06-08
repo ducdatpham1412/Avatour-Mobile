@@ -1,26 +1,32 @@
-import {FONT_SIZE, LINE_HEIGHT} from 'asset/standardValue';
-import Theme, {TypeTheme} from 'asset/theme/Theme';
-import {StyleButton, StyleText} from 'components/base';
+import {
+  BORDER_RADIUS,
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+} from 'asset/standardValue';
+import Theme from 'asset/theme/Theme';
+import {ModalEdit, StyleText} from 'components/base';
 import AppInput from 'components/base/AppInput';
-import ButtonX from 'components/common/ButtonX';
-import React, {Component} from 'react';
-import {TextInput, View} from 'react-native';
-import {Modalize} from 'react-native-modalize';
-import {ScaledSheet} from 'react-native-size-matters';
+import {useTheme} from 'hook';
+import React, {
+  ElementRef,
+  ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import {useTranslation} from 'react-i18next';
+import {TextInput, TextStyle, View} from 'react-native';
 import {borderWidthTiny} from 'utility/assistant';
-import I18Next, {I18Normalize} from 'utility/I18Next';
+import {formatLocaleNumber, formatNormalNumberFromLocale} from 'utility/format';
+import {I18Normalize} from 'utility/I18Next';
+import {scale, verticalScale} from 'utility/scale';
 import {validateIsNumber} from 'utility/validate';
 
 interface Props {
   prices: Array<TypePrice>;
   onAddPrice(value: TypePrice): void;
   onChangePrice(params: {indexEdit: number; value: TypePrice}): void;
-  theme: TypeTheme;
-}
-
-interface States {
-  numberPeople: number;
-  priceValue: number;
 }
 
 interface TypeShow {
@@ -29,362 +35,273 @@ interface TypeShow {
   indexEdit: number;
 }
 
-let timeout: any;
+const ModalAddPrice = (
+  {prices, onAddPrice, onChangePrice}: Props,
+  ref: ForwardedRef<TypeShowModalize<TypeShow>>,
+) => {
+  const theme = useTheme();
+  const {t} = useTranslation();
+  const inputNumberRef = useRef<TextInput>(null);
+  const inputPriceRef = useRef<TextInput>(null);
+  const indexEdit = useRef<number>();
+  const modalRef = useRef<ElementRef<typeof ModalEdit>>(null);
 
-class ModalAddPrice extends Component<Props, States> {
-  modalRef = React.createRef<Modalize>();
+  const [numberPeople, setNumberPeople] = useState(0);
+  const [price, setPrice] = useState(0);
 
-  inputNumberRef = React.createRef<TextInput>();
+  let isValidNumberPeople = true;
+  let textAlertNumberPeople: I18Normalize = 'common.null';
+  const paramsNumberPeople: any = {};
 
-  inputPriceRef = React.createRef<TextInput>();
+  let isValidPriceValue = true;
+  let textAlertPrice: I18Normalize = 'common.null';
+  const paramsPrice: any = {};
 
-  indexEdit: number | null = null;
+  // Add new one
+  if (indexEdit.current === undefined) {
+    const lastPrice = prices[prices.length - 1];
+    if (lastPrice) {
+      if (numberPeople < lastPrice.number_people) {
+        isValidNumberPeople = false;
+        textAlertNumberPeople = 'alert.numberPeopleMoreThan';
+        paramsNumberPeople.value = lastPrice.number_people;
+      }
 
-  state: States = {
-    numberPeople: 0,
-    priceValue: 0,
-  };
-
-  show(params?: TypeShow) {
-    if (params) {
-      this.setState({
-        numberPeople: params.numberPeople,
-        priceValue: params.price,
-      });
-      this.indexEdit = params.indexEdit;
+      isValidPriceValue = price < lastPrice.price && !!price;
+      textAlertPrice = 'alert.priceLessThan';
+      paramsPrice.value = formatLocaleNumber(lastPrice.price);
+    } else if (numberPeople !== 1) {
+      isValidNumberPeople = false;
+      textAlertNumberPeople = 'alert.firstNumberPeopleByOne';
     }
-    this.modalRef.current?.open();
-    timeout = setTimeout(() => {
-      this.inputNumberRef.current?.focus();
-    }, 200);
-    return () => clearTimeout(timeout);
   }
 
-  private onConfirm = () => {
-    if (this.indexEdit === null) {
-      this.props.onAddPrice({
-        number_people: Number(this.state.numberPeople),
-        price: this.state.priceValue,
+  // Edit an index price
+  else {
+    const start = prices[indexEdit.current - 1];
+    const end = prices[indexEdit.current + 1];
+    if (start && end) {
+      isValidNumberPeople =
+        numberPeople > start.number_people && numberPeople < end.number_people;
+      textAlertNumberPeople = 'alert.numberPeopleMoreAndLess';
+      paramsNumberPeople.start = start.number_people;
+      paramsNumberPeople.end = end.number_people;
+
+      isValidPriceValue = price < start.price && price > end.price;
+      textAlertPrice = 'alert.priceMoreLessThan';
+      paramsPrice.start = formatLocaleNumber(start.price);
+      paramsPrice.end = formatLocaleNumber(end.price);
+    } else if (start) {
+      // Editing the last
+      isValidNumberPeople = numberPeople > start.number_people;
+      textAlertNumberPeople = 'alert.numberPeopleMoreThan';
+      paramsNumberPeople.value = start.number_people;
+
+      isValidPriceValue = price < start.price;
+      textAlertPrice = 'alert.priceLessThan';
+      paramsPrice.value = formatLocaleNumber(start.price);
+    } else if (end) {
+      // Editing the first
+      isValidNumberPeople = numberPeople === 1;
+      if (!isValidNumberPeople) {
+        textAlertNumberPeople = 'alert.firstNumberPeopleByOne';
+      }
+
+      isValidPriceValue = price > end.price;
+      textAlertPrice = 'alert.priceMoreThan';
+      paramsPrice.value = formatLocaleNumber(end.price);
+    } else if (numberPeople !== 1) {
+      isValidNumberPeople = false;
+      textAlertNumberPeople = 'alert.firstNumberPeopleByOne';
+    }
+  }
+
+  const borderWidthNumber = isValidNumberPeople ? 0 : borderWidthTiny;
+  const borderWidthPrice = isValidPriceValue ? 0 : borderWidthTiny;
+  const disableButton = !isValidNumberPeople || !isValidPriceValue;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      show: value => {
+        if (value) {
+          setNumberPeople(value.numberPeople);
+          setPrice(value.price);
+          indexEdit.current = value.indexEdit;
+        } else {
+          const lastPrice = prices[prices.length - 1];
+          setNumberPeople(
+            lastPrice?.number_people ? lastPrice?.number_people + 1 : 1,
+          );
+        }
+        modalRef.current?.show();
+        setTimeout(() => {
+          inputPriceRef.current?.focus();
+        }, 300);
+      },
+      hide: () => {
+        modalRef.current?.hide();
+      },
+    }),
+    [prices],
+  );
+
+  const onClosed = () => {
+    setNumberPeople(0);
+    setPrice(0);
+    indexEdit.current = undefined;
+  };
+
+  const onSave = () => {
+    if (indexEdit.current === undefined) {
+      onAddPrice({
+        number_people: numberPeople,
+        price,
       });
     } else {
-      this.props.onChangePrice({
-        indexEdit: this.indexEdit,
+      onChangePrice({
+        indexEdit: indexEdit.current,
         value: {
-          number_people: Number(this.state.numberPeople),
-          price: this.state.priceValue,
+          number_people: numberPeople,
+          price,
         },
       });
     }
-    this.setState({
-      numberPeople: 0,
-      priceValue: 0,
-    });
-    this.indexEdit = null;
-    this.modalRef.current?.close();
+    modalRef.current?.hide();
+    onClosed();
   };
 
-  private onCancel = () => {
-    if (this.indexEdit === null) {
-      this.modalRef.current?.close();
-    } else {
-      this.setState({
-        numberPeople: 0,
-        priceValue: 0,
-      });
-      this.modalRef.current?.close();
-    }
-    this.indexEdit = null;
-  };
-
-  render() {
-    const {theme, prices} = this.props;
-    const {numberPeople, priceValue} = this.state;
-
-    let isValidNumberPeople = true;
-    let textAlertNumberPeople: I18Normalize = 'common.null';
-    const paramsNumberPeople: any = {};
-
-    let isValidPriceValue = true;
-    let textAlertPrice: I18Normalize = 'common.null';
-    const paramsPrice: any = {};
-
-    // add new one
-    if (this.indexEdit === null) {
-      const lastPrice = prices[prices.length - 1];
-      if (lastPrice) {
-        if (Number(numberPeople) < lastPrice.number_people) {
-          isValidNumberPeople = false;
-          paramsNumberPeople.value = lastPrice.number_people;
-          textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-        }
-
-        isValidPriceValue =
-          Number(priceValue) < Number(lastPrice.price) && !!priceValue;
-        paramsPrice.value = lastPrice.price;
-        textAlertPrice = 'alert.priceLessThan';
-      } else if (Number(numberPeople) <= 1) {
-        isValidNumberPeople = false;
-        paramsNumberPeople.value = 1;
-        textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-      }
-    }
-    // edit an index price
-    else {
-      const start = prices[this.indexEdit - 1];
-      const end = prices[this.indexEdit + 1];
-      if (start && end) {
-        isValidNumberPeople =
-          Number(numberPeople) > start.number_people &&
-          Number(numberPeople) < end.number_people;
-        textAlertNumberPeople = 'alert.numberPeopleMoreAndLess';
-        paramsNumberPeople.start = start.number_people;
-        paramsNumberPeople.end = end.number_people;
-
-        isValidPriceValue =
-          Number(priceValue) < Number(start.price) &&
-          Number(priceValue) > Number(end.price);
-        textAlertPrice = 'alert.priceMoreLessThan';
-        paramsPrice.start = start.price;
-        paramsPrice.end = end.price;
-      } else if (start) {
-        isValidNumberPeople = Number(numberPeople) > start.number_people;
-        textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-        paramsNumberPeople.price = start.number_people;
-
-        isValidPriceValue = Number(priceValue) < Number(start.price);
-        textAlertPrice = 'alert.priceLessThan';
-        paramsPrice.price = start.price;
-      } else if (end) {
-        isValidNumberPeople = Number(numberPeople) < end.number_people;
-        if (!isValidNumberPeople) {
-          textAlertNumberPeople = 'alert.numberPeopleLessThan';
-          paramsNumberPeople.value = end.number_people;
-        } else {
-          isValidNumberPeople = Number(numberPeople) > 1;
-          paramsNumberPeople.value = 1;
-          textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-        }
-
-        isValidPriceValue = Number(priceValue) > Number(end.price);
-        textAlertPrice = 'alert.priceMoreThan';
-        paramsPrice.value = end.price;
-      } else if (Number(numberPeople) <= 1) {
-        isValidNumberPeople = false;
-        paramsNumberPeople.value = 1;
-        textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-      }
-    }
-
-    const borderWidthNumber = isValidNumberPeople ? 0 : borderWidthTiny;
-    const borderWidthPrice = isValidPriceValue ? 0 : borderWidthTiny;
-
-    const Content = () => {
-      return (
-        <>
-          <View style={styles.inputView}>
-            <AppInput
-              ref={this.inputNumberRef}
-              value={numberPeople}
-              onChangeText={value => {
-                if (validateIsNumber(value) || !value) {
-                  this.setState({
-                    numberPeople: value,
-                  });
-                }
-              }}
-              placeholder={I18Next.t('profile.number')}
-              placeholderTextColor={theme.borderColor}
-              style={[
-                styles.inputNumberPeople,
-                {
-                  color: theme.textHightLight,
-                  backgroundColor: theme.backgroundTextInput,
-                  borderWidth: borderWidthNumber,
-                },
-              ]}
-              onSubmitEditing={() => this.inputPriceRef.current?.focus()}
-              keyboardType="numeric"
-              returnKeyType="next"
-            />
-            <StyleText
-              originValue="-"
-              customStyle={[styles.textMiddle, {color: theme.borderColor}]}
-            />
-            <View
-              style={[
-                styles.inputPriceBox,
-                {
-                  backgroundColor: theme.backgroundTextInput,
-                  borderWidth: borderWidthPrice,
-                },
-              ]}>
-              <AppInput
-                ref={this.inputPriceRef}
-                value={priceValue}
-                onChangeText={value => {
-                  if (validateIsNumber(value) || !value) {
-                    this.setState({
-                      priceValue: value,
-                    });
-                  }
-                }}
-                placeholder={I18Next.t('profile.price')}
-                placeholderTextColor={theme.borderColor}
-                style={[
-                  styles.inputPrice,
-                  {
-                    color: theme.textHightLight,
-                  },
-                ]}
-                keyboardType="numeric"
-                returnKeyType="done"
-              />
-              <StyleText
-                originValue="vnd"
-                customStyle={[styles.textVnd, {color: theme.borderColor}]}
-              />
-            </View>
-          </View>
-
-          {!isValidNumberPeople && (
-            <StyleText
-              i18Text={textAlertNumberPeople}
-              i18Params={paramsNumberPeople}
-              customStyle={[
-                styles.textInvalidLink,
-                {color: theme.highlightColor},
-              ]}
-            />
-          )}
-
-          {!isValidPriceValue && (
-            <StyleText
-              i18Text={textAlertPrice}
-              i18Params={paramsPrice}
-              customStyle={[
-                styles.textInvalidLink,
-                {color: theme.highlightColor},
-              ]}
-            />
-          )}
-        </>
-      );
-    };
-
-    return (
-      <Modalize
-        ref={this.modalRef}
-        modalStyle={styles.modal}
-        withHandle={false}>
-        <View
-          style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-          <ButtonX
-            containerStyle={styles.buttonClose}
-            onPress={() => this.onCancel()}
-          />
-          <StyleText
-            i18Text={'profile.addPrice'}
-            customStyle={[styles.title, {color: theme.textColor}]}
-          />
-          {Content()}
-          <StyleButton
-            containerStyle={styles.buttonView}
-            titleStyle={styles.titleButton}
-            title="common.save"
-            disable={
-              !isValidNumberPeople ||
-              !isValidPriceValue ||
-              !numberPeople ||
-              !priceValue
+  return (
+    <ModalEdit
+      ref={modalRef}
+      title="profile.addPrice"
+      onPressClose={onClosed}
+      onSave={onSave}
+      disable={disableButton}>
+      <View style={$inputView}>
+        <AppInput
+          ref={inputNumberRef}
+          value={numberPeople === 0 ? '' : formatLocaleNumber(numberPeople)}
+          onChangeText={value => {
+            const temp = formatNormalNumberFromLocale(value);
+            if (validateIsNumber(temp)) {
+              setNumberPeople(Number(temp));
+            } else if (value === '') {
+              setNumberPeople(0);
             }
-            onPress={() => this.onConfirm()}
+          }}
+          placeholder={t('profile.number')}
+          style={[
+            $inputNumberPeople,
+            {
+              backgroundColor: theme.background,
+              borderWidth: borderWidthNumber,
+            },
+          ]}
+          onSubmitEditing={() => inputPriceRef.current?.focus()}
+          keyboardType="numeric"
+          returnKeyType="next"
+        />
+        <StyleText
+          originValue="-"
+          customStyle={[$textMiddle, {color: theme.black}]}
+        />
+        <View
+          style={[
+            $inputPriceBox,
+            {
+              backgroundColor: theme.background,
+              borderWidth: borderWidthPrice,
+            },
+          ]}>
+          <AppInput
+            ref={inputPriceRef}
+            value={price === 0 ? '' : formatLocaleNumber(price)}
+            onChangeText={value => {
+              const temp = formatNormalNumberFromLocale(value);
+              if (validateIsNumber(temp)) {
+                setPrice(Number(temp));
+              } else if (value === '') {
+                setPrice(0);
+              }
+            }}
+            placeholder={t('profile.price')}
+            style={$inputPrice}
+            keyboardType="numeric"
           />
+          <StyleText originValue="vnd" customStyle={$textVnd} />
         </View>
-      </Modalize>
-    );
-  }
-}
+      </View>
 
-const styles = ScaledSheet.create({
-  modal: {
-    backgroundColor: 'transparent',
-  },
-  container: {
-    width: '90%',
-    paddingTop: '10@vs',
-    paddingBottom: '20@vs',
-    marginTop: '100@vs',
-    alignSelf: 'center',
-    borderRadius: '7@ms',
-    alignItems: 'center',
-    paddingHorizontal: '10@s',
-  },
-  buttonClose: {
-    position: 'absolute',
-    top: '7@s',
-    right: '7@s',
-  },
-  title: {
-    fontSize: '15@ms',
-    fontWeight: 'bold',
-  },
-  textMiddle: {
-    fontSize: FONT_SIZE.normal,
-    marginHorizontal: '10@s',
-  },
-  inputView: {
-    width: '100%',
-    marginTop: '15@vs',
-    paddingHorizontal: '8@s',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputNumberPeople: {
-    flex: 1,
-    marginVertical: 0,
-    paddingTop: '8@vs',
-    paddingBottom: '8@vs',
-    paddingHorizontal: '7@s',
-    borderRadius: '5@ms',
-    fontSize: FONT_SIZE.normal,
-    borderColor: Theme.common.red,
-  },
-  inputPriceBox: {
-    flex: 3,
-    marginVertical: 0,
-    borderRadius: '5@ms',
-    borderColor: Theme.common.red,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  inputPrice: {
-    flex: 1,
-    marginVertical: 0,
-    paddingTop: '8@vs',
-    paddingBottom: '8@vs',
-    paddingHorizontal: '7@s',
-    fontSize: FONT_SIZE.normal,
-    lineHeight: LINE_HEIGHT.normal,
-  },
-  textVnd: {
-    marginRight: '7@s',
-    fontSize: FONT_SIZE.normal,
-  },
-  textInvalidLink: {
-    fontSize: '10@ms',
-    alignSelf: 'flex-start',
-    marginTop: '7@vs',
-    marginLeft: '10@s',
-  },
-  buttonView: {
-    paddingHorizontal: '40@s',
-    paddingVertical: '7@vs',
-    marginTop: '20@vs',
-  },
-  titleButton: {
-    fontSize: '15@ms',
-    fontWeight: 'bold',
-  },
-});
+      {!isValidNumberPeople && (
+        <StyleText
+          i18Text={textAlertNumberPeople}
+          i18Params={paramsNumberPeople}
+          customStyle={[$textInvalidLink, {color: theme.red}]}
+        />
+      )}
 
-export default ModalAddPrice;
+      {!isValidPriceValue && (
+        <StyleText
+          i18Text={textAlertPrice}
+          i18Params={paramsPrice}
+          customStyle={[
+            $textInvalidLink,
+            {color: theme.red, marginTop: verticalScale(4)},
+          ]}
+        />
+      )}
+    </ModalEdit>
+  );
+};
+
+const $textMiddle: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  marginHorizontal: scale(12),
+};
+const $inputView: TextStyle = {
+  width: '100%',
+  marginTop: verticalScale(12),
+  paddingHorizontal: scale(8),
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+const $inputNumberPeople: TextStyle = {
+  flex: 1,
+  marginVertical: 0,
+  paddingTop: verticalScale(8),
+  paddingBottom: verticalScale(8),
+  paddingHorizontal: scale(8),
+  borderRadius: BORDER_RADIUS.f4,
+  borderColor: Theme.common.red,
+  fontSize: FONT_SIZE.f1,
+};
+const $inputPriceBox: TextStyle = {
+  flex: 3,
+  marginVertical: 0,
+  borderRadius: BORDER_RADIUS.f4,
+  borderColor: Theme.common.red,
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+const $inputPrice: TextStyle = {
+  flex: 1,
+  marginVertical: 0,
+  paddingTop: verticalScale(8),
+  paddingBottom: verticalScale(8),
+  paddingHorizontal: scale(8),
+  fontSize: FONT_SIZE.f1,
+};
+const $textVnd: TextStyle = {
+  marginRight: scale(8),
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $textInvalidLink: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  alignSelf: 'flex-start',
+  marginTop: verticalScale(12),
+  marginLeft: scale(10),
+};
+
+export default forwardRef(ModalAddPrice);

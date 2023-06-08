@@ -1,9 +1,9 @@
 import {apiGetListGroupBuying} from 'api/profile';
-import {ACCOUNT} from 'asset/enum';
+import {ACCOUNT, APP_EVENT} from 'asset/enum';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
-import {usePaging} from 'hook';
+import {useAppEvent, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {View, ViewStyle} from 'react-native';
 import {borderWidthTiny, onReactSale} from 'utility/assistant';
@@ -30,6 +30,10 @@ const ListSalesSupplier = ({userId}: Props) => {
     },
   });
 
+  useAppEvent(APP_EVENT.createNewSale, data => {
+    setList(pre => pre.concat(data.newSale));
+  });
+
   const renderItemSale = useCallback((item: TypeGroupBuying, index: number) => {
     return (
       <ItemSale
@@ -41,7 +45,7 @@ const ListSalesSupplier = ({userId}: Props) => {
           })
         }
         containerStyle={{marginLeft: index % 2 !== 0 ? scale(7) : 0}}
-        hidingElements={['location', 'name']}
+        hidingElements={['location']}
       />
     );
   }, []);

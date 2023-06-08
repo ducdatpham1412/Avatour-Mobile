@@ -36,12 +36,14 @@ export const apiConfirmUserBought = (list_joins_id: number[]) => {
   });
 };
 
-export const apiCreateGroupBuying = (body: TypeCreateGroupBuying) => {
-  return request.post('profile/create-group-buying', body);
+export const apiCreateSale = (
+  body: TypeCreateSale,
+): Promise<TypeCreateSaleResponse> => {
+  return request.post('profile/sales', body);
 };
 
-export const apiEditGroupBooking = (body: TypeEditGroupBooking) => {
-  return request.put(`profile/sales/${body.postId}`, body.data);
+export const apiEditSale = (body: TypeEditSale) => {
+  return request.put(`profile/sales/${body.post_id}`, body.data);
 };
 
 export const apiGetListEditHistory = ({params}: TypeParamsPaging) => {

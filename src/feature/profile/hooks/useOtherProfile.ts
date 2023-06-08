@@ -1,36 +1,36 @@
 import {apiFollowUser, apiUnFollowUser} from 'api/profile';
 import {apiBlockUser, apiUnBlockUser} from 'api/setting';
 import {RELATIONSHIP} from 'asset/enum';
-import {Mutex, withTimeout} from 'async-mutex';
 import {useApi} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
+import useSWRMutation from 'swr/mutation';
 import {impactLight} from 'utility/haptic';
 
-const useOtherProfile = (id: number) => {
-  const mutex = withTimeout(new Mutex(), 30000);
+interface Params {
+  revalidateAll?: boolean;
+}
+
+const useOtherProfile = (id: number, params?: Params) => {
   const {data, mutate, loading, error} = useApi<TypeGetProfileResponse>({
     path: `/profile/${id}`,
     config: {
-      revalidateAll: true,
+      revalidateAll: params?.revalidateAll ?? true,
     },
   });
 
   const isFollowing = data?.relationship === RELATIONSHIP.following;
   const isBlocked = data?.relationship === RELATIONSHIP.block;
 
-  const follow = async () => {
-    if (data) {
-      if (mutex.isLocked()) {
-        return;
-      }
-      const release = await mutex.acquire();
-      try {
+  const {trigger: follow, isMutating: loadingFollow} = useSWRMutation(
+    ['api.Follow', data?.id],
+    async () => {
+      if (data?.id) {
         impactLight();
         if (!isFollowing) {
-          await apiFollowUser(data?.id);
-          mutate(
+          await apiFollowUser(data.id);
+          await mutate(
             pre => {
               if (pre) {
                 return {
@@ -43,7 +43,7 @@ const useOtherProfile = (id: number) => {
             {revalidate: false},
           );
         } else {
-          await apiUnFollowUser(data?.id);
+          await apiUnFollowUser(data.id);
           await mutate(
             pre => {
               if (pre) {
@@ -57,24 +57,13 @@ const useOtherProfile = (id: number) => {
             {revalidate: false},
           );
         }
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      } finally {
-        release();
       }
-    }
-  };
+    },
+  );
 
-  const block = () => {
+  const {trigger: block} = useSWRMutation(['api.Block', data?.id], async () => {
     if (data) {
-      if (mutex.isLocked()) {
-        return;
-      }
-
       const agree = async () => {
-        const release = await mutex.acquire();
         try {
           if (isBlocked) {
             await apiUnBlockUser(data?.id);
@@ -97,8 +86,6 @@ const useOtherProfile = (id: number) => {
           ModalAlert.error({
             content: err,
           });
-        } finally {
-          release();
         }
       };
 
@@ -107,7 +94,7 @@ const useOtherProfile = (id: number) => {
         onContinue: agree,
       });
     }
-  };
+  });
 
   const report = () => {
     if (data) {
@@ -118,8 +105,8 @@ const useOtherProfile = (id: number) => {
   };
 
   return [
-    {data, isFollowing, isBlocked, loading, error},
-    {follow, block, report},
+    {data, isFollowing, isBlocked, loading, error, loadingFollow},
+    {follow, block, report, mutate},
   ] as const;
 };
 

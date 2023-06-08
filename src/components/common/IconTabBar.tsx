@@ -14,7 +14,7 @@ const IconTabBar = ({icon, title}: IconTabBarProps) => {
   const {black} = useTheme();
   return (
     <View style={$titleView}>
-      <StyleIcon source={icon} size={13} customStyle={{tintColor: black}} />
+      <StyleIcon source={icon} size={13.5} customStyle={{tintColor: black}} />
       <StyleText i18Text={title} customStyle={[$title]} />
     </View>
   );

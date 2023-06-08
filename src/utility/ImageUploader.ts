@@ -4,6 +4,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import I18Next from 'utility/I18Next';
 import {checkCamera, checkPhoto} from './permission/permission';
 import {checkIsVideo} from './validate';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const MAX_WIDTH = 1500;
 const MAX_HEIGHT = 1500;
@@ -29,52 +30,6 @@ interface ImageReadLibraryType {
 }
 
 const ImageUploader = {
-  //   chooseImageFromCamera: (params?: ImagePickerParamsType) =>
-  //     ImagePicker.openCamera({
-  //       mediaType: 'photo',
-  //       width: params?.maxWidth || MAX_WIDTH,
-  //       height: params?.maxHeight || MAX_HEIGHT,
-  //       waitAnimationEnd: true,
-  //       cropping: params?.crop === undefined ? true : params?.crop,
-  //       freeStyleCropEnabled: params?.freeStyleCrop || false,
-  //       //   multiple: params?.multiple || false,
-  //       cropperChooseText: I18Next.t('common.imageUpload.selected'),
-  //       cropperCancelText: I18Next.t('common.imageUpload.cancel'),
-  //       compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
-  //       compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
-  //       compressImageQuality: 1,
-  //     }),
-  //   chooseImageFromLibrary: (params?: ImagePickerParamsType) =>
-  //     ImagePicker.openPicker({
-  //       mediaType: 'photo',
-  //       width: params?.maxWidth || MAX_WIDTH,
-  //       height: params?.maxHeight || MAX_HEIGHT,
-  //       waitAnimationEnd: true,
-  //       cropping: params?.crop === undefined ? true : params?.crop,
-  //       freeStyleCropEnabled: params?.freeStyleCrop || false,
-  //       maxFiles: params?.maxFiles || 1,
-  //       //   multiple: params?.multiple || false,
-  //       cropperChooseText: I18Next.t('common.imageUpload.selected'),
-  //       cropperCancelText: I18Next.t('common.imageUpload.cancel'),
-  //       compressImageMaxWidth: params?.maxWidth || MAX_WIDTH,
-  //       compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
-  //       compressImageQuality: 1,
-  //     }),
-  //   pickImage: async (params?: TypeImagePicker) => {
-  //     const check = await checkPhoto();
-  //     if (check) {
-  //       const res = await launchImageLibrary({
-  //         mediaType: 'photo',
-  //         maxWidth: params?.maxWidth || MAX_WIDTH,
-  //         maxHeight: params?.maxHeight || MAX_HEIGHT,
-  //         quality: params?.quality || 0.3,
-  //         includeBase64: params?.includeBase64,
-  //       });
-  //       return res?.assets?.[0];
-  //     }
-  //     throw new Error('Error while read image from library');
-  //   },
-
   pickCamera: async (params?: ImagePickerParamsType) => {
     const check = await checkCamera();
     if (check) {
@@ -91,7 +46,7 @@ const ImageUploader = {
         compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
         compressImageQuality: 1,
       });
-      return res?.path;
+      return res;
     }
     throw new Error('Error while check camera');
   },
@@ -111,7 +66,7 @@ const ImageUploader = {
         compressImageMaxHeight: params?.maxHeight || MAX_HEIGHT,
         compressImageQuality: 1,
       });
-      return res?.path;
+      return res;
     }
     throw new Error('Error while read image from library');
   },
@@ -148,6 +103,14 @@ const ImageUploader = {
     }
     throw new Error('Error while read video from library');
   },
+  convertUrlToBase64: async (url: string) => {
+    const resp = await RNFetchBlob.config({
+      fileCache: true,
+    }).fetch('GET', url);
+    const base64Data: string = await resp?.readFile('base64');
+    await RNFetchBlob.fs.unlink(resp?.path());
+    return `data:image/png;base64,${base64Data}`;
+  },
 
   readImageFromLibrary: async (params: ImageReadLibraryType) => {
     await checkPhoto();
@@ -156,7 +119,7 @@ const ImageUploader = {
       first: params.first,
       after: params?.after,
       assetType: 'Photos',
-      include: ['filename'],
+      include: ['filename', 'fileSize', 'imageSize', 'orientation'],
     });
     return res;
   },

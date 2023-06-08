@@ -19,7 +19,7 @@ const IconTabBarProfile = ({icon, title}: IconTabBarProps) => {
 };
 
 const $title: TextStyle = {
-  fontSize: FONT_SIZE.f4,
+  fontSize: FONT_SIZE.f5,
   marginTop: 2,
 };
 

@@ -157,6 +157,7 @@ const discovery = {
   applicationPeriod: 'Thời gian áp dụng',
   retailPrice: 'Giá mua riêng',
   groupBuyingPrice: 'Bảng giá mua chung',
+  salePriceAndExplain: 'Bảng giá mua chung (số người - giá)',
   numberPeople: '{{value}} người',
   joinNow: 'Tham gia ngay',
   joinGroupBuying: 'Tham gia mua chung',
@@ -400,6 +401,7 @@ const profile = {
   scanWhenGoToShop:
     'Quét mã khi đến cửa hàng để xác nhận tham gia thành công nhé bạn',
   shopName: 'Tên cửa hàng',
+  groupBuyingName: 'Tên đơn mua chung',
 };
 
 // MESS ROUTE
@@ -538,6 +540,7 @@ const alert = {
   invalidLink: 'Đường dẫn URL không hợp lệ',
   numberPeopleMoreThan: 'Số lượng người phải nhiều hơn {{value}}',
   numberPeopleLessThan: 'Số lượng người phải ít hơn {{value}}',
+  firstNumberPeopleByOne: 'Số lượng người đầu tiên phải bằng 1',
   numberPeopleMoreAndLess:
     'Số lượng người phải nhiều hơn {{start}} và ít hơn {{end}}',
   priceLessThan: 'Giá tiền phải ít hơn {{value}}',

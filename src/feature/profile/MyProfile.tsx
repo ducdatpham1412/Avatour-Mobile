@@ -23,8 +23,9 @@ import {ListFavorites, ListJoiningAndJoined, ListSales} from './screens';
 const MyProfile = () => {
   const update = useUpdate();
   const theme = useTheme();
-  const {profile} = useAppSelector(state => state.accountSlice.passport);
   const route = useRoute();
+
+  const {profile} = useAppSelector(state => state.accountSlice.passport);
   const [tabViewHeight, setTabViewHeight] = useState(0);
 
   useUpdateEffect(() => {

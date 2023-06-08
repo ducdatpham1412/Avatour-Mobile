@@ -2,13 +2,13 @@ import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {BORDER_RADIUS, FONT_SIZE} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {navigate, push} from 'navigation/NavigationService';
+import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import React from 'react';
 import {
+  ActivityIndicator,
   ImageStyle,
   LayoutChangeEvent,
   TextStyle,
@@ -20,22 +20,65 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {useOtherProfile} from '../hooks';
 
 interface Props {
   profile?: TypeGetProfileResponse;
-  isFollowing?: boolean;
-  onFollow?: () => Promise<void>;
   onLayOut?: (e: LayoutChangeEvent) => void;
+}
+
+interface ButtonOtherProfileProps {
+  id: number;
+  isShopAccount: boolean;
 }
 
 const avatarSize = Metrics.width / 3.5;
 
-const InformationProfile = ({
-  profile,
-  isFollowing,
-  onFollow,
-  onLayOut,
-}: Props) => {
+const ButtonOtherProfile = ({id, isShopAccount}: ButtonOtherProfileProps) => {
+  const theme = useTheme();
+  const [{isFollowing, loadingFollow}, {follow}] = useOtherProfile(id);
+
+  return (
+    <View style={$buttonView}>
+      <StyleTouchable
+        customStyle={[$buttonTouch, {backgroundColor: theme.gray_300}]}
+        onPress={follow}
+        disableOpacity={1}
+        disable={loadingFollow}>
+        {loadingFollow ? (
+          <ActivityIndicator size={5} color={theme.p_900} />
+        ) : (
+          <StyleText
+            i18Text={isFollowing ? 'profile.unFollow' : 'profile.follow'}
+            customStyle={$textButton}
+          />
+        )}
+      </StyleTouchable>
+      {isShopAccount && (
+        <StyleTouchable
+          customStyle={[
+            $buttonTouch,
+            {
+              backgroundColor: theme.gray_300,
+              marginLeft: 5,
+            },
+          ]}
+          onPress={() => {
+            console.log('Writing review supplier');
+          }}
+          hitSlop={{right: 20}}>
+          <Entypo name="plus" style={[$iconPlus, {color: theme.black}]} />
+          <StyleText
+            i18Text="profile.reviewProvider"
+            customStyle={[$textPostNew, {color: theme.black}]}
+          />
+        </StyleTouchable>
+      )}
+    </View>
+  );
+};
+
+const InformationProfile = ({profile, onLayOut}: Props) => {
   const theme = useTheme();
   const myId = useAppSelector(state => state.accountSlice.passport.profile.id);
 
@@ -151,38 +194,7 @@ const InformationProfile = ({
       );
     }
 
-    return (
-      <View style={$buttonView}>
-        <StyleTouchable
-          customStyle={[$buttonTouch, {backgroundColor: theme.gray_300}]}
-          onPress={onFollow}>
-          <StyleText
-            i18Text={isFollowing ? 'profile.unFollow' : 'profile.follow'}
-            customStyle={$textButton}
-          />
-        </StyleTouchable>
-        {isShopAccount && (
-          <StyleTouchable
-            customStyle={[
-              $buttonTouch,
-              {
-                backgroundColor: theme.gray_300,
-                marginLeft: 5,
-              },
-            ]}
-            onPress={() => {
-              console.log('Writing review supplier');
-            }}
-            hitSlop={{right: 20}}>
-            <Entypo name="plus" style={[$iconPlus, {color: theme.black}]} />
-            <StyleText
-              i18Text="profile.reviewProvider"
-              customStyle={[$textPostNew, {color: theme.black}]}
-            />
-          </StyleTouchable>
-        )}
-      </View>
-    );
+    return <ButtonOtherProfile id={id} isShopAccount={isShopAccount} />;
   };
 
   return (
@@ -190,11 +202,7 @@ const InformationProfile = ({
       <View style={$introduceView}>
         <StyleImage source={{uri: avatar}} customStyle={$avatarHeader} />
         <View style={$boxNameAndDescription}>
-          <StyleText
-            customStyle={$textName}
-            originValue={name}
-            numberOfLines={1}
-          />
+          <StyleText customStyle={$textName} originValue={name} />
           {!!profile.location && isShopAccount && (
             <View style={styles.locationBox}>
               <Ionicons
@@ -294,17 +302,18 @@ const $buttonView: ViewStyle = {
 };
 const $buttonTouch: ViewStyle = {
   flex: 1,
-  paddingVertical: verticalScale(6),
+  height: verticalScale(30),
   borderRadius: BORDER_RADIUS.f4,
   justifyContent: 'center',
   flexDirection: 'row',
+  alignItems: 'center',
 };
 const $textButton: TextStyle = {
-  fontSize: FONT_SIZE.f3,
+  fontSize: FONT_SIZE.f4,
   fontWeight: '500',
 };
 const $textPostNew: TextStyle = {
-  fontSize: FONT_SIZE.f3,
+  fontSize: FONT_SIZE.f4,
   fontWeight: 'bold',
   marginLeft: 5,
 };

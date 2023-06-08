@@ -97,11 +97,7 @@ const OtherProfile = ({
       stickyHeaderIndices={[1]}>
       {!isBlocked && data && (
         <>
-          <InformationProfile
-            profile={data}
-            isFollowing={isFollowing}
-            onFollow={follow}
-          />
+          <InformationProfile profile={data} />
           <TabView
             style={[$body, {height: tabViewHeight}]}
             tabBarStyle={$tabBar}

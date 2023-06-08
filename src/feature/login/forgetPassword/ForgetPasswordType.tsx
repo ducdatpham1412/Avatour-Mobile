@@ -59,7 +59,7 @@ const ForgetPasswordType = () => {
               setDisable(
                 !validateIsEmail(textTrim) && !validateIsPhone(textTrim),
               );
-            }, 200);
+            }, 400);
           }}
           autoFocus
         />

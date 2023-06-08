@@ -14,6 +14,7 @@ import {
   DEAD_ZONE,
   DefaultTransitionSpec,
   isMovingHorizontally,
+  swipeDistanceThreshold,
   swipeVelocityThreshold,
 } from 'utility/animation';
 
@@ -41,7 +42,6 @@ interface States {
 }
 
 const {width: screenWidth} = Metrics;
-const swipeDistanceThreshold = screenWidth / 1.75;
 
 class StyleTabView extends Component<TabViewProps, States> {
   panX = new Animated.Value(-(this.props.initIndex || 0) * screenWidth);

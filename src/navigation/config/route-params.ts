@@ -90,7 +90,7 @@ export type AppParamsList = {
     };
     itemEdit?: TypeGroupBuying;
     itemDraft?: TypeGroupBuying;
-    itemError?: TypeCreateGroupBuying;
+    itemError?: TypeCreateSale;
   };
   [PROFILE_ROUTE.updatePrices]: {
     item: TypeGroupBuying;
@@ -216,5 +216,8 @@ export type AppEventList = {
   [APP_EVENT.tourUpdateSchedule]: {
     dayIndex: number;
     schedule: TypeGetProfileResponse[];
+  };
+  [APP_EVENT.createNewSale]: {
+    newSale: TypeGroupBuying;
   };
 };
