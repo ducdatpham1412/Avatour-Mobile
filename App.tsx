@@ -1,9 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  NavigationContainer,
+  NavigationState,
+  PartialState,
+} from '@react-navigation/native';
 import Store from 'app-redux/store';
 import Config from 'asset/env';
 import {SocketProvider} from 'hook/useSocketIO';
 import TabBarProvider from 'navigation/config/TabBarProvider';
+import {navigationRef} from 'navigation/NavigationService';
 import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
 import React from 'react';
@@ -34,6 +40,18 @@ if (__DEV__) {
   });
 }
 
+const trackActiveRoute = (
+  s?: NavigationState | PartialState<NavigationState>,
+  level = 0,
+) => {
+  if (__DEV__) {
+    if (s?.index === undefined) return;
+    const {name, params, state} = s.routes[s.index];
+    console.info(' '.repeat(level), level ? '⎿' : '', name, params || '');
+    trackActiveRoute(state, level + 1);
+  }
+};
+
 GoogleSignin.configure({
   webClientId: Config.WEB_CLIENT_ID_GOOGLE_SIGN_IN,
 });
@@ -46,12 +64,16 @@ const App = () => {
           <LanguageProvider>
             <TabBarProvider>
               <ReduxProvider store={Store}>
-                <SocketProvider>
-                  <RootScreen />
-                  {/* App Function */}
-                  {/* <DynamicLink /> */}
-                  <AppModal />
-                </SocketProvider>
+                <NavigationContainer
+                  ref={navigationRef}
+                  onStateChange={trackActiveRoute}>
+                  <SocketProvider>
+                    <RootScreen />
+                    {/* App Function */}
+                    {/* <DynamicLink /> */}
+                    <AppModal />
+                  </SocketProvider>
+                </NavigationContainer>
               </ReduxProvider>
             </TabBarProvider>
           </LanguageProvider>

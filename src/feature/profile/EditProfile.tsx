@@ -61,6 +61,8 @@ const EditProfile = () => {
       const {modeExp} = Store.getState().accountSlice;
       const {token} = Store.getState().logicSlice;
 
+      const newAvatar = await ImageUploader.convertUrlToBase64(avatar);
+
       if (!modeExp && token) {
         // let newAvatar;
         // if (avatar !== profile.avatar) {
@@ -78,7 +80,7 @@ const EditProfile = () => {
           location === profile.location ? undefined : location;
 
         await apiEditProfile({
-          //   avatar: newAvatar,
+          avatar: newAvatar,
           name: newName,
           description: newDescription,
           location: newLocation,
@@ -86,7 +88,12 @@ const EditProfile = () => {
       }
 
       updatePassport({
-        profile: {avatar: avatar || '', name, description, location},
+        profile: {
+          avatar: avatar,
+          name,
+          description,
+          location,
+        },
       });
 
       ModalAlert.success({
@@ -111,7 +118,7 @@ const EditProfile = () => {
             try {
               setTimeout(async () => {
                 const res = await ImageUploader.pickCamera();
-                setAvatar(res);
+                setAvatar(res?.sourceURL ?? res?.path);
               }, 200);
             } catch (err) {
               logger(err);
@@ -124,7 +131,8 @@ const EditProfile = () => {
             try {
               setTimeout(async () => {
                 const res = await ImageUploader.pickLibrary();
-                setAvatar(res);
+                console.log(res?.sourceURL);
+                setAvatar(res?.sourceURL ?? res?.path);
               }, 200);
             } catch (err) {
               logger(err);
@@ -278,7 +286,7 @@ const $avatar: ImageStyle = {
 const $avatarImg: ImageStyle = {
   width: '100%',
   height: '100%',
-  borderRadius: 100,
+  borderRadius: 150,
 };
 const $btnEditAvatar: ViewStyle = {
   width: moderateScale(27),

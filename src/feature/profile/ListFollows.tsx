@@ -16,6 +16,7 @@ import {TextStyle, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {scale} from 'utility/scale';
 import ItemFollow from './components/ItemFollow';
+import {useOtherProfile} from './hooks';
 
 interface Props {
   userId: number;
@@ -26,7 +27,14 @@ const renderItem = (item: TypeFollowResponse) => {
 };
 
 const FollowerScreen = ({userId}: Props) => {
-  const {modeExp} = useAppSelector(state => state.accountSlice);
+  const {
+    modeExp,
+    passport: {profile},
+  } = useAppSelector(state => state.accountSlice);
+  const isMyProfile = profile.id === userId;
+  const [_, {mutate}] = isMyProfile
+    ? [{}, {mutate: () => null}]
+    : useOtherProfile(userId, {revalidateAll: false});
 
   if (modeExp) {
     return null;
@@ -50,13 +58,27 @@ const FollowerScreen = ({userId}: Props) => {
 
   useEffect(() => {
     if (data?.totalItems) {
-      updatePassport({
-        profile: {
-          followers: data?.totalItems,
-        },
-      });
+      if (isMyProfile) {
+        updatePassport({
+          profile: {
+            followers: data?.totalItems,
+          },
+        });
+      } else {
+        mutate(
+          pre => {
+            if (pre) {
+              return {
+                ...pre,
+                followers: data?.totalItems,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+      }
     }
-  }, [data?.totalItems]);
+  }, [data?.totalItems, isMyProfile]);
 
   return (
     <StyleList
@@ -74,7 +96,14 @@ const FollowerScreen = ({userId}: Props) => {
 };
 
 const FollowingScreen = ({userId}: Props) => {
-  const {modeExp} = useAppSelector(state => state.accountSlice);
+  const {
+    modeExp,
+    passport: {profile},
+  } = useAppSelector(state => state.accountSlice);
+  const isMyProfile = profile.id === userId;
+  const [_, {mutate}] = isMyProfile
+    ? [{}, {mutate: () => null}]
+    : useOtherProfile(userId, {revalidateAll: false});
 
   if (modeExp) {
     return null;
@@ -98,13 +127,27 @@ const FollowingScreen = ({userId}: Props) => {
 
   useEffect(() => {
     if (data?.totalItems) {
-      updatePassport({
-        profile: {
-          followings: data?.totalItems,
-        },
-      });
+      if (isMyProfile) {
+        updatePassport({
+          profile: {
+            followings: data?.totalItems,
+          },
+        });
+      } else {
+        mutate(
+          pre => {
+            if (pre) {
+              return {
+                ...pre,
+                followings: data?.totalItems,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+      }
     }
-  }, [data?.totalItems]);
+  }, [data?.totalItems, isMyProfile]);
 
   return (
     <StyleList

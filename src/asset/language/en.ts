@@ -153,7 +153,8 @@ const discovery = {
   chooseTopic: 'Travel categories',
   applicationPeriod: 'Application period',
   retailPrice: 'Retail price',
-  groupBuyingPrice: 'Group prices',
+  groupBuyingPrice: 'Group buying prices',
+  salePriceAndExplain: 'Group buying prices (people - price)',
   numberPeople: '{{value}} people',
   joinNow: 'Join now',
   joinGroupBuying: 'Join group buying',
@@ -423,6 +424,7 @@ const profile = {
   scanWhenGoToShop:
     'Scan the code upon arrival at the store to confirm successfully participate',
   shopName: "Shop's name",
+  groupBuyingName: 'Group buying name',
 };
 
 // SETTING ROUTE
@@ -527,14 +529,14 @@ const alert = {
   // PROFILE
   successUpdatePro: 'Update profile successful!',
   invalidLink: 'Invalid link',
-  numberPeopleMoreThan: 'Number people have to be more than {{value}}',
-  numberPeopleLessThan: 'Number people have to be less than {{value}}',
+  numberPeopleMoreThan: 'Number people must be more than {{value}}',
+  numberPeopleLessThan: 'Number people must be less than {{value}}',
+  firstNumberPeopleByOne: 'The first number people must be 1',
   numberPeopleMoreAndLess:
-    'Number people have to be more than {{start}} and less than {{end}}',
-  priceLessThan: 'Price have to be less than {{value}}',
-  priceMoreThan: 'Price have to be more than {{value}}',
-  priceMoreLessThan:
-    'Price have to be more than {{start}} and less than {{end}}',
+    'Number people must be more than {{start}} and less than {{end}}',
+  priceLessThan: 'Price must be less than {{value}}',
+  priceMoreThan: 'Price must be more than {{value}}',
+  priceMoreLessThan: 'Price must be more than {{start}} and less than {{end}}',
   deadlineDateBefore:
     'Joining deadline has to be before starting date: {{value}}',
   canNotEditStartTimeAndPrice: 'You can not edit start time and prices',

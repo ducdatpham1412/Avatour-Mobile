@@ -11,23 +11,24 @@ import {isIOS, logger} from 'utility/assistant';
 import ImageUploader from 'utility/ImageUploader';
 import {moderateScale} from 'utility/scale';
 
+type StatusLibrary = {
+  endCursor: string | undefined;
+  hasNext: boolean;
+};
+
 interface Props {
-  images: Array<string>;
-  onChooseImage(image: string): void;
+  images: LibraryImage[];
+  onChooseImage(image: LibraryImage): void;
   containerStyle?: StyleProp<ViewStyle>;
   numberColumns?: number;
   initIndexImage?: number;
   urlFocusing?: string;
 }
-interface StatusLibrary {
-  endCursor: string | undefined;
-  hasNext: boolean;
-}
 
 interface RenderImageParams {
-  item: string;
-  images: Array<string>;
-  onChooseImage(image: string): void;
+  item: LibraryImage;
+  images: LibraryImage[];
+  onChooseImage(image: LibraryImage): void;
   numberColumns: number;
   isFocusing: boolean;
 }
@@ -36,7 +37,7 @@ const firstLoad = 40;
 
 const renderImage = (params: RenderImageParams) => {
   const {item, images, onChooseImage, numberColumns, isFocusing} = params;
-  const isChosen = images.includes(item);
+  const isChosen = !!images.find(img => img.url === item.url);
   const index = isChosen ? images.indexOf(item) + 1 : 0;
   const size = Metrics.width / numberColumns;
 
@@ -45,7 +46,7 @@ const renderImage = (params: RenderImageParams) => {
       onPress={() => onChooseImage(item)}
       customStyle={[styles.imageBox, {width: size, height: size}]}>
       <StyleImage
-        source={{uri: item}}
+        source={{uri: item.url}}
         style={styles.image}
         defaultSource={Images.images.defaultImage}
       />
@@ -89,7 +90,7 @@ const ModalPickImage = (props: Props) => {
 
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [libraryImages, setLibraryImages] = useState<Array<any>>([]);
+  const [libraryImages, setLibraryImages] = useState<Array<LibraryImage>>([]);
   const [hadSetIndexImage, setHadSetIndexImage] = useState(false);
 
   const [pageIndex, setPageIndex] = useState(1);
@@ -116,11 +117,15 @@ const ModalPickImage = (props: Props) => {
       };
 
       // set to state libraryImages
-      const moreImages = res.edges.map(item => {
-        if (isIOS) {
-          return item.node.image.uri.concat(`/${item.node.image.filename}`);
-        }
-        return item.node.image.uri;
+      const moreImages: LibraryImage[] = res.edges.map(item => {
+        const url = isIOS
+          ? item.node.image.uri.concat(`/${item.node.image.filename}`)
+          : item.node.image.uri;
+        return {
+          url,
+          width: item.node.image.width,
+          height: item.node.image.height,
+        };
       });
       const temp = libraryImages.concat(moreImages);
       if (!hadSetIndexImage && initIndexImage !== undefined) {
@@ -167,7 +172,7 @@ const ModalPickImage = (props: Props) => {
             images,
             onChooseImage,
             numberColumns,
-            isFocusing: urlFocusing === item,
+            isFocusing: urlFocusing === item.url,
           })
         }
         numColumns={numberColumns}
@@ -176,6 +181,7 @@ const ModalPickImage = (props: Props) => {
         onRefresh={onRefresh}
         loadingMore={loadingMore}
         onLoadMore={onLoadMore}
+        ListEmptyComponent={null}
       />
     </View>
   );

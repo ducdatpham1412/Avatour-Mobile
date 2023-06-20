@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import {apiEditGroupBooking} from 'api/discovery';
+import {apiEditSale} from 'api/discovery';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
@@ -21,7 +21,7 @@ const UpdatePriceStatus = (props: Props) => {
 
   const onCancelRequesting = async () => {
     try {
-      await apiEditGroupBooking({
+      await apiEditSale({
         postId,
         data: {},
       });

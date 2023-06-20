@@ -185,10 +185,11 @@ export const FONT_SIZE = {
   // new font
   h1: moderateScale(34),
   h2: moderateScale(22),
-  f1: moderateScale(16),
-  f2: moderateScale(14),
-  f3: moderateScale(12),
-  f4: moderateScale(10),
+  f1: moderateScale(18),
+  f2: moderateScale(16),
+  f3: moderateScale(14),
+  f4: moderateScale(12),
+  f5: moderateScale(10),
 };
 
 export const BORDER_RADIUS = {

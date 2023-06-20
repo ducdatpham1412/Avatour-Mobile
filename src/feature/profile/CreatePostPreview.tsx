@@ -377,74 +377,76 @@ const CreatePostPreview = ({
   /**
    * Render views
    */
-  const Header = (
-    <View style={[styles.headerView, {borderBottomColor: theme.borderColor}]}>
-      <StyleTouchable customStyle={styles.iconCloseView} onPress={onGoBack}>
-        <Ionicons
-          name="chevron-back"
-          style={[styles.iconClose, {color: theme.textColor}]}
-        />
-      </StyleTouchable>
-
-      {!!initValue.userReviewed && (
-        <StyleImage
-          source={{uri: initValue.userReviewed.avatar}}
-          customStyle={styles.avatarHeader}
-        />
-      )}
-
-      {(itemNew || itemError || itemDraft) && (
-        <StyleTouchable
-          customStyle={[
-            styles.postBox,
-            {
-              borderColor: theme.highlightColor,
-            },
-          ]}
-          onPress={() => {
-            if (itemDraft) {
-              onEditPost();
-            } else {
-              onConfirmPost(false);
-            }
-          }}>
-          <StyleText
-            i18Text="profile.post.post"
-            customStyle={[styles.textPost, {color: theme.highlightColor}]}
+  const renderHeader = () => {
+    return (
+      <View style={[styles.headerView, {borderBottomColor: theme.borderColor}]}>
+        <StyleTouchable customStyle={styles.iconCloseView} onPress={onGoBack}>
+          <Ionicons
+            name="chevron-back"
+            style={[styles.iconClose, {color: theme.textColor}]}
           />
         </StyleTouchable>
-      )}
 
-      {(itemNew || itemError) && (
-        <StyleTouchable
-          customStyle={[
-            styles.draftBox,
-            {
-              borderColor: theme.borderColor,
-            },
-          ]}
-          onPress={() => onConfirmPost(true)}>
-          <StyleText
-            i18Text="profile.post.draft"
-            customStyle={[styles.textDraft, {color: theme.borderColor}]}
+        {!!initValue.userReviewed && (
+          <StyleImage
+            source={{uri: initValue.userReviewed.avatar}}
+            customStyle={styles.avatarHeader}
           />
-        </StyleTouchable>
-      )}
+        )}
 
-      {itemEdit && (
-        <StyleTouchable
-          customStyle={[styles.postBox, {borderColor: theme.highlightColor}]}
-          onPress={onEditPost}>
-          <StyleText
-            i18Text="profile.post.edit"
-            customStyle={[styles.textPost, {color: theme.highlightColor}]}
-          />
-        </StyleTouchable>
-      )}
-    </View>
-  );
+        {(itemNew || itemError || itemDraft) && (
+          <StyleTouchable
+            customStyle={[
+              styles.postBox,
+              {
+                borderColor: theme.highlightColor,
+              },
+            ]}
+            onPress={() => {
+              if (itemDraft) {
+                onEditPost();
+              } else {
+                onConfirmPost(false);
+              }
+            }}>
+            <StyleText
+              i18Text="profile.post.post"
+              customStyle={[styles.textPost, {color: theme.highlightColor}]}
+            />
+          </StyleTouchable>
+        )}
 
-  const FeelingTopicLocation = () => {
+        {(itemNew || itemError) && (
+          <StyleTouchable
+            customStyle={[
+              styles.draftBox,
+              {
+                borderColor: theme.borderColor,
+              },
+            ]}
+            onPress={() => onConfirmPost(true)}>
+            <StyleText
+              i18Text="profile.post.draft"
+              customStyle={[styles.textDraft, {color: theme.borderColor}]}
+            />
+          </StyleTouchable>
+        )}
+
+        {itemEdit && (
+          <StyleTouchable
+            customStyle={[styles.postBox, {borderColor: theme.highlightColor}]}
+            onPress={onEditPost}>
+            <StyleText
+              i18Text="profile.post.edit"
+              customStyle={[styles.textPost, {color: theme.highlightColor}]}
+            />
+          </StyleTouchable>
+        )}
+      </View>
+    );
+  };
+
+  const renderFeelingTopicLocation = () => {
     const chooseFeeling = LIST_FEELINGS.find(item => item.id === feeling);
     return (
       <View style={styles.feelingTopicLocationView}>
@@ -502,7 +504,7 @@ const CreatePostPreview = ({
     return <ScrollSyncSizeImage images={images} syncWidth={screenWidth} />;
   }, []);
 
-  const StarLink = () => {
+  const renderStarLink = () => {
     const Link = () => {
       if (initValue.userReviewed) {
         return (
@@ -605,9 +607,9 @@ const CreatePostPreview = ({
 
   return (
     <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      {Header}
+      {renderHeader()}
       <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-        {FeelingTopicLocation()}
+        {renderFeelingTopicLocation()}
         <View style={styles.captionView}>
           <TextInput
             style={[styles.captionInputBox, {color: theme.textHightLight}]}
@@ -624,7 +626,7 @@ const CreatePostPreview = ({
 
         {ImagePreview}
 
-        {StarLink()}
+        {renderStarLink()}
 
         <View
           style={[

@@ -44,7 +44,8 @@ const LoginRoute: React.FunctionComponent = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerLeft: (props: any) => <HeaderLeftIcon {...props} />,
       }}
-      initialRouteName={LOGIN_ROUTE.editBasicInformation}>
+      //   initialRouteName={LOGIN_ROUTE.editBasicInformation}
+    >
       <Stack.Screen
         options={{headerShown: false}}
         name={LOGIN_ROUTE.loginScreen}

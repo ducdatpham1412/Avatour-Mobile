@@ -360,6 +360,7 @@ export enum APP_EVENT {
   tourWantToSave = 'tour-want-to-save',
   tourSave = 'tour-save',
   tourUpdateSchedule = 'tour-update-schedule',
+  createNewSale = 'create-new-sale',
 }
 
 export enum TYPE_AUTH_REQUEST {

@@ -39,9 +39,11 @@ const SearchListGroupBuying = () => {
         if (sale.id !== data?.saleId) {
           return sale;
         }
+        const isLiked = data.type === 'like';
         return {
           ...sale,
-          is_liked: data.type === 'like',
+          is_liked: isLiked,
+          total_likes: isLiked ? sale.total_likes + 1 : sale.total_likes - 1,
         };
       });
     });

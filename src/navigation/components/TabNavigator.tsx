@@ -1,5 +1,6 @@
 import {setBubblePalaceAction, setNumberNewNotifications} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
+import {FONT_SIZE} from 'asset';
 import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
@@ -232,7 +233,7 @@ const styles = ScaledSheet.create({
 });
 
 const $textTitle: TextStyle = {
-  fontSize: moderateScale(10),
+  fontSize: FONT_SIZE.f5,
   marginTop: verticalScale(4),
 };
 

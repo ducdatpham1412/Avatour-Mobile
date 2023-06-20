@@ -1,4 +1,4 @@
-import {apiEditGroupBooking} from 'api/discovery';
+import {apiEditSale} from 'api/discovery';
 import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
@@ -9,7 +9,7 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import AddInfoButton from 'feature/profile/components/AddInfoButton';
+import AddInfoButton from 'feature/profile/components/ButtonIconTitle';
 import ModalAddPrice from 'feature/profile/post/ModalAddPrice';
 import ModalRetailPrice from 'feature/profile/post/ModalRetailPrice';
 import Redux from 'hook/useRedux';
@@ -50,7 +50,7 @@ const UpdatePrices = ({route}: Props) => {
   const onRequestChange = async () => {
     try {
       Redux.setIsLoading(true);
-      await apiEditGroupBooking({
+      await apiEditSale({
         postId: item.id,
         data: {
           retail_price: item.retailPrice,

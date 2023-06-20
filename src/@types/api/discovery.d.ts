@@ -10,14 +10,19 @@ interface TypeReactRequest {
   reactedId: number | string;
 }
 
-type TypeCreateGroupBuying = {
+type TypeCreateSale = {
+  name: string;
   content: string;
   images: Array<string>;
   prices: Array<TypePrice>;
 };
 
-type TypeEditGroupBooking = {
-  postId: number;
+type TypeCreateSaleResponse = TemplateApiResponse<{
+  id: number;
+}>;
+
+type TypeEditSale = {
+  post_id: number;
   data: {
     content?: string;
     images?: Array<string>;

@@ -14,6 +14,7 @@ import {
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 import {IconLiked, IconNotLiked} from './common';
+import {formatLocaleNumber} from 'utility/format';
 
 interface Props {
   item: TypeGroupBuying;
@@ -30,43 +31,45 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
 
   let textPrice = '';
   if (startPrice && endPrice) {
-    textPrice = `${startPrice} - ${endPrice}vnd`;
+    textPrice = `${formatLocaleNumber(startPrice)} - ${formatLocaleNumber(
+      endPrice,
+    )}vnd`;
   } else {
     const temp = startPrice ?? endPrice ?? '0';
-    textPrice = `${temp}vnd`;
+    textPrice = `${formatLocaleNumber(temp)}vnd`;
   }
 
   const listPersonalJoins = renderPersonalJoinsFromGroups(item?.groups, {
     maxNumber: 3,
   });
 
-  let RenderPeopleJoined = null;
-  if (!listPersonalJoins.length) {
-    RenderPeopleJoined = (
-      <>
-        <StyleIcon
-          source={Images.images.defaultAvatar}
-          size={15}
-          customStyle={$iconBorder}
-        />
-        <StyleIcon
-          source={Images.images.defaultAvatar}
-          size={15}
-          customStyle={$iconBorder}
-        />
-        <StyleIcon
-          source={Images.images.defaultAvatar}
-          size={15}
-          customStyle={$iconBorder}
-        />
-        <StyleText
-          i18Text="discovery.beTheFirstJoin"
-          customStyle={[$textInfo, {color: theme.gray_500}]}
-        />
-      </>
-    );
-  } else {
-    RenderPeopleJoined = (
+  const renderJoins = () => {
+    if (!listPersonalJoins.length) {
+      return (
+        <>
+          <StyleIcon
+            source={Images.images.defaultAvatar}
+            size={15}
+            customStyle={$iconBorder}
+          />
+          <StyleIcon
+            source={Images.images.defaultAvatar}
+            size={15}
+            customStyle={$iconBorder}
+          />
+          <StyleIcon
+            source={Images.images.defaultAvatar}
+            size={15}
+            customStyle={$iconBorder}
+          />
+          <StyleText
+            i18Text="discovery.beTheFirstJoin"
+            customStyle={[$textInfo, {color: theme.gray_500}]}
+          />
+        </>
+      );
+    }
+    return (
       <>
         {listPersonalJoins.map((personal, index) => {
           return (
@@ -87,7 +90,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         />
       </>
     );
-  }
+  };
 
   return (
     <StyleTouchable
@@ -131,11 +134,11 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         <View style={$informationView}>
           <StyleIcon
             source={{uri: item?.creator_avatar}}
-            size={17}
+            size={20}
             customStyle={$iconBorder}
           />
           <StyleText
-            originValue={item?.creator_name}
+            originValue={item?.name}
             customStyle={$textName}
             numberOfLines={1}
           />
@@ -156,7 +159,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         </View>
       )}
 
-      <View style={$informationView}>{RenderPeopleJoined}</View>
+      <View style={$informationView}>{renderJoins()}</View>
 
       <View style={$informationView}>
         <StyleText
@@ -199,11 +202,12 @@ const $iconLike: TextStyle = {
   fontSize: moderateScale(20),
 };
 const $informationView: ViewStyle = {
-  width: '100%',
+  width: defaultWidth - scale(8),
   flexDirection: 'row',
   alignItems: 'center',
   marginTop: verticalScale(4),
-  paddingHorizontal: scale(4),
+  overflow: 'hidden',
+  alignSelf: 'center',
 };
 const $textName: TextStyle = {
   marginLeft: scale(8),
@@ -211,10 +215,11 @@ const $textName: TextStyle = {
 };
 const $textInfo: TextStyle = {
   marginLeft: scale(4),
-  fontSize: FONT_SIZE.f3,
+  fontSize: FONT_SIZE.f4,
 };
 const $textPrice: TextStyle = {
   fontWeight: 'bold',
+  fontSize: FONT_SIZE.f4,
 };
 const $iconBorder: ImageStyle = {
   borderRadius: 50,

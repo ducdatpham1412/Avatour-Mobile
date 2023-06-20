@@ -66,6 +66,7 @@ interface TypePersonalJoinOfAdmin {
 interface TypeGroupBuying {
   id: number;
   post_type: number;
+  name: string;
   content: string;
   images: Array<string>;
   prices: Array<TypePrice>;

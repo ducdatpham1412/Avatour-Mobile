@@ -8,7 +8,7 @@ import {
 
 export type ReduxPostCreatedHandle = {
   status: 'loading' | 'success' | 'error' | 'done';
-  data: TypeCreatePostRequest | TypeCreateGroupBuying | undefined;
+  data: TypeCreatePostRequest | TypeCreateSale | undefined;
 };
 
 export interface TypeHotLocation {

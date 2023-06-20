@@ -1,15 +1,12 @@
+import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
 import {STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
-import {
-  Avatar,
-  IconLiked,
-  IconNotLiked,
-  ScrollSyncSizeImage,
-} from 'components/common';
+import {Avatar, IconLiked, IconNotLiked} from 'components/common';
+import {ScrollCropImages} from 'feature/profile/components';
 import {useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
@@ -33,7 +30,6 @@ import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
-import {useAppSelector} from 'app-redux/store';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -42,6 +38,8 @@ interface ButtonReactionProps {
   titleParams?: Record<string, any>;
   onPress: () => void;
 }
+
+const {width} = Metrics;
 
 const ButtonReaction = ({
   icon,
@@ -342,11 +340,11 @@ const DetailSale = ({
         }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: bottom + safePaddingNotZero}}>
-        <ScrollSyncSizeImage
+        <ScrollCropImages
           images={data?.images || []}
-          syncWidth={Metrics.width}
-          containerStyle={$containerImage}
-          defaultRatio={ratioImageSale}
+          width={width}
+          height={width * ratioImageSale}
+          enableRemoveImage={false}
         />
 
         {renderInformation()}
@@ -508,7 +506,7 @@ const $reactionView: ViewStyle = {
   marginTop: verticalScale(12),
 };
 const $reactionBox: ViewStyle = {
-  width: moderateScale(50),
+  width: moderateScale(60),
   marginHorizontal: scale(16),
   alignItems: 'center',
 };

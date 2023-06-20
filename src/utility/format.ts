@@ -99,10 +99,17 @@ export const formatDayGroupBuying = (date: string) => {
 };
 
 export const formatLocaleNumber = (value: string | number) => {
-  if (!value) {
+  if (value === undefined || value === '') {
     return '';
   }
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+export const formatNormalNumberFromLocale = (value: string) => {
+  if (!value) {
+    return '';
+  }
+  return String(value).replace(/,/g, '');
 };
 
 export const formatDayFromNow = (date: Date | string) => {

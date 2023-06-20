@@ -1,7 +1,10 @@
 /* eslint-disable no-shadow */
+import {ratioImageSale} from 'asset';
 import Theme from 'asset/theme/Theme';
 import {TabViewDynamic} from 'components';
 import {StyleImage, StyleTouchable} from 'components/base';
+import {ButtonX} from 'components/common';
+import {useTheme} from 'hook';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {Animated, Image, ImageStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet, scale} from 'react-native-size-matters';
@@ -11,14 +14,16 @@ import {useAnimatedValue} from 'utility/animation';
 
 interface Props {
   images: Array<string>;
-  index: number;
+  index?: number;
   width: number;
   height: number;
-  initRatio: number;
-  onChangeCropperParams(params: {url: string; value: any}): void;
-  onChangeCropperSize(params: {width: number; height: number}): void;
-  imageFocusing: string;
-  havingZoomButton: boolean;
+  initRatio?: number;
+  imageFocusing?: string;
+  havingZoomButton?: boolean;
+  onChangeCropperParams?: (params: {url: string; value: any}) => void;
+  onChangeCropperSize?: (params: {width: number; height: number}) => void;
+  onRemoveImage?: (url: string) => void;
+  enableRemoveImage?: boolean;
 }
 
 const indicatorPointWidth = scale(10);
@@ -29,18 +34,20 @@ const ScrollCropImages = (props: Props) => {
   const {
     images,
     index,
-    onChangeCropperParams,
     onChangeCropperSize,
     width,
     height,
     initRatio,
     imageFocusing,
     havingZoomButton,
+    onRemoveImage,
+    enableRemoveImage = true,
   } = props;
+
+  const theme = useTheme();
 
   const numberTabs = images.length;
   const layOutWidth = width * numberTabs;
-  const maxTranslate = layOutWidth * (numberTabs - 1);
   const indicatorWidth =
     indicatorPointWidth * numberTabs + marginIndicatorPoint * (numberTabs - 1);
 
@@ -50,55 +57,20 @@ const ScrollCropImages = (props: Props) => {
   const aimHeight = useRef(new Animated.Value(1)).current;
 
   const [cropWidth, setCropWidth] = useState(width);
-  const [cropHeight, setCropHeight] = useState(width * initRatio);
+  const [cropHeight, setCropHeight] = useState(
+    width * (initRatio ?? ratioImageSale),
+  );
   const [typeZoom, setTypeZoom] = useState<'square' | 'free'>('square');
 
   aimWidth.addListener(({value}) => setCropWidth(value * width));
   aimHeight.addListener(({value}) => setCropHeight(value * width));
 
-  //   const panX = useAnimatedValue(0);
-  //   const translateX = Animated.multiply(
-  //     panX.interpolate({
-  //       inputRange: [-maxTranslate, 0],
-  //       outputRange: [-maxTranslate, 0],
-  //       extrapolate: 'clamp',
-  //     }),
-  //     I18nManager.isRTL ? -1 : 1,
-  //   );
-
   const translateXIndicator = useAnimatedValue(0);
-  //   translateX.addListener(({value}) => {
-  //     if (layOutWidth !== 0) {
-  //       const newTranslateX =
-  //         (-value / layOutWidth) * (indicatorWidth + marginIndicatorPoint);
-  //       translateXIndicator.setValue(newTranslateX);
-  //     }
-  //   });
-
-  //   const panResponder = PanResponder.create({
-  //     onMoveShouldSetPanResponder: (event, gesture) => {
-  //         const diffX = I18nManager.isRTL ? -gesture.dx : gesture.dx;
-  //         const isMovingHorizontal = isMovingHorizontally(event, gesture);
-
-  //     }
-  //   })
-
-  //   const jumpToIndex = (__index: number) => {
-  //     const offset = -__index * width;
-  //     const {timing, ...transitionConfig} = DefaultTransitionSpec;
-  //     Animated.parallel([
-  //       timing(panX, {
-  //         ...transitionConfig,
-  //         toValue: offset,
-  //         useNativeDriver: false,
-  //       }),
-  //     ]).start();
-  //   };
 
   useEffect(() => {
     clearTimeout(checkCropRef.current);
     checkCropRef.current = setTimeout(() => {
-      onChangeCropperSize({width: cropWidth, height: cropHeight});
+      onChangeCropperSize?.({width: cropWidth, height: cropHeight});
     }, 100);
   }, [cropWidth, cropHeight]);
 
@@ -109,7 +81,7 @@ const ScrollCropImages = (props: Props) => {
   }, [index]);
 
   const onChangeTypeZoom = () => {
-    if (!havingZoomButton) {
+    if (!havingZoomButton || !imageFocusing) {
       return;
     }
     if (typeZoom === 'square') {
@@ -174,6 +146,13 @@ const ScrollCropImages = (props: Props) => {
               customStyle={$image}
               defaultImageSource="image"
             />
+            {images.length > 1 && !!enableRemoveImage && (
+              <ButtonX
+                containerStyle={{backgroundColor: theme.white_opacity(0.6)}}
+                onPress={() => onRemoveImage?.(url)}
+                size={17}
+              />
+            )}
             {/* <EditZoomCropImage
               width={cropWidth}
               height={cropHeight}
@@ -183,37 +162,6 @@ const ScrollCropImages = (props: Props) => {
           </View>
         ))}
       </TabViewDynamic>
-
-      {/* <Animated.View
-        style={{
-          width: layOutWidth,
-          flexDirection: 'row',
-          transform: [{translateX}],
-        }}>
-        {images.map(url => (
-          <View
-            key={url}
-            style={[
-              $imageBox,
-              {
-                width,
-                height,
-              },
-            ]}>
-            <StyleImage
-              source={{uri: url}}
-              customStyle={$image}
-              defaultImageSource="image"
-            />
-            <EditZoomCropImage
-              width={cropWidth}
-              height={cropHeight}
-              url={url}
-              onChangeCropperParams={onChangeCropperParams}
-            />
-          </View>
-        ))}
-      </Animated.View> */}
 
       {numberTabs >= 2 && (
         <View style={[styles.indicatorView, {width: indicatorWidth}]}>
@@ -280,7 +228,7 @@ const styles = ScaledSheet.create({
     height: '100%',
     borderRadius: 10,
     position: 'absolute',
-    backgroundColor: Theme.common.gradientTabBar1,
+    backgroundColor: Theme.newTheme.likeHeart,
   },
   image: {
     width: '100%',
