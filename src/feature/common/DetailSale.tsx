@@ -1,16 +1,27 @@
 import {useAppSelector} from 'app-redux/store';
-import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
+import {
+  BORDER_RADIUS,
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+  ratioImageSale,
+} from 'asset';
 import {STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {AppModalize} from 'components';
-import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {AppModalize, TextCountDown} from 'components';
+import {
+  StyleContainer,
+  StyleIcon,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
 import {Avatar, IconLiked, IconNotLiked} from 'components/common';
+import dayjs from 'dayjs';
 import {ScrollCropImages} from 'feature/profile/components';
 import {useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet} from 'navigation/screen/modals';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, ReactNode, useRef} from 'react';
 import {
   ImageSourcePropType,
@@ -25,8 +36,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {I18Normalize} from 'utility/I18Next';
-import {onGoToProfile, renderPersonalJoinsFromGroups} from 'utility/assistant';
-import {formatLocaleNumber} from 'utility/format';
+import {
+  borderWidthTiny,
+  onGoToProfile,
+  renderPersonalJoinsFromGroups,
+} from 'utility/assistant';
+import {formatLocaleNumber, formatddddDDMMYYYY} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
@@ -55,7 +70,7 @@ const ButtonReaction = ({
       return (
         <StyleIcon
           source={icon}
-          size={25}
+          size={20}
           customStyle={{tintColor: theme.gray_800}}
         />
       );
@@ -75,6 +90,7 @@ const ButtonReaction = ({
         i18Params={titleParams}
         customStyle={[$textReaction, {color: theme.black}]}
         onPress={onPress}
+        numberOfLines={1}
       />
     </View>
   );
@@ -91,15 +107,34 @@ const DetailSale = ({
     state => state.accountSlice.passport.profile,
   );
 
-  const [{data, loading, meJoins}, {onReaction, onRefresh}] = useDetailSale({
-    saleId,
-    sale,
-  });
+  const [
+    {data, initLoading, meJoins, loadingJoin, refreshing},
+    {onReaction, onRefresh, onJoin, deleteEstimate},
+  ] = useDetailSale(saleId ?? sale?.id);
 
   const isMySale = data?.creator === myId;
 
   const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
+
+  const onConfirmJoin = async (value: Omit<TypeJoinRequest, 'saleId'>) => {
+    try {
+      if (data) {
+        const res = await onJoin(value);
+        if (res) {
+          push(ROOT_SCREEN.detailMeJoin, {
+            saleId: data?.id,
+            mode: 'go-to-deposit',
+          });
+        }
+        modalConfirmJoinRef.current?.hide();
+      }
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
+  };
 
   const renderInformation = () => {
     let textStatus: I18Normalize = 'common.null';
@@ -119,6 +154,10 @@ const DetailSale = ({
 
     return (
       <View style={$informationView}>
+        {!!data?.name && (
+          <StyleText originValue={data?.name} customStyle={$textNameSale} />
+        )}
+
         <View style={$informationBox}>
           <StyleTouchable
             customStyle={$buttonName}
@@ -171,7 +210,7 @@ const DetailSale = ({
           <StyleIcon
             source={Images.icons.location}
             size={18}
-            customStyle={{tintColor: theme.gray_600}}
+            customStyle={{tintColor: theme.blue}}
           />
           <StyleText
             originValue={data?.creator_location}
@@ -241,22 +280,133 @@ const DetailSale = ({
       {maxNumber: 6},
     );
 
+    const button = () => {
+      if (isMySale) {
+        return null;
+      }
+      if (meJoins?.estimate) {
+        const estimate = meJoins.estimate;
+        const seconds = dayjs(estimate.expired).diff(dayjs(), 'seconds');
+
+        return (
+          <View style={[$depositView, {borderColor: theme.gray_400}]}>
+            <StyleText i18Text="discovery.youHaveGroupBuying" />
+
+            <StyleText customStyle={{marginTop: verticalScale(8)}}>
+              <StyleText
+                i18Text="discovery.amount"
+                customStyle={$titleEstimate}
+              />
+              <StyleText originValue={` ${estimate.amount}`} />
+            </StyleText>
+            <StyleText>
+              <StyleText
+                i18Text="discovery.arrivalTime"
+                customStyle={$titleEstimate}
+              />
+              <StyleText
+                originValue={` ${formatddddDDMMYYYY(estimate.time_will_buy)}`}
+              />
+            </StyleText>
+            <StyleText>
+              <StyleText
+                i18Text="discovery.note"
+                customStyle={$titleEstimate}
+              />
+              <StyleText originValue={estimate.note} />
+            </StyleText>
+
+            <StyleText customStyle={{marginTop: verticalScale(8)}}>
+              <StyleText
+                i18Text="discovery.estimatedPrice"
+                customStyle={$titleEstimate}
+              />
+              <StyleText
+                originValue={` ${formatLocaleNumber(estimate.price)}vnd`}
+              />
+            </StyleText>
+            <StyleText>
+              <StyleText
+                i18Text="discovery.deposit"
+                customStyle={$titleEstimate}
+              />
+              <StyleText
+                originValue={` ${formatLocaleNumber(estimate.deposit)}vnd`}
+              />
+            </StyleText>
+
+            <StyleText
+              i18Text="discovery.remainingTime"
+              customStyle={{marginTop: verticalScale(8)}}>
+              <StyleText originValue=": " />
+              <TextCountDown
+                initSeconds={seconds}
+                onFinished={deleteEstimate}
+              />
+            </StyleText>
+
+            <LinearGradient
+              colors={[theme.blue, theme.blue_800]}
+              style={$interactView}>
+              <StyleTouchable
+                customStyle={$buttonInteract}
+                onPress={() => {
+                  if (data) {
+                    push(ROOT_SCREEN.detailMeJoin, {
+                      saleId: data?.id,
+                      mode: 'go-to-deposit',
+                    });
+                  }
+                }}>
+                <StyleIcon source={Images.icons.dollar} size={15} />
+                <StyleText
+                  i18Text="discovery.goToDeposit"
+                  customStyle={[$textJoin, {color: theme.white}]}
+                />
+              </StyleTouchable>
+            </LinearGradient>
+          </View>
+        );
+      }
+      return (
+        <LinearGradient
+          colors={[theme.p_800, theme.p_600]}
+          style={$interactView}>
+          <StyleTouchable
+            customStyle={$buttonInteract}
+            onPress={() => modalConfirmJoinRef.current?.show()}>
+            <StyleIcon
+              source={Images.icons.createGroup}
+              size={15}
+              customStyle={{tintColor: theme.white}}
+            />
+            <StyleText
+              i18Text="discovery.joinGroupBuying"
+              customStyle={[$textJoin, {color: theme.white}]}
+            />
+          </StyleTouchable>
+        </LinearGradient>
+      );
+    };
+
     return (
       <View style={$informationView}>
-        {!!meJoins?.length && (
+        {!!meJoins?.joinings?.length && (
           <View style={$meJoinView}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {meJoins.map(join => {
+              {meJoins?.joinings?.map(join => {
                 return (
                   <ItemMeJoin
                     item={join}
                     key={join?.id}
                     onPress={() => {
-                      push(ROOT_SCREEN.detailMeJoin, {
-                        saleId: join.sale_id,
-                        itemJoin: join,
-                        mode: 'see-detail-from-sale',
-                      });
+                      if (data) {
+                        push(ROOT_SCREEN.detailMeJoin, {
+                          saleId: data?.id,
+                          joinPersonal: join,
+                          mode: 'see-detail-from-sale',
+                        });
+                      }
                     }}
                   />
                 );
@@ -265,25 +415,7 @@ const DetailSale = ({
           </View>
         )}
 
-        {!isMySale && (
-          <LinearGradient
-            colors={[theme.p_800, theme.p_600]}
-            style={$interactView}>
-            <StyleTouchable
-              customStyle={$buttonInteract}
-              onPress={() => modalConfirmJoinRef.current?.show()}>
-              <StyleIcon
-                source={Images.icons.createGroup}
-                size={15}
-                customStyle={{tintColor: theme.white}}
-              />
-              <StyleText
-                i18Text="discovery.joinGroupBuying"
-                customStyle={[$textJoin, {color: theme.white}]}
-              />
-            </StyleTouchable>
-          </LinearGradient>
-        )}
+        {button()}
 
         {!!data?.total_members && (
           <>
@@ -326,32 +458,36 @@ const DetailSale = ({
 
   return (
     <>
-      <ScrollView
-        style={{
-          backgroundColor: theme.white,
-        }}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={onRefresh}
-            tintColor={theme.p_600}
-            colors={[theme.p_600]}
+      {initLoading ? (
+        <StyleContainer initLoading />
+      ) : (
+        <ScrollView
+          style={{
+            backgroundColor: theme.white,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.p_600}
+              colors={[theme.p_600]}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom: bottom + safePaddingNotZero}}>
+          <ScrollCropImages
+            images={data?.images || []}
+            width={width}
+            height={width * ratioImageSale}
+            enableRemoveImage={false}
           />
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: bottom + safePaddingNotZero}}>
-        <ScrollCropImages
-          images={data?.images || []}
-          width={width}
-          height={width * ratioImageSale}
-          enableRemoveImage={false}
-        />
 
-        {renderInformation()}
-        {renderReaction()}
-        {renderJoins()}
-        {renderContent()}
-      </ScrollView>
+          {renderInformation()}
+          {renderReaction()}
+          {renderJoins()}
+          {renderContent()}
+        </ScrollView>
+      )}
 
       <StyleTouchable
         customStyle={[
@@ -412,37 +548,20 @@ const DetailSale = ({
       <ModalGroup
         ref={modalJoinedRef}
         groups={data?.groups || []}
-        refreshing={loading}
+        refreshing={refreshing}
         onRefresh={onRefresh}
         isMySale={isMySale}
       />
 
       <ModalConfirmJoinGb
         ref={modalConfirmJoinRef}
-        onConfirm={value => {
-          if (data) {
-            push(ROOT_SCREEN.detailMeJoin, {
-              saleId: data?.id,
-              itemJoinRequest: {
-                ...value,
-                saleId: data?.id,
-              },
-              mode: 'confirm-join',
-              onSuccess: () => {
-                modalConfirmJoinRef.current?.hide();
-                goBack();
-              },
-            });
-          }
-        }}
+        onConfirm={onConfirmJoin}
+        loadingJoin={loadingJoin}
       />
     </>
   );
 };
 
-const $containerImage: ViewStyle = {
-  width: '100%',
-};
 const $iconBackView: ViewStyle = {
   position: 'absolute',
   left: scale(10),
@@ -461,6 +580,11 @@ const $iconBack: TextStyle = {
 const $informationView: ViewStyle = {
   paddingHorizontal: scale(16),
 };
+const $textNameSale: TextStyle = {
+  fontSize: FONT_SIZE.h2,
+  marginTop: verticalScale(12),
+  fontWeight: 'bold',
+};
 const $informationBox: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
@@ -474,11 +598,11 @@ const $buttonName: ViewStyle = {
 const $textName: TextStyle = {
   marginLeft: scale(8),
   fontWeight: 'bold',
-  fontSize: FONT_SIZE.h2,
+  fontSize: FONT_SIZE.f1,
 };
 const $textStatus: TextStyle = {
   marginLeft: scale(8),
-  fontWeight: 'bold',
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $pricePart: ViewStyle = {
   width: '100%',
@@ -506,13 +630,13 @@ const $reactionView: ViewStyle = {
   marginTop: verticalScale(12),
 };
 const $reactionBox: ViewStyle = {
-  width: moderateScale(60),
-  marginHorizontal: scale(16),
+  width: moderateScale(65),
+  marginHorizontal: scale(8),
   alignItems: 'center',
 };
 const $reaction: ViewStyle = {
-  width: moderateScale(50),
-  height: moderateScale(50),
+  width: moderateScale(45),
+  height: moderateScale(45),
   borderRadius: 60,
   alignItems: 'center',
   justifyContent: 'center',
@@ -523,6 +647,15 @@ const $likeIcon: TextStyle = {
 const $textReaction: TextStyle = {
   fontSize: FONT_SIZE.f4,
   marginTop: verticalScale(10),
+};
+const $depositView: ViewStyle = {
+  width: '90%',
+  paddingVertical: verticalScale(12),
+  paddingHorizontal: scale(12),
+  borderWidth: borderWidthTiny,
+  marginTop: verticalScale(16),
+  alignSelf: 'center',
+  borderRadius: BORDER_RADIUS.f4,
 };
 const $interactView: ViewStyle = {
   width: '75%',
@@ -563,6 +696,9 @@ const $contentView: ViewStyle = {
 const $meJoinView: ViewStyle = {
   width: '100%',
   marginTop: verticalScale(16),
+};
+const $titleEstimate: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 
 export default DetailSale;

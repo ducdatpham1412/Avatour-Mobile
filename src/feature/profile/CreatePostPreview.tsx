@@ -5,7 +5,7 @@ import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {LIST_FEELINGS, LIST_TOPICS, NUMBER_STARS} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
-import LoadingScreen from 'components/LoadingScreen';
+import LoadingScreen from 'feature/profile/screens/LoadingScreen';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import ScrollSyncSizeImage from 'components/common/ScrollSyncSizeImage';
 import Redux from 'hook/useRedux';

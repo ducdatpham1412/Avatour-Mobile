@@ -104,9 +104,6 @@ const DiscoveryScreen = () => {
                 navigate(DISCOVERY_ROUTE.searchScreen, {
                   services: item.id,
                 });
-                // navigate(ROOT_SCREEN.detailSale, {
-                //   sale: fakeSale,
-                // });
               }}>
               <StyleIcon
                 source={item.icon}

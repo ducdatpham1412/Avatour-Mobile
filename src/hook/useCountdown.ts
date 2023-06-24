@@ -1,5 +1,8 @@
 import {useEffect, useState, useMemo, useCallback, useRef} from 'react';
 
+/**
+ * @param initValue: Seconds
+ */
 const useCountdown = (initValue: number) => {
   const timeOut = useRef<any>();
   const [reset, setReset] = useState(true);

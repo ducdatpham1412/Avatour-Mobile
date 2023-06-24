@@ -1,86 +1,345 @@
 import {useAppSelector} from 'app-redux/store';
-import {FONT_SIZE} from 'asset';
-import {APP_EVENT, GROUP_BUYING_STATUS} from 'asset/enum';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {GROUP_BUYING_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
-import {AppModalize, BoxInformation, BoxView} from 'components';
+import {AppModalize, BoxInformation, BoxView, TextCountDown} from 'components';
 import {
   StyleButton,
   StyleContainer,
   StyleIcon,
   StyleImage,
   StyleText,
+  StyleTouchable,
 } from 'components/base';
 import {Avatar, RightIcon} from 'components/common';
-import {useAppEvent, useTheme} from 'hook';
-import {goBack, push} from 'navigation/NavigationService';
+import dayjs from 'dayjs';
+import {useTheme} from 'hook';
+import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
-import React, {ElementRef, useMemo, useRef, useState} from 'react';
+import {ModalAlert, ModalScanQr} from 'navigation/screen/modals';
+import React, {ElementRef, useEffect, useRef} from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {I18Normalize} from 'utility/I18Next';
-import {renderPersonalJoinsFromGroups} from 'utility/assistant';
-import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
+import {borderWidthTiny, calculateTotalJoins} from 'utility/assistant';
+import {formatDDMMMMYY, formatMoney, formatddddDDMMYYYY} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {ModalGroup} from './components';
+import {ModalConfirmJoinGb, ModalGroup, ModalPeopleInGroup} from './components';
 import {useDetailSale} from './hooks';
 
 const DetailMeJoin = ({
   route: {
-    params: {saleId, itemJoinRequest, itemJoin, mode, onSuccess},
+    params: {saleId, joinPersonal, mode},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
-  const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
   const {id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
 
-  const [{loadingJoin, data, loading}, {onJoin, onRequestBought, onRefresh}] =
-    useDetailSale({
-      saleId,
-    });
-
-  const [statusItemJoin, setStatusItemJoin] = useState(itemJoin?.status);
-
-  useAppEvent(APP_EVENT.requestBoughtJoin, data => {
-    if (itemJoin && data?.joinId === itemJoin?.id) {
-      setStatusItemJoin(GROUP_BUYING_STATUS.requestBought);
-    }
+  const [
+    {
+      loadingJoin,
+      data,
+      refreshing,
+      meJoins,
+      loadingDeleteEstimate,
+      loadingEditEstimate,
+    },
+    {onRefresh, estimate, deleteEstimate, editEstimate},
+  ] = useDetailSale(saleId, {
+    revalidateAll: false,
   });
+  const {estimate: joinEstimate} = meJoins ?? {};
 
-  const title = useMemo((): I18Normalize => {
-    if (mode === 'confirm-join') {
-      return 'discovery.confirmJoining';
-    }
-    if (statusItemJoin === GROUP_BUYING_STATUS.bought) {
-      return 'profile.joinedSuccess';
-    }
-    if (statusItemJoin === GROUP_BUYING_STATUS.requestBought) {
-      return 'profile.waitingConfirm';
-    }
-    return 'profile.confirmWithVendor';
-  }, [statusItemJoin]);
+  const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const modalPeopleInGroup =
+    useRef<ElementRef<typeof ModalPeopleInGroup>>(null);
+  const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
 
-  const renderBottomComponent = () => {
-    if (mode === 'confirm-join' && itemJoinRequest) {
-      return (
-        <StyleButton
-          title="common.confirm"
-          containerStyle={{
-            marginBottom: bottom || safePaddingNotZero,
-            width: '70%',
+  useEffect(() => {
+    if (mode === 'go-to-deposit' && !joinEstimate?.list_personals?.length) {
+      estimate();
+    }
+  }, [joinEstimate?.list_personals?.length]);
+
+  /**
+   * Functions
+   */
+  const onDeleteEstimate = () => {
+    ModalAlert.options({
+      onContinue: async () => {
+        try {
+          await deleteEstimate();
+          goBack();
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        }
+      },
+      title: 'alert.sureToDeleteJoin',
+    });
+  };
+
+  const onEditEstimate = async (value: Omit<TypeJoinRequest, 'saleId'>) => {
+    try {
+      await editEstimate(value);
+      modalConfirmJoinRef.current?.hide();
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
+  };
+
+  /**
+   * Render views
+   */
+  const renderListPeopleInGroup = (groupId: number | TypeGroupJoin) => {
+    const groupFind =
+      typeof groupId === 'number'
+        ? data?.groups?.find(item => item.id === groupId)
+        : groupId;
+    if (!groupFind) {
+      return null;
+    }
+
+    return (
+      <StyleTouchable
+        customStyle={$joinView}
+        onPress={() =>
+          modalPeopleInGroup.current?.show({group: groupFind, isMySale: false})
+        }>
+        <StyleText
+          i18Text="discovery.groupDay"
+          i18Params={{
+            value: formatDDMMMMYY(groupFind.created),
           }}
-          onPress={() => onJoin(itemJoinRequest, {onSuccess})}
-          isLoading={loadingJoin}
+          customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
+        />
+        <StyleText
+          i18Text="discovery.numberJoinsWithYou"
+          i18Params={{
+            value: calculateTotalJoins(groupFind),
+          }}
+        />
+        <View style={$listPeopleJoin}>
+          {groupFind?.members.map(member => {
+            return (
+              <Avatar
+                source={{uri: member?.creator_avatar}}
+                size={30}
+                key={member?.id}
+              />
+            );
+          })}
+        </View>
+      </StyleTouchable>
+    );
+  };
+
+  const renderJoins = () => {
+    if (joinPersonal) {
+      const moneySaved = data?.prices?.[0]
+        ? data?.prices?.[0]?.price * joinPersonal?.amount - joinPersonal.price
+        : 0;
+      return (
+        <BoxInformation
+          listInformation={[
+            {
+              title: 'discovery.amount',
+              content: String(joinPersonal?.amount),
+            },
+            {
+              title: 'discovery.arrivalTime',
+              content: formatddddDDMMYYYY(joinPersonal.time_will_buy),
+            },
+            {
+              title: 'discovery.price',
+              content: formatMoney(joinPersonal.price),
+            },
+            {
+              title: 'discovery.deposit',
+              content: formatMoney(joinPersonal.deposit),
+            },
+            {
+              title: 'discovery.moneySaved',
+              content: formatMoney(moneySaved),
+              contentStyle: {color: theme.blue},
+            },
+            <View style={{width: '100%'}}>
+              <StyleText
+                i18Text="discovery.note"
+                customStyle={{color: theme.gray_600}}
+              />
+              <StyleText
+                originValue={joinPersonal.note}
+                customStyle={[$contentNote, {color: theme.black}]}
+              />
+            </View>,
+            renderListPeopleInGroup(joinPersonal.group_id),
+          ]}
+          containerStyle={$depositView}
         />
       );
     }
-    if (
-      statusItemJoin === GROUP_BUYING_STATUS.notBought ||
-      statusItemJoin === GROUP_BUYING_STATUS.notBoughtButOvertime
-    ) {
+
+    if (joinEstimate) {
+      const moneySaved = data?.prices?.[0]
+        ? data?.prices?.[0]?.price * joinEstimate?.amount - joinEstimate.price
+        : 0;
+      return (
+        <BoxInformation
+          listInformation={[
+            {
+              title: 'discovery.amount',
+              content: String(joinEstimate?.amount),
+            },
+            {
+              title: 'discovery.arrivalTime',
+              content: formatddddDDMMYYYY(joinEstimate?.time_will_buy),
+            },
+            {
+              title: 'discovery.estimatedPrice',
+              content: formatMoney(joinEstimate.price),
+              contentStyle: {color: theme.red},
+            },
+            {
+              title: 'discovery.deposit',
+              content: formatMoney(joinEstimate.deposit),
+              contentStyle: {color: theme.red},
+            },
+            {
+              title: 'discovery.moneySaved',
+              content: formatMoney(moneySaved),
+              contentStyle: {color: theme.blue},
+            },
+            {
+              title: 'discovery.transactionHash',
+              content: joinEstimate.hash,
+              contentStyle: {flex: 1.7, fontWeight: 'normal'},
+            },
+            <View style={{width: '100%'}}>
+              <StyleText
+                i18Text="discovery.note"
+                customStyle={{color: theme.gray_600}}
+              />
+              <StyleText
+                originValue={joinEstimate.note}
+                customStyle={[$contentNote, {color: theme.black}]}
+              />
+            </View>,
+            <View style={$countdownView}>
+              <StyleText
+                i18Text="discovery.remainingTime"
+                customStyle={{color: theme.gray_600}}>
+                <StyleText
+                  originValue=":"
+                  customStyle={{color: theme.gray_600}}
+                />
+              </StyleText>
+              <TextCountDown
+                initSeconds={dayjs(joinEstimate.expired).diff(
+                  dayjs(),
+                  'seconds',
+                )}
+              />
+            </View>,
+          ]}
+          containerStyle={$depositView}
+        />
+      );
+    }
+
+    return null;
+  };
+
+  const renderListJoinEstimate = () => {
+    if (joinEstimate) {
+      return (
+        <>
+          <StyleText
+            i18Text="discovery.beInGroup"
+            customStyle={$textBeInGroup}
+          />
+          {joinEstimate?.list_personals?.map((join, index) => {
+            return (
+              <BoxInformation
+                key={index}
+                listInformation={[
+                  renderListPeopleInGroup({
+                    id: null,
+                    created: join.created,
+                    members: [
+                      {
+                        id: null,
+                        amount: join.amount,
+                        creator: join.creator,
+                        creator_avatar: join.creator_avatar,
+                        creator_name: join.creator_name,
+                      },
+                    ],
+                  }),
+                  {
+                    title: 'discovery.amount',
+                    content: String(join.amount),
+                  },
+                  {
+                    title: 'discovery.estimatedPrice',
+                    content: formatMoney(join.price),
+                  },
+                  {
+                    title: 'discovery.deposit',
+                    content: formatMoney(join.deposit),
+                  },
+                ]}
+                containerStyle={$groupView}
+              />
+            );
+          })}
+        </>
+      );
+    }
+  };
+
+  const renderBottomComponent = () => {
+    if (mode === 'go-to-deposit' || mode === 'go-to-deposit-from-profile') {
+      return (
+        <View
+          style={[
+            $buttonView,
+            {
+              paddingBottom: bottom || safePaddingNotZero,
+              backgroundColor: theme.background,
+            },
+          ]}>
+          <StyleButton
+            title="common.cancel"
+            containerStyle={[$buttonCancel, {borderColor: theme.black}]}
+            titleStyle={{color: theme.black}}
+            onPress={onDeleteEstimate}
+            isLoading={loadingDeleteEstimate}
+          />
+          <StyleButton
+            title="discovery.goToDeposit"
+            containerStyle={{width: '70%'}}
+            onPress={() => {
+              if (joinEstimate) {
+                navigate(ROOT_SCREEN.goToDeposit, {
+                  joinEstimate,
+                });
+              }
+            }}
+            isLoading={loadingJoin}
+          />
+        </View>
+      );
+    }
+
+    if (joinPersonal?.status === GROUP_BUYING_STATUS.notBought) {
       return (
         <StyleButton
           title="profile.confirmWithVendor"
@@ -89,48 +348,38 @@ const DetailMeJoin = ({
             width: '70%',
           }}
           onPress={() => {
-            if (itemJoin) {
-              onRequestBought(itemJoin?.id);
-            }
+            ModalScanQr.show();
           }}
           isLoading={loadingJoin}
         />
       );
     }
-    return null;
   };
 
-  const renderListPeopleJoined = () => {
-    if (!data?.groups?.length) {
-      return null;
-    }
-    const listPersonalJoins = renderPersonalJoinsFromGroups(
-      data?.groups || [],
-      {maxNumber: 10},
-    );
-    return (
-      <BoxView
-        containerStyle={$joinView}
-        onPress={() => modalJoinedRef.current?.show()}>
+  const renderStatus = () => {
+    if (joinEstimate?.status === GROUP_BUYING_STATUS.notBoughtButOvertime) {
+      return (
         <StyleText
-          i18Text="discovery.numberGroupJoined"
-          i18Params={{
-            value: data?.total_members ?? 0,
-          }}
-        />
-        <View style={$listPeopleJoin}>
-          {listPersonalJoins.map(join => {
-            return (
-              <Avatar
-                source={{uri: join?.creator_avatar}}
-                size={30}
-                key={join?.id}
-              />
-            );
-          })}
-        </View>
-      </BoxView>
-    );
+          i18Text="discovery.arrivalTimePassed"
+          customStyle={[
+            $textAlert,
+            {marginTop: verticalScale(12), color: theme.gray_600},
+          ]}>
+          <StyleText
+            i18Text="discovery.please"
+            customStyle={[$textAlert, {color: theme.gray_600}]}
+          />
+          <StyleText
+            i18Text="profile.confirmWithVendor"
+            customStyle={[$textAlert, {fontWeight: 'bold', color: theme.red}]}
+          />
+          <StyleText
+            i18Text="discovery.confirmJoinSuccess"
+            customStyle={[$textAlert, {color: theme.gray_600}]}
+          />
+        </StyleText>
+      );
+    }
   };
 
   return (
@@ -138,60 +387,49 @@ const DetailMeJoin = ({
       <StyleContainer
         BottomComponent={renderBottomComponent()}
         headerProps={{
-          title: title,
+          title: data?.name as I18Normalize,
+          RightComponent: !!joinEstimate ? (
+            <StyleTouchable onPress={() => modalConfirmJoinRef.current?.show()}>
+              <StyleText
+                i18Text="profile.post.edit"
+                customStyle={{
+                  color: theme.blue,
+                  fontWeight: FONT_WEIGHT_MEDIUM,
+                }}
+              />
+            </StyleTouchable>
+          ) : null,
         }}
-        scrollEnabled>
+        scrollEnabled
+        customStyle={{paddingBottom: bottom || safePaddingNotZero}}>
         <View style={$topView}>
-          {itemJoin?.status === GROUP_BUYING_STATUS.bought ? (
-            <StyleIcon source={Images.images.successful} size={70} />
-          ) : (
-            <StyleIcon source={Images.images.squirrelLogin} size={70} />
-          )}
+          <StyleIcon source={Images.images.successful} size={70} />
         </View>
 
-        <BoxInformation
-          listInformation={[
-            {
-              title: 'discovery.amount',
-              content: String(
-                itemJoin?.amount || itemJoinRequest?.amount || '0',
-              ),
-            },
-            {
-              title: 'discovery.arrivalTime',
-              content: formatddddDDMMYYYY(
-                itemJoin?.time_will_buy || itemJoinRequest?.time_will_buy || '',
-              ),
-            },
-            {
-              title: 'discovery.deposit',
-              content: formatMoney(
-                itemJoin?.deposit || itemJoinRequest?.deposit || 0,
-              ),
-            },
-            <View style={{width: '100%'}}>
-              <StyleText
-                i18Text="discovery.note"
-                style={{color: theme.gray_600}}
-              />
-              <StyleText
-                originValue={itemJoin?.note || itemJoinRequest?.note}
-                style={[$contentNote, {color: theme.black}]}
-              />
-            </View>,
-          ]}
-          containerStyle={$depositView}
-        />
+        {renderJoins()}
 
         <BoxView
           containerStyle={$saleView}
           onPress={() => {
-            if (mode === 'confirm-join' || mode === 'see-detail-from-sale') {
-              goBack();
-            } else if (mode === 'see-detail') {
-              push(ROOT_SCREEN.detailSale, {
-                sale: data,
-              });
+            switch (mode) {
+              case 'see-detail-from-sale':
+                goBack();
+                break;
+              case 'see-detail':
+                push(ROOT_SCREEN.detailSale, {
+                  sale: data,
+                });
+                break;
+              case 'go-to-deposit':
+                goBack();
+                break;
+              case 'go-to-deposit-from-profile':
+                push(ROOT_SCREEN.detailSale, {
+                  sale: data,
+                });
+                break;
+              default:
+                break;
             }
           }}>
           <StyleImage
@@ -201,7 +439,7 @@ const DetailMeJoin = ({
           />
           <View style={$saleInformation}>
             <StyleText
-              originValue={data?.creator_name}
+              originValue={data?.name}
               customStyle={$saleName}
               numberOfLines={1}
             />
@@ -214,38 +452,33 @@ const DetailMeJoin = ({
           <RightIcon style={{color: theme.gray_500}} />
         </BoxView>
 
-        {renderListPeopleJoined()}
+        {renderListJoinEstimate()}
 
-        {statusItemJoin === GROUP_BUYING_STATUS.notBoughtButOvertime && (
-          <StyleText
-            i18Text="discovery.arrivalTimePassed"
-            customStyle={[
-              $textAlert,
-              {marginTop: verticalScale(12), color: theme.gray_600},
-            ]}>
-            <StyleText
-              i18Text="discovery.please"
-              customStyle={[$textAlert, {color: theme.gray_600}]}
-            />
-            <StyleText
-              i18Text="profile.confirmWithVendor"
-              customStyle={[$textAlert, {fontWeight: 'bold', color: theme.red}]}
-            />
-            <StyleText
-              i18Text="discovery.confirmJoinSuccess"
-              customStyle={[$textAlert, {color: theme.gray_600}]}
-            />
-          </StyleText>
-        )}
+        {renderStatus()}
       </StyleContainer>
 
       <ModalGroup
         ref={modalJoinedRef}
         groups={data?.groups || []}
-        refreshing={loading}
+        refreshing={refreshing}
         onRefresh={onRefresh}
         isMySale={data?.creator === myId}
       />
+
+      <ModalPeopleInGroup ref={modalPeopleInGroup} />
+
+      {!!joinEstimate && (
+        <ModalConfirmJoinGb
+          ref={modalConfirmJoinRef}
+          onConfirm={onEditEstimate}
+          loadingJoin={loadingEditEstimate}
+          initValue={{
+            amount: joinEstimate?.amount,
+            time_will_buy: joinEstimate?.time_will_buy,
+            note: joinEstimate?.note,
+          }}
+        />
+      )}
     </>
   );
 };
@@ -253,10 +486,10 @@ const DetailMeJoin = ({
 const $topView: ViewStyle = {
   width: '100%',
   alignItems: 'center',
-  marginTop: verticalScale(10),
+  marginTop: verticalScale(12),
 };
 const $depositView: ViewStyle = {
-  marginTop: verticalScale(20),
+  marginTop: verticalScale(12),
 };
 const $contentNote: TextStyle = {
   marginTop: verticalScale(5),
@@ -277,7 +510,7 @@ const $saleInformation: ViewStyle = {
   justifyContent: 'center',
 };
 const $joinView: ViewStyle = {
-  marginTop: verticalScale(12),
+  width: '100%',
 };
 const $saleName: TextStyle = {
   fontWeight: 'bold',
@@ -290,6 +523,36 @@ const $listPeopleJoin: ViewStyle = {
 };
 const $textAlert: TextStyle = {
   fontSize: FONT_SIZE.f3,
+};
+const $groupView: ViewStyle = {
+  marginTop: verticalScale(10),
+};
+const $textBeInGroup: TextStyle = {
+  marginTop: verticalScale(12),
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $buttonView: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingTop: verticalScale(8),
+  shadowOpacity: 0.1,
+  shadowOffset: {
+    width: 0,
+    height: -4,
+  },
+  paddingHorizontal: scale(12),
+};
+const $buttonCancel: ViewStyle = {
+  width: '28%',
+  backgroundColor: 'transparent',
+  borderWidth: borderWidthTiny,
+};
+const $countdownView: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 };
 
 export default DetailMeJoin;

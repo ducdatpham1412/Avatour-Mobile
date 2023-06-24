@@ -3,14 +3,15 @@ import React, {ReactNode, isValidElement} from 'react';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny} from 'utility/assistant';
+import {scale, verticalScale} from 'utility/scale';
 import BoxView from './BoxView';
 import {StyleText} from './base';
-import {scale, verticalScale} from 'utility/scale';
 
 type TypeInfoContent = {
-  icon?: ReactNode;
+  iconRight?: ReactNode;
   title: I18Normalize;
   content: string;
+  contentStyle?: StyleProp<TextStyle>;
 };
 
 interface Props {
@@ -59,22 +60,25 @@ const BoxInformation = ({
               },
             ]}>
             <View style={[$leftView, {flex: titleBoxFlex}]}>
-              {itemContent?.icon}
               <StyleText
                 i18Text={itemContent?.title}
                 customStyle={[
                   $textTitle,
                   {
                     color: theme.gray_600,
-                    marginLeft: itemContent?.icon ? scale(4) : 0,
                   },
                 ]}
               />
             </View>
             <StyleText
               originValue={itemContent?.content}
-              customStyle={$textContent}
+              customStyle={[
+                $textContent,
+                {marginRight: itemContent?.iconRight ? scale(4) : 0},
+                itemContent.contentStyle,
+              ]}
             />
+            {itemContent?.iconRight}
           </View>
         );
       })}

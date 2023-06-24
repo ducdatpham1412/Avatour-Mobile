@@ -33,6 +33,8 @@ const common = {
   alert: 'Alert',
   type: 'Type',
   editFilter: 'Edit filter',
+  copy: 'Copy',
+  copied: 'Copied',
 };
 
 const login = {
@@ -119,7 +121,6 @@ const login = {
   newPassword: 'New password',
 };
 
-// DISCOVERY ROUTE
 const discovery = {
   home: 'Home',
   bubble: {
@@ -162,8 +163,9 @@ const discovery = {
   continueJoin: 'Continue joining',
   joined: 'Joined',
   deposited: 'Deposited',
-  deposit: 'Deposit:',
-  numberGroupJoined: '{{value}} people joined',
+  deposit: 'Deposit',
+  numberGroupJoined: '{{value}} joins',
+  numberJoinsWithYou: '{{value}} joins with you',
   beTheFirstJoin: 'Join group buying',
   bought: 'Full payment',
   confirmBought: 'Full payment confirm',
@@ -213,9 +215,9 @@ const discovery = {
   notWorry:
     "Dont't worry.\nStore just is only temporarily not accepting any more orders\nYour booking is still being processed.",
   closed: 'Closed',
-  amount: 'Amount:',
+  amount: 'Amount',
   noteForMerchant: 'Note for merchant',
-  arrivalTime: 'Arrival time:',
+  arrivalTime: 'Arrival time',
   note: 'Note: ',
   numberRetailTurns: '{{value}} buying separately turns',
   addPhoneNumber: 'Add phone number',
@@ -240,7 +242,6 @@ const discovery = {
   price: 'Price',
   moreThan: 'More than {{value}}',
   valuePeople: '{{value}} people',
-  valuePeopleJoined: '{{value}} people joined',
   tour: 'Tour',
   groupBuying: 'Group buying',
   groupDay: 'Group in {{value}}',
@@ -255,9 +256,26 @@ const discovery = {
   free: 'Free',
   addLocation: 'Add location',
   addDay: 'Add day',
+  youHaveGroupBuying:
+    'You have an order\nGo to deposit to confirm joining group buying',
+  remainingTime: 'Remaining time',
+  estimatedPrice: 'Estimated price',
+  beInGroup: 'Với số lượng như trên.\nBạn sẽ được phân vào các nhóm sau:',
+  moneySaved: 'Money you saved',
+  transactionHash: 'Transaction hash',
+  transactionMoney: 'Amount to transfer',
+  transactionContent: 'Transaction content',
+  backToHome: 'Back to home',
+  yourTransactionHash:
+    'Your transaction hash is: {{value}}.\nIn order to confirm successful joining with the seller, please deposit by bank transfer to the following bank account:',
+  yourTransactionContent: 'In your case, the content you need to transfer is:',
+  ifHaveAnyCase: `After the transfer, your group buying order will still be in “Go to Deposit” status. Don't worry, Avatour will respond to you in a maximum of 1 hour if the deposit time is from 6am to 11pm, 7 hours from 11pm to 6am the next day.
+If you have any problems, please contact Avatour through one of the following ways:
+     ・Tel / Zalo: (+84) 862938350
+     ・Email: support.avatour@gmail.com
+Avatour Co., Ltd would like to sincerely thank you for using our service!`,
 };
 
-// REPUTATION
 const reputation = {
   community: 'Community',
   topReviewer: 'Top reviewers',
@@ -266,7 +284,6 @@ const reputation = {
   experience: 'Experience',
 };
 
-// TOURS
 const tour = {
   tours: 'Tours',
   myTours: 'My tours',
@@ -274,7 +291,6 @@ const tour = {
   viewTourOnMapDeveloping: 'View the tour schedule on map will come soon 😁',
 };
 
-// MESS ROUTE
 const mess = {
   component: {},
   messScreen: {
@@ -304,7 +320,6 @@ const mess = {
   oneNameForBoth: 'Use one name for both of you',
 };
 
-// PROFILE ROUTE
 const profile = {
   title: 'Profile',
   editProfile: 'Edit profile',
@@ -332,8 +347,6 @@ const profile = {
   screen: {
     sendMessage: 'Send message',
     goToChatTag: 'Go to conversation',
-    confirmDeleteGroup:
-      "After deleting, people won't see and join your group\nAre you sure delete?",
   },
   modalize: {
     setting: 'Setting',
@@ -392,6 +405,7 @@ const profile = {
   bank: 'Choose bank',
   bankName: 'Bank',
   accountNumber: 'Account number',
+  accountHolder: 'Account holder',
   byTapping: 'By tapping ',
   agreeSendTheseInformation:
     ", you agree to send these information to us.\nReviewing process can take some time, we'll notice to you within 24 hours via email ",
@@ -409,7 +423,7 @@ const profile = {
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
   postGroupBuying: 'Create group buying',
-  confirmWithVendor: 'Confirm with vendor',
+  confirmWithVendor: 'Contact with vendor',
   havingRequestUpdate: "You're having an update request",
   review: 'Review',
   thisIsAccountReceive:
@@ -427,7 +441,6 @@ const profile = {
   groupBuyingName: 'Group buying name',
 };
 
-// SETTING ROUTE
 const setting = {
   title: 'Setting',
   component: {
@@ -485,7 +498,6 @@ const setting = {
   updateStatus: 'Update status',
 };
 
-// NOTIFICATION
 const notification = {
   title: 'Notifications',
   comment: ' commented on your post',
@@ -495,7 +507,6 @@ const notification = {
   likeGroupBuying: '  like your group buying campaign',
 };
 
-// ALERT
 const alert = {
   // FOR LOGIN
   notNull: 'This is a required field !',
@@ -549,6 +560,7 @@ const alert = {
   requestUpdateBankSuccess:
     'Request updating bank account successfully\nOur team will review and respond to you within 1 day',
   sureToBlock: 'Are you sure you want to block this person?',
+  sureToDeleteJoin: 'Are you sure you want to cancel this order?',
 
   // PERMISSION
   permissionCamera: 'Access camera',

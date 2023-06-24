@@ -217,7 +217,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
         resolveForNextShow?.('');
       }}
       animationIn="fadeIn"
-      animationOutTiming={1000}>
+      animationOutTiming={400}>
       <View style={$container} onLayout={() => scaleRef.current?.zoomOut()}>
         <ScaleView ref={scaleRef} style={[$body, {backgroundColor: tintColor}]}>
           <View style={$upView} />

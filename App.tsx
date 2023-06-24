@@ -8,7 +8,6 @@ import {
 import Store from 'app-redux/store';
 import Config from 'asset/env';
 import {SocketProvider} from 'hook/useSocketIO';
-import TabBarProvider from 'navigation/config/TabBarProvider';
 import {navigationRef} from 'navigation/NavigationService';
 import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
@@ -62,20 +61,18 @@ const App = () => {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <I18nextProvider i18n={I18Next}>
           <LanguageProvider>
-            <TabBarProvider>
-              <ReduxProvider store={Store}>
-                <NavigationContainer
-                  ref={navigationRef}
-                  onStateChange={trackActiveRoute}>
-                  <SocketProvider>
-                    <RootScreen />
-                    {/* App Function */}
-                    {/* <DynamicLink /> */}
-                    <AppModal />
-                  </SocketProvider>
-                </NavigationContainer>
-              </ReduxProvider>
-            </TabBarProvider>
+            <ReduxProvider store={Store}>
+              <NavigationContainer
+                ref={navigationRef}
+                onStateChange={trackActiveRoute}>
+                <SocketProvider>
+                  <RootScreen />
+                  {/* App Function */}
+                  {/* <DynamicLink /> */}
+                  <AppModal />
+                </SocketProvider>
+              </NavigationContainer>
+            </ReduxProvider>
           </LanguageProvider>
         </I18nextProvider>
       </SafeAreaProvider>

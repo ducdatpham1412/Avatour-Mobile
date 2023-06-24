@@ -24,6 +24,7 @@ const SearchListGroupBuying = () => {
     refreshing,
     onRefresh,
     loadingMore,
+    initLoading,
   } = usePaging<TypeGroupBuying, TypeSearchRequest>({
     request: apiSearch,
     params: {
@@ -78,6 +79,7 @@ const SearchListGroupBuying = () => {
         refreshing={refreshing}
         onRefresh={onRefresh}
         onLoadMore={onLoadMore}
+        initLoading={initLoading}
         loadingMore={loadingMore}
         contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
         ListEmptyComponent={null}

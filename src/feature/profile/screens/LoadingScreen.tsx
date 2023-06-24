@@ -2,13 +2,25 @@ import Images from 'asset/img/images';
 import {useTheme} from 'hook';
 import LottieView from 'lottie-react-native';
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {StyleProp, StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
+import {moderateScale} from 'utility/scale';
 
 interface Props {
   hasLogo?: boolean;
   opacityBackground?: number;
 }
+
+export const LoadingIcon = () => {
+  return (
+    <LottieView
+      source={Images.images.loadingPlane}
+      style={$iconFly}
+      autoPlay
+      loop
+      speed={1}
+    />
+  );
+};
 
 const LoadingScreen = (props: Props) => {
   const {hasLogo = true, opacityBackground = 0.9} = props;
@@ -17,35 +29,27 @@ const LoadingScreen = (props: Props) => {
   return (
     <View
       style={[
-        styles.container,
+        $container,
         {
           backgroundColor: theme.background,
           opacity: opacityBackground,
         },
       ]}>
-      {hasLogo && (
-        <LottieView
-          source={Images.images.loadingPlane}
-          style={styles.iconFly}
-          autoPlay
-          loop
-          speed={1}
-        />
-      )}
+      {hasLogo && <LoadingIcon />}
     </View>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
+const $container: StyleProp<ViewStyle> = [
+  StyleSheet.absoluteFillObject,
+  {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconFly: {
-    width: '100@ms',
-    height: '100@ms',
-  },
-});
+];
+const $iconFly: TextStyle = {
+  width: moderateScale(70),
+  height: moderateScale(70),
+};
 
 export default LoadingScreen;

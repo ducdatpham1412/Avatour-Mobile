@@ -38,14 +38,15 @@ interface TypeDeposit {
 }
 
 interface TypePersonalJoin {
-  id: number;
+  id: number | null;
+  amount: number;
   creator: number;
   creator_name: string;
   creator_avatar: string;
 }
 
 interface TypeGroupJoin {
-  id: number;
+  id: number | null;
   created: string;
   members: TypePersonalJoin[];
 }
@@ -100,6 +101,15 @@ interface TypeResourceResponse {
     favorite_tours: Array<Tour>;
     hot_locations: Array<TypeHotLocation>;
     prices: Array<TypePriceResource>;
+    deposit_bank: {
+      code: string;
+      name: {
+        vi: string;
+        en: string;
+      };
+      account_number: string;
+      account_holder: string;
+    };
     // listPurchases: Array<TypePurchaseResource>;
     // topGroupBookings: Array<TypeGroupBuying>;
   };

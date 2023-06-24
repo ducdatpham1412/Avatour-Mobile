@@ -1,3 +1,4 @@
+import {LoadingScreen} from 'feature/profile/screens';
 import {useTheme} from 'hook';
 import StyleHeader, {StyleHeaderProps} from 'navigation/components/StyleHeader';
 import React, {forwardRef, ReactNode} from 'react';
@@ -20,6 +21,7 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   TopComponent?: ReactNode;
   BottomComponent?: ReactNode;
   backgroundColor?: string;
+  initLoading?: boolean;
 }
 
 // let offsetY = 0;
@@ -34,6 +36,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     TopComponent,
     BottomComponent,
     backgroundColor,
+    initLoading = false,
   } = props;
   const theme = useTheme();
   const {top} = useSafeAreaInsets();
@@ -68,7 +71,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
         keyboardShouldPersistTaps="handled"
         {...props}
         contentContainerStyle={[$contentContainer, customStyle]}>
-        {children}
+        {initLoading ? <LoadingScreen /> : children}
       </KeyboardAwareScrollView>
       {BottomComponent}
     </View>

@@ -11,7 +11,7 @@ import {formatddddDDMMYYYY} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
-  item: TypeMeJoinResponse;
+  item: TypeJoinPersonal;
   onPress: () => void;
 }
 

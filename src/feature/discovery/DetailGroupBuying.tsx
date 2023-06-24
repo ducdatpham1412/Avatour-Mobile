@@ -42,7 +42,7 @@ import IconLiked from 'components/common/IconLiked';
 import IconNotLiked from 'components/common/IconNotLiked';
 import ScrollSyncSizeImage from 'components/common/ScrollSyncSizeImage';
 import StyleActionSheet from 'components/common/StyleActionSheet';
-import LoadingScreen from 'components/LoadingScreen';
+import LoadingScreen from 'feature/profile/screens/LoadingScreen';
 import ModalCommentLike from 'components/ModalCommentLike';
 import ModalConfirmJoinGb from 'feature/common/components/ModalConfirmJoinGb';
 import UpdatePriceStatus from 'feature/common/components/UpdatePriceStatus';

@@ -1,4 +1,4 @@
-import LoadingScreen from 'components/LoadingScreen';
+import LoadingScreen from 'feature/profile/screens/LoadingScreen';
 import * as React from 'react';
 import {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
