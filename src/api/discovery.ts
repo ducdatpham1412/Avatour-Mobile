@@ -3,10 +3,33 @@ import request from './request';
 
 export const apiJoinSale = (
   params: TypeJoinRequest,
-): Promise<TypeJoinResponse> => {
+): Promise<TemplateApiResponse<TypeJoinEstimate>> => {
   return request.post(`/profile/sales/join/${params.saleId}`, {
-    deposit: params.deposit,
     amount: params.amount,
+    time_will_buy: params.time_will_buy,
+    note: params.note,
+  });
+};
+
+export const apiEstimate = (
+  joinEstimateId: number,
+): Promise<TemplateApiResponse<TypeJoinEstimate>> => {
+  return request.get(`/profile/sales/join/${joinEstimateId}`, {
+    params: {
+      type: 'estimate',
+    },
+  });
+};
+
+export const apiDeleteEstimate = (joinEstimateId: number) => {
+  return request.delete(`/profile/sales/join/${joinEstimateId}`);
+};
+
+export const apiEditEstimate = (
+  params: TypeEditEstimate,
+): Promise<TemplateApiResponse<TypeJoinEstimate>> => {
+  return request.put(`/profile/sales/join/${params.estimateId}`, {
+    amount: params?.amount,
     time_will_buy: params.time_will_buy,
     note: params.note,
   });

@@ -25,7 +25,7 @@ import Theme from 'asset/theme/Theme';
 import Redux from 'hook/useRedux';
 import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
-import {ModalAlert} from 'navigation/screen/modals';
+import {ModalAlert, Toast} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction, useState} from 'react';
 import {
   DevSettings,
@@ -36,6 +36,8 @@ import {
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
 import AuthenticateService from './login/loginService';
+import {impactLight} from './haptic';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 export const interactBubble = (params: TypeInteractBubble) => {
   navigate(ROOT_SCREEN.interactBubble, params);
@@ -440,6 +442,14 @@ export const renderPersonalJoinsFromGroups = (
   return listPersonalJoins;
 };
 
+export const calculateTotalJoins = (group: TypeGroupJoin) => {
+  let res = 0;
+  group?.members?.forEach(item => {
+    res += item?.amount ?? 0;
+  });
+  return res;
+};
+
 type TypeReactPost = {
   isLiked: boolean;
   setList: Dispatch<SetStateAction<TypeGroupBuying[]>>;
@@ -523,4 +533,10 @@ export const detectFromStyle = (style: any, keySearch: string) => {
   }
 
   return res;
+};
+
+export const copy = async (text: string) => {
+  impactLight();
+  await Clipboard.setString(text);
+  Toast.show('common.copied');
 };

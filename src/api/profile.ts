@@ -118,18 +118,6 @@ export const apiGetListPostsArchived = ({params}: TypeParamsPaging) => {
   });
 };
 
-export const apiGetListGbJoining = ({
-  params,
-}: TypeParamsPaging<{userId: number}>) => {
-  return request.get('/profile/sales', {
-    params: {
-      page_index: params.pageIndex,
-      take: params.take,
-      type: TYPE_SALE_SEARCH.joining,
-    },
-  });
-};
-
 export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
   return request.get('/profile/sales', {
     params: {

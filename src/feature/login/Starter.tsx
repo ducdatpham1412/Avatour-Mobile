@@ -5,7 +5,7 @@ import {
 import {Metrics} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {SafeView} from 'components/base';
-import LoadingScreen from 'components/LoadingScreen';
+import LoadingScreen from 'feature/profile/screens/LoadingScreen';
 import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
 import TopTabNavigator from 'navigation/components/TopTabNavigator';

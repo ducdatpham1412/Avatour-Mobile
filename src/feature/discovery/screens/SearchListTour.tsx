@@ -53,10 +53,9 @@ const SearchListTour = () => {
           <ItemTour item={item} containerStyle={$itemView} />
         )}
         keyExtractor={item => item.id}
-        refreshing={refreshing}
+        refreshing={refreshing || loading}
         onRefresh={onRefresh}
         onLoadMore={onLoadMore}
-        loading={loading}
         loadingMore={loadingMore}
         initLoading={initLoading}
         contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}

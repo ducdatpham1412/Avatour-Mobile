@@ -167,10 +167,12 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.detailMeJoin]: {
     saleId: number;
-    itemJoinRequest?: TypeJoinRequest;
-    itemJoin?: TypeMeJoinResponse;
-    mode: 'confirm-join' | 'see-detail' | 'see-detail-from-sale';
-    onSuccess?: () => void;
+    joinPersonal?: TypeJoinPersonal; // for see detail a join personal
+    mode:
+      | 'go-to-deposit'
+      | 'go-to-deposit-from-profile'
+      | 'see-detail'
+      | 'see-detail-from-sale';
   };
   [SETTING_ROUTE.enterPassword]: {
     newInfo: {
@@ -190,12 +192,18 @@ export type AppParamsList = {
     tourId?: number;
     tour?: Tour;
   };
+  [PROFILE_ROUTE.myProfile]: {
+    initIndex?: 'shop' | 'order' | 'favorite' | 'review';
+  };
+  [ROOT_SCREEN.myProfile]: {
+    initIndex?: 'shop' | 'order' | 'favorite' | 'review';
+  };
+  [ROOT_SCREEN.goToDeposit]: {
+    joinEstimate: TypeJoinEstimate;
+  };
 };
 
 export type AppEventList = {
-  [APP_EVENT.requestBoughtJoin]: {
-    joinId: number;
-  };
   [APP_EVENT.reactSale]: {
     saleId: number;
     type: 'like' | 'dislike';

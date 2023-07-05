@@ -9,6 +9,7 @@ import {
   ModalDateRangePicker,
   ModalInputEdit,
   ModalScanQr,
+  Toast,
 } from './modals';
 
 const AppModal = () => {
@@ -23,8 +24,7 @@ const AppModal = () => {
       <ModalScanQr />
       <ModalActionSheet />
       <ModalAlert />
-      {/* <ModalAddLocation />
-      <ModalProfile /> */}
+      <Toast />
     </>
   );
 };

@@ -74,7 +74,7 @@ const EditHistory = ({route}: Props) => {
                   ]}
                 />
                 <StyleText
-                  originValue={`${formatLocaleNumber(price.value)}vnd`}
+                  originValue={`${formatLocaleNumber(price.price)}vnd`}
                   customStyle={[
                     styles.textPrice,
                     {color: theme.textHightLight},

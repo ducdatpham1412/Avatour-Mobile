@@ -33,6 +33,8 @@ const common = {
   alert: 'Thông báo',
   type: 'Loại',
   editFilter: 'Chỉnh sửa bộ lọc',
+  copy: 'Sao chép',
+  copied: 'Đã sao chép',
 };
 
 const login = {
@@ -121,7 +123,6 @@ const login = {
   newPassword: 'Mật khẩu mới',
 };
 
-// DISCOVERY ROUTE
 const discovery = {
   home: 'Trang chủ',
   bubble: {
@@ -165,8 +166,9 @@ const discovery = {
   continueJoin: 'Tiếp tục tham gia',
   joined: 'Đã tham gia',
   deposited: 'Đã đặt cọc',
-  deposit: 'Đặt cọc:',
+  deposit: 'Đặt cọc',
   numberGroupJoined: '{{value}} lượt tham gia',
+  numberJoinsWithYou: '{{value}} lượt tham gia với bạn',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',
   confirmBought: 'Xác nhận thanh toán đủ',
@@ -217,9 +219,9 @@ const discovery = {
   notWorry:
     'Đừng lo lắng.\nCửa hàng chỉ tạm thời không nhận thêm order nữa\nĐơn đặt hàng của bạn vẫn tiếp tục được tiến hành.',
   closed: 'Đã kết thúc',
-  amount: 'Số lượng:',
+  amount: 'Số lượng',
   noteForMerchant: 'Ghi chú cho người bán',
-  arrivalTime: 'Thời gian đến:',
+  arrivalTime: 'Thời gian đến',
   note: 'Ghi chú: ',
   numberRetailTurns: '{{value}} lượt mua riêng',
   addPhoneNumber: 'Thêm số điện thoại',
@@ -244,7 +246,6 @@ const discovery = {
   price: 'Giá tiền',
   moreThan: 'Hơn {{value}}',
   valuePeople: '{{value}} người',
-  valuePeopleJoined: '{{value}} người đã tham gia',
   tour: 'Tour',
   groupBuying: 'Đơn mua chung',
   groupDay: 'Nhóm ngày {{value}}',
@@ -259,9 +260,26 @@ const discovery = {
   free: 'Miễn phí',
   addLocation: 'Thêm địa điểm',
   addDay: 'Thêm ngày',
+  youHaveGroupBuying:
+    'Bạn có một đơn mua chung\nĐi tới đặt cọc để xác nhận tham gia',
+  remainingTime: 'Thời gian còn lại',
+  estimatedPrice: 'Giá tiền dự tính',
+  beInGroup: 'Với số lượng như trên.\nBạn sẽ được phân vào các nhóm sau:',
+  moneySaved: 'Bạn tiết kiệm được',
+  transactionHash: 'Mã giao dịch',
+  transactionMoney: 'Số tiền cần chuyển',
+  transactionContent: 'Nội dung chuyển khoản',
+  backToHome: 'Về trang chủ',
+  yourTransactionHash:
+    'Mã giao dịch của bạn là: {{value}}.\nĐể xác nhận tham gia thành công với người bán, bạn vui lòng đặt cọc bằng hình thức chuyển khoản đến tài khoản ngân hàng sau:',
+  yourTransactionContent: 'Ở đây, nội dung bạn cần chuyển là:',
+  ifHaveAnyCase: `Sau khi chuyển khoản, đơn mua chung của bạn vẫn sẽ ở trạng thái “Đi tới đặt cọc”. Đừng lo lắng, Avatour sẽ phản hồi lại bạn trong thời gian tối đa 1 tiếng đồng hồ nếu thời gian đặt cọc từ 6h - 23h, 7 tiếng đồng hồ trong thời gian 23h - 6h ngày hôm sau.
+Nếu có bất kỳ sự cố nào, bạn vui lòng liên hệ Avatour qua một trong các cách sau:
+  ・SĐT / Zalo: (+84) 862938350
+  ・Email: support.avatour@gmail.com
+Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!`,
 };
 
-// REPUTATION
 const reputation = {
   community: 'Cộng đồng',
   topReviewer: 'Top reviewers',
@@ -278,7 +296,6 @@ const tour = {
     'Xem lịch trình của bạn trên map sẽ sớm đưa đến tay bạn 😁',
 };
 
-// PROFILE SCREEN
 const profile = {
   title: 'Cá nhân',
   editProfile: 'Chỉnh sửa trang cá nhân',
@@ -309,8 +326,6 @@ const profile = {
     follow: 'Theo dõi',
     unFollow: 'Huỷ theo dõi',
     goToChatTag: 'Đi tới cuộc trò chuyện',
-    confirmDeleteGroup:
-      'Sau khi xoá, mọi người sẽ không thấy và tham gia nhóm của bạn nữa\nBạn vẫn chắc chắn xoá chứ?',
   },
   modalize: {
     setting: 'Cài đặt',
@@ -369,6 +384,7 @@ const profile = {
   bank: 'Chọn ngân hàng',
   bankName: 'Ngân hàng',
   accountNumber: 'Số tài khoản',
+  accountHolder: 'Chủ tài khoản',
   byTapping: 'Bằng việc ấn ',
   agreeSendTheseInformation:
     ', bạn đồng ý gửi các thông tin trên cho chúng tôi.\nQuá trình xét duyệt có thể mất chút thời gian, chúng tôi sẽ thông báo tới bạn qua địa chỉ email ',
@@ -386,7 +402,7 @@ const profile = {
   sendRequestChangePrice: 'Yêu cầu thay đổi giá',
   updateBankAccount: 'Tài khoản nhận tiền',
   postGroupBuying: 'Tạo đơn',
-  confirmWithVendor: 'Xác nhận với người bán',
+  confirmWithVendor: 'Liên hệ với người bán',
   havingRequestUpdate: 'Bạn đang có một yêu cầu cập nhật',
   review: 'Đánh giá',
   thisIsAccountReceive:
@@ -404,7 +420,6 @@ const profile = {
   groupBuyingName: 'Tên đơn mua chung',
 };
 
-// MESS ROUTE
 const mess = {
   component: {},
   messScreen: {
@@ -434,7 +449,6 @@ const mess = {
   oneNameForBoth: 'Sử dụng một tên cho cả hai bạn',
 };
 
-// SETTING ROUTE
 const setting = {
   title: 'Cài đặt',
   component: {
@@ -492,7 +506,6 @@ const setting = {
   updateStatus: 'Cập nhật trạng thái',
 };
 
-// NOTIFICATION
 const notification = {
   title: 'Thông báo',
   comment: ' đã bình luận bài của bạn',
@@ -502,7 +515,6 @@ const notification = {
   likeGroupBuying: '  thích chiến dịch mua chung của bạn',
 };
 
-// ALERT
 const alert = {
   // FOR LOGIN
   notNull: 'Giá trị không được để trống !',
@@ -559,6 +571,7 @@ const alert = {
   requestUpdateBankSuccess:
     'Gửi yêu cầu cập nhật tài khoản nhận tiền thành công\nChúng tôi sẽ xem xét và phản hồi lại bạn trong thời gian 1 ngày',
   sureToBlock: 'Bạn có chắc chắn muốn chặn người này?',
+  sureToDeleteJoin: 'Bạn chắc chắn muốn huỷ đơn mua chung chứ?',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

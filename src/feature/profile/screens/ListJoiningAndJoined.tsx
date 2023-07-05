@@ -1,38 +1,26 @@
-import {apiGetListGBJoined, apiGetListGbJoining} from 'api/profile';
+import {apiGetListGBJoined} from 'api/profile';
 import {FONT_SIZE} from 'asset';
-import {APP_EVENT, GROUP_BUYING_STATUS} from 'asset/enum';
 import {Metrics, horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {StyleList, StyleText} from 'components/base';
-import {useAppEvent, usePaging} from 'hook';
+import {useEstimatesAndJoinings, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
-import {ItemJoinProfile} from '../components';
+import {ItemEstimate, ItemJoinProfile} from '../components';
 
 const ListJoiningAndJoined = () => {
-  const dataJoining = usePaging<TypeMeJoinResponse>({
-    request: apiGetListGbJoining,
-  });
+  const {
+    data: {estimates, joinings},
+    loading,
+    mutate,
+  } = useEstimatesAndJoinings();
+
   const {list, refreshing, onRefresh, onLoadMore, loadingMore, initLoading} =
     usePaging({
       request: apiGetListGBJoined,
     });
 
-  useAppEvent(APP_EVENT.requestBoughtJoin, data => {
-    dataJoining.setList(pre => {
-      return pre.map(join => {
-        if (join.id !== data?.joinId) {
-          return join;
-        }
-        return {
-          ...join,
-          status: GROUP_BUYING_STATUS.requestBought,
-        };
-      });
-    });
-  });
-
-  const renderItemJoin = useCallback((item: TypeMeJoinResponse) => {
+  const renderItemJoin = useCallback((item: TypeJoinPersonalAndSale) => {
     return (
       <ItemJoinProfile
         item={item}
@@ -44,26 +32,61 @@ const ListJoiningAndJoined = () => {
 
   const renderHeaderComponent = () => {
     return (
-      <View style={$header}>
-        <StyleText i18Text="profile.joining" customStyle={$textJoining} />
-        <ScrollView
-          horizontal
-          style={$containerHeader}
-          contentContainerStyle={$contentHeader}
-          showsVerticalScrollIndicator={false}>
-          {dataJoining.list.map(joining => (
-            <ItemJoinProfile
-              key={joining?.id}
-              item={joining}
-              containerStyle={$itemJoining}
+      <>
+        {!!estimates?.length && (
+          <View style={$header}>
+            <StyleText
+              i18Text="discovery.goToDeposit"
+              customStyle={$textJoining}
             />
-          ))}
-        </ScrollView>
-        <StyleText
-          i18Text="profile.joinedSuccess"
-          customStyle={$textJoinSuccess}
-        />
-      </View>
+            <ScrollView
+              horizontal
+              style={$containerHeader}
+              contentContainerStyle={$contentHeader}
+              showsVerticalScrollIndicator={false}>
+              {estimates.map(est => (
+                <ItemEstimate
+                  key={est.id}
+                  item={est}
+                  containerStyle={$itemJoining}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        <View
+          style={[
+            $header,
+            {
+              marginTop: estimates.length
+                ? verticalScale(24)
+                : verticalScale(8),
+            },
+          ]}>
+          <StyleText i18Text="profile.joining" customStyle={$textJoining} />
+          <ScrollView
+            horizontal
+            style={$containerHeader}
+            contentContainerStyle={$contentHeader}
+            showsVerticalScrollIndicator={false}>
+            {joinings.map(joining => (
+              <ItemJoinProfile
+                key={joining?.id}
+                item={joining}
+                containerStyle={$itemJoining}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={[$header, {marginTop: verticalScale(24)}]}>
+          <StyleText
+            i18Text="profile.joinedSuccess"
+            customStyle={$textJoinSuccess}
+          />
+        </View>
+      </>
     );
   };
 
@@ -72,11 +95,11 @@ const ListJoiningAndJoined = () => {
       data={list}
       renderItem={({item}) => renderItemJoin(item)}
       keyExtractor={item => String(item?.id)}
-      initLoading={initLoading || dataJoining.initLoading}
+      initLoading={initLoading || loading}
       refreshing={refreshing}
       onRefresh={() => {
         onRefresh();
-        dataJoining.onRefresh();
+        mutate();
       }}
       loadingMore={loadingMore}
       onLoadMore={onLoadMore}
@@ -94,6 +117,7 @@ const $contentContainer: ViewStyle = {
 const $header: ViewStyle = {
   width: Metrics.width,
   left: -scale(12),
+  marginTop: verticalScale(8),
 };
 const $containerHeader: ViewStyle = {
   marginTop: verticalScale(8),
@@ -101,17 +125,14 @@ const $containerHeader: ViewStyle = {
 const $contentHeader: ViewStyle = {
   paddingLeft: scale(12),
   paddingRight: scale(12),
-  paddingBottom: verticalScale(10),
 };
 const $textJoining: TextStyle = {
   marginLeft: scale(12),
-  marginTop: verticalScale(8),
   fontWeight: 'bold',
 };
 const $textJoinSuccess: StyleProp<TextStyle> = [
   $textJoining,
   {
-    marginTop: verticalScale(24),
     marginBottom: verticalScale(8),
   },
 ];

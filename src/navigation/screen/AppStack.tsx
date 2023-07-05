@@ -11,7 +11,7 @@ import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
 import UpdatePrices from 'feature/common/UpdatePrices';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
-import {DetailTour} from 'feature/discovery';
+import {DetailTour, GoToDeposit} from 'feature/discovery';
 import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
@@ -20,9 +20,9 @@ import ChatDetail from 'feature/mess/ChatDetail';
 import ChatDetailSetting from 'feature/mess/ChatDetailSetting';
 import DetailBubble from 'feature/notification/DetailBubble';
 import {
-  CreateSale,
   CreatePostPickImage,
   CreatePostPreview,
+  CreateSale,
   CreateTour,
   EditProfile,
   ListFollows,
@@ -223,6 +223,7 @@ const AppStack = () => {
         name={SETTING_ROUTE.extendSetting}
         component={ExtendSetting}
       />
+      <Stack.Screen name={ROOT_SCREEN.goToDeposit} component={GoToDeposit} />
     </Stack.Navigator>
   );
 };

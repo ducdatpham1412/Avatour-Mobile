@@ -1,214 +1,260 @@
-import {apiJoinSale} from 'api/discovery';
-import {apiLikePost, apiRequestBought, apiUnLikePost} from 'api/profile';
-import {useAppSelector} from 'app-redux/store';
-import {APP_EVENT, GROUP_BUYING_STATUS, REACT} from 'asset/enum';
-import dayjs from 'dayjs';
-import {emitAppEvent, useApiImmutable, useAppEvent} from 'hook';
+import {
+  apiDeleteEstimate,
+  apiEditEstimate,
+  apiEstimate,
+  apiJoinSale,
+} from 'api/discovery';
+import {apiLikePost, apiUnLikePost} from 'api/profile';
+import {APP_EVENT, REACT} from 'asset/enum';
+import {emitAppEvent, useApiImmutable, useEstimatesAndJoinings} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
-import {useEffect, useState} from 'react';
-import {formatUTCDate, getDateTimeNow} from 'utility/format';
+import useSWRMutation from 'swr/mutation';
 
 interface Params {
-  saleId?: number;
-  sale?: TypeGroupBuying;
+  revalidateAll?: boolean;
 }
 
-type TypeExtraParams = {
-  onSuccess?: () => void;
-};
-
-const useDetailSale = ({saleId, sale}: Params) => {
-  const {profile} = useAppSelector(state => state.accountSlice.passport);
+const useDetailSale = (saleId: number | undefined, options?: Params) => {
+  const {revalidateAll = true} = options ?? {};
 
   const {data, mutate, loading} = useApiImmutable<TypeGroupBuying>({
-    path: `/profile/sales/${saleId ?? sale?.id}`,
-    // config: {
-    //   revalidateOnMount: !sale, // check to should un comment this
-    // },
+    path: saleId ? `/profile/sales/${saleId}` : null,
+    config: {
+      revalidateAll,
+    },
   });
-  const dataMeJoined = useApiImmutable<TypeMeJoinResponse[]>({
-    path: `/profile/sales/join/${saleId ?? sale?.id}`,
+
+  const {mutate: mutateEstimatesAndJoinings} = useEstimatesAndJoinings();
+
+  const dataMeJoined = useApiImmutable<TypeMeJoinInSale>({
+    path: saleId ? `/profile/sales/join/${saleId}` : null,
+    config: {
+      revalidateAll,
+    },
   });
-  const appEvent = useAppEvent(APP_EVENT.requestBoughtJoin);
-  const [loadingJoin, setLoadingJoin] = useState(false);
 
-  useEffect(() => {
-    if (sale) {
-      mutate(sale, {revalidate: false});
-    }
-  }, []);
-
-  const onRefresh = async () => {
-    try {
-      await mutate();
-      await dataMeJoined.mutate();
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    }
-  };
-
-  const onReaction = async () => {
-    if (data) {
-      const currentLiked = !!data?.is_liked;
-      let newTotalLikes = currentLiked
-        ? data.total_likes - 1
-        : data.total_likes + 1;
-      newTotalLikes = newTotalLikes >= 0 ? newTotalLikes : 0;
+  const {trigger: onRefresh, isMutating: refreshing} = useSWRMutation(
+    'api.refreshSale',
+    async () => {
       try {
-        await mutate(
-          {...data, is_liked: !currentLiked, total_likes: newTotalLikes},
-          {revalidate: false},
-        );
-        if (currentLiked) {
-          await apiUnLikePost({
-            type: REACT.sale,
-            reactedId: data?.id,
-          });
-          emitAppEvent(APP_EVENT.reactSale, {
-            saleId: data?.id,
-            type: 'dislike',
-          });
-        } else {
-          await apiLikePost({
-            type: REACT.sale,
-            reactedId: data?.id,
-          });
-          emitAppEvent(APP_EVENT.reactSale, {
-            saleId: data?.id,
-            type: 'like',
-          });
-        }
-      } catch (err) {
-        await mutate({...data, is_liked: currentLiked});
-      }
-    }
-  };
-
-  const onJoin = async (
-    params: Omit<TypeJoinRequest, 'saleId'>,
-    extraParams?: TypeExtraParams,
-  ) => {
-    if (data) {
-      try {
-        setLoadingJoin(true);
-        const res = await apiJoinSale({...params, saleId: data?.id});
-
-        await dataMeJoined.mutate(
-          pre =>
-            pre?.concat({
-              id: res?.personal_id,
-              sale_id: data?.id,
-              group_id: res?.group_id,
-              deposit: params.deposit,
-              amount: params.amount,
-              time_will_buy: params.time_will_buy,
-              note: params.note,
-              created: formatUTCDate(dayjs()),
-              status: GROUP_BUYING_STATUS.notBought,
-              sale: {
-                images: data?.images,
-                creator: data?.creator,
-                name: data?.creator_name,
-                avatar: data?.creator_avatar,
-              },
-            }),
-          {revalidate: false},
-        );
-
-        await mutate(
-          pre => {
-            if (!pre) return undefined;
-            const next = {...pre};
-            next.total_members = next.total_members + 1;
-            const checkGroup = next?.groups?.find(
-              group => group?.id === res?.group_id,
-            );
-            if (checkGroup) {
-              checkGroup.members.push({
-                id: res?.personal_id,
-                creator: profile?.id,
-                creator_name: profile?.name,
-                creator_avatar: profile?.avatar,
-              });
-            } else {
-              next.groups.push({
-                id: res?.group_id,
-                created: getDateTimeNow(),
-                members: [
-                  {
-                    id: res?.personal_id,
-                    creator: profile?.id,
-                    creator_name: profile?.name,
-                    creator_avatar: profile?.avatar,
-                  },
-                ],
-              });
-            }
-            return next;
-          },
-          {revalidate: false},
-        );
-
-        ModalAlert.success({
-          i18Content: 'profile.joinedSuccess',
-          onClose: extraParams?.onSuccess,
-        });
+        await mutate();
+        await dataMeJoined.mutate();
       } catch (err) {
         ModalAlert.error({
           content: err,
         });
-      } finally {
-        setLoadingJoin(false);
       }
-    }
-  };
+    },
+  );
 
-  const onRequestBought = async (joinId: number) => {
-    if (data) {
-      try {
-        setLoadingJoin(true);
-        await apiRequestBought({
-          list_joins_id: [joinId],
-        });
-        // add modal alert here
+  const {trigger: onReaction} = useSWRMutation(
+    [data?.id, 'api.reactSale'],
+    async () => {
+      if (data) {
+        const currentLiked = !!data?.is_liked;
+        let newTotalLikes = currentLiked
+          ? data.total_likes - 1
+          : data.total_likes + 1;
+        newTotalLikes = newTotalLikes >= 0 ? newTotalLikes : 0;
+        try {
+          await mutate(
+            {...data, is_liked: !currentLiked, total_likes: newTotalLikes},
+            {revalidate: false},
+          );
+          if (currentLiked) {
+            await apiUnLikePost({
+              type: REACT.sale,
+              reactedId: data?.id,
+            });
+            emitAppEvent(APP_EVENT.reactSale, {
+              saleId: data?.id,
+              type: 'dislike',
+            });
+          } else {
+            await apiLikePost({
+              type: REACT.sale,
+              reactedId: data?.id,
+            });
+            emitAppEvent(APP_EVENT.reactSale, {
+              saleId: data?.id,
+              type: 'like',
+            });
+          }
+        } catch (err) {
+          await mutate({...data, is_liked: currentLiked});
+        }
+      }
+    },
+  );
+
+  const {trigger: onJoin, isMutating: loadingJoin} = useSWRMutation(
+    [data?.id, 'api.JoinSale'],
+    async (_, {arg}: {arg: Omit<TypeJoinRequest, 'saleId'>}) => {
+      if (data) {
+        const res = await apiJoinSale({...arg, saleId: data?.id});
         await dataMeJoined.mutate(
           pre => {
             if (pre) {
-              return pre.map(join => {
-                if (join.id !== joinId) {
-                  return join;
-                }
-                return {
-                  ...join,
-                  status: GROUP_BUYING_STATUS.requestBought,
-                };
-              });
+              return {
+                estimate: res.data,
+                joinings: pre?.joinings,
+              };
             }
-            return undefined;
           },
           {revalidate: false},
         );
-        appEvent.emit({joinId});
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      } finally {
-        setLoadingJoin(false);
+        await mutateEstimatesAndJoinings(
+          pre => {
+            if (pre) {
+              return {
+                estimates: [res.data].concat(pre.estimates),
+                joinings: pre.joinings,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+        return res.data;
+      } else {
+        throw new Error('Sale not exited');
       }
-    }
-  };
+    },
+  );
+
+  const {trigger: estimate, isMutating: loadingEstimate} = useSWRMutation(
+    'api.estimateJoinSale',
+    async () => {
+      if (dataMeJoined.data?.estimate) {
+        const res = await apiEstimate(dataMeJoined.data.estimate.id);
+        await dataMeJoined.mutate(
+          pre => {
+            if (pre) {
+              return {
+                estimate: res.data,
+                joinings: pre.joinings,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+        await mutateEstimatesAndJoinings(
+          pre => {
+            if (pre) {
+              const check = pre.estimates.find(
+                item => item?.sale_id === res.data.sale_id,
+              );
+
+              if (check) {
+                return {
+                  estimates: pre.estimates.map(item => {
+                    if (item.sale_id === res.data?.sale_id) {
+                      return res.data;
+                    }
+                    return item;
+                  }),
+                  joinings: pre.joinings,
+                };
+              }
+
+              return {
+                estimates: [res.data].concat(pre.estimates),
+                joinings: pre.joinings,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+      } else {
+        throw new Error('Estimate not exited');
+      }
+    },
+  );
+
+  const {trigger: deleteEstimate, isMutating: loadingDeleteEstimate} =
+    useSWRMutation('api.deleteEstimateJoinSale', async () => {
+      const estimateId = dataMeJoined.data?.estimate?.id;
+      if (estimateId) {
+        await apiDeleteEstimate(estimateId);
+        await dataMeJoined.mutate(
+          pre => {
+            if (pre) {
+              return {
+                estimate: null,
+                joinings: pre.joinings,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+        await mutateEstimatesAndJoinings(
+          pre => {
+            if (pre) {
+              return {
+                estimates: pre.estimates.filter(item => item.id !== estimateId),
+                joinings: pre.joinings,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+      } else {
+        throw new Error('Estimate not exited');
+      }
+    });
+
+  const {trigger: editEstimate, isMutating: loadingEditEstimate} =
+    useSWRMutation(
+      'api.editEstimateJoinSale',
+      async (_, {arg}: {arg: Omit<TypeEditEstimate, 'estimateId'>}) => {
+        const estimateId = dataMeJoined.data?.estimate?.id;
+        if (estimateId) {
+          const res = await apiEditEstimate({
+            estimateId: estimateId,
+            ...arg,
+          });
+          await dataMeJoined.mutate(
+            pre => {
+              if (pre) {
+                return {
+                  estimate: res.data,
+                  joinings: pre.joinings,
+                };
+              }
+            },
+            {revalidate: false},
+          );
+          await mutateEstimatesAndJoinings(
+            pre => {
+              if (pre) {
+                return {
+                  estimates: pre.estimates.map(item => {
+                    if (item.id !== res.data.id) {
+                      return item;
+                    }
+                    return res.data;
+                  }),
+                  joinings: pre.joinings,
+                };
+              }
+            },
+            {revalidate: false},
+          );
+        }
+      },
+    );
 
   return [
     {
       data,
-      meJoins: dataMeJoined?.data || [],
-      loading: loading || dataMeJoined?.loading,
+      meJoins: dataMeJoined?.data,
+      initLoading: loading || dataMeJoined?.loading,
       loadingJoin,
+      refreshing,
+      loadingEstimate,
+      loadingDeleteEstimate,
+      loadingEditEstimate,
     },
-    {onRefresh, onReaction, onJoin, onRequestBought},
+    {onRefresh, onReaction, onJoin, estimate, deleteEstimate, editEstimate},
   ] as const;
 };
 

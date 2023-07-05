@@ -228,7 +228,6 @@ export enum ACCOUNT {
 }
 
 export enum GROUP_BUYING_STATUS {
-  deleted = 0,
   notBought = 1,
   notBoughtButOvertime = 2,
   requestBought = 3,

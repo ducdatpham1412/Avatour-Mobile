@@ -70,3 +70,8 @@ interface TypeEditPostRequest {
 interface TypeRequestBought {
   list_joins_id: number[];
 }
+
+interface TypeGetEstimatesAndJoinings {
+  estimates: TypeJoinEstimate[];
+  joinings: TypeJoinPersonalAndSale[];
+}

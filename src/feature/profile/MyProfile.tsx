@@ -6,8 +6,8 @@ import {TabView} from 'components';
 import {StyleContainer, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
-import {PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
-import React, {useState} from 'react';
+import {AppParamsList, PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
+import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdate, useUpdateEffect} from 'react-use';
@@ -20,13 +20,21 @@ import {
 } from './components';
 import {ListFavorites, ListJoiningAndJoined, ListSales} from './screens';
 
-const MyProfile = () => {
+const MyProfile = ({
+  route,
+}: RouteParams<AppParamsList[PROFILE_ROUTE.myProfile]>) => {
   const update = useUpdate();
   const theme = useTheme();
-  const route = useRoute();
 
   const {profile} = useAppSelector(state => state.accountSlice.passport);
+  const tabViewRef = useRef<ElementRef<typeof TabView>>(null);
   const [tabViewHeight, setTabViewHeight] = useState(0);
+
+  useEffect(() => {
+    if (route.params?.initIndex === 'order') {
+      tabViewRef.current?.navigateToIndex(1);
+    }
+  }, [route?.params]);
 
   useUpdateEffect(() => {
     update();
@@ -71,6 +79,7 @@ const MyProfile = () => {
       scrollEnabled>
       <InformationProfile profile={profile} />
       <TabView
+        ref={tabViewRef}
         style={[$body, {height: tabViewHeight}]}
         listElements={[
           renderShop,

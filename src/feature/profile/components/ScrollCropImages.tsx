@@ -131,9 +131,9 @@ const ScrollCropImages = (props: Props) => {
             translateXIndicator.setValue(newTranslateX);
           }
         }}>
-        {images.map(url => (
+        {images.map((url, index) => (
           <View
-            key={url}
+            key={index}
             style={[
               $imageBox,
               {

@@ -97,6 +97,7 @@ const Theme = {
     white_opacity: (value = 0.6) => `rgba(255, 255, 255, ${value})`,
     pink: '#f94b68',
     blue: '#54B3E9',
+    blue_800: '#90BEE9',
     orange: 'orange',
   },
 };

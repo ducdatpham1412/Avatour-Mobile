@@ -1,24 +1,11 @@
-import SafeView from './SafeView';
-import StyleButton from './StyleButton';
-import StyleContainer from './StyleContainer';
-import StyleIcon from './StyleIcon';
-import StyleImage from './StyleImage';
-import StyleInput from './StyleInput';
-import StyleInputForm from './StyleInputForm';
-import StyleText from './StyleText';
-import StyleTouchable from './StyleTouchable';
 export {default as AppInput} from './AppInput';
 export {default as ModalEdit} from './ModalEdit';
+export {default as SafeView} from './SafeView';
+export {default as StyleButton} from './StyleButton';
+export {default as StyleContainer} from './StyleContainer';
+export {default as StyleIcon} from './StyleIcon';
+export {default as StyleImage} from './StyleImage';
 export {default as StyleList} from './StyleList';
+export {default as StyleText} from './StyleText';
+export {default as StyleTouchable} from './StyleTouchable';
 export {default as StyleWebView} from './StyleWebView';
-export {
-  StyleText,
-  StyleImage,
-  StyleIcon,
-  StyleButton,
-  StyleInput,
-  StyleInputForm,
-  StyleTouchable,
-  StyleContainer,
-  SafeView,
-};

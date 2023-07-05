@@ -5,9 +5,9 @@ import {
 } from '@react-navigation/stack';
 import AlertYesNo from 'components/AlerYesNo';
 import Alert from 'components/Alert';
-import LoadingScreen from 'components/LoadingScreen';
 import StylePicker from 'components/base/picker/StylePicker';
 import ErrorScreen from 'feature/common/ErrorScreen';
+import {LoadingScreen} from 'feature/profile/screens';
 import {useInitApp, useTheme} from 'hook';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';

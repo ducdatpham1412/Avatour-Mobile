@@ -30,11 +30,28 @@ type TypeEditSale = {
   };
 };
 
-type TypeMeJoinResponse = {
+interface TypeJoinPersonal {
+  id: number | null;
+  sale_id: number;
+  group_id: number;
+  deposit: number;
+  price: number;
+  amount: number;
+  time_will_buy: string;
+  note: string;
+  creator: number;
+  creator_name: string;
+  creator_avatar: string;
+  created: string;
+  status: number;
+}
+
+interface TypeJoinPersonalAndSale {
   id: number;
   sale_id: number;
   group_id: number;
   deposit: number;
+  price: number;
   amount: number;
   time_will_buy: string;
   note: string;
@@ -46,19 +63,41 @@ type TypeMeJoinResponse = {
     name: string;
     avatar: string;
   };
-};
+}
+
+interface TypeJoinEstimate {
+  id: number;
+  sale_id: number;
+  amount: number;
+  time_will_buy: string;
+  note: string;
+  deposit: number;
+  price: number;
+  hash: string;
+  creator: number;
+  created: string;
+  expired: string;
+  status: number;
+  list_personals?: TypeJoinPersonal[];
+}
+
+interface TypeMeJoinInSale {
+  estimate: TypeJoinEstimate | null;
+  joinings: TypeJoinPersonal[];
+}
 
 type TypeJoinRequest = {
-  deposit: number;
   amount: number;
   time_will_buy: string;
   note: string;
   saleId: number;
 };
 
-type TypeJoinResponse = {
-  group_id: number;
-  personal_id: number;
+type TypeEditEstimate = {
+  amount?: number;
+  time_will_buy?: string;
+  note?: string;
+  estimateId: number;
 };
 
 interface TypeReactRequest {

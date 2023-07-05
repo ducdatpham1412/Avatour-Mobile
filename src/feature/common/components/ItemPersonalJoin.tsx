@@ -26,6 +26,7 @@ const ItemPersonalJoin = ({item}: Props) => {
         customStyle={$name}
         numberOfLines={2}
       />
+      <StyleText originValue={item?.amount} />
     </StyleTouchable>
   );
 };
@@ -39,8 +40,9 @@ const $container: ViewStyle = {
   borderRadius: BORDER_RADIUS.f2,
 };
 const $name: TextStyle = {
-  marginLeft: scale(8),
+  marginHorizontal: scale(8),
   fontWeight: '500',
+  flex: 1,
 };
 const $avatar: ImageStyle = {
   borderRadius: 100,

@@ -36,13 +36,15 @@ import AddPhone from './AddPhone';
 
 interface Props {
   onConfirm(params: Omit<TypeJoinRequest, 'saleId'>): void;
+  loadingJoin: boolean;
+  initValue?: Omit<TypeJoinRequest, 'saleId'>;
 }
 
 const onAddPhone = () => {
   ModalInputEdit.show({
     onSave: async value => {
       await apiChangeInformation({
-        phone: value,
+        username: value,
       });
       updatePassport({profile: {information: {phone: value}}});
     },
@@ -53,7 +55,7 @@ const onAddPhone = () => {
 };
 
 const ModalConfirmJoinGb = (
-  {onConfirm}: Props,
+  {onConfirm, loadingJoin, initValue}: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const {bottom} = useSafeAreaInsets();
@@ -66,14 +68,17 @@ const ModalConfirmJoinGb = (
   const modalizeRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalAddPhoneRef = useRef<Modalize>(null);
 
-  const [amount, setAmount] = useState(1);
+  const [amount, setAmount] = useState(initValue?.amount ?? 1);
   const [timeWillJoin, setTimeWillJoin] = useState(
-    addDate(dayjs(), {
-      value: 1,
-      unit: 'day',
-    }),
+    formatUTCDate(
+      initValue?.time_will_buy ??
+        addDate(dayjs(), {
+          value: 1,
+          unit: 'day',
+        }),
+    ),
   );
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState(initValue?.note ?? '');
 
   useImperativeHandle(
     ref,
@@ -224,17 +229,17 @@ const ModalConfirmJoinGb = (
         />
 
         <StyleButton
-          title="discovery.goToDeposit"
+          title="discovery.joinGroupBuying"
           containerStyle={styles.button}
           onPress={() => {
             onConfirm({
-              deposit: 0,
               amount,
               time_will_buy: timeWillJoin,
               note,
             });
           }}
           disable={!phone}
+          isLoading={loadingJoin}
         />
       </AppModalize>
 
@@ -253,23 +258,12 @@ const ModalConfirmJoinGb = (
 
 const styles = ScaledSheet.create({
   textHeader: {
-    fontSize: FONT_SIZE.normal,
+    fontSize: FONT_SIZE.f1,
     marginTop: '5@vs',
     fontWeight: 'bold',
     alignSelf: 'center',
   },
   icon: {
-    marginTop: '10@vs',
-    alignSelf: 'center',
-  },
-  textTitle: {
-    fontSize: FONT_SIZE.normal,
-    marginTop: '10@vs',
-  },
-  textMoney: {
-    fontSize: FONT_SIZE.normal,
-    fontWeight: 'bold',
-    textAlign: 'center',
     marginTop: '10@vs',
     alignSelf: 'center',
   },
@@ -284,7 +278,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   textTitleEnterInfo: {
-    fontSize: FONT_SIZE.normal,
+    fontSize: FONT_SIZE.f2,
     fontWeight: 'bold',
   },
   minusPlusBox: {
@@ -296,13 +290,13 @@ const styles = ScaledSheet.create({
     fontSize: '20@ms',
   },
   textAmount: {
-    fontSize: FONT_SIZE.big,
+    fontSize: FONT_SIZE.f2,
     fontWeight: 'bold',
     width: '50@ms',
     textAlign: 'center',
   },
   textJoinDate: {
-    fontSize: FONT_SIZE.normal,
+    fontSize: FONT_SIZE.f2,
     textDecorationLine: 'underline',
   },
   inputNote: {
@@ -314,7 +308,7 @@ const styles = ScaledSheet.create({
     paddingHorizontal: '7@ms',
     paddingTop: '7@ms',
     paddingBottom: '7@ms',
-    fontSize: FONT_SIZE.normal,
+    fontSize: FONT_SIZE.f2,
   },
 });
 

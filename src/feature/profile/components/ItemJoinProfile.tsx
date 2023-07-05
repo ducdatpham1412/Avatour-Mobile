@@ -1,3 +1,4 @@
+import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
 import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {
@@ -7,7 +8,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import {useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
+import {push} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
@@ -17,13 +18,14 @@ import {formatDDMMMMYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
-  item: TypeMeJoinResponse;
+  item: TypeJoinPersonalAndSale;
   containerStyle?: StyleProp<ViewStyle>;
   contentFontSize?: number;
 }
 
 const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
   const theme = useTheme();
+  const {profile} = useAppSelector(state => state.accountSlice.passport);
   const width = useRef(
     detectFromStyle(containerStyle, 'width') || defaultWidth,
   );
@@ -41,9 +43,23 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
         {width: width.current},
       ]}
       onPress={() =>
-        navigate(ROOT_SCREEN.detailMeJoin, {
+        push(ROOT_SCREEN.detailMeJoin, {
           saleId: item?.sale_id,
-          itemJoin: item,
+          joinPersonal: {
+            id: item.id,
+            group_id: item.group_id,
+            sale_id: item.sale_id,
+            deposit: item.deposit,
+            price: item.price,
+            amount: item.amount,
+            time_will_buy: item.time_will_buy,
+            note: item.note,
+            creator: profile.id,
+            creator_name: profile.name,
+            creator_avatar: profile.avatar,
+            created: item.created,
+            status: item.status,
+          },
           mode: 'see-detail',
         })
       }
@@ -60,7 +76,11 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
 
       <View style={$informationView}>
         <StyleIcon source={{uri: item?.sale?.avatar}} size={17} />
-        <StyleText originValue={item?.sale?.name} customStyle={$textName} />
+        <StyleText
+          originValue={item?.sale?.name}
+          customStyle={$textName}
+          numberOfLines={1}
+        />
       </View>
 
       <View style={$informationView}>
@@ -74,6 +94,7 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
         <StyleText
           originValue={formatDDMMMMYY(item?.time_will_buy)}
           customStyle={[$textInfo, {fontSize: fontSize.current}]}
+          numberOfLines={1}
         />
       </View>
 
@@ -91,6 +112,7 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
             $textInfo,
             {color: theme.blue, fontSize: fontSize.current},
           ]}
+          numberOfLines={1}
         />
       </View>
 
