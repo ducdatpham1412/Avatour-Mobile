@@ -17,7 +17,7 @@ export const navigate = <T extends AllRoutes>(
   params?: T extends keyof AppParamsList ? AppParamsList[T] : undefined,
 ) => {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name as never, params as never);
+    (navigationRef.navigate as any)(name, params);
   }
 };
 

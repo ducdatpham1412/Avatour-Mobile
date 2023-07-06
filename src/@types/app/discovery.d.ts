@@ -10,3 +10,7 @@ type LibraryImage = {
   width: number;
   height: number;
 };
+
+type QrData = {
+  user_id: number;
+};

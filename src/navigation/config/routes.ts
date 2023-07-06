@@ -26,6 +26,7 @@ enum ROOT_SCREEN {
   detailMeJoin = '@ROOT_SCREEN/detailMeJoin',
   detailTour = '@ROOT_SCREEN/detailTour',
   goToDeposit = '@ROOT_SCREEN/goToDeposit',
+  scanResult = '@ROOT_SCREEN/scanResult',
 }
 /**
  * ||

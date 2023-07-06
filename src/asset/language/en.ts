@@ -196,7 +196,7 @@ const discovery = {
   amountBookGb: 'Quantities orders: {{value}}',
   depositAmount: 'Deposit amount: {{value}}vnd',
   titleDeposit: 'You need to deposit a small amount',
-  theMoneyIs: 'The money deposit is: ',
+  moneyToPay: 'tiền cần thanh toán còn lại',
   goToDeposit: 'Go to deposit',
   hotLocation: '🔥 Hot location',
   travelCamping: 'Experience',
@@ -274,6 +274,10 @@ If you have any problems, please contact Avatour through one of the following wa
      ・Tel / Zalo: (+84) 862938350
      ・Email: support.avatour@gmail.com
 Avatour Co., Ltd would like to sincerely thank you for using our service!`,
+  goToDepositToConfirm:
+    'Go to the deposit to confirm your successful joining in the group buying',
+  scanQrAtShop: 'Scan QR code at the store',
+  todayIsTimeWillBuy: 'Today is the day to buy at {{value}}',
 };
 
 const reputation = {
@@ -436,9 +440,10 @@ const profile = {
   createNameForYourTour: 'Create name for your tour',
   qrConfirm: 'QR Confirming',
   scanWhenGoToShop:
-    'Scan the code upon arrival at the store to confirm successfully participate',
+    'Scan the code upon arrival at the store to know exactly how much to pay and confirm successfully participate',
   shopName: "Shop's name",
   groupBuyingName: 'Group buying name',
+  goToScan: 'Go to scan',
 };
 
 const setting = {

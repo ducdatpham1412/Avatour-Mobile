@@ -200,7 +200,7 @@ const discovery = {
   amountBookGb: 'Số lượng mua: {{value}}',
   depositAmount: 'Số tiền đặt cọc: {{value}}vnd',
   titleDeposit: 'Bạn cần đặt cọc một khoản tiền cho người bán',
-  theMoneyIs: 'Số tiền đặt cọc là: ',
+  moneyToPay: 'Số tiền cần thanh toán còn lại',
   goToDeposit: 'Đi tới đặt cọc',
   hotLocation: '🔥 Địa điểm nổi bật',
   travelCamping: 'Cắm trại',
@@ -278,6 +278,10 @@ Nếu có bất kỳ sự cố nào, bạn vui lòng liên hệ Avatour qua mộ
   ・SĐT / Zalo: (+84) 862938350
   ・Email: support.avatour@gmail.com
 Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!`,
+  goToDepositToConfirm:
+    'Đi tới đặt cọc để xác nhận tham gia mua chung thành công nhé bạn',
+  scanQrAtShop: 'Quét mã QR tại cửa hàng',
+  todayIsTimeWillBuy: 'Hôm nay là ngày đến mua tại {{value}}',
 };
 
 const reputation = {
@@ -415,9 +419,10 @@ const profile = {
   createNameForYourTour: 'Đặt tên cho tour của bạn',
   qrConfirm: 'QR Xác nhận',
   scanWhenGoToShop:
-    'Quét mã khi đến cửa hàng để xác nhận tham gia thành công nhé bạn',
+    'Quét mã khi đến cửa hàng để biết số tiền cần thanh toán và xác nhận tham gia thành công nhé bạn',
   shopName: 'Tên cửa hàng',
   groupBuyingName: 'Tên đơn mua chung',
+  goToScan: 'Đi tới quét mã',
 };
 
 const mess = {

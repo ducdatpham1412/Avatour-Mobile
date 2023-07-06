@@ -111,22 +111,6 @@ const ModalConfirmJoinGb = (
           size={50}
           customStyle={styles.icon}
         />
-        {/* <StyleText
-          i18Text="discovery.titleDeposit"
-          customStyle={styles.textTitle}
-        />
-        <StyleText
-          i18Text="discovery.theMoneyIs"
-          customStyle={[styles.textTitle, {color: theme.textColor}]}>
-          {!!chosenDeposit && (
-            <StyleText
-              originValue={`${formatLocaleNumber(
-                String(chosenDeposit.value),
-              )}vnd`}
-              customStyle={[styles.textMoney, {color: theme.highlightColor}]}
-            />
-          )}
-        </StyleText> */}
 
         <View style={styles.enterInfoView}>
           <StyleText

@@ -98,6 +98,8 @@ const ItemEstimate = ({item, containerStyle}: Props) => {
         />
       </StyleText>
 
+      {!data?.name && <StyleText originValue="" customStyle={$textName} />}
+
       <View style={[$button, {backgroundColor: theme.p_700}]}>
         <StyleText
           i18Text="discovery.goToDeposit"
@@ -125,6 +127,7 @@ const $textName: TextStyle = {
   fontSize: FONT_SIZE.f4,
   marginTop: verticalScale(4),
   fontWeight: 'bold',
+  height: FONT_SIZE.f4 + moderateScale(5),
 };
 const $creatorView: ViewStyle = {
   width: '100%',

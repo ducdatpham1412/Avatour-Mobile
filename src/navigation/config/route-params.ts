@@ -172,7 +172,8 @@ export type AppParamsList = {
       | 'go-to-deposit'
       | 'go-to-deposit-from-profile'
       | 'see-detail'
-      | 'see-detail-from-sale';
+      | 'see-detail-from-sale'
+      | 'go-from-scan';
   };
   [SETTING_ROUTE.enterPassword]: {
     newInfo: {
