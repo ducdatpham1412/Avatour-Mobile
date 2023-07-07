@@ -27,6 +27,10 @@ enum ROOT_SCREEN {
   detailTour = '@ROOT_SCREEN/detailTour',
   goToDeposit = '@ROOT_SCREEN/goToDeposit',
   scanResult = '@ROOT_SCREEN/scanResult',
+  messScreen = '@ROOT_SCREEN/messScreen',
+  chatDetail = '@ROOT_SCREEN/chatDetail',
+  chatDetailGroup = '@ROOT_SCREEN/chatDetailGroup',
+  chatDetailSetting = '@ROOT_SCREEN/chatDetailSetting',
 }
 /**
  * ||
@@ -68,13 +72,6 @@ enum DISCOVERY_ROUTE {
   discoveryScreen = '@DISCOVERY_ROUTE/discoveryScreen',
   detailGroupBuying = '@DISCOVERY_ROUTE/detailGroupBuying',
   searchScreen = '@DISCOVERY_ROUTE/searchScreen',
-}
-
-enum MESS_ROUTE {
-  messScreen = '@MESS_ROUTE/messScreen',
-  chatDetail = '@MESS_ROUTE/chatDetail',
-  chatDetailGroup = '@MESS_ROUTE/chatDetailGroup',
-  chatDetailSetting = '@MESS_ROUTE/chatDetailSetting',
 }
 
 enum PROFILE_ROUTE {
@@ -120,7 +117,6 @@ export {
   DISCOVERY_ROUTE,
   PROFILE_ROUTE,
   SETTING_ROUTE,
-  MESS_ROUTE,
   REPUTATION_ROUTE,
   TOUR_ROUTE,
 };

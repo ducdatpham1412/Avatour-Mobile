@@ -1,22 +1,22 @@
 import {TypeNotificationResponse} from 'api/interface';
 import {apiReadNotification} from 'api/notification';
+import {useAppSelector} from 'app-redux/store';
 import {TYPE_FOLLOW, TYPE_NOTIFICATION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleIcon, StyleText} from 'components/base';
 import StyleList from 'components/base/StyleList';
+import {useTheme} from 'hook';
+import {useSocketNotifications} from 'hook/sockets';
 import Redux from 'hook/useRedux';
-import {useSocketNotification} from 'hook/useSocketIO';
-import ROOT_SCREEN, {MAIN_SCREEN} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
+import ROOT_SCREEN, {MAIN_SCREEN} from 'navigation/config/routes';
 import React, {useCallback} from 'react';
 import {Platform, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {logger} from 'utility/assistant';
 import ItemNotification from './components/ItemNotification';
-import {useAppSelector} from 'app-redux/store';
-import {useTheme} from 'hook';
 
 /** ------------------------
  * Notification Enjoy
@@ -51,7 +51,7 @@ const NotificationAccount = () => {
   const {id, name} = Redux.getPassport().profile;
 
   const {list, setList, onRefresh, onLoadMore, refreshing} =
-    useSocketNotification();
+    useSocketNotifications();
 
   const onGoToDetailNotification = async (item: TypeNotificationResponse) => {
     if (item.type === TYPE_NOTIFICATION.likePost) {

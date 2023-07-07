@@ -1,18 +1,18 @@
 /* eslint-disable no-underscore-dangle */
 import {useIsFocused} from '@react-navigation/native';
-import {TypeChatMessageResponse, TypeChatTagResponse} from 'api/interface';
+import {TypeChatMessageResponse} from 'api/interface';
 import {CONVERSATION_STATUS, MESSAGE_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
+import StyleKeyboardAwareView from 'components/StyleKeyboardAwareView';
 import {StyleImage, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
-import StyleKeyboardAwareView from 'components/StyleKeyboardAwareView';
 import ModalPickImage from 'feature/mess/components/ModalPickImage';
+import {socketUnTyping, useSocketChatDetail} from 'hook/sockets';
 import Redux from 'hook/useRedux';
-import {socketUnTyping, useSocketChatDetail} from 'hook/useSocketIO';
-import {AppParamsList} from 'navigation/config';
-import {MESS_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
+import {AppParamsList} from 'navigation/config';
+import ROOT_SCREEN from 'navigation/config/routes';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {FlatList, TextInput, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -26,7 +26,7 @@ import UserInput from './components/UserInput';
 
 interface ChatDetailProps {
   route: {
-    params: AppParamsList[MESS_ROUTE.chatDetail];
+    params: AppParamsList[ROOT_SCREEN.chatDetail];
   };
 }
 
@@ -233,7 +233,7 @@ const ChatDetail = ({route}: ChatDetailProps) => {
    * Go to setting chat
    */
   const onNavigateToMessSetting = () => {
-    navigate(MESS_ROUTE.chatDetailSetting, {
+    navigate(ROOT_SCREEN.chatDetailSetting, {
       itemChatTag,
     });
   };

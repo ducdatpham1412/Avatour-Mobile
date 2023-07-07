@@ -1,17 +1,15 @@
 import {apiGetDetailConversation} from 'api/conversation';
 import {TypeChatTagResponse} from 'api/interface';
 import {useAppSelector} from 'app-redux/store';
-import {StyleText, StyleTouchable} from 'components/base';
+import {SafeView} from 'components/base';
 import StyleList from 'components/base/StyleList';
+import {useSocketConversations} from 'hook/sockets';
 import Redux from 'hook/useRedux';
-import {useSocketChatTagBubble} from 'hook/useSocketIO';
 import {navigate} from 'navigation/NavigationService';
-import ROOT_SCREEN, {MESS_ROUTE} from 'navigation/config/routes';
+import {StyleHeader} from 'navigation/components';
+import ROOT_SCREEN from 'navigation/config/routes';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {memo, useCallback, useEffect} from 'react';
-import {Platform, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {isTimeBefore} from 'utility/format';
 import ChatTag from './components/ChatTag';
 
@@ -19,14 +17,16 @@ const RenderMessages = () => {
   const {chatTagFromNotification} = useAppSelector(state => state.logicSlice);
   const myId = useAppSelector(state => state.accountSlice.passport.profile.id);
 
-  const {
-    listChatTags,
-    seenMessage,
-    onRefresh,
-    refreshing,
-    onLoadMore,
-    setListChatTags,
-  } = useSocketChatTagBubble();
+  const [
+    {
+      listChatTags,
+      seenMessage,
+      onRefresh,
+      refreshing,
+      onLoadMore,
+      setListChatTags,
+    },
+  ] = useSocketConversations();
 
   const goToChatDetailFromNotification = async () => {
     if (chatTagFromNotification) {
@@ -35,7 +35,7 @@ const RenderMessages = () => {
         const res = await apiGetDetailConversation(chatTagFromNotification);
         seenMessage(chatTagFromNotification);
 
-        navigate(MESS_ROUTE.chatDetail, {
+        navigate(ROOT_SCREEN.chatDetail, {
           itemChatTag: res.data,
           setListChatTags,
         });
@@ -72,7 +72,7 @@ const RenderMessages = () => {
         seenMessage(conversation.id);
       }
       Redux.setChatTagFocusing(conversation.id);
-      navigate(MESS_ROUTE.chatDetail, {
+      navigate(ROOT_SCREEN.chatDetail, {
         itemChatTag: conversation,
         setListChatTags,
       });
@@ -97,7 +97,6 @@ const RenderMessages = () => {
       renderItem={({item}) => {
         return renderChatTag(item);
       }}
-      contentContainerStyle={styles.contentList}
       keyExtractor={item => item.id}
       refreshing={refreshing}
       onRefresh={onRefresh}
@@ -110,60 +109,16 @@ const RenderMessages = () => {
  * Boss here
  */
 const MessScreen = () => {
-  const isModeExp = Redux.getModeExp();
-  const token = Redux.getToken();
-  const borderMessRoute = Redux.getBorderMessRoute();
-  const theme = Redux.getTheme();
+  const {
+    accountSlice: {modeExp},
+    logicSlice: {borderMessRoute},
+  } = useAppSelector(state => state);
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      <View style={[styles.headerView, {borderBottomColor: theme.holderColor}]}>
-        <StyleTouchable
-          onPress={() => navigate(ROOT_SCREEN.mainScreen)}
-          hitSlop={10}>
-          <Ionicons
-            name="chevron-back-outline"
-            style={[styles.iconBack, {color: borderMessRoute}]}
-          />
-        </StyleTouchable>
-        <StyleText
-          i18Text="mess.messScreen.headerTitle"
-          customStyle={[styles.textTitle, {color: borderMessRoute}]}
-        />
-      </View>
-
-      {/* List chat tags */}
-      {!isModeExp && token && <RenderMessages />}
-    </View>
+    <SafeView>
+      <StyleHeader title="mess.messScreen.headerTitle" />
+    </SafeView>
   );
 };
-
-const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
-  headerView: {
-    paddingHorizontal: '10@s',
-    paddingVertical: '3@vs',
-    borderBottomWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconBack: {
-    fontSize: '22@ms',
-  },
-  textTitle: {
-    fontSize: '20@ms',
-    fontWeight: 'bold',
-    marginLeft: '10@s',
-  },
-  contentList: {
-    paddingBottom: '50@vs',
-  },
-});
 
 export default memo(MessScreen);

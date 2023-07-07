@@ -5,7 +5,7 @@ import {StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
 import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
-import {socketTyping, socketUnTyping} from 'hook/useSocketIO';
+import {socketTyping, socketUnTyping} from 'hook/sockets/SocketManager';
 import React, {
   forwardRef,
   memo,

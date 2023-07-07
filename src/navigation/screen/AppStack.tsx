@@ -16,8 +16,7 @@ import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
 import {SendOTP} from 'feature/login';
-import ChatDetail from 'feature/mess/ChatDetail';
-import ChatDetailSetting from 'feature/mess/ChatDetailSetting';
+import {ChatDetail, ChatDetailSetting, MessScreen} from 'feature/mess';
 import DetailBubble from 'feature/notification/DetailBubble';
 import {
   CreatePostPickImage,
@@ -46,13 +45,11 @@ import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   LOGIN_ROUTE,
-  MESS_ROUTE,
   PROFILE_ROUTE,
   SETTING_ROUTE,
 } from 'navigation/config/routes';
 import React from 'react';
 import MainTabs from './MainTabs';
-import MessRoute from './tabs/MessRoute';
 
 const modalPreviewLinkRef = React.createRef<ModalPreviewLink>();
 export const showPreviewLink = (item: TypeBubblePalace) => {
@@ -72,7 +69,6 @@ const AppStack = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name={ROOT_SCREEN.mainScreen} component={MainTabs} />
-      <Stack.Screen name={ROOT_SCREEN.chatRoute} component={MessRoute} />
 
       <Stack.Screen name={ROOT_SCREEN.otherProfile} component={OtherProfile} />
       <Stack.Screen name={ROOT_SCREEN.listFollows} component={ListFollows} />
@@ -138,18 +134,13 @@ const AppStack = () => {
       <Stack.Screen name={PROFILE_ROUTE.myQRCode} component={MyQRCode} />
       <Stack.Screen name={PROFILE_ROUTE.createTour} component={CreateTour} />
 
-      <Stack.Screen name={MESS_ROUTE.chatDetail} component={ChatDetail} />
-      {/* <Stack.Screen
-                name={MESS_ROUTE.chatDetailGroup}
-                component={ChatDetailGroup}
-                options={{
-                    gestureEnabled: isIOS,
-                }}
-            /> */}
+      <Stack.Screen name={ROOT_SCREEN.messScreen} component={MessScreen} />
+      <Stack.Screen name={ROOT_SCREEN.chatDetail} component={ChatDetail} />
       <Stack.Screen
-        name={MESS_ROUTE.chatDetailSetting}
+        name={ROOT_SCREEN.chatDetailSetting}
         component={ChatDetailSetting}
       />
+
       <Stack.Screen
         name={ROOT_SCREEN.postsArchived}
         component={PostsArchived}

@@ -11,13 +11,12 @@ import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import Redux from 'hook/useRedux';
 import {navigate} from 'navigation/NavigationService';
 import StyleHeader from 'navigation/components/StyleHeader';
-import {AppParamsList, MESS_ROUTE, ROOT_SCREEN} from 'navigation/config';
+import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useMemo, useRef, useState} from 'react';
-import {Platform, ScrollView, TextInput, View} from 'react-native';
+import {ScrollView, TextInput, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Modalize} from 'react-native-modalize';
-import {ScaledSheet} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -28,10 +27,9 @@ import {
 } from 'utility/assistant';
 import ItemSetting from './components/ItemSetting';
 import ItemSettingSwitch from './components/ItemSettingSwitch';
-
 interface Props {
   route: {
-    params: AppParamsList[MESS_ROUTE.chatDetailSetting];
+    params: AppParamsList[ROOT_SCREEN.chatDetailSetting];
   };
 }
 
@@ -50,7 +48,7 @@ const ChatDetailSetting = ({route}: Props) => {
   const shouldRenderOtherProfile = Redux.getShouldRenderOtherProfile();
   const borderMessRoute = Redux.getBorderMessRoute();
   const theme = Redux.getTheme();
-  const {profile, information} = Redux.getPassport();
+  const {profile} = Redux.getPassport();
   const {gradients} = Redux.getResource();
   const gradientAny: any = gradients;
 
@@ -439,117 +437,5 @@ const ChatDetailSetting = ({route}: Props) => {
     </View>
   );
 };
-
-const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Metrics.safeTopPadding,
-  },
-  avatarNameView: {
-    alignSelf: 'center',
-    marginTop: '20@vs',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: '100@s',
-    height: '100@s',
-    borderRadius: '50@s',
-  },
-  nameText: {
-    fontWeight: 'bold',
-    marginTop: '10@vs',
-  },
-  body: {
-    width: '85%',
-    alignSelf: 'center',
-    marginTop: '15@vs',
-  },
-  customActionsView: {
-    width: '100%',
-    paddingVertical: '10@vs',
-    paddingHorizontal: '15@s',
-    borderRadius: '8@s',
-    marginBottom: '15@vs',
-  },
-  iconGender: {
-    width: '80%',
-    height: '80%',
-  },
-  textConversationName: {
-    fontSize: '20@ms',
-  },
-  iconAvatar: {
-    width: '70%',
-    height: '70%',
-    borderRadius: '70@s',
-  },
-  contentModalScroll: {
-    paddingBottom: '50@vs',
-    paddingTop: '20@vs',
-  },
-  chooseGradientBox: {
-    width: '60%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: '10@vs',
-    alignSelf: 'center',
-  },
-  itemGradient: {
-    width: '40@s',
-    height: '40@s',
-    borderRadius: '25@s',
-  },
-  textNameGradient: {
-    fontSize: '16@ms',
-    marginLeft: '10@s',
-    fontWeight: 'bold',
-  },
-  inputEditNameView: {
-    width: '75%',
-    alignSelf: 'center',
-    borderRadius: '15@ms',
-    marginTop: Metrics.height / 5,
-    alignItems: 'center',
-  },
-  titleConversationName: {
-    fontSize: '15@ms',
-    fontWeight: 'bold',
-    marginTop: '13@vs',
-  },
-  contentConversationName: {
-    fontSize: '12@ms',
-    marginTop: '7@vs',
-  },
-  inputConversationName: {
-    width: '85%',
-    marginTop: '15@vs',
-    marginBottom: 0,
-    borderWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    paddingVertical: '6@vs',
-    paddingHorizontal: '5@s',
-    borderRadius: '5@ms',
-  },
-  buttonView: {
-    width: '100%',
-    borderTopWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    marginTop: '15@vs',
-    flexDirection: 'row',
-    paddingVertical: '13@vs',
-  },
-  buttonBox: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textButton: {
-    fontSize: '15@ms',
-  },
-});
 
 export default ChatDetailSetting;

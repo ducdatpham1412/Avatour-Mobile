@@ -5,7 +5,6 @@ import ROOT_SCREEN, {
   TOUR_ROUTE,
   LOGIN_ROUTE,
   MAIN_SCREEN,
-  MESS_ROUTE,
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
@@ -17,7 +16,6 @@ export type AllRoutes =
   | LOGIN_ROUTE
   | MAIN_SCREEN
   | DISCOVERY_ROUTE
-  | MESS_ROUTE
   | PROFILE_ROUTE
   | SETTING_ROUTE
   | REPUTATION_ROUTE
@@ -96,11 +94,11 @@ export type AppParamsList = {
     item: TypeGroupBuying;
     onUpdatePrice(value: TypeGroupBuying): void;
   };
-  [MESS_ROUTE.chatDetail]: {
+  [ROOT_SCREEN.chatDetail]: {
     itemChatTag: TypeChatTagResponse;
     setListChatTags: any;
   };
-  [MESS_ROUTE.chatDetailSetting]: {
+  [ROOT_SCREEN.chatDetailSetting]: {
     itemChatTag: TypeChatTagResponse;
   };
   [ROOT_SCREEN.editHistory]: {
@@ -201,6 +199,11 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.goToDeposit]: {
     joinEstimate: TypeJoinEstimate;
+  };
+  [ROOT_SCREEN.scanResult]: {
+    mode: 'estimate';
+  } & {
+    user_id: number;
   };
 };
 

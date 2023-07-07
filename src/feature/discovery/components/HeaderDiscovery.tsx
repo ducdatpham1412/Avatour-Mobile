@@ -154,7 +154,7 @@ const HeaderDiscovery = () => {
       </View>
 
       <StyleTouchable
-        onPress={() => navigate(ROOT_SCREEN.chatRoute)}
+        onPress={() => navigate(ROOT_SCREEN.messScreen)}
         customStyle={[$buttonMessage, {backgroundColor: theme.white}]}>
         <StyleIcon
           source={Images.icons.chat}

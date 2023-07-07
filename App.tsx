@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/native';
 import Store from 'app-redux/store';
 import Config from 'asset/env';
-import {SocketProvider} from 'hook/useSocketIO';
+import {SocketProvider} from 'hook/sockets';
 import {navigationRef} from 'navigation/NavigationService';
 import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
