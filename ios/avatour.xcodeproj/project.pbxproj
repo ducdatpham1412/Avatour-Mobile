@@ -56,6 +56,7 @@
 		A1C422D98BD946DC8A6003F2 /* AvenirLTStd-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Black.otf"; path = "../src/asset/fonts/AvenirLTStd-Black.otf"; sourceTree = "<group>"; };
 		CDBC8B73726E4DFB8E6BDBD0 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../src/asset/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		CE660D1429B25C7B00FEFF0E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CECF2C432A580715008E0490 /* avatour.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = avatour.entitlements; path = avatour/avatour.entitlements; sourceTree = "<group>"; };
 		CFB25FF6AAB24C95AFF4B4D7 /* GT Super Display Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "GT Super Display Regular.ttf"; path = "../src/asset/fonts/GT Super Display Regular.ttf"; sourceTree = "<group>"; };
 		E2F4DEC21D454EB28B3D8D81 /* AvenirLTStd-Roman.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Roman.otf"; path = "../src/asset/fonts/AvenirLTStd-Roman.otf"; sourceTree = "<group>"; };
 		EB552837CFE44B33A548C0A2 /* AvenirLTStd-Book.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Book.otf"; path = "../src/asset/fonts/AvenirLTStd-Book.otf"; sourceTree = "<group>"; };
@@ -102,6 +103,7 @@
 		13B07FAE1A68108700A75B9A /* avatour */ = {
 			isa = PBXGroup;
 			children = (
+				CECF2C432A580715008E0490 /* avatour.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -539,6 +541,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = avatour/avatour.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
@@ -572,6 +575,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = avatour/avatour.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;

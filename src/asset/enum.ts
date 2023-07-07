@@ -68,11 +68,6 @@ export enum TYPE_OTP {
   requestOpenAccount = 3,
 }
 
-// export enum CHAT_TAG {
-//     newFromBubble = 0,
-//     newFromProfile = 1,
-//     group = 2,
-// }
 export enum MESSAGE_TYPE {
   text = 0,
   image = 1,
@@ -138,6 +133,7 @@ export enum TYPE_NOTIFICATION {
   friendPostNew = 4,
   likeGroupBuying = 5,
   commentGroupBuying = 6,
+  joinSuccess = 7,
 }
 
 export enum TYPE_BUBBLE_PALACE_ACTION {
