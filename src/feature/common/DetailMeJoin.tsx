@@ -26,13 +26,12 @@ import {borderWidthTiny, calculateTotalJoins, logger} from 'utility/assistant';
 import {formatDDMMMMYY, formatMoney, formatddddDDMMYYYY} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalConfirmJoinGb, ModalGroup, ModalPeopleInGroup} from './components';
-import {useDetailSale} from './hooks';
+import {useDetailSale, useJoinPersonal} from './hooks';
 
 const DetailMeJoin = ({
-  route: {
-    params: {saleId, joinPersonal, mode},
-  },
+  route: {params},
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
+  const {saleId, joinId, mode} = params;
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const {id: myId} = useAppSelector(
@@ -53,6 +52,13 @@ const DetailMeJoin = ({
   ] = useDetailSale(saleId, {
     revalidateAll: false,
   });
+  const {data: joinPersonal} = useJoinPersonal(
+    joinId ?? params.joinPersonal?.id ?? null,
+    {
+      initValue: params.joinPersonal,
+    },
+  );
+
   const {estimate: joinEstimate} = meJoins ?? {};
 
   const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
@@ -107,12 +113,18 @@ const DetailMeJoin = ({
           const dataQR: QrData = JSON.parse(res.data);
 
           if (dataQR.user_id === data.creator) {
-            ModalScanQr.hide();
-            navigate(ROOT_SCREEN.scanResult);
+            await ModalScanQr.hide();
+            navigate(ROOT_SCREEN.scanResult, {
+              mode: 'join-result',
+              shop_id: data.creator,
+            });
             return;
           }
 
-          // show modal this is not shop
+          ModalScanQr.loading();
+          // get profile shop here
+          await ModalScanQr.hide();
+          // show modal ask want to come to other shop
         }
       }
     } catch (err) {
@@ -545,6 +557,7 @@ const DetailMeJoin = ({
             time_will_buy: joinEstimate?.time_will_buy,
             note: joinEstimate?.note,
           }}
+          titleButton="common.change"
         />
       )}
     </>

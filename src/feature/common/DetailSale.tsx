@@ -110,7 +110,9 @@ const DetailSale = ({
   const [
     {data, initLoading, meJoins, loadingJoin, refreshing},
     {onReaction, onRefresh, onJoin, deleteEstimate},
-  ] = useDetailSale(saleId ?? sale?.id);
+  ] = useDetailSale(saleId ?? sale?.id, {
+    revalidateAll: true,
+  });
 
   const isMySale = data?.creator === myId;
 
@@ -297,7 +299,7 @@ const DetailSale = ({
                 i18Text="discovery.amount"
                 customStyle={$titleEstimate}
               />
-              <StyleText originValue={` ${estimate.amount}`} />
+              <StyleText originValue={`: ${estimate.amount}`} />
             </StyleText>
             <StyleText>
               <StyleText
@@ -305,7 +307,7 @@ const DetailSale = ({
                 customStyle={$titleEstimate}
               />
               <StyleText
-                originValue={` ${formatddddDDMMYYYY(estimate.time_will_buy)}`}
+                originValue={`: ${formatddddDDMMYYYY(estimate.time_will_buy)}`}
               />
             </StyleText>
             <StyleText>
@@ -322,7 +324,7 @@ const DetailSale = ({
                 customStyle={$titleEstimate}
               />
               <StyleText
-                originValue={` ${formatLocaleNumber(estimate.price)}vnd`}
+                originValue={`: ${formatLocaleNumber(estimate.price)}vnd`}
               />
             </StyleText>
             <StyleText>
@@ -331,7 +333,7 @@ const DetailSale = ({
                 customStyle={$titleEstimate}
               />
               <StyleText
-                originValue={` ${formatLocaleNumber(estimate.deposit)}vnd`}
+                originValue={`: ${formatLocaleNumber(estimate.deposit)}vnd`}
               />
             </StyleText>
 
@@ -520,7 +522,9 @@ const DetailSale = ({
                 title: 'discovery.buyingHistory',
                 onPress: () => {
                   if (data) {
-                    console.log('got to see history');
+                    navigate(ROOT_SCREEN.joinsHistory, {
+                      saleId: data.id,
+                    });
                   }
                 },
               },

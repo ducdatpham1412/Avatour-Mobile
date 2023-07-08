@@ -11,7 +11,12 @@ import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
 import UpdatePrices from 'feature/common/UpdatePrices';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
-import {DetailTour, GoToDeposit, ScanResult} from 'feature/discovery';
+import {
+  DetailTour,
+  GoToDeposit,
+  JoinHistory,
+  ScanResult,
+} from 'feature/discovery';
 import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
@@ -216,6 +221,7 @@ const AppStack = () => {
       />
       <Stack.Screen name={ROOT_SCREEN.goToDeposit} component={GoToDeposit} />
       <Stack.Screen name={ROOT_SCREEN.scanResult} component={ScanResult} />
+      <Stack.Screen name={ROOT_SCREEN.joinsHistory} component={JoinHistory} />
     </Stack.Navigator>
   );
 };

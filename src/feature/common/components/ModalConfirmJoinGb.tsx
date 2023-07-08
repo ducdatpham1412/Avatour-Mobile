@@ -33,11 +33,13 @@ import {borderWidthTiny} from 'utility/assistant';
 import {addDate, formatDayGroupBuying, formatUTCDate} from 'utility/format';
 import {validateIsPhone} from 'utility/validate';
 import AddPhone from './AddPhone';
+import {I18Normalize} from 'utility/I18Next';
 
 interface Props {
   onConfirm(params: Omit<TypeJoinRequest, 'saleId'>): void;
   loadingJoin: boolean;
   initValue?: Omit<TypeJoinRequest, 'saleId'>;
+  titleButton?: I18Normalize;
 }
 
 const onAddPhone = () => {
@@ -55,7 +57,7 @@ const onAddPhone = () => {
 };
 
 const ModalConfirmJoinGb = (
-  {onConfirm, loadingJoin, initValue}: Props,
+  {onConfirm, loadingJoin, initValue, titleButton}: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const {bottom} = useSafeAreaInsets();
@@ -213,7 +215,7 @@ const ModalConfirmJoinGb = (
         />
 
         <StyleButton
-          title="discovery.joinGroupBuying"
+          title={titleButton ?? 'discovery.joinGroupBuying'}
           containerStyle={styles.button}
           onPress={() => {
             onConfirm({

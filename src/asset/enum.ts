@@ -107,6 +107,8 @@ export enum SOCKET_EVENT {
   openConversation = '4.4',
   // notification
   notification = '5.0',
+  // join
+  joinSuccess = '6.0',
 }
 
 export enum TYPE_FOLLOW {
@@ -340,11 +342,11 @@ export enum POST_SEARCH {
 }
 
 export enum TYPE_SALE_SEARCH {
-  joining = 0,
-  joined = 1,
-  favorite = 2,
-  review = 3,
-  list = 4,
+  joining = 'joining',
+  joined = 'joined',
+  favorite = 'favorite',
+  review = 'review',
+  list = 'sale_list',
 }
 
 export enum APP_EVENT {

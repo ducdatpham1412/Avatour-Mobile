@@ -1,9 +1,10 @@
 import {SOCKET_EVENT} from 'asset/enum';
 import Config from 'asset/env';
-import {Socket, io} from 'socket.io-client';
-import {isIOS} from 'utility/assistant';
+import {SocketEmitList, SocketOnList} from 'navigation/config';
+import io, {Socket} from 'socket.io-client';
 
-const socketDev = isIOS ? Config.API_SOCKET : 'http://10.0.2.2:3000';
+// const socketDev = isIOS ? Config.API_SOCKET : 'http://10.0.2.2:3000';
+const socketDev = Config.API_SOCKET;
 const socketProduction = Config.API_SOCKET;
 const socketUrl = __DEV__ ? socketDev : socketProduction;
 
@@ -43,6 +44,29 @@ class SocketManager {
     instance?.socket?.emit(SOCKET_EVENT.authenticate, {
       token,
     });
+  };
+
+  public socketOn = <T extends SOCKET_EVENT>(
+    event: T,
+    callBack: (
+      data: T extends keyof SocketOnList ? SocketOnList[T] : undefined,
+    ) => void,
+  ) => {
+    const instance = this.checkInstance();
+    instance?.socket?.on(event, callBack as any);
+  };
+
+  public socketOff = <T extends SOCKET_EVENT>(event: T) => {
+    const instance = this.checkInstance();
+    instance?.socket?.off(event);
+  };
+
+  public socketEmit = <T extends SOCKET_EVENT>(
+    event: T,
+    data: T extends keyof SocketEmitList ? SocketEmitList[T] : undefined,
+  ) => {
+    const instance = this.checkInstance();
+    instance?.socket?.emit(event, data);
   };
 }
 

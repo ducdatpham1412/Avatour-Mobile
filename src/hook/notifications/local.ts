@@ -1,4 +1,7 @@
 import Notifee, {EventType} from '@notifee/react-native';
+import {TYPE_NOTIFICATION} from 'asset/enum';
+import {navigate} from 'navigation/NavigationService';
+import {MAIN_SCREEN, ROOT_SCREEN} from 'navigation/config';
 import {useEffect} from 'react';
 import {Vibration} from 'react-native';
 import {logger} from 'utility/assistant';
@@ -14,7 +17,14 @@ const useLocalNotification = () => {
     event: number,
     data: Record<string, any> | undefined,
   ) => {
-    console.log('Event: ', event, ' - ', data);
+    if (event === TYPE_NOTIFICATION.joinSuccess) {
+      if (data) {
+        navigate(MAIN_SCREEN.profileRoute);
+        navigate(ROOT_SCREEN.joinsHistory, {
+          saleId: data.saleId,
+        });
+      }
+    }
   };
 
   useEffect(

@@ -1,15 +1,15 @@
+import {APP_EVENT, SOCKET_EVENT} from 'asset/enum';
 import {ReactNode} from 'react';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
-  TOUR_ROUTE,
   LOGIN_ROUTE,
   MAIN_SCREEN,
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
+  TOUR_ROUTE,
 } from './routes';
-import {APP_EVENT} from 'asset/enum';
 
 export type AllRoutes =
   | ROOT_SCREEN
@@ -165,6 +165,7 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.detailMeJoin]: {
     saleId: number;
+    joinId?: number;
     joinPersonal?: TypeJoinPersonal; // for see detail a join personal
     mode:
       | 'go-to-deposit'
@@ -201,9 +202,12 @@ export type AppParamsList = {
     joinEstimate: TypeJoinEstimate;
   };
   [ROOT_SCREEN.scanResult]: {
-    mode: 'estimate';
+    mode: 'join-result';
   } & {
-    user_id: number;
+    shop_id: number;
+  };
+  [ROOT_SCREEN.joinsHistory]: {
+    saleId: number;
   };
 };
 
@@ -233,3 +237,11 @@ export type AppEventList = {
     newSale: TypeGroupBuying;
   };
 };
+
+export type SocketOnList = {
+  [SOCKET_EVENT.joinSuccess]: {
+    sale_id: number;
+  };
+};
+
+export type SocketEmitList = {};

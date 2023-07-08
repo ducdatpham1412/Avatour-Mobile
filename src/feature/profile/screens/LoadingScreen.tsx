@@ -7,7 +7,7 @@ import {moderateScale} from 'utility/scale';
 
 interface Props {
   hasLogo?: boolean;
-  opacityBackground?: number;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export const LoadingIcon = () => {
@@ -22,8 +22,7 @@ export const LoadingIcon = () => {
   );
 };
 
-const LoadingScreen = (props: Props) => {
-  const {hasLogo = true, opacityBackground = 0.9} = props;
+const LoadingScreen = ({hasLogo = true, containerStyle}: Props) => {
   const theme = useTheme();
 
   return (
@@ -31,9 +30,9 @@ const LoadingScreen = (props: Props) => {
       style={[
         $container,
         {
-          backgroundColor: theme.background,
-          opacity: opacityBackground,
+          backgroundColor: theme.white_opacity(0.9),
         },
+        containerStyle,
       ]}>
       {hasLogo && <LoadingIcon />}
     </View>

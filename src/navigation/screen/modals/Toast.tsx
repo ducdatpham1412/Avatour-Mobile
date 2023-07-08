@@ -13,6 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import {useTranslation} from 'react-i18next';
 import {TextStyle, ViewStyle} from 'react-native';
 import Animated, {
   runOnJS,
@@ -24,20 +25,27 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale} from 'utility/scale';
 
+interface TypeShow {
+  title?: I18Normalize;
+  content?: string;
+}
+
 interface ItemToastProp {
-  content?: I18Normalize;
+  title?: string;
+  content?: string;
   onFinished: () => void;
 }
 
 interface State {
   time: number;
-  text: I18Normalize;
+  title: string;
+  content: string;
 }
 
 const modalToastRef = createRef<ElementRef<typeof Toast>>();
 
 const ItemToast = memo(
-  ({content, onFinished}: ItemToastProp) => {
+  ({title, content, onFinished}: ItemToastProp) => {
     const theme = useTheme();
     const opacity = useSharedValue(1);
     const opacityStyle = useAnimatedStyle(() => ({
@@ -64,9 +72,15 @@ const ItemToast = memo(
           opacityStyle,
         ]}>
         <Entypo name="check" style={[$icon, {color: theme.white}]} />
+        {!!title && (
+          <StyleText
+            originValue={title}
+            customStyle={[$title, {color: theme.white}]}
+          />
+        )}
         {!!content && (
           <StyleText
-            i18Text={content}
+            originValue={content}
             customStyle={[$content, {color: theme.white}]}
           />
         )}
@@ -77,17 +91,19 @@ const ItemToast = memo(
 );
 
 const Toast = forwardRef(
-  (_: any, ref: ForwardedRef<TypeShowModalize<I18Normalize>>) => {
+  (_: any, ref: ForwardedRef<TypeShowModalize<TypeShow>>) => {
+    const {t} = useTranslation();
     const [listItemToasts, setListItemToasts] = useState<State[]>([]);
 
     useImperativeHandle(
       ref ?? modalToastRef,
       () => ({
-        show: text => {
+        show: value => {
           setListItemToasts(pre =>
             pre.concat({
               time: Date.now(),
-              text: text ?? 'common.null',
+              title: t(value?.title ?? 'common.null'),
+              content: value?.content ?? '',
             }),
           );
         },
@@ -101,7 +117,8 @@ const Toast = forwardRef(
         {listItemToasts.map(item => (
           <ItemToast
             key={item.time}
-            content={item.text}
+            title={item.title}
+            content={item.content}
             onFinished={() => {
               setListItemToasts(pre => {
                 return pre.filter(toast => toast.time !== item.time);
@@ -127,14 +144,17 @@ const $container: ViewStyle = {
   justifyContent: 'center',
 };
 const $icon: TextStyle = {
-  fontSize: moderateScale(60),
+  fontSize: moderateScale(50),
 };
-const $content: TextStyle = {
+const $title: TextStyle = {
   fontSize: FONT_SIZE.f4,
   fontWeight: FONT_WEIGHT_MEDIUM,
 };
+const $content: TextStyle = {
+  fontSize: FONT_SIZE.f5,
+};
 
 export default Object.assign(Toast, {
-  show: (value?: I18Normalize) => modalToastRef.current?.show(value),
+  show: (value?: TypeShow) => modalToastRef.current?.show(value),
   hide: () => modalToastRef.current?.hide(),
 });

@@ -3,8 +3,6 @@ import {
   StackNavigationOptions,
   createStackNavigator,
 } from '@react-navigation/stack';
-import AlertYesNo from 'components/AlerYesNo';
-import Alert from 'components/Alert';
 import StylePicker from 'components/base/picker/StylePicker';
 import ErrorScreen from 'feature/common/ErrorScreen';
 import {LoadingScreen} from 'feature/profile/screens';
@@ -43,29 +41,6 @@ const RootScreen = () => {
         headerShown: false,
       }}>
       <RootStack.Screen name="check" component={ChooseRoute} />
-
-      {/* Alert */}
-      <RootStack.Screen
-        options={{
-          ...alertOption,
-          cardStyle: {
-            backgroundColor: theme.backgroundOpacity(),
-          },
-        }}
-        name={ROOT_SCREEN.alert}
-        component={Alert}
-      />
-      {/* Alert yes no */}
-      <RootStack.Screen
-        options={{
-          ...alertOption,
-          cardStyle: {
-            backgroundColor: theme.backgroundOpacity(),
-          },
-        }}
-        name={ROOT_SCREEN.alertYesNo}
-        component={AlertYesNo}
-      />
 
       {/* Web view */}
       <RootStack.Screen

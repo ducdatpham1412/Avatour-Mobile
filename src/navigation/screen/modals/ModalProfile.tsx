@@ -1,6 +1,5 @@
 import {Metrics} from 'asset/metrics';
 import {AppModalize} from 'components';
-import {OtherProfile} from 'feature/profile';
 import {useTheme} from 'hook';
 import React, {
   ElementRef,
@@ -47,9 +46,9 @@ const ModalProfile = forwardRef(
         modalHeight={Metrics.height * 0.75}
         onClosed={() => setShowContent(false)}
         containerStyle={[$container, {backgroundColor: theme.background}]}>
-        {!!userId && showContent && (
+        {/* {!!userId && showContent && (
           <OtherProfile route={{params: {id: userId, showHeader: false}}} />
-        )}
+        )} */}
       </AppModalize>
     );
   },

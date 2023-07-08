@@ -59,13 +59,13 @@ const ItemMeJoin = ({item, onPress}: Props) => {
 
       <StyleText customStyle={$textInfo}>
         <StyleText i18Text="discovery.amount" customStyle={$title} />
-        <StyleText originValue={` ${item?.amount}`} />
+        <StyleText originValue={`: ${item?.amount}`} />
       </StyleText>
 
       <StyleText customStyle={$textInfo}>
         <StyleText i18Text="discovery.arrivalTime" customStyle={$title} />
         <StyleText
-          originValue={` ${formatddddDDMMYYYY(item?.time_will_buy)}`}
+          originValue={`: ${formatddddDDMMYYYY(item?.time_will_buy)}`}
         />
       </StyleText>
 

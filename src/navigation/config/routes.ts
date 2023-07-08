@@ -21,6 +21,7 @@ enum ROOT_SCREEN {
   postsArchived = '@ROOT_SCREEN/postsArchived',
   upgradeAccount = '@ROOT_SCREEN/upgradeAccount',
   editHistory = '@ROOT_SCREEN/editHistory',
+  joinsHistory = '@ROOT_SCREEN/joinsHistory',
   updateBankAccount = '@ROOT_SCREEN/updateBankAccount',
   detailSale = '@ROOT_SCREEN/detailSale',
   detailMeJoin = '@ROOT_SCREEN/detailMeJoin',
@@ -76,7 +77,6 @@ enum DISCOVERY_ROUTE {
 
 enum PROFILE_ROUTE {
   myProfile = '@PROFILE_ROUTE/myProfile',
-  editProfile = '@PROFILE_ROUTE/editProfile',
   createPostPreview = '@PROFILE_ROUTE/createPostPreview',
   createPostPickImg = '@PROFILE_ROUTE/createPostPickImg',
   detailGroupBuying = '@PROFILE_ROUTE/detailGroupBuying',
