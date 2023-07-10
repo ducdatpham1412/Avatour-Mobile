@@ -200,7 +200,7 @@ const discovery = {
   amountBookGb: 'Số lượng mua: {{value}}',
   depositAmount: 'Số tiền đặt cọc: {{value}}vnd',
   titleDeposit: 'Bạn cần đặt cọc một khoản tiền cho người bán',
-  theMoneyIs: 'Số tiền đặt cọc là: ',
+  moneyToPay: 'Số tiền cần thanh toán còn lại',
   goToDeposit: 'Đi tới đặt cọc',
   hotLocation: '🔥 Địa điểm nổi bật',
   travelCamping: 'Cắm trại',
@@ -251,7 +251,7 @@ const discovery = {
   groupDay: 'Nhóm ngày {{value}}',
   confirmJoining: 'Xác nhận tham gia mua chung',
   buyingHistory: 'Lịch sử mua chung',
-  arrivalTimePassed: 'Đã quá thời gian đến.\n',
+  arrivalTimePassed: 'Đã quá thời gian đến',
   please: 'Bạn vui lòng ',
   confirmJoinSuccess: ' để xác nhận tham gia thành công nha.',
   notRequestConfirm: 'Chưa gửi yêu cầu xác nhận',
@@ -272,12 +272,15 @@ const discovery = {
   backToHome: 'Về trang chủ',
   yourTransactionHash:
     'Mã giao dịch của bạn là: {{value}}.\nĐể xác nhận tham gia thành công với người bán, bạn vui lòng đặt cọc bằng hình thức chuyển khoản đến tài khoản ngân hàng sau:',
-  yourTransactionContent: 'Ở đây, nội dung bạn cần chuyển là:',
   ifHaveAnyCase: `Sau khi chuyển khoản, đơn mua chung của bạn vẫn sẽ ở trạng thái “Đi tới đặt cọc”. Đừng lo lắng, Avatour sẽ phản hồi lại bạn trong thời gian tối đa 1 tiếng đồng hồ nếu thời gian đặt cọc từ 6h - 23h, 7 tiếng đồng hồ trong thời gian 23h - 6h ngày hôm sau.
 Nếu có bất kỳ sự cố nào, bạn vui lòng liên hệ Avatour qua một trong các cách sau:
   ・SĐT / Zalo: (+84) 862938350
   ・Email: support.avatour@gmail.com
 Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!`,
+  goToDepositToConfirm:
+    'Đi tới đặt cọc để xác nhận tham gia mua chung thành công nhé bạn',
+  scanQrAtShop: 'Quét mã QR tại cửa hàng',
+  todayIsTimeWillBuy: 'Hôm nay là ngày đến mua tại {{value}}',
 };
 
 const reputation = {
@@ -397,6 +400,7 @@ const profile = {
   joining: 'Đang tham gia',
   waitingConfirm: 'Chờ cửa hàng xác nhận',
   joinedSuccess: 'Tham gia thành công',
+  goToSeeJoins: 'Đi tới xem đơn mua chung của bạn',
   gbOrder: 'Đơn hàng',
   maxGroups: 'Số lượng nhóm tối đa',
   sendRequestChangePrice: 'Yêu cầu thay đổi giá',
@@ -415,9 +419,11 @@ const profile = {
   createNameForYourTour: 'Đặt tên cho tour của bạn',
   qrConfirm: 'QR Xác nhận',
   scanWhenGoToShop:
-    'Quét mã khi đến cửa hàng để xác nhận tham gia thành công nhé bạn',
+    'Quét mã khi đến cửa hàng để biết số tiền cần thanh toán và xác nhận tham gia thành công nhé bạn',
   shopName: 'Tên cửa hàng',
   groupBuyingName: 'Tên đơn mua chung',
+  goToScan: 'Đi tới quét mã',
+  status: 'Trạng thái',
 };
 
 const mess = {
@@ -428,8 +434,6 @@ const mess = {
       'Bạn đồng ý mở khóa ẩn danh của cuộc trò chuyện này chứ?\n\nSau khi mở khoá, bạn và người bạn này có thể biết và theo dõi với nhau!',
     waitingOther: 'Đợi phản hồi từ người bạn bên kia...',
     areYouReady: 'Sẵn sàng chưa? :D',
-    congratulation:
-      'Wowww! :D\nGiờ đây các bạn có thể chia sẻ và kết bạn với nhau rồi',
   },
   detailSetting: {
     title: 'Chi tiết trò chuyện',

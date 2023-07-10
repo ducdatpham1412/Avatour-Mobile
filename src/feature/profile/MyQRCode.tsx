@@ -40,7 +40,7 @@ const MyQRCode = () => {
           />
           <View style={$qrBox}>
             <QRCode
-              value={JSON.stringify({userId: profile.id})}
+              value={JSON.stringify({user_id: profile.id} as QrData)}
               size={scale(150)}
             />
           </View>

@@ -21,11 +21,17 @@ enum ROOT_SCREEN {
   postsArchived = '@ROOT_SCREEN/postsArchived',
   upgradeAccount = '@ROOT_SCREEN/upgradeAccount',
   editHistory = '@ROOT_SCREEN/editHistory',
+  joinsHistory = '@ROOT_SCREEN/joinsHistory',
   updateBankAccount = '@ROOT_SCREEN/updateBankAccount',
   detailSale = '@ROOT_SCREEN/detailSale',
   detailMeJoin = '@ROOT_SCREEN/detailMeJoin',
   detailTour = '@ROOT_SCREEN/detailTour',
   goToDeposit = '@ROOT_SCREEN/goToDeposit',
+  scanResult = '@ROOT_SCREEN/scanResult',
+  messScreen = '@ROOT_SCREEN/messScreen',
+  chatDetail = '@ROOT_SCREEN/chatDetail',
+  chatDetailGroup = '@ROOT_SCREEN/chatDetailGroup',
+  chatDetailSetting = '@ROOT_SCREEN/chatDetailSetting',
 }
 /**
  * ||
@@ -69,16 +75,8 @@ enum DISCOVERY_ROUTE {
   searchScreen = '@DISCOVERY_ROUTE/searchScreen',
 }
 
-enum MESS_ROUTE {
-  messScreen = '@MESS_ROUTE/messScreen',
-  chatDetail = '@MESS_ROUTE/chatDetail',
-  chatDetailGroup = '@MESS_ROUTE/chatDetailGroup',
-  chatDetailSetting = '@MESS_ROUTE/chatDetailSetting',
-}
-
 enum PROFILE_ROUTE {
   myProfile = '@PROFILE_ROUTE/myProfile',
-  editProfile = '@PROFILE_ROUTE/editProfile',
   createPostPreview = '@PROFILE_ROUTE/createPostPreview',
   createPostPickImg = '@PROFILE_ROUTE/createPostPickImg',
   detailGroupBuying = '@PROFILE_ROUTE/detailGroupBuying',
@@ -119,7 +117,6 @@ export {
   DISCOVERY_ROUTE,
   PROFILE_ROUTE,
   SETTING_ROUTE,
-  MESS_ROUTE,
   REPUTATION_ROUTE,
   TOUR_ROUTE,
 };

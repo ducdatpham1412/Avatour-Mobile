@@ -13,14 +13,19 @@ import {ModalScanQr} from 'navigation/screen/modals';
 import React, {useMemo, useRef} from 'react';
 import {Animated, TextStyle, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {
-  moderateScale,
-  ScaledSheet,
-  verticalScale,
-} from 'react-native-size-matters';
-import {borderWidthTiny} from 'utility/assistant';
+import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {borderWidthTiny, logger} from 'utility/assistant';
 
 const iconSize = 27;
+
+const showModalQr = async () => {
+  try {
+    const res = await ModalScanQr.show();
+    console.log('response qr: ', res);
+  } catch (err) {
+    logger(err);
+  }
+};
 
 const TabNavigator = (props: any) => {
   const theme = useTheme();
@@ -91,7 +96,7 @@ const TabNavigator = (props: any) => {
   const ScanButton = useRef(() => (
     <StyleTouchable
       customStyle={[styles.buttonView, {justifyContent: 'flex-start'}]}
-      onPress={ModalScanQr.show}>
+      onPress={showModalQr}>
       <StyleIcon source={Images.icons.scan} size={30} />
     </StyleTouchable>
   ));

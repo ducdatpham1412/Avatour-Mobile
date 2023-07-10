@@ -59,9 +59,9 @@ interface TypeJoinPersonalAndSale {
   status: number;
   sale: {
     images: string[];
-    creator: number;
     name: string;
-    avatar: string;
+    creator: number;
+    creator_avatar: string;
   };
 }
 

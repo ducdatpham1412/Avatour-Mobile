@@ -6,7 +6,7 @@ import {
 } from 'api/discovery';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
 import {APP_EVENT, REACT} from 'asset/enum';
-import {emitAppEvent, useApiImmutable, useEstimatesAndJoinings} from 'hook';
+import {emitAppEvent, useApi, useEstimatesAndJoinings} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import useSWRMutation from 'swr/mutation';
 
@@ -17,7 +17,7 @@ interface Params {
 const useDetailSale = (saleId: number | undefined, options?: Params) => {
   const {revalidateAll = true} = options ?? {};
 
-  const {data, mutate, loading} = useApiImmutable<TypeGroupBuying>({
+  const {data, mutate, loading} = useApi<TypeGroupBuying>({
     path: saleId ? `/profile/sales/${saleId}` : null,
     config: {
       revalidateAll,
@@ -26,7 +26,7 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
 
   const {mutate: mutateEstimatesAndJoinings} = useEstimatesAndJoinings();
 
-  const dataMeJoined = useApiImmutable<TypeMeJoinInSale>({
+  const dataMeJoined = useApi<TypeMeJoinInSale>({
     path: saleId ? `/profile/sales/join/${saleId}` : null,
     config: {
       revalidateAll,

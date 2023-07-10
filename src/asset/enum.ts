@@ -68,11 +68,6 @@ export enum TYPE_OTP {
   requestOpenAccount = 3,
 }
 
-// export enum CHAT_TAG {
-//     newFromBubble = 0,
-//     newFromProfile = 1,
-//     group = 2,
-// }
 export enum MESSAGE_TYPE {
   text = 0,
   image = 1,
@@ -112,6 +107,8 @@ export enum SOCKET_EVENT {
   openConversation = '4.4',
   // notification
   notification = '5.0',
+  // join
+  joinSuccess = '6.0',
 }
 
 export enum TYPE_FOLLOW {
@@ -138,6 +135,7 @@ export enum TYPE_NOTIFICATION {
   friendPostNew = 4,
   likeGroupBuying = 5,
   commentGroupBuying = 6,
+  joinSuccess = 7,
 }
 
 export enum TYPE_BUBBLE_PALACE_ACTION {
@@ -344,11 +342,11 @@ export enum POST_SEARCH {
 }
 
 export enum TYPE_SALE_SEARCH {
-  joining = 0,
-  joined = 1,
-  favorite = 2,
-  review = 3,
-  list = 4,
+  joining = 'joining',
+  joined = 'joined',
+  favorite = 'favorite',
+  review = 'review',
+  list = 'sale_list',
 }
 
 export enum APP_EVENT {

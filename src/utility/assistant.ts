@@ -535,8 +535,12 @@ export const detectFromStyle = (style: any, keySearch: string) => {
   return res;
 };
 
-export const copy = async (text: string) => {
+export const copy = (text: string) => {
   impactLight();
-  await Clipboard.setString(text);
-  Toast.show('common.copied');
+  Clipboard.setString(text);
+  const content = `(${text.slice(0, 10)}${text.length > 10 ? '...' : ''})`;
+  Toast.show({
+    title: 'common.copied',
+    content,
+  });
 };

@@ -12,7 +12,7 @@ interface Props {
   size?: number;
 }
 
-const ButtonX = ({containerStyle, onPress, iconStyle, size}: Props) => {
+const ButtonX = ({containerStyle, onPress, iconStyle, size = 10}: Props) => {
   const theme = useTheme();
 
   return (
@@ -27,10 +27,9 @@ const ButtonX = ({containerStyle, onPress, iconStyle, size}: Props) => {
       <Feather
         name="x"
         style={[
-          $iconX,
           {color: theme.black},
           iconStyle,
-          size && {fontSize: moderateScale(size)},
+          {fontSize: moderateScale(size)},
         ]}
       />
     </StyleTouchable>
@@ -43,9 +42,6 @@ const $container: ViewStyle = {
   right: moderateScale(5),
   padding: moderateScale(5),
   borderRadius: 20,
-};
-const $iconX: TextStyle = {
-  fontSize: moderateScale(10),
 };
 
 export default ButtonX;

@@ -7,7 +7,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import Redux from 'hook/useRedux';
-import {startChatTag} from 'hook/useSocketIO';
+import {startChatTag} from 'hook/sockets/SocketManager';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {goBack} from 'navigation/NavigationService';

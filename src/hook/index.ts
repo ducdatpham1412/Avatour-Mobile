@@ -8,3 +8,4 @@ export {default as useLoading} from './useLoading';
 export {default as useNotification} from './useNotification';
 export {default as usePaging} from './usePaging';
 export {default as useTheme} from './useTheme';
+export {default as useSocket} from './sockets/SocketManager';

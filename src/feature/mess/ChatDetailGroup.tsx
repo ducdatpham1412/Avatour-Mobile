@@ -15,7 +15,7 @@
 //     socketUnTyping,
 //     useSocketChatDetail,
 // } from 'hook/useSocketIO';
-// import {MESS_ROUTE} from 'navigation/config/routes';
+// import {ROOT_SCREEN} from 'navigation/config/routes';
 // import {
 //     appAlertYesNo,
 //     goBack,
@@ -253,7 +253,7 @@
 //      * Go to setting chat
 //      */
 //     const onNavigateToMessSetting = () => {
-//         navigate(MESS_ROUTE.chatDetailSetting, {
+//         navigate(ROOT_SCREEN.chatDetailSetting, {
 //             itemChatTag,
 //         });
 //     };
@@ -622,11 +622,11 @@ import React from 'react';
 import {Text, View} from 'react-native';
 
 const ChatDetailGroup = () => {
-    return (
-        <View>
-            <Text>ChatDetailGroup</Text>
-        </View>
-    );
+  return (
+    <View>
+      <Text>ChatDetailGroup</Text>
+    </View>
+  );
 };
 
 export default ChatDetailGroup;

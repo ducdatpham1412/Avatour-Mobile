@@ -6,7 +6,7 @@ import {
 import {Metrics} from 'asset/metrics';
 import ItemComment from 'feature/discovery/components/ItemComment';
 import Redux from 'hook/useRedux';
-import {socketAddComment, useSocketComment} from 'hook/useSocketIO';
+import {socketAddComment, useSocketComment} from 'hook/sockets';
 import React, {useCallback, useRef, useState} from 'react';
 import {
   FlatList,

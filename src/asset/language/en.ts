@@ -196,7 +196,7 @@ const discovery = {
   amountBookGb: 'Quantities orders: {{value}}',
   depositAmount: 'Deposit amount: {{value}}vnd',
   titleDeposit: 'You need to deposit a small amount',
-  theMoneyIs: 'The money deposit is: ',
+  moneyToPay: 'tiền cần thanh toán còn lại',
   goToDeposit: 'Go to deposit',
   hotLocation: '🔥 Hot location',
   travelCamping: 'Experience',
@@ -247,7 +247,7 @@ const discovery = {
   groupDay: 'Group in {{value}}',
   confirmJoining: 'Confirm joining group buying',
   buyingHistory: 'Buying history',
-  arrivalTimePassed: 'The arrival time has passed.\n',
+  arrivalTimePassed: 'The arrival time has passed',
   please: 'Please ',
   confirmJoinSuccess: ' to confirm successful participation.',
   notRequestConfirm: 'No confirmation request yet',
@@ -268,12 +268,15 @@ const discovery = {
   backToHome: 'Back to home',
   yourTransactionHash:
     'Your transaction hash is: {{value}}.\nIn order to confirm successful joining with the seller, please deposit by bank transfer to the following bank account:',
-  yourTransactionContent: 'In your case, the content you need to transfer is:',
   ifHaveAnyCase: `After the transfer, your group buying order will still be in “Go to Deposit” status. Don't worry, Avatour will respond to you in a maximum of 1 hour if the deposit time is from 6am to 11pm, 7 hours from 11pm to 6am the next day.
 If you have any problems, please contact Avatour through one of the following ways:
      ・Tel / Zalo: (+84) 862938350
      ・Email: support.avatour@gmail.com
 Avatour Co., Ltd would like to sincerely thank you for using our service!`,
+  goToDepositToConfirm:
+    'Go to the deposit to confirm your successful joining in the group buying',
+  scanQrAtShop: 'Scan QR code at the store',
+  todayIsTimeWillBuy: 'Today is the day to buy at {{value}}',
 };
 
 const reputation = {
@@ -299,8 +302,6 @@ const mess = {
       'Do you agree to unlock anonymous of this conversation?\n\nAfter unlocking, you and this friend can know and follow each other!',
     waitingOther: 'Waiting response from\nyour friend...',
     areYouReady: 'Are you ready? :D',
-    congratulation:
-      'Congratulation! :D\nNow you can connect and make friend to each other',
   },
   detailSetting: {
     title: 'Chat details',
@@ -418,6 +419,7 @@ const profile = {
   joining: 'Joining',
   waitingConfirm: "Waiting for supplier's confirmation",
   joinedSuccess: 'Joined successfully',
+  goToSeeJoins: 'Go to see your group buying',
   gbOrder: 'Orders',
   maxGroups: 'Maximum number of groups',
   sendRequestChangePrice: 'Request changing prices',
@@ -436,9 +438,11 @@ const profile = {
   createNameForYourTour: 'Create name for your tour',
   qrConfirm: 'QR Confirming',
   scanWhenGoToShop:
-    'Scan the code upon arrival at the store to confirm successfully participate',
+    'Scan the code upon arrival at the store to know exactly how much to pay and confirm successfully participate',
   shopName: "Shop's name",
   groupBuyingName: 'Group buying name',
+  goToScan: 'Go to scan',
+  status: 'Status',
 };
 
 const setting = {

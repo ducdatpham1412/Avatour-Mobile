@@ -4,8 +4,8 @@ type DeepPartial<T> = T extends object
     }
   : T;
 
-type TypeShowModalize<TShow = undefined, THide = undefined> = {
-  show: (value?: TShow) => void;
+type TypeShowModalize<TShow = undefined, THide = undefined, Res = void> = {
+  show: (value?: TShow) => Res;
   hide: (value?: THide) => void;
 };
 

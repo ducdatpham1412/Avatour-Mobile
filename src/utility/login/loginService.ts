@@ -10,7 +10,7 @@ import {
 } from 'app-redux';
 import Store from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
-import {closeSocket} from 'hook/useSocketIO';
+import SocketManager from 'hook/sockets/SocketManager';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -169,7 +169,8 @@ const AuthenticateService = {
       }
       await AsyncStorage.logOut();
       logOut();
-      closeSocket();
+      const socketManager = SocketManager.getInstance();
+      socketManager.close();
       params?.callBack?.();
     } catch (err) {
       ModalAlert.error({

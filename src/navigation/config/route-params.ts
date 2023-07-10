@@ -1,23 +1,21 @@
+import {APP_EVENT, SOCKET_EVENT} from 'asset/enum';
 import {ReactNode} from 'react';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
-  TOUR_ROUTE,
   LOGIN_ROUTE,
   MAIN_SCREEN,
-  MESS_ROUTE,
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
+  TOUR_ROUTE,
 } from './routes';
-import {APP_EVENT} from 'asset/enum';
 
 export type AllRoutes =
   | ROOT_SCREEN
   | LOGIN_ROUTE
   | MAIN_SCREEN
   | DISCOVERY_ROUTE
-  | MESS_ROUTE
   | PROFILE_ROUTE
   | SETTING_ROUTE
   | REPUTATION_ROUTE
@@ -96,11 +94,11 @@ export type AppParamsList = {
     item: TypeGroupBuying;
     onUpdatePrice(value: TypeGroupBuying): void;
   };
-  [MESS_ROUTE.chatDetail]: {
+  [ROOT_SCREEN.chatDetail]: {
     itemChatTag: TypeChatTagResponse;
     setListChatTags: any;
   };
-  [MESS_ROUTE.chatDetailSetting]: {
+  [ROOT_SCREEN.chatDetailSetting]: {
     itemChatTag: TypeChatTagResponse;
   };
   [ROOT_SCREEN.editHistory]: {
@@ -167,12 +165,14 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.detailMeJoin]: {
     saleId: number;
+    joinId?: number;
     joinPersonal?: TypeJoinPersonal; // for see detail a join personal
     mode:
       | 'go-to-deposit'
       | 'go-to-deposit-from-profile'
       | 'see-detail'
-      | 'see-detail-from-sale';
+      | 'see-detail-from-sale'
+      | 'go-from-scan';
   };
   [SETTING_ROUTE.enterPassword]: {
     newInfo: {
@@ -200,6 +200,14 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.goToDeposit]: {
     joinEstimate: TypeJoinEstimate;
+  };
+  [ROOT_SCREEN.scanResult]: {
+    mode: 'join-result';
+  } & {
+    shop_id: number;
+  };
+  [ROOT_SCREEN.joinsHistory]: {
+    saleId: number;
   };
 };
 
@@ -229,3 +237,11 @@ export type AppEventList = {
     newSale: TypeGroupBuying;
   };
 };
+
+export type SocketOnList = {
+  [SOCKET_EVENT.joinSuccess]: {
+    sale_id: number;
+  };
+};
+
+export type SocketEmitList = {};

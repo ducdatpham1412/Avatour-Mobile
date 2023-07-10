@@ -90,15 +90,12 @@ const GoToDeposit = ({
             content: formatMoney(joinEstimate.deposit),
             contentStyle: {color: theme.red},
           },
-          {
-            title: 'discovery.transactionContent',
-            content: `Dat coc <${t('discovery.transactionHash')}>`,
-          },
           <>
             <StyleText
-              i18Text="discovery.yourTransactionContent"
-              customStyle={$textNotifyContent}
-            />
+              i18Text="discovery.transactionContent"
+              customStyle={$textNotifyContent}>
+              <StyleText originValue=":" customStyle={$textNotifyContent} />
+            </StyleText>
             <View
               style={[
                 $transactionContent,
@@ -110,7 +107,6 @@ const GoToDeposit = ({
               <StyleText
                 originValue={transactionContent}
                 customStyle={$textContent}
-                numberOfLines={1}
               />
               <StyleTouchable onPress={() => copy(transactionContent)}>
                 <StyleText
@@ -183,7 +179,8 @@ const $transactionContent: ViewStyle = {
   justifyContent: 'space-between',
 };
 const $textContent: TextStyle = {
-  maxWidth: '70%',
+  flex: 1,
+  paddingRight: scale(4),
 };
 const $countdownView: ViewStyle = {
   width: '100%',
