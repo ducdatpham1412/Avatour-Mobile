@@ -32,6 +32,7 @@ enum ROOT_SCREEN {
   chatDetail = '@ROOT_SCREEN/chatDetail',
   chatDetailGroup = '@ROOT_SCREEN/chatDetailGroup',
   chatDetailSetting = '@ROOT_SCREEN/chatDetailSetting',
+  listJoining = '@ROOT_SCREEN/listJoining',
 }
 /**
  * ||
@@ -112,12 +113,13 @@ enum TOUR_ROUTE {
   detailGroupBuying = '@TOUR_ROUTE/detailGroupBuying',
 }
 
-export {LOGIN_ROUTE, MAIN_SCREEN};
 export {
   DISCOVERY_ROUTE,
+  LOGIN_ROUTE,
+  MAIN_SCREEN,
   PROFILE_ROUTE,
-  SETTING_ROUTE,
   REPUTATION_ROUTE,
+  SETTING_ROUTE,
   TOUR_ROUTE,
 };
 export default ROOT_SCREEN;

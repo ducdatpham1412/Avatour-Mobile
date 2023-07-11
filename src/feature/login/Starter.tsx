@@ -2,8 +2,6 @@ import {
   createMaterialTopTabNavigator,
   MaterialTopTabBarProps,
 } from '@react-navigation/material-top-tabs';
-import {Metrics} from 'asset/metrics';
-import Theme from 'asset/theme/Theme';
 import {SafeView} from 'components/base';
 import LoadingScreen from 'feature/profile/screens/LoadingScreen';
 import {useTheme} from 'hook';
@@ -11,10 +9,8 @@ import Redux from 'hook/useRedux';
 import TopTabNavigator from 'navigation/components/TopTabNavigator';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import React from 'react';
-import {View, ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ViewStyle} from 'react-native';
 import ChoosingLoginOrEnjoy from './ChoosingLoginOrEnjoy';
-import BackgroundAuthen from './components/BackgroundAuthen';
 import LoginScreen from './LoginScreen';
 import SignUpForm from './signUp/SignUpForm';
 

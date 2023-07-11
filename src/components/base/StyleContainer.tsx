@@ -1,3 +1,4 @@
+import {horizontalPadding} from 'asset/metrics';
 import {LoadingScreen} from 'feature/profile/screens';
 import {useTheme} from 'hook';
 import StyleHeader, {StyleHeaderProps} from 'navigation/components/StyleHeader';
@@ -9,7 +10,6 @@ import {
 } from 'react-native-keyboard-aware-scroll-view';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'react-native-size-matters';
-import {scale} from 'utility/scale';
 
 interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   children?: ReactNode;
@@ -22,6 +22,7 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   BottomComponent?: ReactNode;
   backgroundColor?: string;
   initLoading?: boolean;
+  layOut?: 'view' | 'scroll';
 }
 
 // let offsetY = 0;
@@ -37,6 +38,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     BottomComponent,
     backgroundColor,
     initLoading = false,
+    layOut = 'scroll',
   } = props;
   const theme = useTheme();
   const {top} = useSafeAreaInsets();
@@ -61,18 +63,24 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
         />
       )}
       {TopComponent}
-      <KeyboardAwareScrollView
-        ref={ref}
-        scrollEnabled={false}
-        extraHeight={extraHeight}
-        extraScrollHeight={extraHeight}
-        enableOnAndroid
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        {...props}
-        contentContainerStyle={[$contentContainer, customStyle]}>
-        {initLoading ? <LoadingScreen /> : children}
-      </KeyboardAwareScrollView>
+      {layOut === 'scroll' ? (
+        <KeyboardAwareScrollView
+          ref={ref}
+          scrollEnabled={false}
+          extraHeight={extraHeight}
+          extraScrollHeight={extraHeight}
+          enableOnAndroid
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          {...props}
+          contentContainerStyle={[$contentContainer, customStyle]}>
+          {initLoading ? <LoadingScreen /> : children}
+        </KeyboardAwareScrollView>
+      ) : (
+        <View style={[$body, customStyle]}>
+          {initLoading ? <LoadingScreen /> : children}
+        </View>
+      )}
       {BottomComponent}
     </View>
   );
@@ -81,7 +89,11 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   width: '100%',
-  paddingHorizontal: scale(12),
+  paddingHorizontal: horizontalPadding,
+};
+const $body: ViewStyle = {
+  flex: 1,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default forwardRef(StyleContainer);

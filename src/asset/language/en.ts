@@ -35,6 +35,7 @@ const common = {
   editFilter: 'Edit filter',
   copy: 'Copy',
   copied: 'Copied',
+  retry: 'Retry',
 };
 
 const login = {
@@ -164,6 +165,7 @@ const discovery = {
   joined: 'Joined',
   deposited: 'Deposited',
   deposit: 'Deposit',
+  allDeposited: 'Total deposited',
   numberGroupJoined: '{{value}} joins',
   numberJoinsWithYou: '{{value}} joins with you',
   beTheFirstJoin: 'Join group buying',
@@ -196,7 +198,8 @@ const discovery = {
   amountBookGb: 'Quantities orders: {{value}}',
   depositAmount: 'Deposit amount: {{value}}vnd',
   titleDeposit: 'You need to deposit a small amount',
-  moneyToPay: 'tiền cần thanh toán còn lại',
+  moneyToPay: 'Money to pay remaining',
+  moneyToPayAll: 'Total money to pay remaining',
   goToDeposit: 'Go to deposit',
   hotLocation: '🔥 Hot location',
   travelCamping: 'Experience',
@@ -240,16 +243,22 @@ const discovery = {
   departure: 'Departure',
   comeback: 'Comeback',
   price: 'Price',
+  allPrice: 'Total price',
   moreThan: 'More than {{value}}',
   valuePeople: '{{value}} people',
   tour: 'Tour',
   groupBuying: 'Group buying',
   groupDay: 'Group in {{value}}',
-  confirmJoining: 'Confirm joining group buying',
+  confirmArrived: 'Confirm arrived store',
+  rememberConfirmWhenArrived:
+    'You have {{numberJoins}} group buying orders at {{storeName}} today\nPlease "Confirm arrived store" or <b>"Confirm all above"</b> to confirm your successful joining group buying',
+  alsoHaveNextDay:
+    'You also have {{numberJoins}} group buying orders at {{storeName}} in the coming days',
+  notHaveOrderToday:
+    'You have no general group buying orders today at {{storeName}}',
+  confirmAll: 'Confirm all above',
   buyingHistory: 'Buying history',
   arrivalTimePassed: 'The arrival time has passed',
-  please: 'Please ',
-  confirmJoinSuccess: ' to confirm successful participation.',
   notRequestConfirm: 'No confirmation request yet',
   dayNumber: 'Day {{value}}',
   timeHere: 'Duration in here',
@@ -277,6 +286,8 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
     'Go to the deposit to confirm your successful joining in the group buying',
   scanQrAtShop: 'Scan QR code at the store',
   todayIsTimeWillBuy: 'Today is the day to buy at {{value}}',
+  pleaseConfirmWithVendor:
+    'Please <b>Contact with vendor</b> to confirm successful participation',
 };
 
 const reputation = {
@@ -425,7 +436,6 @@ const profile = {
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
   postGroupBuying: 'Create group buying',
-  confirmWithVendor: 'Contact with vendor',
   havingRequestUpdate: "You're having an update request",
   review: 'Review',
   thisIsAccountReceive:
@@ -447,13 +457,13 @@ const profile = {
 
 const setting = {
   title: 'Setting',
+  logOut: 'Log out',
   component: {
     typeMainSetting: {
       security: 'Security and login',
       personalInfo: 'Personal information',
       aboutFindme: 'About us',
       extend: 'Extend setting',
-      logOut: 'Log out',
     },
   },
   securityAndLogin: {
@@ -525,6 +535,7 @@ const alert = {
   moreButtonContent: 'Go to Sign up',
   needToAddPhone: 'You need to add phone number\nin order to join services',
   phoneExisted: 'This phone have been used by one other',
+  beSureConfirmWhenInStore: `Make sure you press confirm only when you've arrived to pay at the store.\nAfter pressing confirm, you won't receive any additional discounts if someone joins the same group buying with you.`,
 
   // FOR SETTING
   nowPassError: 'Current password not true !',
@@ -540,6 +551,7 @@ const alert = {
   passNotMatch: 'Password not match',
   inValidEmail: 'Invalid email',
   inValidPhone: 'Invalid phone number',
+  invalidQr: 'Invalid QR Code',
 
   // PROFILE
   successUpdatePro: 'Update profile successful!',

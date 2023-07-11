@@ -22,6 +22,7 @@ const useLocalNotification = () => {
         navigate(MAIN_SCREEN.profileRoute);
         navigate(ROOT_SCREEN.joinsHistory, {
           saleId: data.saleId,
+          mode: 'go-from-notification',
         });
       }
     }

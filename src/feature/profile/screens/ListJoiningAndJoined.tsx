@@ -1,12 +1,12 @@
 import {apiGetListGBJoined} from 'api/profile';
-import {FONT_SIZE} from 'asset';
 import {Metrics, horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {StyleList, StyleText} from 'components/base';
+import {ItemJoin, ItemJoinWithBanner} from 'feature/discovery/components';
 import {useEstimatesAndJoinings, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
-import {ItemEstimate, ItemJoinProfile} from '../components';
+import {ItemEstimate} from '../components';
 
 const ListJoiningAndJoined = () => {
   const {
@@ -22,10 +22,11 @@ const ListJoiningAndJoined = () => {
 
   const renderItemJoin = useCallback((item: TypeJoinPersonalAndSale) => {
     return (
-      <ItemJoinProfile
+      <ItemJoin
         item={item}
         containerStyle={$itemJoinSuccess}
-        contentFontSize={FONT_SIZE.f2}
+        bottomComponent="join-status"
+        onPressMode="see-detail"
       />
     );
   }, []);
@@ -71,7 +72,7 @@ const ListJoiningAndJoined = () => {
             contentContainerStyle={$contentHeader}
             showsVerticalScrollIndicator={false}>
             {joinings.map(joining => (
-              <ItemJoinProfile
+              <ItemJoinWithBanner
                 key={joining?.id}
                 item={joining}
                 containerStyle={$itemJoining}

@@ -8,8 +8,8 @@ import {useTheme} from 'hook';
 import React from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
 import QRCode from 'react-native-qrcode-svg';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 const MyQRCode = () => {
   const theme = useTheme();
@@ -40,7 +40,10 @@ const MyQRCode = () => {
           />
           <View style={$qrBox}>
             <QRCode
-              value={JSON.stringify({user_id: profile.id} as QrData)}
+              value={JSON.stringify({
+                user_id: profile.id,
+                app: 'Avatour',
+              } as QrData)}
               size={scale(150)}
             />
           </View>

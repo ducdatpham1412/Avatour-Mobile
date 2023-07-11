@@ -34,6 +34,7 @@ const BoxInformation = ({
         if (isValidElement(item)) {
           return (
             <View
+              key={index}
               style={[
                 $boxContainerColumn,
                 {
@@ -52,6 +53,7 @@ const BoxInformation = ({
 
         return (
           <View
+            key={index}
             style={[
               $boxContainer,
               {

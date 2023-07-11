@@ -1,3 +1,4 @@
+import {useTheme} from 'hook';
 import React from 'react';
 import {StyleProp, TextStyle} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -8,7 +9,10 @@ interface Props {
 }
 
 const LeftIcon = ({style}: Props) => {
-  return <Entypo name="chevron-thin-left" style={[$icon, style]} />;
+  const {black} = useTheme();
+  return (
+    <Entypo name="chevron-thin-left" style={[$icon, {color: black}, style]} />
+  );
 };
 
 const $icon: TextStyle = {

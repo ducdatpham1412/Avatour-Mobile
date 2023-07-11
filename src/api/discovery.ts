@@ -192,3 +192,12 @@ export const apiEditTour = (tourId: number, body: TypeEditTour) => {
 export const apiCreateTour = (body: TypeCreateTour) => {
   return request.post('/common/tours', body);
 };
+
+export const apiScanJoinResult = (
+  shopId: number,
+): Promise<TemplateApiResponse<TypeJoinResult>> => {
+  return request.post('/common/scan', {
+    type: 'get-money-sale',
+    shop_id: shopId,
+  });
+};

@@ -35,6 +35,7 @@ const common = {
   editFilter: 'Chỉnh sửa bộ lọc',
   copy: 'Sao chép',
   copied: 'Đã sao chép',
+  retry: 'Thử lại',
 };
 
 const login = {
@@ -167,6 +168,7 @@ const discovery = {
   joined: 'Đã tham gia',
   deposited: 'Đã đặt cọc',
   deposit: 'Đặt cọc',
+  allDeposited: 'Tổng tiền đã cọc',
   numberGroupJoined: '{{value}} lượt tham gia',
   numberJoinsWithYou: '{{value}} lượt tham gia với bạn',
   beTheFirstJoin: 'Tham gia mua chung ',
@@ -201,6 +203,7 @@ const discovery = {
   depositAmount: 'Số tiền đặt cọc: {{value}}vnd',
   titleDeposit: 'Bạn cần đặt cọc một khoản tiền cho người bán',
   moneyToPay: 'Số tiền cần thanh toán còn lại',
+  moneyToPayAll: 'Tổng số cần thanh toán còn lại',
   goToDeposit: 'Đi tới đặt cọc',
   hotLocation: '🔥 Địa điểm nổi bật',
   travelCamping: 'Cắm trại',
@@ -244,16 +247,22 @@ const discovery = {
   departure: 'Khởi hành',
   comeback: 'Ngày về',
   price: 'Giá tiền',
+  allPrice: 'Tổng giá tiền',
   moreThan: 'Hơn {{value}}',
   valuePeople: '{{value}} người',
   tour: 'Tour',
   groupBuying: 'Đơn mua chung',
   groupDay: 'Nhóm ngày {{value}}',
-  confirmJoining: 'Xác nhận tham gia mua chung',
+  confirmArrived: 'Xác nhận đã đến cửa hàng',
+  rememberConfirmWhenArrived:
+    'Bạn có {{numberJoins}} đơn mua chung tại {{storeName}} trong ngày hôm nay\nVui lòng <b>"Xác nhận đã đến cửa hàng"</b> hoặc <b>"Xác nhận tất cả"</b> để xác nhận đã tham gia thành công nha',
+  alsoHaveNextDay:
+    'Bạn cũng có {{numberJoins}} đơn mua chung tại {{storeName}} trong những ngày tới',
+  notHaveOrderToday:
+    'Bạn không có đơn mua chung nào ngày hôm nay tại {{storeName}}',
+  confirmAll: 'Xác nhận tất cả',
   buyingHistory: 'Lịch sử mua chung',
   arrivalTimePassed: 'Đã quá thời gian đến',
-  please: 'Bạn vui lòng ',
-  confirmJoinSuccess: ' để xác nhận tham gia thành công nha.',
   notRequestConfirm: 'Chưa gửi yêu cầu xác nhận',
   dayNumber: 'Ngày {{value}}',
   timeHere: 'Thời gian ở đây',
@@ -281,6 +290,8 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
     'Đi tới đặt cọc để xác nhận tham gia mua chung thành công nhé bạn',
   scanQrAtShop: 'Quét mã QR tại cửa hàng',
   todayIsTimeWillBuy: 'Hôm nay là ngày đến mua tại {{value}}',
+  pleaseConfirmWithVendor:
+    'Bạn vui lòng <b>Liên hệ với người bán</b> để xác nhận tham gia thành công nhé',
 };
 
 const reputation = {
@@ -406,7 +417,6 @@ const profile = {
   sendRequestChangePrice: 'Yêu cầu thay đổi giá',
   updateBankAccount: 'Tài khoản nhận tiền',
   postGroupBuying: 'Tạo đơn',
-  confirmWithVendor: 'Liên hệ với người bán',
   havingRequestUpdate: 'Bạn đang có một yêu cầu cập nhật',
   review: 'Đánh giá',
   thisIsAccountReceive:
@@ -455,13 +465,13 @@ const mess = {
 
 const setting = {
   title: 'Cài đặt',
+  logOut: 'Đăng xuất',
   component: {
     typeMainSetting: {
       security: 'Bảo mật và đăng nhập',
       personalInfo: 'Thông tin cá nhân',
       aboutFindme: 'Về chúng tôi',
       extend: 'Cài đặt mở rộng',
-      logOut: 'Đăng xuất',
     },
   },
   securityAndLogin: {
@@ -535,6 +545,8 @@ const alert = {
   moreButtonContent: 'Đi tới đăng ký',
   needToAddPhone: 'Bạn cần thêm số điện thoại\nđể tham gia các dịch vụ',
   phoneExisted: 'Số điện thoại đã được một người khác sử dụng',
+  beSureConfirmWhenInStore:
+    'Hãy chắc chắn bạn ấn xác nhận chỉ khi đã đến thanh toán tại cửa hàng.\nSau khi ấn xác nhận, bạn sẽ không nhận được thêm giá ưu đãi nếu có người cùng tham gia cùng nhóm mua chung với bạn.',
 
   // FOR SETTING
   nowPassError: 'Mật khẩu hiện tại không đúng !',
@@ -550,6 +562,7 @@ const alert = {
   passNotMatch: 'Mật khẩu không trùng khớp',
   inValidEmail: 'Email không đúng định dạng',
   inValidPhone: 'Số điện thoại không đúng',
+  invalidQr: 'Mã QR không hợp lệ',
 
   // PROFILE
   successUpdatePro: 'Cập nhật trang cá nhân thành công !',

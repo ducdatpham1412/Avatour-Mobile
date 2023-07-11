@@ -19,7 +19,13 @@ import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert, ModalScanQr} from 'navigation/screen/modals';
 import React, {ElementRef, useEffect, useRef} from 'react';
-import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  ImageStyle,
+  RefreshControl,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny, calculateTotalJoins, logger} from 'utility/assistant';
@@ -52,12 +58,14 @@ const DetailMeJoin = ({
   ] = useDetailSale(saleId, {
     revalidateAll: false,
   });
-  const {data: joinPersonal} = useJoinPersonal(
-    joinId ?? params.joinPersonal?.id ?? null,
-    {
-      initValue: params.joinPersonal,
-    },
-  );
+  const {
+    data: joinPersonal,
+    loading,
+    mutate,
+    validating,
+  } = useJoinPersonal(joinId ?? params.joinPersonal?.id ?? null, {
+    initValue: params.joinPersonal,
+  });
 
   const {estimate: joinEstimate} = meJoins ?? {};
 
@@ -113,7 +121,7 @@ const DetailMeJoin = ({
           const dataQR: QrData = JSON.parse(res.data);
 
           if (dataQR.user_id === data.creator) {
-            await ModalScanQr.hide();
+            ModalScanQr.hide();
             navigate(ROOT_SCREEN.scanResult, {
               mode: 'join-result',
               shop_id: data.creator,
@@ -164,12 +172,12 @@ const DetailMeJoin = ({
           }}
         />
         <View style={$listPeopleJoin}>
-          {groupFind?.members.map(member => {
+          {groupFind?.members.map((member, index) => {
             return (
               <Avatar
                 source={{uri: member?.creator_avatar}}
                 size={30}
-                key={member?.id}
+                key={index}
               />
             );
           })}
@@ -183,6 +191,11 @@ const DetailMeJoin = ({
       const moneySaved = data?.prices?.[0]
         ? data?.prices?.[0]?.price * joinPersonal?.amount - joinPersonal.price
         : 0;
+      const textPrice: I18Normalize =
+        joinPersonal.status === GROUP_BUYING_STATUS.notBought
+          ? 'discovery.estimatedPrice'
+          : 'discovery.price';
+
       return (
         <BoxInformation
           listInformation={[
@@ -195,7 +208,7 @@ const DetailMeJoin = ({
               content: formatddddDDMMYYYY(joinPersonal.time_will_buy),
             },
             {
-              title: 'discovery.price',
+              title: textPrice,
               content: formatMoney(joinPersonal.price),
             },
             {
@@ -360,28 +373,27 @@ const DetailMeJoin = ({
       );
     }
 
-    if (mode === 'see-detail' || mode === 'see-detail-from-sale') {
+    if (
+      mode === 'see-detail' ||
+      mode === 'see-detail-from-sale' ||
+      mode === 'go-from-scan'
+    ) {
       if (joinPersonal?.status === GROUP_BUYING_STATUS.notBoughtButOvertime) {
         return (
-          <StyleText
-            i18Text="discovery.arrivalTimePassed"
-            customStyle={[
-              $textAlert,
-              {marginTop: verticalScale(12), color: theme.gray_600},
-            ]}>
+          <>
             <StyleText
-              i18Text="discovery.please"
+              i18Text="discovery.arrivalTimePassed"
+              customStyle={[
+                $textAlert,
+                {marginTop: verticalScale(12), color: theme.gray_600},
+              ]}
+            />
+            <StyleText
+              i18Text="discovery.pleaseConfirmWithVendor"
               customStyle={[$textAlert, {color: theme.gray_600}]}
+              mode="html"
             />
-            <StyleText
-              i18Text="profile.confirmWithVendor"
-              customStyle={[$textAlert, {fontWeight: 'bold', color: theme.red}]}
-            />
-            <StyleText
-              i18Text="discovery.confirmJoinSuccess"
-              customStyle={[$textAlert, {color: theme.gray_600}]}
-            />
-          </StyleText>
+          </>
         );
       }
 
@@ -403,6 +415,38 @@ const DetailMeJoin = ({
           </>
         );
       }
+
+      if (joinPersonal?.status === GROUP_BUYING_STATUS.requestBought) {
+        return (
+          <StyleText
+            i18Text="profile.waitingConfirm"
+            customStyle={[
+              $textAlert,
+              {
+                marginTop: verticalScale(12),
+                color: theme.p_800,
+                fontWeight: FONT_WEIGHT_MEDIUM,
+              },
+            ]}
+          />
+        );
+      }
+
+      if (joinPersonal?.status === GROUP_BUYING_STATUS.bought) {
+        return (
+          <StyleText
+            i18Text="profile.joinedSuccess"
+            customStyle={[
+              $textAlert,
+              {
+                marginTop: verticalScale(12),
+                color: theme.green,
+                fontWeight: FONT_WEIGHT_MEDIUM,
+              },
+            ]}
+          />
+        );
+      }
     }
   };
 
@@ -415,6 +459,7 @@ const DetailMeJoin = ({
             {
               paddingBottom: bottom || safePaddingNotZero,
               backgroundColor: theme.background,
+              shadowColor: theme.black,
             },
           ]}>
           <StyleButton
@@ -447,7 +492,7 @@ const DetailMeJoin = ({
             title="profile.goToScan"
             containerStyle={{
               marginBottom: bottom || safePaddingNotZero,
-              width: '70%',
+              width: '90%',
             }}
             onPress={() => {
               if (data) {
@@ -482,7 +527,15 @@ const DetailMeJoin = ({
         }}
         scrollEnabled
         customStyle={{paddingBottom: bottom || safePaddingNotZero}}
-        initLoading={loadingEstimate}>
+        initLoading={loadingEstimate}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading || validating}
+            onRefresh={mutate}
+            tintColor={theme.p_600}
+            colors={[theme.p_600]}
+          />
+        }>
         <View style={$topView}>
           <StyleIcon source={Images.images.successful} size={50} />
         </View>
@@ -506,6 +559,11 @@ const DetailMeJoin = ({
                 goBack();
                 break;
               case 'go-to-deposit-from-profile':
+                push(ROOT_SCREEN.detailSale, {
+                  sale: data,
+                });
+                break;
+              case 'go-from-scan':
                 push(ROOT_SCREEN.detailSale, {
                   sale: data,
                 });

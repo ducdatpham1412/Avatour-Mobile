@@ -14,7 +14,13 @@ import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
 import React from 'react';
 import {I18nextProvider} from 'react-i18next';
-import {DevSettings, LogBox, NativeModules, ViewStyle} from 'react-native';
+import {
+  DevSettings,
+  LogBox,
+  NativeModules,
+  StatusBar,
+  ViewStyle,
+} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   initialWindowMetrics,
@@ -73,6 +79,7 @@ const App = () => {
                   <Notification />
                   <DynamicLink />
                   <AppModal />
+                  <StatusBar barStyle="dark-content" />
                 </SocketProvider>
               </NavigationContainer>
             </ReduxProvider>

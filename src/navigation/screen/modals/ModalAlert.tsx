@@ -18,11 +18,11 @@ import React, {
   useState,
 } from 'react';
 import {StyleProp, TextStyle, Vibration, View, ViewStyle} from 'react-native';
+import Modal from 'react-native-modal';
 import {Path, Svg} from 'react-native-svg';
 import {I18Normalize} from 'utility/I18Next';
 import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import Modal from 'react-native-modal';
 
 const modalRef = createRef<ElementRef<typeof ModalAlert>>();
 
@@ -121,7 +121,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       },
       options: async value => {
         await promiseForNextShow;
-        impactMedium();
+        Vibration.vibrate();
         setStatus('options');
         setTitle(value?.title ?? 'common.alert');
         setContent(

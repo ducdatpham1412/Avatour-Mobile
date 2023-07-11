@@ -1,19 +1,17 @@
-import {FONT_SIZE} from 'asset';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
-import {SafeView, StyleList} from 'components/base';
+import {safePaddingNotZero} from 'asset/metrics';
+import {StyleContainer, StyleList} from 'components/base';
 import {useDetailSale} from 'feature/common/hooks';
-import {ItemJoinProfile} from 'feature/profile/components';
 import {useApi} from 'hook';
-import {StyleHeader} from 'navigation/components';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
 import {ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'utility/scale';
+import {ItemJoin} from './components';
 
 const JoinsHistory = ({
   route: {
-    params: {saleId},
+    params: {saleId, mode},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.joinsHistory]>) => {
   const {bottom} = useSafeAreaInsets();
@@ -23,18 +21,23 @@ const JoinsHistory = ({
     params: {
       type: 'join_history',
     },
+    config: {
+      revalidateAll: mode === 'go-from-notification',
+    },
   });
   const [{data: dataSale}] = useDetailSale(saleId);
 
   return (
-    <SafeView style={$container}>
-      <StyleHeader title="discovery.buyingHistory" />
-
+    <StyleContainer
+      headerProps={{
+        title: 'discovery.buyingHistory',
+      }}
+      layOut="view">
       <StyleList
         data={data ?? []}
         keyExtractor={item => String(item?.id)}
         renderItem={({item}) => (
-          <ItemJoinProfile
+          <ItemJoin
             item={{
               ...item,
               sale: {
@@ -45,21 +48,18 @@ const JoinsHistory = ({
               },
             }}
             containerStyle={$itemContainer}
-            contentFontSize={FONT_SIZE.f2}
+            bottomComponent="join-status"
+            onPressMode="see-detail"
           />
         )}
         contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
         refreshing={validating}
         initLoading={loading}
       />
-    </SafeView>
+    </StyleContainer>
   );
 };
 
-const $container: ViewStyle = {
-  width: '100%',
-  paddingHorizontal: horizontalPadding,
-};
 const $itemContainer: ViewStyle = {
   width: '100%',
   marginTop: verticalScale(12),

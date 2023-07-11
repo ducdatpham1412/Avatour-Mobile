@@ -524,6 +524,7 @@ const DetailSale = ({
                   if (data) {
                     navigate(ROOT_SCREEN.joinsHistory, {
                       saleId: data.id,
+                      mode: 'go-from-sale',
                     });
                   }
                 },

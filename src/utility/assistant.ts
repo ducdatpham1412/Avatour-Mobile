@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Clipboard from '@react-native-clipboard/clipboard';
 import {
   TypeBubblePalace,
   TypeInteractBubble,
@@ -10,6 +11,7 @@ import Store from 'app-redux/store';
 import {
   FEELING,
   GENDER_TYPE,
+  GROUP_BUYING_STATUS,
   LANGUAGE_TYPE,
   REACT,
   SIGN_UP_TYPE,
@@ -21,7 +23,7 @@ import {
   LIST_TOPICS,
   PRIVATE_AVATAR,
 } from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
+import Theme, {TypeTheme} from 'asset/theme/Theme';
 import Redux from 'hook/useRedux';
 import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
@@ -35,9 +37,8 @@ import {
 } from 'react-native';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
-import AuthenticateService from './login/loginService';
 import {impactLight} from './haptic';
-import Clipboard from '@react-native-clipboard/clipboard';
+import AuthenticateService from './login/loginService';
 
 export const interactBubble = (params: TypeInteractBubble) => {
   navigate(ROOT_SCREEN.interactBubble, params);
@@ -543,4 +544,42 @@ export const copy = (text: string) => {
     title: 'common.copied',
     content,
   });
+};
+
+type RenderStatus = {
+  text: I18Normalize;
+  color: string;
+};
+
+export const renderJoinStatus = (
+  status: number,
+  theme: TypeTheme,
+): RenderStatus => {
+  switch (status) {
+    case GROUP_BUYING_STATUS.bought:
+      return {
+        text: 'profile.joinedSuccess',
+        color: theme.green,
+      };
+    case GROUP_BUYING_STATUS.notBought:
+      return {
+        text: 'profile.joining',
+        color: theme.blue,
+      };
+    case GROUP_BUYING_STATUS.requestBought:
+      return {
+        text: 'profile.waitingConfirm',
+        color: theme.p_800,
+      };
+    case GROUP_BUYING_STATUS.notBoughtButOvertime:
+      return {
+        text: 'discovery.arrivalTimePassed',
+        color: theme.red,
+      };
+    default:
+      return {
+        text: 'common.null',
+        color: theme.white,
+      };
+  }
 };

@@ -13,4 +13,5 @@ type LibraryImage = {
 
 type QrData = {
   user_id: number;
+  app: 'Avatour';
 };

@@ -12,10 +12,48 @@ interface StyleTextProps extends TextProps {
   originValue?: any;
   customStyle?: StyleProp<TextStyle>;
   children?: ReactNode;
+  mode?: 'html' | 'text';
 }
 
+type ElementText = {
+  type: 'normal' | 'bold';
+  text: string;
+};
+
+const detectHtmlText = (text: string) => {
+  const res: ElementText[] = [];
+  const split = text.split('<b>');
+  split.forEach(tx => {
+    if (tx.includes('</b>')) {
+      const temp = tx.split('</b>');
+      res.push({
+        type: 'bold',
+        text: temp[0],
+      });
+      res.push({
+        type: 'normal',
+        text: temp[1] ?? '',
+      });
+    } else {
+      res.push({
+        type: 'normal',
+        text: tx,
+      });
+    }
+  });
+
+  return res;
+};
+
 const StyleText = (props: StyleTextProps) => {
-  const {i18Text, i18Params, originValue, customStyle, children} = props;
+  const {
+    i18Text,
+    i18Params,
+    originValue,
+    customStyle,
+    children,
+    mode = 'text',
+  } = props;
   const {t} = useTranslation();
   const {black} = useTheme();
 
@@ -28,9 +66,41 @@ const StyleText = (props: StyleTextProps) => {
     valueText = '';
   }
 
+  if (mode === 'text') {
+    return (
+      <Text style={[$textDefault, {color: black}, customStyle]} {...props}>
+        {valueText}
+        {children}
+      </Text>
+    );
+  }
+
+  const listTexts = detectHtmlText(valueText);
   return (
     <Text style={[$textDefault, {color: black}, customStyle]} {...props}>
-      {valueText}
+      {listTexts.map(tx => {
+        if (tx.type === 'normal') {
+          return (
+            <Text
+              style={[$textDefault, {color: black}, customStyle]}
+              {...props}>
+              {tx.text}
+            </Text>
+          );
+        }
+        return (
+          <Text
+            style={[
+              $textDefault,
+              {color: black},
+              customStyle,
+              {fontWeight: 'bold'},
+            ]}
+            {...props}>
+            {tx.text}
+          </Text>
+        );
+      })}
       {children}
     </Text>
   );
