@@ -1,7 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
-import {GROUP_BUYING_STATUS} from 'asset/enum';
-import {TypeTheme} from 'asset/theme/Theme';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {Avatar} from 'components/common';
 import {useTheme} from 'hook';
@@ -10,8 +8,11 @@ import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {I18Normalize} from 'utility/I18Next';
-import {borderWidthTiny, detectFromStyle} from 'utility/assistant';
+import {
+  borderWidthTiny,
+  detectFromStyle,
+  renderJoinStatus,
+} from 'utility/assistant';
 import {formatDDMMMMYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
@@ -21,42 +22,7 @@ interface Props {
   contentFontSize?: number;
 }
 
-type RenderStatus = {
-  text: I18Normalize;
-  color: string;
-};
-
-const renderStatus = (status: number, theme: TypeTheme): RenderStatus => {
-  switch (status) {
-    case GROUP_BUYING_STATUS.bought:
-      return {
-        text: 'profile.joinedSuccess',
-        color: theme.green,
-      };
-    case GROUP_BUYING_STATUS.notBought:
-      return {
-        text: 'profile.joining',
-        color: theme.blue,
-      };
-    case GROUP_BUYING_STATUS.requestBought:
-      return {
-        text: 'profile.waitingConfirm',
-        color: theme.p_800,
-      };
-    case GROUP_BUYING_STATUS.notBoughtButOvertime:
-      return {
-        text: 'discovery.arrivalTimePassed',
-        color: theme.red,
-      };
-    default:
-      return {
-        text: 'common.null',
-        color: theme.white,
-      };
-  }
-};
-
-const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
+const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
   const theme = useTheme();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const width = useRef(
@@ -66,7 +32,7 @@ const ItemJoinProfile = ({item, containerStyle, contentFontSize}: Props) => {
   const [height, setHeight] = useState(
     typeof width.current === 'number' ? width.current * ratioImageSale : 0,
   );
-  const status = renderStatus(item?.status, theme);
+  const status = renderJoinStatus(item?.status, theme);
 
   return (
     <StyleTouchable
@@ -220,7 +186,7 @@ const $textInfo: TextStyle = {
   fontWeight: 'bold',
 };
 
-export default memo(ItemJoinProfile, (pre: Props, next: Props) => {
+export default memo(ItemJoinWithBanner, (pre: Props, next: Props) => {
   if (!isEqual(pre.item, next.item)) {
     return false;
   }

@@ -1,7 +1,7 @@
 import {BORDER_RADIUS} from 'asset';
 import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
-import {StyleProp, View, ViewStyle} from 'react-native';
+import {StyleProp, ViewStyle} from 'react-native';
 import {$styleDropShadow} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import {StyleTouchable} from './base';

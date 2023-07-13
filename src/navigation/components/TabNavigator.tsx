@@ -7,7 +7,10 @@ import {safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import {MAIN_SCREEN, PROFILE_ROUTE} from 'navigation/config/routes';
+import ROOT_SCREEN, {
+  MAIN_SCREEN,
+  PROFILE_ROUTE,
+} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalScanQr} from 'navigation/screen/modals';
 import React, {useMemo, useRef} from 'react';
@@ -21,7 +24,14 @@ const iconSize = 27;
 const showModalQr = async () => {
   try {
     const res = await ModalScanQr.show();
-    console.log('response qr: ', res);
+    if (res) {
+      const dataQR: QrData = JSON.parse(res.data);
+      ModalScanQr.hide();
+      navigate(ROOT_SCREEN.scanResult, {
+        shop_id: dataQR.user_id,
+        mode: 'join-result',
+      });
+    }
   } catch (err) {
     logger(err);
   }

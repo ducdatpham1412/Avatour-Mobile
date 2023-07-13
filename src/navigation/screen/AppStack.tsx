@@ -15,6 +15,7 @@ import {
   DetailTour,
   GoToDeposit,
   JoinHistory,
+  ListJoining,
   ScanResult,
 } from 'feature/discovery';
 import InteractBubble from 'feature/discovery/InteractBubble';
@@ -220,8 +221,15 @@ const AppStack = () => {
         component={ExtendSetting}
       />
       <Stack.Screen name={ROOT_SCREEN.goToDeposit} component={GoToDeposit} />
-      <Stack.Screen name={ROOT_SCREEN.scanResult} component={ScanResult} />
+      <Stack.Screen
+        name={ROOT_SCREEN.scanResult}
+        component={ScanResult}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
       <Stack.Screen name={ROOT_SCREEN.joinsHistory} component={JoinHistory} />
+      <Stack.Screen name={ROOT_SCREEN.listJoining} component={ListJoining} />
     </Stack.Navigator>
   );
 };

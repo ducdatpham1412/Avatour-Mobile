@@ -208,6 +208,10 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.joinsHistory]: {
     saleId: number;
+    mode: 'go-from-sale' | 'go-from-notification';
+  };
+  [ROOT_SCREEN.listJoining]: {
+    list: TypeJoinPersonalAndSale[];
   };
 };
 

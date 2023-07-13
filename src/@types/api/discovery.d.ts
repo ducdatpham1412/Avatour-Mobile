@@ -197,3 +197,8 @@ type TypeEditTour = Partial<
 >;
 
 type TypeSearchResponse = TemplateApiResponse<Tour[]>;
+
+type TypeJoinResult = {
+  today: TypeJoinPersonalAndSale[];
+  next: TypeJoinPersonalAndSale[];
+};

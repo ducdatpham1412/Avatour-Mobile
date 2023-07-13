@@ -10,15 +10,18 @@ import React, {
   ForwardedRef,
   createRef,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from 'react';
 import {
+  Animated,
   ImageStyle,
   Modal,
   StyleSheet,
   TextStyle,
+  Vibration,
   View,
   ViewStyle,
 } from 'react-native';
@@ -37,7 +40,70 @@ type TypeShow = TypeShowModalize<
   continue: () => void;
 };
 
+interface ErrorViewProps {
+  onFinished: () => void;
+}
+
 const modalRef = createRef<ElementRef<typeof ModalScanQr>>();
+
+const ErrorView = ({onFinished}: ErrorViewProps) => {
+  const scale = useRef(new Animated.Value(1));
+  const translateX = useRef(new Animated.Value(0));
+  const timeOut = useRef(0);
+
+  useEffect(() => {
+    Animated.timing(scale.current, {
+      toValue: 1.5,
+      useNativeDriver: true,
+      duration: 100,
+    }).start(() => {
+      Animated.sequence([
+        Animated.timing(translateX.current, {
+          toValue: 10,
+          duration: 60,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateX.current, {
+          toValue: -10,
+          duration: 60,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateX.current, {
+          toValue: 10,
+          duration: 60,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateX.current, {
+          toValue: 0,
+          duration: 60,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        Animated.timing(scale.current, {
+          toValue: 1,
+          useNativeDriver: true,
+          duration: 100,
+        }).start(() => {
+          timeOut.current = setTimeout(() => {
+            onFinished();
+          }, 1000);
+        });
+      });
+    });
+
+    return () => clearTimeout(timeOut.current);
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        $error,
+        {transform: [{scale: scale.current}, {translateX: translateX.current}]},
+      ]}>
+      <StyleText i18Text="alert.invalidQr" customStyle={$textError} />
+    </Animated.View>
+  );
+};
 
 const ModalScanQr = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const {top, bottom} = useSafeAreaInsets();
@@ -55,6 +121,7 @@ const ModalScanQr = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const [showOpenSetting, setShowOpenSetting] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useImperativeHandle(
     ref ?? modalRef,
@@ -83,6 +150,59 @@ const ModalScanQr = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
     }),
     [],
   );
+
+  const onHandleQrData = (e: BarCodeReadEvent) => {
+    if (!isCheckingData.current) {
+      try {
+        isCheckingData.current = true;
+        const dataQR: QrData = JSON.parse(String(e.data));
+        if (dataQR.app !== 'Avatour') {
+          Vibration.vibrate();
+          setError(true);
+        } else {
+          promise.current?.resolve(e);
+        }
+      } catch (err) {
+        Vibration.vibrate();
+        setError(true);
+      }
+    }
+  };
+
+  const renderCenter = () => {
+    if (showOpenSetting) {
+      return (
+        <BoxView containerStyle={$openSetting}>
+          <StyleText
+            i18Text="alert.cameraHadBeenDisable"
+            customStyle={$textCamera}
+          />
+          <StyleButton
+            title="alert.openSetting"
+            onPress={() => openSettings()}
+          />
+        </BoxView>
+      );
+    }
+
+    if (error) {
+      return (
+        <ErrorView
+          onFinished={() => {
+            setError(false);
+            isCheckingData.current = false;
+          }}
+        />
+      );
+    }
+
+    return (
+      <StyleImage
+        source={Images.icons.fingerScan}
+        customStyle={$iconFingerScan}
+      />
+    );
+  };
 
   return (
     <Modal
@@ -126,12 +246,7 @@ const ModalScanQr = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
               <RNCamera
                 style={[StyleSheet.absoluteFill, {borderRadius: 100}]}
                 captureAudio={false}
-                onBarCodeRead={e => {
-                  if (!isCheckingData.current) {
-                    isCheckingData.current = true;
-                    promise.current?.resolve(e);
-                  }
-                }}
+                onBarCodeRead={onHandleQrData}
                 onStatusChange={value => {
                   if (value.cameraStatus === 'NOT_AUTHORIZED') {
                     setShowOpenSetting(true);
@@ -149,23 +264,7 @@ const ModalScanQr = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
           customStyle={$textUnder}
         />
 
-        {showOpenSetting ? (
-          <BoxView containerStyle={$openSetting}>
-            <StyleText
-              i18Text="alert.cameraHadBeenDisable"
-              customStyle={$textCamera}
-            />
-            <StyleButton
-              title="alert.openSetting"
-              onPress={() => openSettings()}
-            />
-          </BoxView>
-        ) : (
-          <StyleImage
-            source={Images.icons.fingerScan}
-            customStyle={$iconFingerScan}
-          />
-        )}
+        {renderCenter()}
       </LinearGradient>
     </Modal>
   );
@@ -225,6 +324,18 @@ const $textUnder: TextStyle = {
 };
 const $loading: ViewStyle = {
   backgroundColor: Theme.newTheme.black_opacity(0.8),
+};
+const $error: ViewStyle = {
+  position: 'absolute',
+  alignSelf: 'center',
+  backgroundColor: Theme.newTheme.white,
+  borderRadius: BORDER_RADIUS.f3,
+  paddingVertical: verticalScale(8),
+  paddingHorizontal: scale(16),
+};
+const $textError: TextStyle = {
+  color: Theme.newTheme.red,
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 
 export default Object.assign(ModalScanQr, {

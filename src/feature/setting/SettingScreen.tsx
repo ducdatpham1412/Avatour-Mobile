@@ -45,7 +45,7 @@ const SettingScreen = () => {
 
       <TypeMainSetting
         icon={Images.icons.logout}
-        title="setting.component.typeMainSetting.logOut"
+        title="setting.logOut"
         onPress={() =>
           AuthenticateService.logOut({hadRefreshTokenBlacked: false})
         }
