@@ -1,5 +1,6 @@
 export {default as AppInput} from './AppInput';
 export {default as ModalEdit} from './ModalEdit';
+export {default as RefreshControl} from './RefreshControl';
 export {default as SafeView} from './SafeView';
 export {default as StyleButton} from './StyleButton';
 export {default as StyleContainer} from './StyleContainer';

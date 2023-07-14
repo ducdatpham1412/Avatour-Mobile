@@ -189,8 +189,8 @@ export type AppParamsList = {
     paramsOTP: TypeRequestOTPRequest;
   };
   [ROOT_SCREEN.detailTour]: {
-    tourId?: number;
-    tour?: Tour;
+    tourId: number;
+    itemTour?: TourDetail;
   };
   [PROFILE_ROUTE.myProfile]: {
     initIndex?: 'shop' | 'order' | 'favorite' | 'review';
@@ -213,6 +213,9 @@ export type AppParamsList = {
   [ROOT_SCREEN.listJoining]: {
     list: TypeJoinPersonalAndSale[];
   };
+  [PROFILE_ROUTE.createTour]: {
+    itemTour: TourDetail;
+  };
 };
 
 export type AppEventList = {
@@ -223,19 +226,6 @@ export type AppEventList = {
   [APP_EVENT.reactTour]: {
     tourId: number;
     type: 'like' | 'dislike';
-  };
-  [APP_EVENT.tourEditMode]: {
-    isEditMode: boolean;
-    tourId: number;
-  };
-  [APP_EVENT.tourSave]: {
-    dayIndex: number;
-    tourId: number;
-    schedule: TypeGetProfileResponse[];
-  };
-  [APP_EVENT.tourUpdateSchedule]: {
-    dayIndex: number;
-    schedule: TypeGetProfileResponse[];
   };
   [APP_EVENT.createNewSale]: {
     newSale: TypeGroupBuying;

@@ -1,26 +1,26 @@
-import {apiCreateTour} from 'api/discovery';
+import {apiCreateTour, apiEditTour} from 'api/discovery';
 import dayjs from 'dayjs';
-import {navigate} from 'navigation/NavigationService';
-import {MAIN_SCREEN} from 'navigation/config';
-import {ModalAlert} from 'navigation/screen/modals';
-import {useState} from 'react';
+import {useDetailTour} from 'feature/discovery/hooks';
+import isEqual from 'react-fast-compare';
+import useSWRMutation from 'swr/mutation';
 import {formatUTCDate} from 'utility/format';
+import {useContextCreateTour} from '../CreateTour';
 
-type TypeCreateTourParams = {
-  schedule: TourDetail['schedule'];
-  searchParams: TypeSearchParams;
-};
+export type ParamsCreateTour = 'create-new' | number;
 
-const useCreateTour = () => {
-  const [shouldRenderTab, setShouldRenderTab] = useState(true);
-  const [loadingCreateTour, setLoadingCreateTour] = useState(false);
+const useCreateTour = (tourId: ParamsCreateTour) => {
+  const [
+    {schedules, searchParams},
+    {setSchedules, setSearchParams, onSave, onReset},
+  ] = useContextCreateTour();
+  const [{data}, {mutate}] = useDetailTour(
+    tourId === 'create-new' ? null : tourId,
+  );
 
-  const onCreateTour = async ({
-    schedule,
-    searchParams,
-  }: TypeCreateTourParams) => {
-    try {
-      const scheduleNumber = schedule.map(day =>
+  const {trigger: createTour, isMutating: loadingCreateTour} = useSWRMutation(
+    [tourId, 'api.createTour'],
+    async () => {
+      const scheduleNumber = schedules.map(day =>
         day.map(location => location.id),
       );
       await apiCreateTour({
@@ -36,22 +36,79 @@ const useCreateTour = () => {
           end_time: formatUTCDate(dayjs()),
         },
       });
-      ModalAlert.success({
-        i18Content: 'profile.createTourSuccess',
-        onClose: () => navigate(MAIN_SCREEN.favorite),
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    } finally {
-      setLoadingCreateTour(false);
-    }
-  };
+      onSave();
+    },
+  );
+
+  const {trigger: editTour, isMutating: loadingEditTour} = useSWRMutation(
+    tourId === 'create-new' ? null : [tourId, 'api.editTour'],
+    async () => {
+      if (data) {
+        const value: Omit<TypeEditTour, 'schedule'> & {
+          schedule: TourDetail['schedule'];
+        } = {
+          services: searchParams.services,
+          location: searchParams.location,
+          start_location: searchParams.start_location,
+          number_people: searchParams.number_people,
+          start_price: searchParams.start_price,
+          end_price: searchParams.end_price,
+          schedule: schedules,
+        };
+
+        const update: TypeEditTour = {};
+
+        Object.keys(value).forEach(key => {
+          const newValue = (value as any)?.[key];
+          const currentValue = (data as any)?.[key];
+
+          if (!isEqual(newValue, currentValue) && newValue && currentValue) {
+            if (key === 'schedule') {
+              update.schedule = value?.schedule?.map(day =>
+                day.map(location => location?.id),
+              );
+            } else {
+              (update as any)[key] = newValue;
+            }
+          }
+        });
+
+        // If update have value => call api update tour
+        if (!isEqual(update, {})) {
+          await apiEditTour(data.id, update);
+          await mutate(
+            pre => {
+              if (pre) {
+                return {
+                  ...pre,
+                  location: searchParams.location ?? pre.location,
+                  start_location:
+                    searchParams.start_location ?? pre.start_location,
+                  number_people:
+                    searchParams.number_people ?? pre.number_people,
+                  start_price: searchParams.start_price ?? pre.start_price,
+                  end_price: searchParams.end_price ?? pre.end_price,
+                  services: searchParams.services ?? pre.services,
+                  schedule: schedules,
+                };
+              }
+            },
+            {revalidate: false},
+          );
+        }
+      }
+    },
+  );
 
   return [
-    {shouldRenderTab, loadingCreateTour},
-    {setShouldRenderTab, setLoadingCreateTour, onCreateTour},
+    {loadingCreateTour, loadingEditTour, schedules, searchParams},
+    {
+      createTour,
+      setSchedules,
+      setSearchParams,
+      onReset,
+      editTour,
+    },
   ] as const;
 };
 

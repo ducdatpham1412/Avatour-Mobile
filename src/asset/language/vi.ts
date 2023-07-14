@@ -549,9 +549,9 @@ const alert = {
     'Hãy chắc chắn bạn ấn xác nhận chỉ khi đã đến thanh toán tại cửa hàng.\nSau khi ấn xác nhận, bạn sẽ không nhận được thêm giá ưu đãi nếu có người cùng tham gia cùng nhóm mua chung với bạn.',
 
   // FOR SETTING
-  nowPassError: 'Mật khẩu hiện tại không đúng !',
-  successChangePass: 'Thay đổi mật khẩu thành công !',
-  successChange: 'Thay đổi thành công !',
+  nowPassError: 'Mật khẩu hiện tại không đúng',
+  successChangePass: 'Thay đổi mật khẩu thành công',
+  successChange: 'Thay đổi thành công',
 
   // STYLE INPUT FORM
   notWrapProvider: 'You must wrap provider in this form',

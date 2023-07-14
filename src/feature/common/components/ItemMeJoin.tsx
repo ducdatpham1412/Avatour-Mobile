@@ -1,12 +1,10 @@
 import {BORDER_RADIUS} from 'asset';
-import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import React, {memo, useMemo} from 'react';
+import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {TextStyle, ViewStyle} from 'react-native';
-import {I18Normalize} from 'utility/I18Next';
-import {borderWidthTiny} from 'utility/assistant';
+import {borderWidthTiny, renderJoinStatus} from 'utility/assistant';
 import {formatddddDDMMYYYY} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
@@ -18,29 +16,7 @@ interface Props {
 const ItemMeJoin = ({item, onPress}: Props) => {
   const theme = useTheme();
 
-  const textAndColor = useMemo(() => {
-    let color = theme.black;
-    let text: I18Normalize = 'common.null';
-    if (
-      item?.status === GROUP_BUYING_STATUS.notBought ||
-      item?.status === GROUP_BUYING_STATUS.notBoughtButOvertime
-    ) {
-      color = theme.blue;
-      text = 'profile.joining';
-    }
-    if (item?.status === GROUP_BUYING_STATUS.requestBought) {
-      color = theme.red;
-      text = 'profile.waitingConfirm';
-    }
-    if (item?.status === GROUP_BUYING_STATUS.bought) {
-      color = theme.green;
-      text = 'profile.joinedSuccess';
-    }
-    return {
-      color,
-      text,
-    };
-  }, [item?.status, theme]);
+  const textAndColor = renderJoinStatus(item.status, theme);
 
   return (
     <StyleTouchable

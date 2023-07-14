@@ -25,7 +25,7 @@ export type TypeShowModalAddLocation = {
   listCurrentIds: number[];
 };
 
-const ListLocation = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
+const ListLocations = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
   const {bottom} = useSafeAreaInsets();
   const {
     data: savedData,
@@ -71,7 +71,7 @@ const ListLocation = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
   );
 };
 
-const ListShop = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
+const ListShops = ({onSave, listCurrentIds}: TypeShowModalAddLocation) => {
   const {bottom} = useSafeAreaInsets();
   const {
     data: savedData,
@@ -135,6 +135,7 @@ const ModalAddLocation = (
       show: value => {
         onSaveRef.current = value?.onSave;
         listCurrentIds.current = value?.listCurrentIds;
+        update();
         modalRef.current?.show();
       },
       hide: () => modalRef.current?.hide(),
@@ -145,7 +146,7 @@ const ModalAddLocation = (
   const renderLocations = () => {
     if (onSaveRef.current && listCurrentIds.current) {
       return (
-        <ListLocation
+        <ListLocations
           onSave={onSaveRef.current}
           listCurrentIds={listCurrentIds.current}
         />
@@ -157,7 +158,7 @@ const ModalAddLocation = (
   const renderShops = () => {
     if (onSaveRef.current && listCurrentIds.current) {
       return (
-        <ListShop
+        <ListShops
           onSave={onSaveRef.current}
           listCurrentIds={listCurrentIds.current}
         />
@@ -175,8 +176,7 @@ const ModalAddLocation = (
       onClose={() => {
         onSaveRef.current = undefined;
         listCurrentIds.current = undefined;
-      }}
-      onClosed={() => update()}>
+      }}>
       <InputBox
         style={[$input, {borderColor: theme.gray_600}]}
         i18Placeholder="discovery.searchAround"

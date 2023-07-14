@@ -212,11 +212,6 @@ export enum POST_TYPE {
   groupBuying = 1,
 }
 
-export enum TOUR_TYPE {
-  list = 0,
-  favorite = 1,
-}
-
 export enum ACCOUNT {
   user = 0,
   shop = 1,
@@ -353,10 +348,6 @@ export enum APP_EVENT {
   requestBoughtJoin = 'request-bought-join',
   reactSale = 'react-sale',
   reactTour = 'react-tour',
-  tourEditMode = 'tour-edit-tour',
-  tourWantToSave = 'tour-want-to-save',
-  tourSave = 'tour-save',
-  tourUpdateSchedule = 'tour-update-schedule',
   createNewSale = 'create-new-sale',
 }
 
@@ -371,8 +362,8 @@ export enum TYPE_AUTH_REQUEST {
 }
 
 export enum TYPE_GET_TOUR {
-  list = 0,
-  favorite = 1,
+  list = 'list',
+  favorite = 'favorite',
 }
 
 export enum TYPE_CHANGE {

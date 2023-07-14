@@ -138,7 +138,11 @@ const AppStack = () => {
         component={ListMyRequests}
       />
       <Stack.Screen name={PROFILE_ROUTE.myQRCode} component={MyQRCode} />
-      <Stack.Screen name={PROFILE_ROUTE.createTour} component={CreateTour} />
+      <Stack.Screen
+        name={PROFILE_ROUTE.createTour}
+        component={CreateTour}
+        options={{gestureEnabled: false}}
+      />
 
       <Stack.Screen name={ROOT_SCREEN.messScreen} component={MessScreen} />
       <Stack.Screen name={ROOT_SCREEN.chatDetail} component={ChatDetail} />

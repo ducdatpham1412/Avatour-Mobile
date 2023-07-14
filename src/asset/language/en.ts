@@ -538,9 +538,9 @@ const alert = {
   beSureConfirmWhenInStore: `Make sure you press confirm only when you've arrived to pay at the store.\nAfter pressing confirm, you won't receive any additional discounts if someone joins the same group buying with you.`,
 
   // FOR SETTING
-  nowPassError: 'Current password not true !',
-  successChangePass: 'Changed password successful !',
-  successChange: 'Changed successfully !',
+  nowPassError: 'Current password not true',
+  successChangePass: 'Changed password successful',
+  successChange: 'Changed successfully',
 
   // STYLE INPUT FORM
   notWrapProvider: 'You must wrap provider in this form',

@@ -46,7 +46,7 @@ const ItemTour = ({item, containerStyle}: Props) => {
         customStyle={$body}
         onPress={() =>
           push(ROOT_SCREEN.detailTour, {
-            tour: item,
+            tourId: item.id,
           })
         }>
         <View style={$scheduleView}>
