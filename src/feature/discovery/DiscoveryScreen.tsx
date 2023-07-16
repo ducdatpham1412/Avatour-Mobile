@@ -47,11 +47,10 @@ const DiscoveryScreen = () => {
 
   return (
     <SafeView style={$container}>
+      <HeaderDiscovery />
       <ScrollView
         contentContainerStyle={$contentContainer}
         showsVerticalScrollIndicator={false}>
-        <HeaderDiscovery />
-
         <StyleTouchable
           customStyle={[
             $buttonSearch,

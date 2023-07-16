@@ -1,6 +1,5 @@
 import {apiGetListTours, apiGetListToursFavorite} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
-import {TOUR_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
@@ -36,14 +35,12 @@ const MyTour = () => {
     state => state.accountSlice.passport.profile,
   );
 
-  const {list, refreshing, onRefresh, onLoadMore, initLoading, loading} =
-    usePaging({
-      request: apiGetListTours,
-      params: {
-        type: TOUR_TYPE.list,
-        user_id: myId,
-      },
-    });
+  const {list, refreshing, onRefresh, onLoadMore, initLoading} = usePaging({
+    request: apiGetListTours,
+    params: {
+      user_id: myId,
+    },
+  });
 
   const renderItem = useCallback((item: Tour) => {
     return <ItemTour item={item} containerStyle={{marginBottom: 10}} />;
@@ -58,17 +55,15 @@ const MyTour = () => {
       onRefresh={onRefresh}
       onLoadMore={onLoadMore}
       contentContainerStyle={styles.content}
-      loading={loading}
       initLoading={initLoading}
     />
   );
 };
 
 const TourFavorite = () => {
-  const {list, refreshing, onRefresh, onLoadMore, initLoading, loading} =
-    usePaging({
-      request: apiGetListToursFavorite,
-    });
+  const {list, refreshing, onRefresh, onLoadMore, initLoading} = usePaging({
+    request: apiGetListToursFavorite,
+  });
 
   const renderItem = useCallback((item: Tour) => {
     return <ItemTour item={item} containerStyle={{marginBottom: 10}} />;
@@ -83,7 +78,6 @@ const TourFavorite = () => {
       onRefresh={onRefresh}
       onLoadMore={onLoadMore}
       contentContainerStyle={styles.content}
-      loading={loading}
       initLoading={initLoading}
     />
   );

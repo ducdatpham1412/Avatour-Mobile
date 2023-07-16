@@ -1,83 +1,112 @@
 import {FONT_WEIGHT_MEDIUM} from 'asset';
-import {APP_EVENT} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
-import {MapTour, TabView} from 'components';
+import {AppModalize, MapTour, TabView} from 'components';
 import {StyleButton, StyleText, StyleTouchable} from 'components/base';
 import {ButtonX} from 'components/common';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
-import {DaySchedule} from 'feature/discovery/screens';
-import {emitAppEvent, useAppEvent, useTheme} from 'hook';
-import {ModalAlert} from 'navigation/screen/modals';
-import React, {ElementRef, useRef, useState} from 'react';
-import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
+import {DayScheduleCreateTour} from 'feature/discovery/screens';
+import {useTheme} from 'hook';
+import {goBack, navigate} from 'navigation/NavigationService';
+import {AppParamsList, MAIN_SCREEN, PROFILE_ROUTE} from 'navigation/config';
+import {ModalAddLocation, ModalAlert} from 'navigation/screen/modals';
+import React, {
+  Dispatch,
+  ElementRef,
+  SetStateAction,
+  createContext,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useUpdateEffect} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
-import {useCreateTour} from './hooks';
+import {ParamsCreateTour, useCreateTour} from './hooks';
 
-const CreateTour = () => {
-  const {top, bottom} = useSafeAreaInsets();
+type TypeContext = [
+  {
+    schedules: TourDetail['schedule'];
+    searchParams: TypeSearchParams;
+  },
+  {
+    setSchedules: Dispatch<SetStateAction<TourDetail['schedule']>>;
+    setSearchParams: Dispatch<SetStateAction<TypeSearchParams>>;
+    onSave: () => void;
+    onReset: () => void;
+  },
+];
+
+const CreateTourContext = createContext<TypeContext>([
+  {
+    schedules: [],
+    searchParams: defaultSearchParams,
+  },
+  {
+    setSchedules: () => [],
+    setSearchParams: () => defaultSearchParams,
+    onSave: () => null,
+    onReset: () => null,
+  },
+]);
+
+const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
+  const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
 
   const [
-    {shouldRenderTab, loadingCreateTour},
-    {setShouldRenderTab, setLoadingCreateTour, onCreateTour},
-  ] = useCreateTour();
+    {loadingCreateTour, loadingEditTour, searchParams, schedules},
+    {createTour, editTour, setSearchParams, setSchedules, onReset},
+  ] = useCreateTour(tourId);
 
-  const savedIndexDaySchedule = useRef(0);
-  const timeOut = useRef<number>(0);
-  const savedSchedule = useRef<TourDetail['schedule']>([[]]);
-  const savedSearchParams = useRef<TypeSearchParams>();
-  const searchRef = useRef<ElementRef<typeof ModalSearchFilter>>(null);
+  const searchRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const modalAddLocationRef = useRef<ElementRef<typeof ModalAddLocation>>(null);
+  const tabViewRef = useRef<ElementRef<typeof TabView>>(null);
 
-  const [schedules, setSchedules] = useState<TourDetail['schedule']>([[]]);
-  const [searchParams, setSearchParams] =
-    useState<TypeSearchParams>(defaultSearchParams);
-
-  savedSearchParams.current = searchParams;
-
-  const resetRender = () => {
-    setShouldRenderTab(false);
+  useUpdateEffect(() => {
     setTimeout(() => {
-      setShouldRenderTab(true);
-    }, 300);
-  };
+      tabViewRef.current?.navigateToIndex(schedules.length - 1);
+    }, 200);
+  }, [schedules.length]);
 
-  useAppEvent(APP_EVENT.tourSave, async value => {
-    if (value.tourId === ('create-new-one' as unknown as number)) {
-      setLoadingCreateTour(true);
-      clearTimeout(timeOut.current);
-      timeOut.current = setTimeout(() => {
-        if (savedSearchParams.current) {
-          onCreateTour({
-            schedule: savedSchedule.current,
-            searchParams: savedSearchParams.current,
-          });
-        }
-      }, 200);
+  /**
+   * Functions
+   */
+  const onSave = async () => {
+    if (tourId === 'create-new') {
+      try {
+        await createTour();
+        ModalAlert.success({
+          i18Content: 'profile.createTourSuccess',
+          onClose: () => navigate(MAIN_SCREEN.favorite),
+        });
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+      return;
     }
-  });
 
-  useAppEvent(APP_EVENT.tourUpdateSchedule, value => {
-    savedSchedule.current[value.dayIndex] = value.schedule;
-    console.log('news: ', savedSchedule.current);
-  });
-
-  const listSchedules = () => {
-    return schedules.map((day, index) => {
-      return () => (
-        <DaySchedule
-          schedule={day}
-          tourId={'create-new-one' as unknown as number}
-          dayIndex={index}
-          initEditMode
-        />
-      );
-    });
+    try {
+      await editTour();
+      ModalAlert.success({
+        i18Content: 'alert.successChange',
+        onClose: goBack,
+      });
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
   };
 
+  /**
+   * Render views
+   */
   const listIconTabBar = () => {
     if (!schedules) {
       return [];
@@ -92,16 +121,11 @@ const CreateTour = () => {
               ModalAlert.options({
                 i18Content: 'profile.post.sureDeletePost',
                 onContinue: () => {
-                  savedSchedule.current.splice(index, 1);
-                  if (
-                    savedIndexDaySchedule.current >
-                    savedSchedule.current.length - 1
-                  ) {
-                    savedIndexDaySchedule.current =
-                      savedSchedule.current.length - 1;
-                  }
-                  setSchedules(savedSchedule.current);
-                  resetRender();
+                  setSchedules(pre => {
+                    const temp = [...pre];
+                    temp.splice(index, 1);
+                    return temp;
+                  });
                 },
               });
             }}
@@ -115,48 +139,6 @@ const CreateTour = () => {
         </View>
       );
     });
-  };
-
-  const renderIconRightTab = () => {
-    return (
-      <StyleTouchable
-        customStyle={[$buttonAddDay]}
-        onPress={() => {
-          const next = [...savedSchedule.current, []];
-          savedIndexDaySchedule.current = next.length - 1;
-          setSchedules(next);
-          resetRender();
-        }}>
-        <AntDesign name="plus" style={[$iconPlus, {color: theme.black}]} />
-        <StyleText i18Text="discovery.addDay" customStyle={$textAddDay} />
-      </StyleTouchable>
-    );
-  };
-
-  const renderTabView = () => {
-    if (shouldRenderTab) {
-      return (
-        <View style={$listView}>
-          <TabView
-            listElements={listSchedules()}
-            tabBarType="scroll"
-            tabBarStyle={$tabBar}
-            listIconTabBar={listIconTabBar()}
-            lazy={false}
-            style={{flex: 1}}
-            onChangeIndex={index => (savedIndexDaySchedule.current = index)}
-            initialIndex={savedIndexDaySchedule.current}
-            RightButtonTabBar={renderIconRightTab()}
-          />
-        </View>
-      );
-    }
-
-    return (
-      <View style={$loading}>
-        <ActivityIndicator color={theme.p_700} />
-      </View>
-    );
   };
 
   return (
@@ -175,17 +157,74 @@ const CreateTour = () => {
           onPress={() => searchRef.current?.show()}
         />
 
-        {renderTabView()}
+        <View style={$listView}>
+          <TabView
+            ref={tabViewRef}
+            listElements={schedules.map((_, index) => {
+              return () => (
+                <DayScheduleCreateTour
+                  dayIndex={index}
+                  initEditMode
+                  onShowModalAddLocation={value => {
+                    modalAddLocationRef.current?.show(value);
+                  }}
+                />
+              );
+            })}
+            tabBarType="scroll"
+            tabBarStyle={$tabBar}
+            listIconTabBar={listIconTabBar()}
+            lazy={false}
+            style={{flex: 1}}
+            initialIndex={0}
+            RightButtonTabBar={
+              <StyleTouchable
+                customStyle={[$buttonAddDay]}
+                onPress={() => {
+                  setSchedules(pre => {
+                    return pre.concat([[]]);
+                  });
+                }}>
+                <AntDesign
+                  name="plus"
+                  style={[$iconPlus, {color: theme.black}]}
+                />
+                <StyleText
+                  i18Text="discovery.addDay"
+                  customStyle={$textAddDay}
+                />
+              </StyleTouchable>
+            }
+          />
+        </View>
       </View>
 
       <View style={[$button, {bottom: bottom || safePaddingNotZero}]}>
+        {tourId !== 'create-new' && (
+          <>
+            <StyleButton
+              title="common.cancel"
+              containerStyle={[
+                $buttonCancel,
+                {backgroundColor: theme.background},
+              ]}
+              titleStyle={{color: theme.black, fontWeight: FONT_WEIGHT_MEDIUM}}
+              onPress={() =>
+                ModalAlert.options({
+                  i18Content: 'common.wantToDiscard',
+                  onContinue: onReset,
+                })
+              }
+              isLoading={loadingCreateTour}
+            />
+            <View style={{width: scale(4)}} />
+          </>
+        )}
         <StyleButton
           title="common.save"
-          containerStyle={[$buttonBox, {borderWidth: 0}]}
-          onPress={() => {
-            emitAppEvent(APP_EVENT.tourWantToSave);
-          }}
-          isLoading={loadingCreateTour}
+          containerStyle={$buttonSave}
+          onPress={onSave}
+          isLoading={loadingCreateTour || loadingEditTour}
         />
       </View>
 
@@ -195,14 +234,77 @@ const CreateTour = () => {
         onChangeSearch={value => {
           setSearchParams({...value, location: value?.start_location});
         }}
-        titleButton="profile.post.post"
+        titleButton="common.save"
         notIncludes={['transport', 'date_time']}
         isGetFromAsync={false}
         searchPlaceHolder="profile.createNameForYourTour"
       />
+
+      <ModalAddLocation ref={modalAddLocationRef} />
     </View>
   );
 };
+
+const CreateTour = ({
+  route: {params},
+}: RouteParams<AppParamsList[PROFILE_ROUTE.createTour]>) => {
+  const {itemTour} = params ?? {};
+
+  const savedSearchParams = useRef<TypeSearchParams>(
+    itemTour
+      ? {
+          location: itemTour.location,
+          start_location: itemTour.start_location,
+          number_people: itemTour.number_people,
+          services: itemTour.services,
+          transports: itemTour.transports,
+          start_price: itemTour.start_price,
+          end_price: itemTour.end_price,
+        }
+      : defaultSearchParams,
+  );
+  const savedSchedule = useRef<TourDetail['schedule']>(
+    itemTour?.schedule ?? [[]],
+  );
+
+  const [schedules, setSchedules] = useState<TourDetail['schedule']>(
+    savedSchedule.current,
+  );
+  const [searchParams, setSearchParams] = useState<TypeSearchParams>(
+    savedSearchParams.current,
+  );
+
+  const onSave = () => {
+    savedSchedule.current = schedules;
+    savedSearchParams.current = searchParams;
+  };
+
+  const onReset = () => {
+    setSchedules(savedSchedule.current);
+    setSearchParams(savedSearchParams.current);
+  };
+
+  return (
+    <CreateTourContext.Provider
+      value={[
+        {
+          schedules,
+          searchParams,
+        },
+        {
+          setSchedules,
+          setSearchParams,
+          onSave,
+          onReset,
+        },
+      ]}>
+      <CreateTourInstance tourId={itemTour ? itemTour?.id : 'create-new'} />
+    </CreateTourContext.Provider>
+  );
+};
+
+export const useContextCreateTour = (): TypeContext =>
+  useContext(CreateTourContext);
 
 const $container: ViewStyle = {
   flex: 1,
@@ -229,10 +331,15 @@ const $button: ViewStyle = {
   justifyContent: 'space-between',
   paddingHorizontal: scale(12),
 };
-const $buttonBox: ViewStyle = {
-  flex: 1,
+const $buttonCancel: ViewStyle = {
+  flex: 0.5,
   width: undefined,
   borderWidth: borderWidthTiny,
+  backgroundColor: 'transparent',
+};
+const $buttonSave: ViewStyle = {
+  flex: 1,
+  width: undefined,
 };
 const $buttonAddDay: ViewStyle = {
   width: moderateScale(120),

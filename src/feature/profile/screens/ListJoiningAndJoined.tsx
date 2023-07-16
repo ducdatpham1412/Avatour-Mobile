@@ -44,7 +44,8 @@ const ListJoiningAndJoined = () => {
               horizontal
               style={$containerHeader}
               contentContainerStyle={$contentHeader}
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}>
               {estimates.map(est => (
                 <ItemEstimate
                   key={est.id}
@@ -70,7 +71,8 @@ const ListJoiningAndJoined = () => {
             horizontal
             style={$containerHeader}
             contentContainerStyle={$contentHeader}
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}>
             {joinings.map(joining => (
               <ItemJoinWithBanner
                 key={joining?.id}

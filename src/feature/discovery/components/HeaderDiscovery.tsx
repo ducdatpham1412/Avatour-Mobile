@@ -180,7 +180,7 @@ const $container: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'space-between',
   alignSelf: 'center',
-  marginTop: verticalScale(14),
+  paddingBottom: verticalScale(8),
 };
 const $leftView: ViewStyle = {
   flex: 1,

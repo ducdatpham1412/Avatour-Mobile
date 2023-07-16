@@ -17,6 +17,7 @@ interface Props {
   listChosen: Array<OptionTickBox>;
   onPressOption?: (value: OptionTickBox) => void;
   containerStyle?: StyleProp<ViewStyle>;
+  disable?: boolean;
 }
 
 const TickBox = ({
@@ -25,6 +26,7 @@ const TickBox = ({
   listChosen,
   onPressOption,
   containerStyle,
+  disable = false,
 }: Props) => {
   const theme = useTheme();
 
@@ -43,7 +45,9 @@ const TickBox = ({
                   $itemOptionBox,
                   index > 0 && {marginTop: verticalScale(8)},
                 ]}
-                onPress={() => onPressOption?.(option)}>
+                onPress={() => onPressOption?.(option)}
+                disable={disable}
+                disableOpacity={1}>
                 <View style={[$checkBox, {borderColor: theme.gray_500}]}>
                   {isChosen && (
                     <AntDesign

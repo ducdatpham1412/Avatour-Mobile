@@ -5,6 +5,7 @@ import React, {
   FunctionComponent,
   ReactNode,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -64,19 +65,22 @@ const TabView = (
 ) => {
   const theme = useTheme();
 
-  const initValue = useRef({
-    route: listElements.map((_, index) => ({
-      key: String(index),
-      title: '',
-    })),
-    scene: () => {
-      const res: Record<string, FunctionComponent> = {};
-      listElements.forEach((item, index) => {
-        res[String(index)] = item;
-      });
-      return res;
-    },
-  }).current;
+  const initValue = useMemo(() => {
+    return {
+      route: listElements.map((_, index) => ({
+        key: String(index),
+        title: '',
+      })),
+      scene: () => {
+        const res: Record<string, FunctionComponent> = {};
+        listElements.forEach((item, index) => {
+          res[String(index)] = item;
+        });
+        return res;
+      },
+    };
+  }, [listElements.length]);
+
   const translateXIndicator = useRef(new Animated.Value(0));
 
   const [index, setIndex] = useState(initialIndex);
@@ -103,7 +107,7 @@ const TabView = (
                 <StyleTouchable
                   key={_index}
                   customStyle={$tabBarBox}
-                  normalOpacity={_index === index ? 1 : 0.4}
+                  //   normalOpacity={_index === index ? 1 : 0.4}
                   onLayout={e => {
                     if (_index === 0) {
                       setIndicatorWidth(e.nativeEvent.layout.width);
@@ -174,7 +178,7 @@ const TabView = (
                       marginRight: tabBarScrollMargin,
                     },
                   ]}
-                  normalOpacity={_index === index ? 1 : 0.4}
+                  //   normalOpacity={_index === index ? 1 : 0.4}
                   onLayout={e => {
                     if (_index === 0) {
                       setIndicatorWidth(e.nativeEvent.layout.width);

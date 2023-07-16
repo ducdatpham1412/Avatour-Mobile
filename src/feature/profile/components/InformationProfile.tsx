@@ -29,14 +29,14 @@ interface Props {
 
 interface ButtonOtherProfileProps {
   id: number;
-  isShopAccount: boolean;
 }
 
 const avatarSize = Metrics.width / 3.5;
 
-const ButtonOtherProfile = ({id, isShopAccount}: ButtonOtherProfileProps) => {
+const ButtonOtherProfile = ({id}: ButtonOtherProfileProps) => {
   const theme = useTheme();
-  const [{isFollowing, loadingFollow}, {follow}] = useOtherProfile(id);
+  const [{isFollowing, loadingFollow, data}, {follow}] = useOtherProfile(id);
+  const isShopAccount = data?.account_type === ACCOUNT.shop;
 
   return (
     <View style={$buttonView}>
@@ -148,6 +148,26 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
               customStyle={$textButton}
             />
           </StyleTouchable>
+
+          <StyleTouchable
+            customStyle={[
+              $buttonTouch,
+              {
+                backgroundColor: theme.p_600,
+                marginLeft: 5,
+              },
+            ]}
+            onPress={() => {
+              navigate(PROFILE_ROUTE.createTour);
+            }}
+            hitSlop={{right: 20}}>
+            <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+            <StyleText
+              i18Text="profile.createTour"
+              customStyle={[$textPostNew, {color: theme.white}]}
+            />
+          </StyleTouchable>
+
           {isShopAccount && (
             <StyleTouchable
               customStyle={[
@@ -170,31 +190,11 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
               />
             </StyleTouchable>
           )}
-          {isShareTourAccount && (
-            <StyleTouchable
-              customStyle={[
-                $buttonTouch,
-                {
-                  backgroundColor: theme.p_600,
-                  marginLeft: 5,
-                },
-              ]}
-              onPress={() => {
-                navigate(PROFILE_ROUTE.createTour);
-              }}
-              hitSlop={{right: 20}}>
-              <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
-              <StyleText
-                i18Text="profile.createTour"
-                customStyle={[$textPostNew, {color: theme.white}]}
-              />
-            </StyleTouchable>
-          )}
         </View>
       );
     }
 
-    return <ButtonOtherProfile id={id} isShopAccount={isShopAccount} />;
+    return <ButtonOtherProfile id={id} />;
   };
 
   return (
@@ -216,9 +216,10 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
               />
             </View>
           )}
+
           {renderStars()}
+
           <View style={$followBox}>
-            {/* Follower */}
             <StyleTouchable
               customStyle={styles.elementFollow}
               onPress={() => onNavigateFollow('follower')}>
@@ -232,7 +233,6 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
               />
             </StyleTouchable>
 
-            {/* Following */}
             <StyleTouchable
               customStyle={styles.elementFollow}
               onPress={() => onNavigateFollow('following')}>

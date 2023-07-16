@@ -24,14 +24,14 @@ const MapTour = ({children}: Props) => {
         }}
       />
       <View style={[$overlayMap, {backgroundColor: theme.black_opacity(0.6)}]}>
-        <View style={$mapNotification}>
+        <View style={[$mapNotification, {marginTop: top}]}>
           <FontAwesome
             name="map-o"
-            style={[$iconMap, {color: theme.white_opacity(0.6)}]}
+            style={[$iconMap, {color: theme.white_opacity(0.8)}]}
           />
           <StyleText
             i18Text="tour.viewTourOnMapDeveloping"
-            customStyle={[$textNotification, {color: theme.white_opacity(0.6)}]}
+            customStyle={[$textNotification, {color: theme.white_opacity(0.8)}]}
           />
         </View>
       </View>
@@ -45,7 +45,8 @@ const MapTour = ({children}: Props) => {
 };
 
 const $map: ViewStyle = {
-  flex: 0.2,
+  width: '100%',
+  height: verticalScale(150),
 };
 const $overlayMap: ViewStyle = {
   position: 'absolute',

@@ -10,6 +10,7 @@ import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, TextCountDown} from 'components';
 import {
+  RefreshControl,
   StyleContainer,
   StyleIcon,
   StyleText,
@@ -26,7 +27,6 @@ import React, {ElementRef, ReactNode, useRef} from 'react';
 import {
   ImageSourcePropType,
   ImageStyle,
-  RefreshControl,
   ScrollView,
   TextStyle,
   View,
@@ -468,12 +468,7 @@ const DetailSale = ({
             backgroundColor: theme.white,
           }}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={theme.p_600}
-              colors={[theme.p_600]}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingBottom: bottom + safePaddingNotZero}}>

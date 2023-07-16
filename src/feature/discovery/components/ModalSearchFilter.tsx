@@ -34,11 +34,18 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {borderWidthTiny} from 'utility/assistant';
-import {formatDDMMMM, formatUTCDate} from 'utility/format';
+import {
+  formatDDMMMM,
+  formatLocaleNumber,
+  formatMoney,
+  formatNormalNumberFromLocale,
+  formatUTCDate,
+} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
 import {I18Normalize} from 'utility/I18Next';
+import {validateIsNumber} from 'utility/validate';
 
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
@@ -54,6 +61,7 @@ interface Props {
   >;
   isGetFromAsync: boolean;
   searchPlaceHolder?: I18Normalize;
+  editable?: boolean;
 }
 
 interface IndicatorProps {
@@ -92,6 +100,7 @@ const ModalSearchFilter = (
     notIncludes = [],
     isGetFromAsync,
     searchPlaceHolder,
+    editable = true,
   }: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
@@ -105,9 +114,7 @@ const ModalSearchFilter = (
 
   const [closeOnOverlayEnable, setCloseOnOverlayEnable] = useState(true);
 
-  const [startLocation, setStartLocation] = useState(
-    initSearchParams?.start_location ?? '',
-  );
+  const [location, setLocation] = useState(initSearchParams?.location ?? '');
   const [startPrice, setStartPrice] = useState('');
   const [endPrice, setEndPrice] = useState('');
 
@@ -122,8 +129,11 @@ const ModalSearchFilter = (
     },
   } = useFilterSearch({onChangeSearch, initSearchParams, isGetFromAsync});
 
-  const onSearch = async () => {
-    const newValue = {...searchParams, start_location: startLocation};
+  const onSave = async () => {
+    const newValue: TypeSearchParams = {
+      ...searchParams,
+      start_location: location,
+    };
     onChangeSearch(newValue);
     const temp: any = ref;
     temp?.current?.hide();
@@ -155,8 +165,9 @@ const ModalSearchFilter = (
               customStyle={{tintColor: theme.black}}
             />
           }
-          value={startLocation}
-          onChangeText={text => setStartLocation(text)}
+          value={location}
+          onChangeText={text => setLocation(text)}
+          editable={editable}
         />
 
         {!notIncludes?.includes('transport') && (
@@ -172,6 +183,7 @@ const ModalSearchFilter = (
                 searchParams?.transports?.includes(item.id),
               )}
               onPressOption={onPressVehicle}
+              disable={!editable}
             />
             <Indicator color={theme.gray_300} />
           </>
@@ -182,7 +194,8 @@ const ModalSearchFilter = (
           <View style={$pressPeopleBox}>
             <StyleTouchable
               customStyle={[$btnPeople, {backgroundColor: theme.p_100}]}
-              onPress={() => onChangeNumberPeople(-1)}>
+              onPress={() => onChangeNumberPeople(-1)}
+              disable={!editable}>
               <AntDesign
                 name="minus"
                 style={[$textBtnPeople, {color: theme.black}]}
@@ -194,7 +207,8 @@ const ModalSearchFilter = (
             />
             <StyleTouchable
               customStyle={[$btnPeople, {backgroundColor: theme.p_100}]}
-              onPress={() => onChangeNumberPeople(1)}>
+              onPress={() => onChangeNumberPeople(1)}
+              disable={!editable}>
               <AntDesign
                 name="plus"
                 style={[$textBtnPeople, {color: theme.black}]}
@@ -234,7 +248,9 @@ const ModalSearchFilter = (
                         startDate: new Date(),
                       },
                     })
-                  }>
+                  }
+                  disable={!editable}
+                  disableOpacity={1}>
                   <View>
                     <StyleText
                       i18Text="discovery.departure"
@@ -274,6 +290,7 @@ const ModalSearchFilter = (
             searchParams?.services?.includes(item.id),
           )}
           onPressOption={onPressService}
+          disable={!editable}
         />
 
         <Indicator color={theme.gray_300} />
@@ -289,8 +306,12 @@ const ModalSearchFilter = (
               setTimeout(() => {
                 startPriceRef.current?.focus();
               }, 300);
-            }}>
-            <StyleText originValue={`${searchParams?.start_price} vnd`} />
+            }}
+            disable={!editable}
+            disableOpacity={1}>
+            <StyleText
+              originValue={formatMoney(searchParams.start_price ?? 0)}
+            />
           </StyleTouchable>
           <StyleText originValue="~" customStyle={$dividerPrice} />
           <StyleTouchable
@@ -302,16 +323,20 @@ const ModalSearchFilter = (
               setTimeout(() => {
                 endPriceRef.current?.focus();
               }, 300);
-            }}>
-            <StyleText originValue={`${searchParams?.end_price} vnd`} />
+            }}
+            disable={!editable}
+            disableOpacity={1}>
+            <StyleText originValue={formatMoney(searchParams.end_price ?? 0)} />
           </StyleTouchable>
         </View>
 
-        <StyleButton
-          title={titleButton ?? 'common.search'}
-          containerStyle={$buttonView}
-          onPress={onSearch}
-        />
+        {editable && (
+          <StyleButton
+            title={titleButton ?? 'common.search'}
+            containerStyle={$buttonView}
+            onPress={onSave}
+          />
+        )}
       </AppModalize>
 
       <ModalEdit
@@ -325,19 +350,35 @@ const ModalSearchFilter = (
           <AppInput
             ref={startPriceRef}
             style={[$inputPrice, {borderColor: theme.gray_500}]}
-            value={startPrice}
-            onChangeText={text => setStartPrice(text)}
+            value={formatLocaleNumber(startPrice)}
+            onChangeText={text => {
+              const temp = formatNormalNumberFromLocale(text);
+              if (validateIsNumber(temp)) {
+                setStartPrice(temp);
+              } else if (text === '') {
+                setStartPrice('');
+              }
+            }}
             placeholder={t('discovery.price')}
             keyboardType="numeric"
+            editable={editable}
           />
           <StyleText originValue="~" customStyle={$dividerPrice} />
           <AppInput
             ref={endPriceRef}
             style={[$inputPrice, {borderColor: theme.gray_500}]}
-            value={endPrice}
-            onChangeText={text => setEndPrice(text)}
+            value={formatLocaleNumber(endPrice)}
+            onChangeText={text => {
+              const temp = formatNormalNumberFromLocale(text);
+              if (validateIsNumber(temp)) {
+                setEndPrice(temp);
+              } else if (text === '') {
+                setEndPrice('');
+              }
+            }}
             placeholder={t('discovery.price')}
             keyboardType="numeric"
+            editable={editable}
           />
         </View>
       </ModalEdit>
