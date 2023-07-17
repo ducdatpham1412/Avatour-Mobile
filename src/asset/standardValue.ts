@@ -50,7 +50,8 @@ export const TERMS_URL = 'https://www.avatour.life/about-us/terms';
 export const FEEDBACK_URL =
   'https://docs.google.com/forms/d/1Yb-OzSMJbJxG_RZYtPwkKZGjw4AZOsC2IvJlac-1ydI/edit?usp=sharing';
 export const LANDING_PAGE_URL = 'https://www.avatour.life/';
-export const REPORT_REASONS = [
+
+export const REPORT_REASONS: {id: number; name: I18Normalize}[] = [
   {
     id: 0,
     name: 'discovery.report.offensiveLanguage',

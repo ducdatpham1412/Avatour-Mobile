@@ -127,23 +127,23 @@ export function logger(...args: any) {
   }
 }
 
-export const renderListGender = [
+export const listGenders: {id: number; name: I18Normalize}[] = [
   {
     id: GENDER_TYPE.man,
-    name: 'login.detailInformation.man',
+    name: 'login.man',
   },
   {
     id: GENDER_TYPE.woman,
-    name: 'login.detailInformation.woman',
+    name: 'login.woman',
   },
   {
     id: GENDER_TYPE.notToSay,
-    name: 'login.detailInformation.notToSay',
+    name: 'login.notToSay',
   },
 ];
 
 export const chooseTextFromIdGender = (id: number | undefined) => {
-  const temp = renderListGender.find(item => item.id === id);
+  const temp = listGenders.find(item => item.id === id);
   return temp?.name || '';
 };
 

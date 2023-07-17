@@ -2,24 +2,25 @@
 import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
-import {StyleContainer, StyleText} from 'components/base';
+import {StyleContainer} from 'components/base';
 import {useTheme} from 'hook';
-import {goBack, navigate, popUpPicker} from 'navigation/NavigationService';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {SETTING_ROUTE} from 'navigation/config/routes';
 import {
+  ModalActionSheet,
   ModalAlert,
   ModalDatePicker,
   ModalInputEdit,
 } from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TextStyle, View, ViewStyle} from 'react-native';
+import {TextStyle, ViewStyle} from 'react-native';
 import {verticalScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useUpdateEffect} from 'react-use';
-import {chooseTextFromIdGender, renderListGender} from 'utility/assistant';
+import {chooseTextFromIdGender, listGenders} from 'utility/assistant';
 import {
   formatDateDayMonthYear,
   formatUTCDate,
@@ -39,6 +40,7 @@ const PersonalInformation = () => {
     gender: profile.gender,
     birthday: profile.birthday,
   });
+  const timeOut = useRef<number>(0);
 
   const [email, setEmail] = useState(profile.information.email);
   const [phone, setPhone] = useState(profile.information.phone);
@@ -60,10 +62,12 @@ const PersonalInformation = () => {
         });
         updatePassport({
           profile: {
-            information: newInfo,
+            gender: newInfo.gender,
           },
         });
-        goBack();
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+        });
         return;
       }
       if (newInfo.birthday) {
@@ -72,10 +76,12 @@ const PersonalInformation = () => {
         });
         updatePassport({
           profile: {
-            information: newInfo,
+            birthday: newInfo.birthday,
           },
         });
-        goBack();
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+        });
         return;
       }
       if (newInfo.email) {
@@ -104,19 +110,28 @@ const PersonalInformation = () => {
 
   useUpdateEffect(() => {
     if (email !== informationValueRef.current.email) {
-      openConfirmChange({email});
+      timeOut.current = setTimeout(() => {
+        openConfirmChange({email});
+      }, 400);
       return;
     }
     if (phone !== informationValueRef.current.phone) {
-      openConfirmChange({phone});
+      timeOut.current = setTimeout(() => {
+        openConfirmChange({phone});
+      }, 400);
       return;
     }
     if (gender !== informationValueRef.current.gender) {
       openConfirmChange({gender});
+      return;
     }
     if (!isTimeEqual(birthday, informationValueRef.current.birthday)) {
-      openConfirmChange({birthday});
+      timeOut.current = setTimeout(() => {
+        openConfirmChange({birthday});
+      }, 400);
     }
+
+    return () => clearTimeout(timeOut.current);
   }, [email, phone, gender, birthday]);
 
   useEffect(() => {
@@ -126,25 +141,6 @@ const PersonalInformation = () => {
       birthday: profile.birthday,
     };
   }, [profile.information]);
-
-  const onNavigateGenderPicker = () => {
-    popUpPicker({
-      data: renderListGender,
-      renderItem: (item: any) => (
-        <View style={$elementPicker}>
-          <StyleText
-            i18Text={item.name}
-            customStyle={[$textPicker, {color: theme.textColor}]}
-          />
-        </View>
-      ),
-      itemHeight: verticalScale(50),
-      onSetItemSelected: (value: any) => {
-        setGender(value.id);
-      },
-      initIndex: renderListGender.findIndex(item => item.id === gender) || 0,
-    });
-  };
 
   return (
     <StyleContainer
@@ -181,7 +177,14 @@ const PersonalInformation = () => {
       <ItemInfo
         value={t(chooseTextFromIdGender(gender))}
         icon={<Feather name="user" style={[$icon, {color: theme.blue}]} />}
-        onPressEdit={onNavigateGenderPicker}
+        onPressEdit={() => {
+          ModalActionSheet.show({
+            options: listGenders.map(value => ({
+              title: value.name,
+              onPress: () => setGender(value.id),
+            })),
+          });
+        }}
       />
 
       <ItemInfo

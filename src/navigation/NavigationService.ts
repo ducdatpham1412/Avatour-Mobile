@@ -100,7 +100,3 @@ export const showSwipeImages = (
 ) => {
   navigate(ROOT_SCREEN.swipeImages, params);
 };
-
-export const popUpPicker = (params: AppParamsList[ROOT_SCREEN.picker]) => {
-  navigate(ROOT_SCREEN.picker, params);
-};

@@ -1,6 +1,6 @@
 import {apiReportUser} from 'api/discovery';
 import {safePaddingNotZero} from 'asset/metrics';
-import {REPORT_REASONS} from 'asset/standardValue';
+import {FONT_SIZE, REPORT_REASONS} from 'asset/standardValue';
 import {
   AppInput,
   StyleButton,
@@ -12,14 +12,13 @@ import RowPickImages from 'components/common/RowPickImages';
 import {useTheme} from 'hook';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
-import {goBack, popUpPicker} from 'navigation/NavigationService';
-import {ModalAlert} from 'navigation/screen/modals';
-import React, {useCallback, useRef, useState} from 'react';
+import {goBack} from 'navigation/NavigationService';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
+import React, {useRef, useState} from 'react';
 import {TextInput, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {ScaledSheet} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {I18Normalize} from 'utility/I18Next';
 import ImageUploader from 'utility/ImageUploader';
 import {scale} from 'utility/scale';
 
@@ -38,32 +37,10 @@ const ReportUser = ({
   const {bottom} = useSafeAreaInsets();
   const inputDescriptionRef = useRef<TextInput>(null);
 
-  const [reasonReport, setReasonReport] = useState<{
-    id: number;
-    name: I18Normalize;
-  }>();
+  const [reasonReport, setReasonReport] =
+    useState<(typeof REPORT_REASONS)[number]>();
   const [description, setDescription] = useState('');
   const [images, setImages] = useState([]);
-
-  const onNavigateToPicker = useCallback(() => {
-    popUpPicker({
-      data: REPORT_REASONS,
-      renderItem: (item: any) => (
-        <View style={styles.elementPicker}>
-          <StyleText
-            i18Text={item.name}
-            customStyle={[styles.textReport, {color: theme.textColor}]}
-          />
-        </View>
-      ),
-      itemHeight: verticalScale(50),
-      onSetItemSelected: (item: any) => {
-        setReasonReport(item);
-      },
-      initIndex:
-        REPORT_REASONS.findIndex(item => item.name === reasonReport?.name) || 0,
-    });
-  }, [reasonReport]);
 
   const onSubmitReport = async () => {
     if (reasonReport) {
@@ -124,7 +101,17 @@ const ReportUser = ({
         </View>
         <StyleTouchable
           customStyle={[styles.buttonOpenPicker, {borderColor: theme.gray_400}]}
-          onPress={onNavigateToPicker}>
+          onPress={() => {
+            ModalActionSheet.show({
+              options: REPORT_REASONS.map(item => {
+                return {
+                  title: item.name,
+                  onPress: () => setReasonReport(item),
+                };
+              }),
+              fontSize: FONT_SIZE.f2,
+            });
+          }}>
           <FontAwesome5
             name="chevron-down"
             style={[styles.iconPickerDown, {color: theme.black}]}

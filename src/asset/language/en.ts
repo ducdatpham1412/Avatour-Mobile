@@ -42,6 +42,9 @@ const login = {
   notiOTP: 'Please enter verification code Avatour have sent to',
   confirmOTP: 'Confirm OTP',
   resetPassword: 'Reset password',
+  man: 'Male',
+  woman: 'Female',
+  notToSay: 'Prefer not to say',
   component: {
     sendOTP: {
       enterCode: 'Enter',
@@ -83,9 +86,6 @@ const login = {
   },
   detailInformation: {
     title: 'Edit information',
-    man: 'Male',
-    woman: 'Female',
-    notToSay: 'Prefer not to say',
     firstChooseGender: 'First, choose your gender:',
     enterYourName: 'Enter your name:',
     chooseBirthday: 'Choosing birthday',
