@@ -10,6 +10,7 @@ import ROOT_SCREEN, {
   SETTING_ROUTE,
   TOUR_ROUTE,
 } from './routes';
+import {ParamsCreateTour} from 'feature/profile/hooks';
 
 export type AllRoutes =
   | ROOT_SCREEN
@@ -214,7 +215,7 @@ export type AppParamsList = {
     list: TypeJoinPersonalAndSale[];
   };
   [PROFILE_ROUTE.createTour]: {
-    itemTour: TourDetail;
+    itemTour: Omit<TourDetail, 'id'> & {id: ParamsCreateTour};
   };
 };
 

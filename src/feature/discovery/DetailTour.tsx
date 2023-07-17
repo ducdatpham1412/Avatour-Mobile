@@ -107,11 +107,11 @@ const DetailTour = ({
             <StyleText originValue={data?.creator_name} customStyle={$name} />
           </StyleTouchable>
           <StyleTouchable
-            onPress={() =>
+            onPress={() => {
               navigate(PROFILE_ROUTE.createTour, {
-                itemTour: data,
-              })
-            }>
+                itemTour: isMyTour ? data : {...data, id: 'create-new'},
+              });
+            }}>
             <StyleText
               i18Text={'profile.post.edit'}
               customStyle={[$textEdit, {color: theme.blue}]}

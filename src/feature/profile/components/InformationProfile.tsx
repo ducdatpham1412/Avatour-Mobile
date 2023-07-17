@@ -70,7 +70,7 @@ const ButtonOtherProfile = ({id}: ButtonOtherProfileProps) => {
           <Entypo name="plus" style={[$iconPlus, {color: theme.black}]} />
           <StyleText
             i18Text="profile.reviewProvider"
-            customStyle={[$textPostNew, {color: theme.black}]}
+            customStyle={$textPostNew}
           />
         </StyleTouchable>
       )}
@@ -98,7 +98,6 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
   } = profile;
 
   const isShopAccount = account_type === ACCOUNT.shop;
-  const isShareTourAccount = account_type === ACCOUNT.shareTour;
   const isMyProfile = myId === id;
 
   const onNavigateFollow = (type: 'follower' | 'following') => {
@@ -143,28 +142,33 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
             onPress={() => {
               navigate(ROOT_SCREEN.editProfile);
             }}>
-            <StyleText
-              i18Text="profile.editProfile"
-              customStyle={$textButton}
-            />
+            <StyleText i18Text="profile.post.edit" customStyle={$textButton} />
           </StyleTouchable>
 
           <StyleTouchable
             customStyle={[
               $buttonTouch,
               {
-                backgroundColor: theme.p_600,
+                backgroundColor: isShopAccount ? theme.gray_300 : theme.p_600,
                 marginLeft: 5,
               },
             ]}
             onPress={() => {
               navigate(PROFILE_ROUTE.createTour);
-            }}
-            hitSlop={{right: 20}}>
-            <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+            }}>
+            <Entypo
+              name="plus"
+              style={[
+                $iconPlus,
+                {color: isShopAccount ? theme.black : theme.white},
+              ]}
+            />
             <StyleText
               i18Text="profile.createTour"
-              customStyle={[$textPostNew, {color: theme.white}]}
+              customStyle={[
+                $textPostNew,
+                {color: isShopAccount ? theme.black : theme.white},
+              ]}
             />
           </StyleTouchable>
 
