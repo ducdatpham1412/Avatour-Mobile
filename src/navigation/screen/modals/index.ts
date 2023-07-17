@@ -1,7 +1,4 @@
-export {
-  default as ModalActionSheet,
-  type TypeShowActionSheet,
-} from './ModalActionSheet';
+export {default as ModalActionSheet} from './ModalActionSheet';
 export {
   default as ModalAddLocation,
   type TypeShowModalAddLocation,

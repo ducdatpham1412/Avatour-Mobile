@@ -52,7 +52,7 @@ const RowPickImages = (props: Props) => {
             try {
               setTimeout(async () => {
                 const res = await ImageUploader.pickCamera({crop: false});
-                onSetAgainListImages([res]);
+                onSetAgainListImages([res?.path]);
               }, 200);
             } catch (err) {
               logger(err);

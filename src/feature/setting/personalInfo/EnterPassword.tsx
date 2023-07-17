@@ -54,6 +54,10 @@ const EnterPassword = ({
             new_username: newInfo.email,
           },
         });
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+          onClose: () => navigate(SETTING_ROUTE.personalInformation),
+        });
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -74,7 +78,10 @@ const EnterPassword = ({
             },
           },
         });
-        navigate(SETTING_ROUTE.personalInformation);
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+          onClose: () => navigate(SETTING_ROUTE.personalInformation),
+        });
       } catch (err) {
         ModalAlert.error({
           content: err,

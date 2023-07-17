@@ -9,7 +9,6 @@ enum ROOT_SCREEN {
   swipeImages = '@ROOT_SCREEN/swipeImage',
   reportUser = '@ROOT_SCREEN/reportUser',
   webView = '@ROOT_SCREEN/webview',
-  picker = '@ROOT_SCREEN/picker',
   otherProfile = '@ROOT_SCREEN/otherProfile',
   listFollows = '@ROOT_SCREEN/listFollows',
   followers = '@ROOT_SCREEN/followers',

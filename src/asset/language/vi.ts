@@ -42,6 +42,9 @@ const login = {
   notiOTP: 'Vui lòng nhập mã xác minh Avatour đã gửi đến',
   confirmOTP: 'Xác nhận OTP',
   resetPassword: 'Đặt lại mật khẩu',
+  man: 'Nam',
+  woman: 'Nữ',
+  notToSay: 'Không tiện nói',
   component: {
     sendOTP: {
       enterCode: 'Nhập mã',
@@ -84,9 +87,6 @@ const login = {
   },
   detailInformation: {
     title: 'Thông tin cá nhân',
-    man: 'Nam',
-    woman: 'Nữ',
-    notToSay: 'Không tiện nói',
     firstChooseGender: 'Đầu tiên, chọn giới tính của bạn',
     enterYourName: 'Nhập tên của bạn:',
     chooseBirthday: 'Chọn ngày sinh',
@@ -494,7 +494,7 @@ const setting = {
   personalInfo: {
     headerTitle: 'Thông tin cá nhân',
     enterPassword: 'Nhập mật khẩu',
-    password: 'Mậu khẩu',
+    password: 'Mật khẩu',
     notYet: 'Chưa có',
     alertCfChange: 'Bạn chắc chắn muốn thay đổi thông tin này của mình chứ?',
     confirm: 'Xác nhận',

@@ -367,8 +367,8 @@ export enum TYPE_GET_TOUR {
 }
 
 export enum TYPE_CHANGE {
-  password = 0,
-  theme = 1,
-  language = 2,
-  information = 3,
+  password = 'password',
+  theme = 'theme',
+  language = 'language',
+  information = 'information',
 }

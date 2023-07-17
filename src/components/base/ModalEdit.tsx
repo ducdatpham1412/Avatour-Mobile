@@ -25,6 +25,7 @@ interface Props {
   onPressClose?: () => void;
   loading?: boolean;
   disable?: boolean;
+  onDismiss?: () => void;
 }
 
 const ModalEdit = (
@@ -35,6 +36,7 @@ const ModalEdit = (
     onPressClose,
     loading = false,
     disable = false,
+    onDismiss,
   }: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
@@ -59,6 +61,7 @@ const ModalEdit = (
       visible={visible}
       onDismiss={() => {
         setVisible(false);
+        onDismiss?.();
       }}
       transparent
       animationType="fade">

@@ -1,9 +1,4 @@
-import {
-  CardStyleInterpolators,
-  StackNavigationOptions,
-  createStackNavigator,
-} from '@react-navigation/stack';
-import StylePicker from 'components/base/picker/StylePicker';
+import {createStackNavigator} from '@react-navigation/stack';
 import ErrorScreen from 'feature/common/ErrorScreen';
 import {LoadingScreen} from 'feature/profile/screens';
 import {useInitApp, useTheme} from 'hook';
@@ -15,12 +10,6 @@ import LoginRoute from './LoginRoute';
 import WebViewScreen from './WebViewScreen';
 
 const RootStack = createStackNavigator<AppParamsList>();
-
-const alertOption: StackNavigationOptions = {
-  animationEnabled: false,
-  cardOverlayEnabled: true,
-  headerShown: false,
-};
 
 const RootScreen = () => {
   const theme = useTheme();
@@ -52,21 +41,6 @@ const RootScreen = () => {
               backgroundColor: theme.backgroundColor,
             },
           ],
-        }}
-      />
-
-      {/* Picker */}
-      <RootStack.Screen
-        name={ROOT_SCREEN.picker}
-        component={StylePicker}
-        options={{
-          cardStyle: [
-            {
-              backgroundColor: theme.backgroundOpacity(),
-            },
-          ],
-          cardStyleInterpolator:
-            CardStyleInterpolators.forFadeFromBottomAndroid,
         }}
       />
     </RootStack.Navigator>

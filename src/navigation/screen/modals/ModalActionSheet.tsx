@@ -1,5 +1,5 @@
 import {FONT_SIZE} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {StyleText} from 'components/base';
 import {useTheme} from 'hook';
 import React, {
@@ -10,7 +10,7 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react';
-import {View} from 'react-native';
+import {TextStyle, View} from 'react-native';
 import {ActionSheetCustom as ActionSheet} from 'react-native-actionsheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useUpdate} from 'react-use';
@@ -18,9 +18,12 @@ import {I18Normalize} from 'utility/I18Next';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, verticalScale} from 'utility/scale';
 
-export type TypeShowActionSheet = {
-  title: I18Normalize;
-  onPress: () => void;
+type TypeShow = {
+  options: {
+    title: I18Normalize;
+    onPress: () => void;
+  }[];
+  fontSize?: number;
 };
 
 type TypeActionSheetElement = {
@@ -31,7 +34,7 @@ type TypeActionSheetElement = {
 const modalRef = createRef<ElementRef<typeof ModalActionSheet>>();
 
 const ModalActionSheet = forwardRef(
-  (_: any, ref: ForwardedRef<TypeShowModalize<TypeShowActionSheet[]>>) => {
+  (_: any, ref: ForwardedRef<TypeShowModalize<TypeShow>>) => {
     const update = useUpdate();
     const {bottom} = useSafeAreaInsets();
     const theme = useTheme();
@@ -44,15 +47,16 @@ const ModalActionSheet = forwardRef(
         show: value => {
           if (value) {
             impactLight();
-            listOptions.current = value.map(option => {
+            listOptions.current = value.options.map(option => {
               return {
                 title: (
                   <View>
                     <StyleText
                       i18Text={option.title}
-                      customStyle={{
-                        fontSize: FONT_SIZE.f1,
-                      }}
+                      customStyle={[
+                        $title,
+                        {fontSize: value.fontSize ?? FONT_SIZE.f1},
+                      ]}
                     />
                   </View>
                 ),
@@ -108,8 +112,13 @@ const ModalActionSheet = forwardRef(
   },
 );
 
+const $title: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  paddingHorizontal: horizontalPadding,
+  textAlign: 'center',
+};
+
 export default Object.assign(ModalActionSheet, {
-  show: (value: {options: TypeShowActionSheet[]}) =>
-    modalRef.current?.show(value.options),
+  show: (value: TypeShow) => modalRef.current?.show(value),
   hide: () => modalRef.current?.hide(),
 });

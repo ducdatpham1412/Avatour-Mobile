@@ -131,15 +131,6 @@ export type AppParamsList = {
     title: I18Normalize;
     linkWeb: string;
   };
-  [ROOT_SCREEN.picker]: {
-    data: Array<any>;
-    renderItem(item: any): ReactNode;
-    // itemHeight is calculated by style of each item in "renderItem"
-    itemHeight: number;
-    onSetItemSelected: Function;
-    initIndex?: number;
-    onCancel?(): void;
-  };
   [LOGIN_ROUTE.sendOTP]: {
     paramsOTP: TypeRequestOTPRequest;
   };
