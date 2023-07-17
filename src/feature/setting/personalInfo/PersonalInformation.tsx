@@ -4,7 +4,7 @@ import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {StyleContainer} from 'components/base';
 import {useTheme} from 'hook';
-import {goBack, navigate} from 'navigation/NavigationService';
+import {navigate} from 'navigation/NavigationService';
 import {SETTING_ROUTE} from 'navigation/config/routes';
 import {
   ModalActionSheet,
@@ -20,9 +20,14 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useUpdateEffect} from 'react-use';
-import {chooseTextFromIdGender, listGenders} from 'utility/assistant';
+import {
+  chooseTextFromIdGender,
+  listGenders,
+  removePrefixPhone,
+} from 'utility/assistant';
 import {
   formatDateDayMonthYear,
+  formatPhone,
   formatUTCDate,
   isTimeEqual,
 } from 'utility/format';
@@ -153,7 +158,7 @@ const PersonalInformation = () => {
         onPressEdit={() =>
           ModalInputEdit.show({
             defaultValue: email,
-            checkValid: value => validateIsEmail(value),
+            checkEnableButton: value => validateIsEmail(value),
             placeholder: 'login.email',
             onSave: value => setEmail(value),
           })
@@ -161,14 +166,15 @@ const PersonalInformation = () => {
       />
 
       <ItemInfo
-        value={phone}
+        value={formatPhone(phone)}
         icon={<Feather name="phone" style={[$icon, {color: theme.blue}]} />}
         onPressEdit={() =>
           ModalInputEdit.show({
-            defaultValue: phone,
-            checkValid: value => validateIsPhone(value),
-            placeholder: 'login.signUp.type.phone',
-            onSave: value => setPhone(value),
+            defaultValue: formatPhone(phone),
+            validateInput: text => text.includes('(+84) '),
+            checkEnableButton: text => validateIsPhone(removePrefixPhone(text)),
+            placeholder: 'login.phone',
+            onSave: value => setPhone(removePrefixPhone(value)),
             keyboardType: 'numeric',
           })
         }

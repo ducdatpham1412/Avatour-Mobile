@@ -45,6 +45,7 @@ const login = {
   man: 'Male',
   woman: 'Female',
   notToSay: 'Prefer not to say',
+  phone: 'Phone',
   component: {
     sendOTP: {
       enterCode: 'Enter',
@@ -65,14 +66,12 @@ const login = {
     send: {
       header: 'Forgot password',
       receiveThrow: 'Receive OTP via',
-      phone: 'Phone',
     },
   },
   signUp: {
     type: {
       header: 'Sign up',
       chooseMethod: 'Choose method signing up',
-      phone: 'Phone',
     },
     form: {
       header: 'Sign up',

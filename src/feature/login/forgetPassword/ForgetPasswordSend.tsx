@@ -10,6 +10,7 @@ import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
+import {I18Normalize} from 'utility/I18Next';
 import HeaderLogo from '../components/HeaderLogo';
 import IconType from '../components/IconType';
 
@@ -56,19 +57,16 @@ const ForgetPasswordSend = ({
           customStyle={[styles.textNotification, {color: theme.textColor}]}
         />
 
-        {/* FACEBOOK, GOOGLE OR PHONE */}
         <View style={styles.iconsBox}>
-          {/* EMAIL */}
           <IconType
             source={Images.icons.email}
-            title="Email"
+            title={'Email' as I18Normalize}
             onPress={() => onRequestOTP(SIGN_UP_TYPE.email)}
           />
 
-          {/* PHONE */}
           <IconType
             source={Images.icons.phone}
-            title="login.forgetPassword.send.phone"
+            title="login.phone"
             onPress={() => onRequestOTP(SIGN_UP_TYPE.phone)}
           />
         </View>

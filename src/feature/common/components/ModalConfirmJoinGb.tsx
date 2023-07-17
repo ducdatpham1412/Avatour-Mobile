@@ -29,8 +29,13 @@ import {Modalize} from 'react-native-modalize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {borderWidthTiny} from 'utility/assistant';
-import {addDate, formatDayGroupBuying, formatUTCDate} from 'utility/format';
+import {borderWidthTiny, removePrefixPhone} from 'utility/assistant';
+import {
+  addDate,
+  formatDayGroupBuying,
+  formatPhone,
+  formatUTCDate,
+} from 'utility/format';
 import {validateIsPhone} from 'utility/validate';
 import AddPhone from './AddPhone';
 import {I18Normalize} from 'utility/I18Next';
@@ -46,13 +51,15 @@ const onAddPhone = () => {
   ModalInputEdit.show({
     onSave: async value => {
       await apiChangeInformation({
-        username: value,
+        username: removePrefixPhone(value),
       });
       updatePassport({profile: {information: {phone: value}}});
     },
     keyboardType: 'numeric',
     placeholder: 'profile.phoneNumber',
-    checkValid: value => validateIsPhone(value),
+    validateInput: text => text.includes('(+84) '),
+    checkEnableButton: text => validateIsPhone(removePrefixPhone(text)),
+    defaultValue: '(+84) ',
   });
 };
 
@@ -164,7 +171,7 @@ const ModalConfirmJoinGb = (
 
         <View style={styles.enterInfoView}>
           <StyleText
-            i18Text="login.signUp.type.phone"
+            i18Text="login.phone"
             customStyle={styles.textTitleEnterInfo}>
             <StyleText
               originValue=":"
@@ -176,9 +183,9 @@ const ModalConfirmJoinGb = (
               onPress={onAddPhone}
               disable={!!phone}
               disableOpacity={1}>
-              {phone ? (
+              {!!phone ? (
                 <StyleText
-                  originValue={phone}
+                  originValue={formatPhone(phone)}
                   customStyle={[
                     styles.textJoinDate,
                     {

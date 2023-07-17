@@ -45,6 +45,7 @@ const login = {
   man: 'Nam',
   woman: 'Nữ',
   notToSay: 'Không tiện nói',
+  phone: 'Số điện thoại',
   component: {
     sendOTP: {
       enterCode: 'Nhập mã',
@@ -65,15 +66,12 @@ const login = {
     send: {
       header: 'Quên mật khẩu',
       receiveThrow: 'Nhận OTP qua',
-      phone: 'Số điện thoại',
     },
   },
   signUp: {
     type: {
       header: 'Đăng ký',
       chooseMethod: 'Chọn cách thức đăng ký tài khoản',
-      phone: 'Số điện thoại',
-      nameHolder: 'Tên Findme',
     },
     form: {
       header: 'Đăng ký',

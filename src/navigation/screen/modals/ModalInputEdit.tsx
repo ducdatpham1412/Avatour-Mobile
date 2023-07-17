@@ -20,7 +20,8 @@ interface TypeShow {
   defaultValue?: string;
   // onSaveFunction have not to have try-catch, we catch it in this component
   onSave?: (value: string) => Promise<void> | void;
-  checkValid?: (value: string) => boolean;
+  checkEnableButton?: (value: string) => boolean;
+  validateInput?: (text: string) => boolean;
   keyboardType?: KeyboardTypeOptions;
   placeholder?: I18Normalize;
 }
@@ -35,7 +36,8 @@ const ModalInputEdit = forwardRef(
 
     const modalRef = useRef<ElementRef<typeof ModalEdit>>(null);
     const onSaveFunctionRef = useRef<(value: string) => Promise<void> | void>();
-    const checkValidFunction = useRef<(value: string) => boolean>();
+    const checkEnableButton = useRef<(value: string) => boolean>();
+    const validateInput = useRef<(text: string) => boolean>();
 
     const [keyboardType, setKeyboardType] =
       useState<KeyboardTypeOptions>('default');
@@ -52,9 +54,14 @@ const ModalInputEdit = forwardRef(
           setValue(newValue);
           setKeyboardType(params?.keyboardType ?? 'default');
           setPlaceholder(params?.placeholder ?? 'common.null');
-          setIsValid(params?.checkValid ? params?.checkValid(newValue) : true);
+          setIsValid(
+            params?.checkEnableButton
+              ? params?.checkEnableButton(newValue)
+              : true,
+          );
           onSaveFunctionRef.current = params?.onSave;
-          checkValidFunction.current = params?.checkValid;
+          checkEnableButton.current = params?.checkEnableButton;
+          validateInput.current = params?.validateInput;
           modalRef.current?.show();
         },
         hide: () => {
@@ -82,14 +89,22 @@ const ModalInputEdit = forwardRef(
         ref={modalRef}
         loading={loading}
         onSave={onSave}
-        disable={!isValid}>
+        disable={!isValid}
+        onDismiss={() => {
+          onSaveFunctionRef.current = undefined;
+          checkEnableButton.current = undefined;
+          validateInput.current = undefined;
+        }}>
         <AppInput
           style={[$inputContainer, {borderColor: theme.gray_300}]}
           value={value}
           onChangeText={text => {
+            if (validateInput.current && !validateInput.current?.(text)) {
+              return;
+            }
             setValue(text);
-            const temp = checkValidFunction.current
-              ? checkValidFunction.current?.(text)
+            const temp = checkEnableButton.current
+              ? checkEnableButton.current?.(text)
               : true;
             if (temp !== isValid) {
               setIsValid(temp);

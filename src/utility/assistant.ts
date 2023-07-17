@@ -204,29 +204,6 @@ export const onGoToSignUp = () => {
 /**
  * MESSAGE
  */
-export const moveMeToEndOfListMember = (
-  listMember: Array<TypeMemberInListChatTag>,
-) => {
-  const myId = Store.getState().accountSlice.passport.profile.id;
-
-  const temp = [...listMember];
-  let memberMe: any;
-
-  let myIndex = -1;
-
-  listMember.forEach((item, index) => {
-    if (item.id === myId) {
-      myIndex = index;
-      memberMe = item;
-      temp.splice(index, 1);
-    }
-  });
-
-  if (myIndex === -1) {
-    return temp;
-  }
-  return temp.concat(memberMe);
-};
 
 export const reorderListChatTag = (listChatTag: Array<any>, index: number) => {
   const temp = [listChatTag[index]];
@@ -294,27 +271,6 @@ export function sleep(milliseconds: number) {
     currentDate = Date.now();
   } while (currentDate - date < milliseconds);
 }
-
-export const addMenuClearAsyncStorage = () => {
-  if (__DEV__) {
-    DevSettings.addMenuItem('Clear AsyncStorage', () => {
-      AsyncStorage.clear();
-      DevSettings.reload();
-    });
-  }
-};
-
-const paddingBottomCheckScroll = verticalScale(70);
-export const isScrollCloseToBottom = ({
-  layoutMeasurement,
-  contentOffset,
-  contentSize,
-}: NativeScrollEvent) => {
-  return (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - paddingBottomCheckScroll
-  );
-};
 
 export const $styleDropShadow: ViewStyle = {
   shadowColor: Theme.newTheme.gray_600,
@@ -583,3 +539,5 @@ export const renderJoinStatus = (
       };
   }
 };
+
+export const removePrefixPhone = (phone: string) => phone.replace('(+84) ', '');
