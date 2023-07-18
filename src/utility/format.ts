@@ -195,3 +195,4 @@ export const formatMoney = (value: number, options?: FormatMoneyOptions) => {
   }
   return `${formatLocaleNumber(String(value || '0'))} (vnd)`;
 };
+export const formatPhone = (phone: string) => `(+84) ${phone}`;
