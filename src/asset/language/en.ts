@@ -46,6 +46,8 @@ const login = {
   woman: 'Female',
   notToSay: 'Prefer not to say',
   phone: 'Phone',
+  yourAccountIsBeingLock:
+    'Your account is temporarily locked.\nBy tapping <b>"Continue"</b>, you confirm unlock your account.',
   component: {
     sendOTP: {
       enterCode: 'Enter',
@@ -100,9 +102,6 @@ const login = {
     termsOfUse: 'Terms Of Use',
     learnMore: '. Learn more about how we process your data in our',
     privacyPolicy: 'Privacy Policy',
-    yourAccountIsBeingLock:
-      'Your account is temporarily locked.\nBy tapping "Continue", you confirm unlock your account.',
-    continue: 'Continue',
     openAccountSuccess: 'Open account successfully!',
   },
   enjoy: 'Enjoy',

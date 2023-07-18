@@ -1,4 +1,3 @@
-import {apiLockAccount} from 'api/authentication';
 import Images from 'asset/img/images';
 import {
   StyleButton,
@@ -6,30 +5,15 @@ import {
   StyleIcon,
   StyleText,
 } from 'components/base';
-import {useLoading, useTheme} from 'hook';
-import {ModalAlert} from 'navigation/screen/modals';
+import {useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
+import {SETTING_ROUTE} from 'navigation/config';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import AuthenticateService from 'utility/login/loginService';
 
 const ConfirmLockAccount = () => {
   const theme = useTheme();
-  const {loading, setLoading} = useLoading();
-
-  const onLockAccount = async () => {
-    try {
-      setLoading(true);
-      await apiLockAccount();
-      await AuthenticateService.logOut({hadRefreshTokenBlacked: false});
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <StyleContainer
@@ -51,8 +35,11 @@ const ConfirmLockAccount = () => {
       <StyleButton
         title="setting.securityAndLogin.continueLock"
         containerStyle={styles.buttonDelete}
-        onPress={onLockAccount}
-        isLoading={loading}
+        onPress={() =>
+          navigate(SETTING_ROUTE.enterPassword, {
+            mode: 'lock-account',
+          })
+        }
       />
     </StyleContainer>
   );

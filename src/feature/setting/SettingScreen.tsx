@@ -1,17 +1,29 @@
 import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
 import {StyleContainer} from 'components/base';
+import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {SETTING_ROUTE} from 'navigation/config/routes';
-import React from 'react';
-import {ViewStyle} from 'react-native';
+import React, {useState} from 'react';
+import {ActivityIndicator, ViewStyle} from 'react-native';
 import {renderIconGender} from 'utility/assistant';
-import AuthenticateService from 'utility/login/loginService';
+import {logOut} from 'utility/authentication';
 import {scale} from 'utility/scale';
 import TypeMainSetting from './components/TypeMainSetting';
 
 const SettingScreen = () => {
+  const theme = useTheme();
   const {gender} = useAppSelector(state => state.accountSlice.passport.profile);
+  const [loadingLogOut, setLoadingLogOut] = useState(false);
+
+  const onLogOut = async () => {
+    if (loadingLogOut) {
+      return;
+    }
+    setLoadingLogOut(true);
+    await logOut();
+    setLoadingLogOut(false);
+  };
 
   return (
     <StyleContainer
@@ -44,11 +56,15 @@ const SettingScreen = () => {
       />
 
       <TypeMainSetting
-        icon={Images.icons.logout}
-        title="setting.logOut"
-        onPress={() =>
-          AuthenticateService.logOut({hadRefreshTokenBlacked: false})
+        icon={
+          loadingLogOut ? (
+            <ActivityIndicator color={theme.p_600} />
+          ) : (
+            Images.icons.logout
+          )
         }
+        title="setting.logOut"
+        onPress={onLogOut}
       />
     </StyleContainer>
   );

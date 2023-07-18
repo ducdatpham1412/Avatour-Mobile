@@ -167,10 +167,11 @@ export type AppParamsList = {
       | 'go-from-scan';
   };
   [SETTING_ROUTE.enterPassword]: {
-    newInfo: {
+    newInfo?: {
       email?: string;
       phone?: string;
     };
+    mode: 'change-information' | 'lock-account' | 'delete-account';
   };
   [SETTING_ROUTE.sendOTPChangeInfo]: {
     name: string;

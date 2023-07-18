@@ -1,4 +1,8 @@
-import {apiRequestOTP} from 'api/authentication';
+import {
+  apiLockAccount,
+  apiRequestDeleteAccount,
+  apiRequestOTP,
+} from 'api/authentication';
 import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
@@ -15,12 +19,13 @@ import {ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {borderWidthTiny} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
+import {logOut} from 'utility/authentication';
 import {scale, verticalScale} from 'utility/scale';
 
 const EnterPassword = ({
   route,
 }: RouteParams<AppParamsList[SETTING_ROUTE.enterPassword]>) => {
-  const {newInfo} = route.params;
+  const {newInfo, mode} = route.params ?? {};
   const {t} = useTranslation();
   const theme = useTheme();
   const {loading, setLoading} = useLoading();
@@ -39,45 +44,68 @@ const EnterPassword = ({
       return;
     }
 
-    if (newInfo.email) {
-      try {
-        setLoading(true);
-        await apiRequestOTP({
-          username: email,
-          type_otp: TYPE_OTP.changeInfo,
-          new_username: newInfo.email,
-        });
-        navigate(LOGIN_ROUTE.sendOTP, {
-          paramsOTP: {
+    /**
+     * Change information
+     */
+    if (mode === 'change-information' && newInfo) {
+      if (newInfo.email) {
+        try {
+          setLoading(true);
+          await apiRequestOTP({
             username: email,
             type_otp: TYPE_OTP.changeInfo,
             new_username: newInfo.email,
-          },
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      } finally {
-        setLoading(false);
+          });
+          navigate(LOGIN_ROUTE.sendOTP, {
+            paramsOTP: {
+              username: email,
+              type_otp: TYPE_OTP.changeInfo,
+              new_username: newInfo.email,
+            },
+          });
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        } finally {
+          setLoading(false);
+        }
+      } else if (newInfo.phone) {
+        try {
+          setLoading(true);
+          await apiChangeInformation({
+            username: newInfo.phone,
+          });
+          updatePassport({
+            profile: {
+              information: {
+                phone: newInfo.phone,
+              },
+            },
+          });
+          ModalAlert.success({
+            i18Content: 'alert.successChange',
+            onClose: () => navigate(SETTING_ROUTE.personalInformation),
+          });
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        } finally {
+          setLoading(false);
+        }
       }
-    } else if (newInfo.phone) {
+      return;
+    }
+
+    /**
+     * Lock account
+     */
+    if (mode === 'lock-account') {
       try {
         setLoading(true);
-        await apiChangeInformation({
-          username: newInfo.phone,
-        });
-        updatePassport({
-          profile: {
-            information: {
-              phone: newInfo.phone,
-            },
-          },
-        });
-        ModalAlert.success({
-          i18Content: 'alert.successChange',
-          onClose: () => navigate(SETTING_ROUTE.personalInformation),
-        });
+        await apiLockAccount();
+        await logOut();
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -85,6 +113,25 @@ const EnterPassword = ({
       } finally {
         setLoading(false);
       }
+      return;
+    }
+
+    /**
+     * Delete account
+     */
+    if (mode === 'delete-account') {
+      try {
+        setLoading(true);
+        await apiRequestDeleteAccount();
+        await logOut();
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      } finally {
+        setLoading(false);
+      }
+      return;
     }
   };
 

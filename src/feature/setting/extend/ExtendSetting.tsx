@@ -1,21 +1,17 @@
-import {StyleContainer, StyleIcon} from 'components/base';
-import Redux from 'hook/useRedux';
-import StyleHeader from 'navigation/components/StyleHeader';
-import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
-import {navigate} from 'navigation/NavigationService';
-import React, {useState} from 'react';
-import {ScaledSheet} from 'react-native-size-matters';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import TypeDetailSetting from '../../../components/common/TypeDetailSetting';
-import LanguageSetting from './LanguageSetting';
-import ThemeSetting from './ThemeSetting';
-import {scale} from 'utility/scale';
-import {useTheme} from 'hook';
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';
+import {StyleContainer, StyleIcon} from 'components/base';
+import {useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
+import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
+import React, {useState} from 'react';
+import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {scale} from 'utility/scale';
+import TypeDetailSetting from '../../../components/common/TypeDetailSetting';
+import LanguageSetting from './LanguageSetting';
 
 const ExtendSetting = () => {
   const theme = useTheme();
@@ -62,7 +58,7 @@ const ExtendSetting = () => {
           />
         }
       />
-      {isSettingLanguage && <LanguageSetting />}
+      <LanguageSetting isOpening={isSettingLanguage} />
 
       {!isShopAccount && (
         <TypeDetailSetting

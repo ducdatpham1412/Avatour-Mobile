@@ -1,9 +1,8 @@
-import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
+import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
-import {borderWidthTiny} from 'utility/assistant';
 import {I18Normalize} from 'utility/I18Next';
 import {scale, verticalScale} from 'utility/scale';
 

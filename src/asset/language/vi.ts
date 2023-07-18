@@ -46,6 +46,8 @@ const login = {
   woman: 'Nữ',
   notToSay: 'Không tiện nói',
   phone: 'Số điện thoại',
+  yourAccountIsBeingLock:
+    'Tài khoản của bạn đang khoá tạm thời.\nBằng việc ấn <b>"Tiếp tục"</b>, bạn xác nhận mở khoá tài khoản của mình.',
   component: {
     sendOTP: {
       enterCode: 'Nhập mã',
@@ -101,9 +103,6 @@ const login = {
     learnMore:
       ' của chúng tôi. Hiểu về cách chúng tôi xử lý dữ liệu của bạn tại',
     privacyPolicy: 'Chính sách bảo mật',
-    yourAccountIsBeingLock:
-      'Tài khoản của bạn đang khoá tạm thời.\nBằng việc ấn "Tiếp tục", bạn xác nhận mở khoá tài khoản của mình.',
-    continue: 'Tiếp tục',
     openAccountSuccess: 'Mở khoá tài khoản thành công!',
   },
   enjoy: 'Trải nghiệm',

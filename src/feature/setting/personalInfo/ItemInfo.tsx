@@ -42,7 +42,7 @@ const styles = ScaledSheet.create({
     height: '45@vs',
     borderRadius: '10@vs',
     flexDirection: 'row',
-    marginVertical: '7@vs',
+    marginTop: '16@vs',
   },
   iconModule: {
     flex: 1,

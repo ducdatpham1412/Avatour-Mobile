@@ -1,4 +1,3 @@
-import {apiRequestDeleteAccount} from 'api/authentication';
 import Images from 'asset/img/images';
 import {
   StyleButton,
@@ -7,25 +6,14 @@ import {
   StyleText,
 } from 'components/base';
 import {useTheme} from 'hook';
-import {ModalAlert} from 'navigation/screen/modals';
+import {navigate} from 'navigation/NavigationService';
+import {SETTING_ROUTE} from 'navigation/config';
 import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import AuthenticateService from 'utility/login/loginService';
 
 const ConfirmDeleteAccount = () => {
   const theme = useTheme();
-
-  const onRequestDeleteAccount = async () => {
-    try {
-      await apiRequestDeleteAccount();
-      await AuthenticateService.logOut({hadRefreshTokenBlacked: false});
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    }
-  };
 
   return (
     <StyleContainer
@@ -47,7 +35,11 @@ const ConfirmDeleteAccount = () => {
       <StyleButton
         title="setting.securityAndLogin.continueDelete"
         containerStyle={styles.buttonDelete}
-        onPress={onRequestDeleteAccount}
+        onPress={() =>
+          navigate(SETTING_ROUTE.enterPassword, {
+            mode: 'delete-account',
+          })
+        }
       />
     </StyleContainer>
   );

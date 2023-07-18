@@ -22,11 +22,11 @@ import {useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
 import {isIOS} from 'utility/assistant';
 import AsyncStore from 'utility/asyncStore';
+import {loginSuccess} from 'utility/authentication';
 import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
-import AuthenticateService from 'utility/login/loginService';
+import {impactLight} from 'utility/haptic';
 import {moderateScale} from 'utility/scale';
 import GenderSwipe from '../components/GenderSwipe';
-import {impactLight} from 'utility/haptic';
 
 const defaultDate = new Date(2000, 0, 1);
 
@@ -74,7 +74,7 @@ const EditBasicInformation = ({
            */
           await AsyncStore.updateActiveUser(itemLoginSuccess);
           await apiChangeInformation(updateObject);
-          await AuthenticateService.loginSuccess({
+          await loginSuccess({
             itemLoginSuccess,
             isKeepSign: isKeep,
             isLoginSocial,

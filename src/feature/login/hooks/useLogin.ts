@@ -4,12 +4,15 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {useIsFocused} from '@react-navigation/native';
+import {apiLogin} from 'api/authentication';
 import {RootState, useAppSelector} from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
+import {navigate} from 'navigation/NavigationService';
+import {LOGIN_ROUTE} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import {useEffect, useRef, useState} from 'react';
 import AsyncStorage from 'utility/asyncStore';
-import AuthenticateService from 'utility/login/loginService';
+import {loginSuccess, requestLoginSocial} from 'utility/authentication';
 
 const loginForm = __DEV__
   ? {
@@ -51,7 +54,7 @@ const useLogin = () => {
         showPlayServicesUpdateDialog: true,
       });
       const userInfo = await GoogleSignin.signIn();
-      AuthenticateService.requestLoginSocial({
+      await requestLoginSocial({
         tokenSocial: userInfo.idToken,
         typeSocial: TYPE_SOCIAL_LOGIN.google,
       });
@@ -79,8 +82,7 @@ const useLogin = () => {
       });
 
       const tokenSocial = res.authorizationCode;
-      // console.log('token haha: ', res);
-      AuthenticateService.requestLoginSocial({
+      requestLoginSocial({
         tokenSocial,
         typeSocial: TYPE_SOCIAL_LOGIN.apple,
       });
@@ -94,13 +96,41 @@ const useLogin = () => {
   }).current;
 
   const submitLogin = async (isKeepSign: boolean) => {
-    setLoading(true);
-    await AuthenticateService.requestLogin({
-      username: username.trim(),
-      password: password.trim(),
-      isKeepSign,
-    });
-    setLoading(false);
+    try {
+      setLoading(true);
+      const res = await apiLogin({username, password});
+      /**
+       * Account is temporary locking
+       */
+      if (res.data?.isLocking && res.data?.username) {
+        navigate(LOGIN_ROUTE.confirmOpenAccount, {
+          username: res.data.username,
+        });
+        return;
+      }
+
+      /**
+       * Login success
+       */
+      if (res.data?.token && res.data?.refreshToken) {
+        await loginSuccess({
+          itemLoginSuccess: {
+            username,
+            password,
+            token: res.data.token,
+            refreshToken: res.data.refreshToken,
+          },
+          isKeepSign,
+          isLoginSocial: false,
+        });
+      }
+    } catch (err) {
+      ModalAlert.error({
+        i18Content: 'alert.loginFail',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const selectSavedAccount = (index: number) => {

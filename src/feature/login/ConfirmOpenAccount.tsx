@@ -58,11 +58,11 @@ const ConfirmOpenAccount = ({
       />
 
       <View style={[styles.alertView, {backgroundColor: theme.background}]}>
-        <StyleText i18Text="login.loginScreen.yourAccountIsBeingLock" />
+        <StyleText i18Text="login.yourAccountIsBeingLock" mode="html" />
       </View>
 
       <StyleButton
-        title="login.loginScreen.continue"
+        title="common.continue"
         containerStyle={styles.buttonDelete}
         onPress={onOpenAccount}
         isLoading={loading}
