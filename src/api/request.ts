@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable prefer-destructuring */
 import Store from 'app-redux/store';
 import {ERROR_KEY_ENUM} from 'asset/enum';
 import Config from 'asset/env';
@@ -7,7 +5,7 @@ import axios, {InternalAxiosRequestConfig} from 'axios';
 import Redux from 'hook/useRedux';
 import {logger} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
-import AuthenticateService from 'utility/login/loginService';
+import {logOut} from 'utility/authentication';
 
 const baseURL = Config.API_URL;
 
@@ -111,7 +109,7 @@ request.interceptors.response.use(
         const temp: any = err;
         const _error = temp.response.data;
         if (_error.errorKey === ERROR_KEY_ENUM.token_blacklisted) {
-          AuthenticateService.logOut({hadRefreshTokenBlacked: true});
+          logOut();
         }
         return Promise.reject(_error.errorMessage);
       } finally {

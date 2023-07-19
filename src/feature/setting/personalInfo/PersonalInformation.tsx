@@ -34,11 +34,13 @@ import {
 import {moderateScale, scale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 import ItemInfo from './ItemInfo';
+import {useIsFocused} from '@react-navigation/native';
 
 const PersonalInformation = () => {
   const {t} = useTranslation();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const theme = useTheme();
+  const isFocused = useIsFocused();
 
   const informationValueRef = useRef({
     ...profile.information,
@@ -92,12 +94,14 @@ const PersonalInformation = () => {
       if (newInfo.email) {
         navigate(SETTING_ROUTE.enterPassword, {
           newInfo,
+          mode: 'change-information',
         });
         return;
       }
       if (newInfo.phone) {
         navigate(SETTING_ROUTE.enterPassword, {
           newInfo,
+          mode: 'change-information',
         });
       }
     } catch (err) {
@@ -138,6 +142,13 @@ const PersonalInformation = () => {
 
     return () => clearTimeout(timeOut.current);
   }, [email, phone, gender, birthday]);
+
+  useUpdateEffect(() => {
+    if (isFocused) {
+      console.log('on focus');
+      refuseChange();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     informationValueRef.current = {

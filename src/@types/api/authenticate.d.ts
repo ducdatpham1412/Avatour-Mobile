@@ -33,6 +33,7 @@ interface TypeLoginResponse {
     // for login success
     token?: string;
     refreshToken?: string;
+  } & {
     // for account temporary locking
     username?: string;
     isLocking?: boolean;

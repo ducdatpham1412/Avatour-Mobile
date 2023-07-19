@@ -1,14 +1,14 @@
 import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
-import React from 'react';
-import {View} from 'react-native';
+import React, {isValidElement} from 'react';
+import {ImageSourcePropType, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale} from 'utility/scale';
 
 interface TypeMainSettingProps {
-  icon: any;
+  icon: ImageSourcePropType | Element;
   title: I18Normalize;
   onPress(): void;
 }
@@ -28,7 +28,11 @@ const TypeMainSetting = (props: TypeMainSettingProps) => {
             borderColor: theme.p_700,
           },
         ]}>
-        <StyleImage source={icon} customStyle={{width: '70%', height: '70%'}} />
+        {isValidElement(icon) ? (
+          icon
+        ) : (
+          <StyleImage source={icon} customStyle={styles.icon} />
+        )}
       </View>
 
       <View style={[styles.cordBox, {borderColor: theme.p_700}]} />
@@ -42,7 +46,7 @@ const styles = ScaledSheet.create({
   container: {
     width: '100%',
     height: '55@vs',
-    marginVertical: '8@vs',
+    marginTop: '16@vs',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -68,6 +72,10 @@ const styles = ScaledSheet.create({
   },
   text: {
     fontWeight: FONT_WEIGHT_MEDIUM,
+  },
+  icon: {
+    width: '70%',
+    height: '70%',
   },
 });
 

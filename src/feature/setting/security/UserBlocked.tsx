@@ -3,8 +3,13 @@ import {useAppSelector} from 'app-redux/store';
 import {StyleIcon, StyleList, StyleText, StyleTouchable} from 'components/base';
 import {useApi, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {View} from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import {moderateScale, scale} from 'utility/scale';
@@ -54,16 +59,15 @@ const UserBlocked = ({isOpening}: Props) => {
     },
   });
 
-  const aim = useRef(new Animated.Value(0)).current;
-  const [height, setHeight] = useState(0);
-  aim.addListener(({value}) => setHeight(value));
+  const aim = useSharedValue(0);
+  const heightStyle = useAnimatedStyle(() => ({
+    height: aim.value,
+  }));
 
   useEffect(() => {
-    Animated.timing(aim, {
-      toValue: isOpening ? verticalScale(300) : 0,
+    aim.value = withTiming(isOpening ? verticalScale(300) : 0, {
       duration: 300,
-      useNativeDriver: true,
-    }).start();
+    });
   }, [isOpening]);
 
   const onUnBlock = async (userId: number) => {
@@ -80,7 +84,7 @@ const UserBlocked = ({isOpening}: Props) => {
   };
 
   return (
-    <Animated.View style={[styles.container, {height}]}>
+    <Animated.View style={[styles.container, heightStyle]}>
       {!!data && (
         <StyleList
           data={data}

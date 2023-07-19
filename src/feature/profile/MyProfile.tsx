@@ -58,6 +58,9 @@ const MyProfile = ({
   };
 
   return (
+    /**
+     * TO DO: Consider move this to ScrollView of re animated
+     */
     <StyleContainer
       headerProps={{
         title: profile?.name as I18Normalize,

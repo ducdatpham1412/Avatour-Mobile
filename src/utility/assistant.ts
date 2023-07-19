@@ -1,11 +1,5 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {
-  TypeBubblePalace,
-  TypeInteractBubble,
-  TypeMemberInListChatTag,
-} from 'api/interface';
+import {TypeBubblePalace, TypeInteractBubble} from 'api/interface';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
 import Store from 'app-redux/store';
 import {
@@ -29,16 +23,11 @@ import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
 import {ModalAlert, Toast} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {
-  DevSettings,
-  NativeScrollEvent,
-  Platform,
-  ViewStyle,
-} from 'react-native';
-import {moderateScale, verticalScale} from 'react-native-size-matters';
+import {Platform, ViewStyle} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
 import {impactLight} from './haptic';
-import AuthenticateService from './login/loginService';
+import {logOut} from './authentication';
 
 export const interactBubble = (params: TypeInteractBubble) => {
   navigate(ROOT_SCREEN.interactBubble, params);
@@ -59,59 +48,6 @@ export const choosePrivateAvatar = (_gender?: number) => {
       return '';
   }
 };
-
-/**
- * FOR EDIT PROFILE THAT IMAGE PICKER
- */
-// export const chooseImageFromLibrary = async (
-//   action: Function,
-//   params?: ImagePickerParamsType,
-//   callBackFunction?: Function,
-// ) => {
-//   try {
-//     const permission = await checkPhoto();
-//     if (permission) {
-//       const localPath: any = await ImageUploader.chooseImageFromLibrary(params);
-
-//       callBackFunction?.();
-
-//       if (params?.multiple) {
-//         action(localPath.map((item: any) => item.path));
-//       } else {
-//         action(localPath.path);
-//       }
-//     }
-//   } catch (err) {
-//     logger(err);
-//   }
-// };
-
-// export const chooseImageFromCamera = async (
-//   action: Function,
-//   params?: ImagePickerParamsType,
-//   callBackFunction?: Function,
-// ) => {
-//   try {
-//     const permission = await checkCamera();
-//     if (permission) {
-//       const localPath: any = await ImageUploader.chooseImageFromCamera(params);
-
-//       callBackFunction?.();
-
-//       if (params?.multiple) {
-//         action(localPath.map((item: any) => item.path));
-//       } else {
-//         action(localPath.path);
-//       }
-//     }
-//   } catch (err) {
-//     logger(err);
-//   }
-// };
-
-/**
- * OTHERS
- */
 
 export const isIOS = Platform.OS === 'ios';
 
@@ -148,13 +84,13 @@ export const chooseTextFromIdGender = (id: number | undefined) => {
 };
 
 export const chooseLanguageFromId = (id: number) => {
-  let tempLanguage = '';
   if (id === LANGUAGE_TYPE.en) {
-    tempLanguage = 'en';
-  } else if (id === LANGUAGE_TYPE.vi) {
-    tempLanguage = 'vi';
+    return 'en';
   }
-  return tempLanguage;
+  if (id === LANGUAGE_TYPE.vi) {
+    return 'vi';
+  }
+  return 'vi';
 };
 
 export const modalizeGoToChatTagFromGroup = (params: {chatTagId: string}) => {
@@ -191,8 +127,8 @@ export const renderIconGender = (_gender?: number) => {
 };
 
 export const onGoToSignUp = () => {
-  AuthenticateService.logOut({
-    hadRefreshTokenBlacked: true,
+  logOut({
+    callApiLogOut: false,
     callBack: () => {
       navigate(LOGIN_ROUTE.signUpForm, {
         typeSignUp: SIGN_UP_TYPE.email,

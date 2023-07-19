@@ -1,16 +1,22 @@
 import {apiChangePassword} from 'api/setting';
 import {useAppSelector} from 'app-redux/store';
+import {BORDER_RADIUS} from 'asset';
 import {AppInput, StyleButton} from 'components/base';
 import {useLoading, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Animated, TextInput} from 'react-native';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {TextInput, TextStyle, ViewStyle} from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {verticalScale} from 'react-native-size-matters';
 import {useAsync} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
 import AppAsyncStorage from 'utility/asyncStore';
-import {scale} from 'utility/scale';
+import {moderateScale, scale} from 'utility/scale';
 import {validatePassword} from 'utility/validate';
 
 interface Props {
@@ -24,9 +30,10 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
   const theme = useTheme();
   const {loading, setLoading} = useLoading();
 
-  const aim = useRef(new Animated.Value(0)).current;
-  const [height, setHeight] = useState(0);
-  aim.addListener(({value}) => setHeight(value));
+  const aim = useSharedValue(0);
+  const heightStyle = useAnimatedStyle(() => ({
+    height: aim.value,
+  }));
 
   const ref_newPassword = useRef<TextInput>(null);
   const ref_passwordCf = useRef<TextInput>(null);
@@ -36,11 +43,9 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   useAsync(async () => {
-    Animated.timing(aim, {
-      toValue: isOpening ? verticalScale(250) : 0,
+    aim.value = withTiming(isOpening ? verticalScale(250) : 0, {
       duration: 300,
-      useNativeDriver: true,
-    }).start();
+    });
   }, [isOpening]);
 
   const confirmChangePassword = async () => {
@@ -94,12 +99,12 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
   };
 
   return (
-    <Animated.View style={[styles.container, {height}]}>
+    <Animated.View style={[$container, heightStyle]}>
       <AppInput
         value={currentPassword}
         placeholder={t('setting.securityAndLogin.nowPass')}
         style={[
-          styles.moduleInput,
+          $moduleInput,
           {
             borderColor: theme.gray_500,
           },
@@ -113,7 +118,7 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
         ref={ref_newPassword}
         placeholder={t('setting.securityAndLogin.newPass')}
         style={[
-          styles.moduleInput,
+          $moduleInput,
           {
             borderColor: theme.gray_500,
           },
@@ -127,7 +132,7 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
         ref={ref_passwordCf}
         placeholder={t('setting.securityAndLogin.confirmPass')}
         style={[
-          styles.moduleInput,
+          $moduleInput,
           {
             borderColor: theme.gray_500,
           },
@@ -137,8 +142,8 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
       />
 
       <StyleButton
-        containerStyle={styles.buttonConfirm}
-        titleStyle={styles.textButtonCf}
+        containerStyle={$buttonConfirm}
+        titleStyle={$textButtonCf}
         title="setting.securityAndLogin.buttonChangePass"
         onPress={confirmChangePassword}
         isLoading={loading}
@@ -147,37 +152,29 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '90%',
-    paddingHorizontal: '20@s',
-    alignItems: 'center',
-    overflow: 'hidden',
-    alignSelf: 'center',
-  },
-  moduleInput: {
-    width: '100%',
-    borderWidth: borderWidthTiny,
-    borderRadius: '10@ms',
-    marginVertical: '5@vs',
-    paddingTop: verticalScale(8),
-    paddingBottom: verticalScale(8),
-    paddingHorizontal: scale(10),
-  },
-  buttonConfirm: {
-    marginVertical: '15@vs',
-    paddingHorizontal: '30@s',
-    paddingVertical: '7@vs',
-  },
-  textButtonCf: {
-    fontSize: '14@ms',
-  },
-  inputStyle: {
-    paddingHorizontal: '10@s',
-    backgroundColor: 'transparent',
-    paddingTop: '7@vs',
-    paddingBottom: '7@vs',
-  },
-});
+const $container: ViewStyle = {
+  width: '90%',
+  paddingHorizontal: scale(12),
+  alignItems: 'center',
+  alignSelf: 'center',
+  overflow: 'hidden',
+};
+const $moduleInput: TextStyle = {
+  width: '100%',
+  borderWidth: borderWidthTiny,
+  borderRadius: BORDER_RADIUS.f3,
+  marginVertical: verticalScale(5),
+  paddingTop: verticalScale(8),
+  paddingBottom: verticalScale(8),
+  paddingHorizontal: scale(10),
+};
+const $buttonConfirm: ViewStyle = {
+  marginVertical: verticalScale(15),
+  paddingHorizontal: scale(30),
+  paddingVertical: verticalScale(8),
+};
+const $textButtonCf: TextStyle = {
+  fontSize: moderateScale(14),
+};
 
 export default ChangingPassword;
