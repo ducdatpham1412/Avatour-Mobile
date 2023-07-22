@@ -45,7 +45,7 @@ const ItemRequest = ({item}: Props) => {
         <>
           {Object.entries(item?.data)?.map(([key, value]) => {
             return (
-              <StyleText>
+              <StyleText key={key}>
                 <StyleText originValue={String(key)} customStyle={$keyText} />
                 <StyleText originValue=": " />
                 <StyleText originValue={String(value)} />

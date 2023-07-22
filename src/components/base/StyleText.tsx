@@ -82,6 +82,7 @@ const StyleText = (props: StyleTextProps) => {
         if (tx.type === 'normal') {
           return (
             <Text
+              key={tx.text}
               style={[$textDefault, {color: black}, customStyle]}
               {...props}>
               {tx.text}
@@ -90,6 +91,7 @@ const StyleText = (props: StyleTextProps) => {
         }
         return (
           <Text
+            key={tx.text}
             style={[
               $textDefault,
               {color: black},

@@ -410,15 +410,14 @@ const profile = {
   price: 'Price',
   toBecomeShopAccount:
     'In order to become touring supplier\nWe need some information to complete review process',
-  firstEnterLocation: "First, let's us know your location",
+  firstEnterName: "First, enter your shop's name",
+  shopLocation: "Let's us know your location",
   location: 'Location',
   bank: 'Choose bank',
   bankName: 'Bank',
   accountNumber: 'Account number',
   accountHolder: 'Account holder',
-  byTapping: 'By tapping ',
-  agreeSendTheseInformation:
-    ", you agree to send these information to us.\nReviewing process can take some time, we'll notice to you within 24 hours via email ",
+  agreeSendInformation: `By tapping <b>"Confirm"</b>, you agree to send these information to us.\nReviewing process can take from 1-7 days, we'll notice to you within 24 hours via email <b>{{email}}</b>`,
   phoneNumber: 'Your phone number',
   requestUpgradeSuccess: 'Send request successfully',
   description: 'Description about you',

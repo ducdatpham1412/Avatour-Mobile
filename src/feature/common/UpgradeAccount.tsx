@@ -1,16 +1,20 @@
 import {apiUpgradeAccount} from 'api/authentication';
 import {useAppSelector} from 'app-redux/store';
-import {Metrics} from 'asset/metrics';
+import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
 import AutoHeightImage from 'components/AutoHeightImage';
-import {StyleButton, StyleText, StyleTouchable} from 'components/base';
+import {
+  StyleButton,
+  StyleContainer,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
 import InputBox from 'components/common/InputBox';
+import {useMyRequests} from 'feature/profile/hooks';
 import {useLoading, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
-import {StyleHeader} from 'navigation/components';
 import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
-import React, {useRef, useState} from 'react';
-import {ScrollView, TextInput, View} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, {useEffect, useRef, useState} from 'react';
+import {ScrollView, TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {borderWidthTiny} from 'utility/assistant';
 import {verticalScale} from 'utility/scale';
@@ -18,36 +22,47 @@ import {validateIsPhone} from 'utility/validate';
 import ModalBankAccount from './components/ModalBankAccount';
 import ModalChooseBank from './components/ModalChooseBank';
 
-const {width, height} = Metrics;
-
 const UpgradeAccount = () => {
-  const {top} = useSafeAreaInsets();
+  const timeOutRef = useRef(0);
   const {loading, setLoading} = useLoading();
   const theme = useTheme();
   const {email} = useAppSelector(
     state => state.accountSlice.passport.profile.information,
   );
+  const [, {mutate}] = useMyRequests();
 
   const scrollRef = useRef<ScrollView>(null);
+  const nameRef = useRef<TextInput>(null);
   const locationInputRef = useRef<TextInput>(null);
   const phoneNumberRef = useRef<TextInput>(null);
   const modalChooseBankRef = useRef<ModalChooseBank>(null);
   const modalBankAccountRef = useRef<ModalBankAccount>(null);
 
+  const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [phone, setPhone] = useState('');
   const [chosenBank, setChosenBank] = useState<any>();
   const [bankAccount, setBankAccount] = useState('');
 
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeOutRef.current);
+    };
+  }, []);
+
   const onConfirm = async () => {
     try {
       setLoading(true);
       await apiUpgradeAccount({
+        name,
         location,
         phone,
         bank_code: chosenBank?.code || chosenBank?.shortName || '',
         bank_account: bankAccount,
       });
+      await mutate();
       ModalAlert.success({
         i18Content: 'profile.requestUpgradeSuccess',
         onClose: () => goBack(),
@@ -61,13 +76,13 @@ const UpgradeAccount = () => {
     }
   };
 
+  /**
+   * Render views
+   */
   const renderHeader = () => {
     return (
-      <View style={styles.elementView}>
-        <StyleText
-          i18Text="profile.toBecomeShopAccount"
-          customStyle={styles.titleBecome}
-        />
+      <View style={[$element, {height}]}>
+        <StyleText i18Text="profile.toBecomeShopAccount" customStyle={$title} />
         <StyleButton
           title="common.next"
           onPress={() => {
@@ -76,28 +91,27 @@ const UpgradeAccount = () => {
               animated: true,
             });
             if (!location) {
-              locationInputRef.current?.focus();
+              timeOutRef.current = setTimeout(() => {
+                nameRef.current?.focus();
+              }, 400);
             }
           }}
-          containerStyle={styles.buttonView}
+          containerStyle={$button}
         />
       </View>
     );
   };
 
-  const enterLocation = () => {
+  const renderEnterName = () => {
     return (
-      <View style={styles.elementView}>
-        <StyleText
-          i18Text="profile.firstEnterLocation"
-          customStyle={styles.titleBecome}
-        />
+      <View style={[$element, {height}]}>
+        <StyleText i18Text="profile.firstEnterName" customStyle={$title} />
         <InputBox
-          ref={locationInputRef}
-          style={[styles.inputContainer, {backgroundColor: theme.background}]}
-          i18Placeholder="profile.location"
-          defaultValue={location}
-          onChangeText={text => setLocation(text)}
+          ref={nameRef}
+          style={[$input, {backgroundColor: theme.white}]}
+          i18Placeholder="profile.shopName"
+          defaultValue={name}
+          onChangeText={text => setName(text)}
         />
         <StyleButton
           title="common.next"
@@ -106,11 +120,44 @@ const UpgradeAccount = () => {
               y: height * 2,
               animated: true,
             });
-            if (!phone) {
-              phoneNumberRef.current?.focus();
+            if (!location) {
+              timeOutRef.current = setTimeout(() => {
+                locationInputRef.current?.focus();
+              }, 400);
             }
           }}
-          containerStyle={styles.buttonView}
+          containerStyle={$button}
+          disable={!name}
+        />
+      </View>
+    );
+  };
+
+  const enterLocation = () => {
+    return (
+      <View style={[$element, {height}]}>
+        <StyleText i18Text="profile.shopLocation" customStyle={$title} />
+        <InputBox
+          ref={locationInputRef}
+          style={[$input, {backgroundColor: theme.white}]}
+          i18Placeholder="profile.location"
+          defaultValue={location}
+          onChangeText={text => setLocation(text)}
+        />
+        <StyleButton
+          title="common.next"
+          onPress={() => {
+            scrollRef.current?.scrollTo({
+              y: height * 3,
+              animated: true,
+            });
+            if (!phone) {
+              timeOutRef.current = setTimeout(() => {
+                phoneNumberRef.current?.focus();
+              }, 400);
+            }
+          }}
+          containerStyle={$button}
           disable={!location}
         />
       </View>
@@ -119,14 +166,11 @@ const UpgradeAccount = () => {
 
   const enterPhoneNumber = () => {
     return (
-      <View style={styles.elementView}>
-        <StyleText
-          i18Text="profile.phoneNumber"
-          customStyle={styles.titleBecome}
-        />
+      <View style={[$element, {height}]}>
+        <StyleText i18Text="profile.phoneNumber" customStyle={$title} />
         <InputBox
           ref={phoneNumberRef}
-          style={[styles.inputContainer, {backgroundColor: theme.background}]}
+          style={[$input, {backgroundColor: theme.white}]}
           i18Placeholder="profile.phoneNumber"
           defaultValue={phone}
           onChangeText={text => setPhone(text)}
@@ -136,11 +180,11 @@ const UpgradeAccount = () => {
           title="common.next"
           onPress={() => {
             scrollRef.current?.scrollTo({
-              y: height * 3,
+              y: height * 4,
               animated: true,
             });
           }}
-          containerStyle={styles.buttonView}
+          containerStyle={$button}
           disable={!validateIsPhone(phone)}
         />
       </View>
@@ -149,17 +193,14 @@ const UpgradeAccount = () => {
 
   const chooseBanking = () => {
     return (
-      <View style={styles.elementView}>
-        <StyleText
-          i18Text="profile.updateBankAccount"
-          customStyle={styles.titleBecome}
-        />
+      <View style={[$element, {height}]}>
+        <StyleText i18Text="profile.updateBankAccount" customStyle={$title} />
         <StyleText i18Text="profile.thisIsAccountReceive" />
 
         {!chosenBank ? (
           <StyleTouchable
             customStyle={[
-              styles.chooseBankBox,
+              $chooseBank,
               {borderColor: theme.black, marginTop: verticalScale(30)},
             ]}
             onPress={() => modalChooseBankRef.current?.show()}>
@@ -176,7 +217,7 @@ const UpgradeAccount = () => {
 
         <View style={styles.accountNumberView}>
           <StyleTouchable
-            customStyle={styles.chooseBankBox}
+            customStyle={$chooseBank}
             onPress={() =>
               ModalInputEdit.show({
                 defaultValue: bankAccount,
@@ -196,11 +237,11 @@ const UpgradeAccount = () => {
           title="common.done"
           onPress={() => {
             scrollRef.current?.scrollTo({
-              y: height * 4,
+              y: height * 5,
               animated: true,
             });
           }}
-          containerStyle={styles.buttonView}
+          containerStyle={$button}
           disable={!chosenBank || !bankAccount}
         />
       </View>
@@ -209,28 +250,20 @@ const UpgradeAccount = () => {
 
   const confirmAll = () => {
     return (
-      <View style={styles.elementView}>
+      <View style={[$element, {height}]}>
         <StyleText
-          i18Text="profile.byTapping"
-          customStyle={styles.titleConfirm}>
-          <StyleText
-            i18Text="setting.personalInfo.confirm"
-            customStyle={[styles.titleConfirm, {fontWeight: 'bold'}]}
-          />
-          <StyleText
-            i18Text="profile.agreeSendTheseInformation"
-            customStyle={styles.titleConfirm}
-          />
-          <StyleText
-            originValue={email}
-            customStyle={[styles.titleConfirm, {fontWeight: 'bold'}]}
-          />
-        </StyleText>
+          i18Text="profile.agreeSendInformation"
+          i18Params={{
+            email,
+          }}
+          mode="html"
+          customStyle={[$title, {fontWeight: 'normal'}]}
+        />
         <StyleButton
           title="setting.personalInfo.confirm"
           onPress={onConfirm}
-          containerStyle={styles.buttonView}
-          disable={!location || !phone || !chosenBank || !bankAccount}
+          containerStyle={$button}
+          disable={!name || !location || !phone || !chosenBank || !bankAccount}
           isLoading={loading}
         />
       </View>
@@ -238,28 +271,28 @@ const UpgradeAccount = () => {
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.white}]}>
-      <ScrollView
-        ref={scrollRef}
-        showsVerticalScrollIndicator={false}
-        snapToInterval={height}
-        decelerationRate="fast">
-        {renderHeader()}
-        {enterLocation()}
-        {enterPhoneNumber()}
-        {chooseBanking()}
-        {confirmAll()}
-      </ScrollView>
-
+    <StyleContainer
+      headerProps={{
+        title: 'profile.upgradeToShop',
+      }}
+      layOut="view">
       <View
-        style={[
-          styles.header,
-          {paddingTop: top, backgroundColor: theme.white},
-        ]}>
-        <StyleHeader
-          containerStyle={{backgroundColor: theme.white}}
-          title="profile.upgradeToShop"
-        />
+        style={$container}
+        onLayout={({nativeEvent}) => {
+          setHeight(nativeEvent.layout.height);
+        }}>
+        <ScrollView
+          ref={scrollRef}
+          showsVerticalScrollIndicator={false}
+          snapToInterval={height}
+          decelerationRate="fast">
+          {renderHeader()}
+          {renderEnterName()}
+          {enterLocation()}
+          {enterPhoneNumber()}
+          {chooseBanking()}
+          {confirmAll()}
+        </ScrollView>
       </View>
 
       <ModalChooseBank
@@ -274,52 +307,38 @@ const UpgradeAccount = () => {
         onChangeValue={value => setBankAccount(value)}
         theme={theme}
       />
-    </View>
+    </StyleContainer>
   );
 };
 
+const $container: ViewStyle = {
+  flex: 1,
+};
+const $element: ViewStyle = {
+  width: '100%',
+  justifyContent: 'center',
+  marginTop: -verticalScale(20),
+};
+const $title: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $input: TextStyle = {
+  width: '100%',
+  marginTop: verticalScale(12),
+};
+const $button: ViewStyle = {
+  marginTop: verticalScale(26),
+};
+const $chooseBank: ViewStyle = {
+  width: '70%',
+  alignSelf: 'center',
+  borderRadius: BORDER_RADIUS.f3,
+  borderWidth: borderWidthTiny,
+  paddingVertical: verticalScale(8),
+  alignItems: 'center',
+};
+
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    width: '100%',
-    position: 'absolute',
-  },
-  buttonBack: {
-    position: 'absolute',
-    left: '20@s',
-  },
-  imageBackground: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  elementView: {
-    width,
-    height,
-    justifyContent: 'center',
-    paddingHorizontal: '20@s',
-  },
-  titleBecome: {
-    lineHeight: '20@ms',
-    fontWeight: 'bold',
-  },
-  buttonView: {
-    marginTop: '30@vs',
-  },
-  inputContainer: {
-    width: '100%',
-    marginTop: '15@vs',
-  },
-  chooseBankBox: {
-    paddingVertical: '10@vs',
-    alignItems: 'center',
-    width: '70%',
-    alignSelf: 'center',
-    borderRadius: '10@ms',
-    borderWidth: borderWidthTiny,
-  },
   iconChosenBank: {
     width: '30%',
     borderRadius: '10@ms',

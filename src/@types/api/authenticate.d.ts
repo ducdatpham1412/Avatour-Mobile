@@ -84,6 +84,7 @@ interface TypeOpenAccountRequest {
 }
 
 interface TypeUpgradeAccount {
+  name: string;
   location: string;
   phone: string;
   bank_code: string;
