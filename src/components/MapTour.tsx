@@ -1,13 +1,14 @@
+import {FONT_SIZE} from 'asset';
 import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {ReactNode} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleText, StyleWebView} from './base';
 import {ButtonX} from './common';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {FONT_SIZE} from 'asset';
 
 interface Props {
   children?: ReactNode;
@@ -16,6 +17,14 @@ interface Props {
 const MapTour = ({children}: Props) => {
   const {top} = useSafeAreaInsets();
   const theme = useTheme();
+
+  const onGoBack = () => {
+    ModalAlert.options({
+      i18Content: 'common.wantToDiscard',
+      onContinue: goBack,
+    });
+  };
+
   return (
     <View style={$map}>
       <StyleWebView
@@ -37,7 +46,7 @@ const MapTour = ({children}: Props) => {
       </View>
       <ButtonX
         containerStyle={[$iconX, {top: top || verticalScale(3)}]}
-        onPress={goBack}
+        onPress={onGoBack}
       />
       {children}
     </View>

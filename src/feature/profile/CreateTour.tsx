@@ -65,12 +65,27 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
   const searchRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalAddLocationRef = useRef<ElementRef<typeof ModalAddLocation>>(null);
   const tabViewRef = useRef<ElementRef<typeof TabView>>(null);
+  const timeOutRef = useRef(0);
+  const saveLength = useRef(0);
+  const numberOfDays = schedules.length;
 
   useUpdateEffect(() => {
-    setTimeout(() => {
-      tabViewRef.current?.navigateToIndex(schedules.length - 1);
+    /**
+     * TO DO: Optimize this
+     */
+    timeOutRef.current = setTimeout(() => {
+      if (saveLength.current > numberOfDays) {
+        tabViewRef.current?.forceNavigateToIndex(numberOfDays - 1);
+        saveLength.current = numberOfDays;
+      } else {
+        tabViewRef.current?.navigateToIndex(numberOfDays - 1);
+        saveLength.current = numberOfDays;
+      }
     }, 200);
-  }, [schedules.length]);
+    return () => {
+      clearTimeout(timeOutRef.current);
+    };
+  }, [numberOfDays]);
 
   /**
    * Functions

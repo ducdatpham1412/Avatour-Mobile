@@ -207,7 +207,7 @@ const $itemCategory: ViewStyle = {
   alignItems: 'center',
 };
 const $titleCategory: TextStyle = {
-  fontSize: FONT_SIZE.f3,
+  fontSize: FONT_SIZE.f4,
   fontWeight: FONT_WEIGHT_MEDIUM,
   marginTop: verticalScale(8),
 };

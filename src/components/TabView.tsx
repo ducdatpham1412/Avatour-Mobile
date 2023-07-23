@@ -41,6 +41,7 @@ interface TabViewProps {
 
 interface TypeTabViewRef {
   navigateToIndex: (value: number) => void;
+  forceNavigateToIndex: (value: number) => void;
 }
 
 const tabBarScrollMargin = scale(8);
@@ -91,10 +92,19 @@ const TabView = (
     () => ({
       navigateToIndex: value => {
         setIndex(value);
-        onChangeIndex?.(value);
+        // onChangeIndex?.(value);
+      },
+      // Call this when list schedules are changed
+      forceNavigateToIndex: newIndex => {
+        setIndex(newIndex);
+        if (tabBarType === 'scroll') {
+          const newTranslateX =
+            (indicatorWidth + tabBarScrollMargin) * newIndex;
+          translateXIndicator.current.setValue(newTranslateX);
+        }
       },
     }),
-    [],
+    [tabBarType, indicatorWidth],
   );
 
   const renderTabBar = () => {
