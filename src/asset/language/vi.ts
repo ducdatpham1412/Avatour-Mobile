@@ -390,15 +390,14 @@ const profile = {
   price: 'Giá',
   toBecomeShopAccount:
     'Để trở thành một nhà cung cấp tour\ndu lịch\nChúng tôi cần một số thông tin phục vụ cho quá trình xét duyệt',
-  firstEnterLocation: 'Đầu tiên, hãy cho chúng tôi biết địa chỉ của bạn',
+  firstEnterName: 'Đầu tiên, nhập tên cửa hàng của bạn',
+  shopLocation: 'Địa chỉ cửa hàng',
   location: 'Địa chỉ',
   bank: 'Chọn ngân hàng',
   bankName: 'Ngân hàng',
   accountNumber: 'Số tài khoản',
   accountHolder: 'Chủ tài khoản',
-  byTapping: 'Bằng việc ấn ',
-  agreeSendTheseInformation:
-    ', bạn đồng ý gửi các thông tin trên cho chúng tôi.\nQuá trình xét duyệt có thể mất chút thời gian, chúng tôi sẽ thông báo tới bạn qua địa chỉ email ',
+  agreeSendInformation: `Bằng việc ấn <b>"Xác nhận"</b>, bạn đồng ý gửi các thông tin trên cho chúng tôi.\nQuá trình xét duyệt có thể mất từ 1 tới 7 ngày, chúng tôi sẽ thông báo tới bạn qua địa chỉ email <b>{{email}}</b>`,
   phoneNumber: 'Số điện thoại của bạn',
   requestUpgradeSuccess: 'Gửi yêu cầu thành công',
   description: 'Mô tả về bạn',

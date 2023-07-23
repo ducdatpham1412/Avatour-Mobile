@@ -109,6 +109,7 @@ export enum SOCKET_EVENT {
   notification = '5.0',
   // join
   joinSuccess = '6.0',
+  haveNewJoin = '6.1',
 }
 
 export enum TYPE_FOLLOW {

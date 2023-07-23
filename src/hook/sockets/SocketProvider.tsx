@@ -44,6 +44,11 @@ const SocketUser = ({children}: Props) => {
         },
       });
     });
+    socketOn(SOCKET_EVENT.haveNewJoin, async () => {
+      /**
+       * TO DO: Handle when have new join
+       */
+    });
 
     return () => {
       if (!__DEV__) {
