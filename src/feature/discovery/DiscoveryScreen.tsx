@@ -11,24 +11,18 @@ import {
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
-import {
-  SafeView,
-  StyleIcon,
-  StyleImage,
-  StyleText,
-  StyleTouchable,
-} from 'components/base';
+import {SafeView, StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {CardInformation} from 'components/common';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {DISCOVERY_ROUTE} from 'navigation/config';
 import React from 'react';
-import {ImageStyle, ScrollView, TextStyle, View, ViewStyle} from 'react-native';
+import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
 import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {HeaderDiscovery, ItemHotLocation} from './components';
+import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
 
 const DiscoveryScreen = () => {
   const isFocused = useIsFocused();
@@ -69,25 +63,14 @@ const DiscoveryScreen = () => {
           />
         </StyleTouchable>
 
-        <View style={$bannerView}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={$contentBanner}>
-            {banners.map((url, index) => (
-              <StyleTouchable
-                key={index}
-                customStyle={$itemBannerView}
-                onPress={() => navigate(DISCOVERY_ROUTE.searchScreen)}>
-                <StyleImage
-                  source={{uri: url}}
-                  customStyle={$image}
-                  defaultSource={Images.images.defaultImage}
-                />
-              </StyleTouchable>
-            ))}
-          </ScrollView>
-        </View>
+        <Banner
+          data={banners.map(value => {
+            return {
+              url: value,
+            };
+          })}
+          containerStyle={$bannerView}
+        />
 
         <View
           style={[
@@ -178,22 +161,7 @@ const $textSearch: TextStyle = {
   marginLeft: scale(8),
 };
 const $bannerView: ViewStyle = {
-  width: '100%',
-  height: scale(138),
   marginTop: verticalScale(16),
-};
-const $contentBanner: ViewStyle = {
-  paddingRight: scale(12),
-};
-const $itemBannerView: ViewStyle = {
-  width: scale(315),
-  height: scale(138),
-  marginLeft: scale(12),
-};
-const $image: ImageStyle = {
-  width: '100%',
-  height: '100%',
-  borderRadius: BORDER_RADIUS.f2,
 };
 const $categoryView: ViewStyle = {
   width: scale(351),
