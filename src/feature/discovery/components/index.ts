@@ -1,3 +1,4 @@
+export {default as Banner} from './Banner';
 export {default as HeaderDiscovery} from './HeaderDiscovery';
 export {default as ItemHotLocation} from './ItemHotLocation';
 export {default as ItemJoin} from './ItemJoin';
