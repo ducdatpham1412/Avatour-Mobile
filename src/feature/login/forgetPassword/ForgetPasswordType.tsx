@@ -7,16 +7,15 @@ import {useLoading} from 'hook';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 
 const ForgetPasswordType = () => {
-  const timeOut = useRef<number>(0);
   const {loading, setLoading} = useLoading();
   const [username, setUsername] = useState('');
-  const [disable, setDisable] = useState(true);
+  const disable = !(validateIsEmail(username) || validateIsPhone(username));
 
   const onRequestOTP = async () => {
     try {
@@ -53,15 +52,10 @@ const ForgetPasswordType = () => {
           value={username}
           onChangeText={text => {
             setUsername(text);
-            clearTimeout(timeOut.current);
-            timeOut.current = setTimeout(() => {
-              const textTrim = text.trim();
-              setDisable(
-                !validateIsEmail(textTrim) && !validateIsPhone(textTrim),
-              );
-            }, 400);
           }}
           autoFocus
+          isError={disable && !!username}
+          textError="alert.invalidUsername"
         />
 
         <StyleButton

@@ -98,7 +98,7 @@ android {
         applicationId "com.doffy.android.production"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
+        versionCode 10
         versionName "1.0.0"
         missingDimensionStrategy "store", "play"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
