@@ -1,7 +1,6 @@
 import {FONT_SIZE} from 'asset';
 import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
-import {ModalAlert} from 'navigation/screen/modals';
 import React, {ReactNode} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -12,18 +11,12 @@ import {ButtonX} from './common';
 
 interface Props {
   children?: ReactNode;
+  onGoBack?: () => void;
 }
 
-const MapTour = ({children}: Props) => {
+const MapTour = ({children, onGoBack}: Props) => {
   const {top} = useSafeAreaInsets();
   const theme = useTheme();
-
-  const onGoBack = () => {
-    ModalAlert.options({
-      i18Content: 'common.wantToDiscard',
-      onContinue: goBack,
-    });
-  };
 
   return (
     <View style={$map}>
@@ -46,7 +39,7 @@ const MapTour = ({children}: Props) => {
       </View>
       <ButtonX
         containerStyle={[$iconX, {top: top || verticalScale(3)}]}
-        onPress={onGoBack}
+        onPress={onGoBack ?? goBack}
       />
       {children}
     </View>

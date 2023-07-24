@@ -19,7 +19,7 @@ const RootScreen = () => {
     return <LoadingScreen />;
   }
   if (error) {
-    return <ErrorScreen onPress={forceLogOut} />;
+    return <ErrorScreen onPress={forceLogOut} title="setting.logOut" />;
   }
 
   const ChooseRoute = isInApp ? AppStack : LoginRoute;
@@ -31,7 +31,6 @@ const RootScreen = () => {
       }}>
       <RootStack.Screen name="check" component={ChooseRoute} />
 
-      {/* Web view */}
       <RootStack.Screen
         name={ROOT_SCREEN.webView}
         component={WebViewScreen}

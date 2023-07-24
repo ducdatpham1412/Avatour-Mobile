@@ -559,6 +559,7 @@ const alert = {
   inValidEmail: 'Email không đúng định dạng',
   inValidPhone: 'Số điện thoại không đúng',
   invalidQr: 'Mã QR không hợp lệ',
+  invalidUsername: 'Email hoặc số điện thoại không hợp lệ',
 
   // PROFILE
   successUpdatePro: 'Cập nhật trang cá nhân thành công !',

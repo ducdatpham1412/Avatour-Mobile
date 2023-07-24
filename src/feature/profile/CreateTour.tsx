@@ -119,6 +119,13 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
     }
   };
 
+  const onGoBack = () => {
+    ModalAlert.options({
+      i18Content: 'common.wantToDiscard',
+      onContinue: goBack,
+    });
+  };
+
   /**
    * Render views
    */
@@ -158,7 +165,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
 
   return (
     <View style={[$container, {backgroundColor: theme.background}]}>
-      <MapTour />
+      <MapTour onGoBack={onGoBack} />
 
       <View style={$body}>
         <ToolSearch

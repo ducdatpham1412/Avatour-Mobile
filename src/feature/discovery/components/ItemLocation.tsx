@@ -1,4 +1,5 @@
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {
   StyleIcon,
@@ -142,51 +143,71 @@ const ItemLocation = ({
     <ShadowDecorator>
       <ScaleDecorator>
         <StyleTouchable
-          style={[$itemLocation, {backgroundColor: theme.white}]}
+          style={[$container, {backgroundColor: theme.white}]}
           onPress={() => onGoToProfile(item?.id)}
           disable={isActive}
           disableOpacity={1}>
-          <StyleImage
-            source={{uri: item?.avatar}}
-            customStyle={$avatar}
-            defaultImageSource="image"
-          />
-          <View style={$content}>
-            <StyleText
-              originValue={`${(getIndex() ?? 0) + 1}. `}
-              numberOfLines={1}
-              customStyle={$textNameLocation}>
-              <StyleText originValue={item?.name} />
-            </StyleText>
-            {renderPrice()}
-            <Info icon={Images.icons.location} content={item?.location} />
-            <Info
-              icon={Images.icons.clock}
-              content={t('discovery.timeHere')
-                .concat(': ')
-                .concat(`${item?.duration}h`)}
+          <View style={$body}>
+            <StyleImage
+              source={{uri: item?.avatar}}
+              customStyle={$avatar}
+              defaultImageSource="image"
             />
-            <StyleText
-              originValue={item?.description}
-              numberOfLines={1}
-              customStyle={{color: theme.gray_500}}
-            />
+            <View style={$content}>
+              <StyleText
+                originValue={`${(getIndex() ?? 0) + 1}. `}
+                numberOfLines={1}
+                customStyle={$textNameLocation}>
+                <StyleText originValue={item?.name} />
+              </StyleText>
+              {renderPrice()}
+              <Info icon={Images.icons.location} content={item?.location} />
+              <Info
+                icon={Images.icons.clock}
+                content={t('discovery.timeHere')
+                  .concat(': ')
+                  .concat(`${item?.duration}h`)}
+              />
+              <StyleText
+                originValue={item?.description}
+                numberOfLines={1}
+                customStyle={[$textDescription, {color: theme.gray_500}]}
+              />
+            </View>
+
+            {isEditMode && (
+              <>
+                <ButtonDrag
+                  onDrag={() => {
+                    impactLight();
+                    onDrag();
+                  }}
+                />
+                <ButtonX
+                  size={15}
+                  containerStyle={$iconX}
+                  onPress={onDeleteLocation}
+                />
+              </>
+            )}
           </View>
 
-          {isEditMode && (
-            <>
-              <ButtonDrag
-                onDrag={() => {
-                  impactLight();
-                  onDrag();
-                }}
+          {item.account_type === ACCOUNT.shop && (
+            <View
+              style={[
+                $joinGroupBuying,
+                {borderColor: theme.p_700, backgroundColor: theme.p_300},
+              ]}>
+              <StyleIcon
+                source={Images.icons.createGroup}
+                size={17}
+                customStyle={{tintColor: theme.p_900}}
               />
-              <ButtonX
-                size={15}
-                containerStyle={$iconX}
-                onPress={onDeleteLocation}
+              <StyleText
+                i18Text="discovery.joinGroupBuying"
+                customStyle={[$textJoin, {color: theme.p_900}]}
               />
-            </>
+            </View>
           )}
         </StyleTouchable>
 
@@ -198,11 +219,14 @@ const ItemLocation = ({
   );
 };
 
-const $itemLocation: ViewStyle = {
+const $container: ViewStyle = {
   width: '100%',
   padding: scale(8),
   marginBottom: verticalScale(12),
   borderRadius: moderateScale(8),
+};
+const $body: ViewStyle = {
+  width: '100%',
   flexDirection: 'row',
 };
 const $avatar: ImageStyle = {
@@ -216,7 +240,7 @@ const $content: ViewStyle = {
   justifyContent: 'space-between',
 };
 const $textNameLocation: TextStyle = {
-  fontSize: FONT_SIZE.f1,
+  fontSize: FONT_SIZE.f3,
   fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $infoView: ViewStyle = {
@@ -226,6 +250,7 @@ const $infoView: ViewStyle = {
 };
 const $infoContent: TextStyle = {
   marginLeft: scale(4),
+  fontSize: FONT_SIZE.f3,
 };
 const $addLocation: ViewStyle = {
   width: '70%',
@@ -256,6 +281,25 @@ const $iconX: ViewStyle = {
   left: -5,
   top: -5,
   right: undefined,
+};
+const $joinGroupBuying: ViewStyle = {
+  width: '80%',
+  paddingVertical: verticalScale(4),
+  borderRadius: BORDER_RADIUS.f2,
+  borderWidth: 0,
+  marginTop: verticalScale(8),
+  alignSelf: 'center',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+const $textJoin: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  fontSize: FONT_SIZE.f3,
+  marginLeft: scale(4),
+};
+const $textDescription: TextStyle = {
+  fontSize: FONT_SIZE.f3,
 };
 
 export default memo(

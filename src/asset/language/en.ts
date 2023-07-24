@@ -549,6 +549,7 @@ const alert = {
   inValidEmail: 'Invalid email',
   inValidPhone: 'Invalid phone number',
   invalidQr: 'Invalid QR Code',
+  invalidUsername: 'Invalid email or phone number',
 
   // PROFILE
   successUpdatePro: 'Update profile successful!',
