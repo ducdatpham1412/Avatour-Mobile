@@ -261,6 +261,7 @@ const styles = ScaledSheet.create({
     alignSelf: 'center',
   },
   button: {
+    width: '90%',
     marginTop: '20@vs',
     marginBottom: '5@vs',
     paddingVertical: '5@vs',

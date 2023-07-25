@@ -477,3 +477,20 @@ export const renderJoinStatus = (
 };
 
 export const removePrefixPhone = (phone: string) => phone.replace('(+84) ', '');
+
+export const takePriceRange = (listPrice: TypePrice[], amount: number) => {
+  const listSorts = listPrice.sort((pre, next) => {
+    if (pre.number_people < next.number_people) {
+      return -1;
+    }
+    return 0;
+  });
+
+  const minPrice = listSorts[listSorts.length - 1].price;
+  const maxPrice = listSorts[0].price;
+
+  return {
+    min: minPrice * amount,
+    max: maxPrice * amount,
+  };
+};

@@ -5,14 +5,16 @@ import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, Text, TextProps, TextStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
+import {detectFromStyle} from 'utility/assistant';
 
-interface StyleTextProps extends TextProps {
+export interface StyleTextProps extends TextProps {
   i18Text?: I18Normalize;
   i18Params?: Record<string, any>;
   originValue?: any;
   customStyle?: StyleProp<TextStyle>;
   children?: ReactNode;
   mode?: 'html' | 'text';
+  htmlTextBoldColor?: string;
 }
 
 type ElementText = {
@@ -53,6 +55,7 @@ const StyleText = (props: StyleTextProps) => {
     customStyle,
     children,
     mode = 'text',
+    htmlTextBoldColor,
   } = props;
   const {t} = useTranslation();
   const {black} = useTheme();
@@ -76,6 +79,8 @@ const StyleText = (props: StyleTextProps) => {
   }
 
   const listTexts = detectHtmlText(valueText);
+  const styleColor = detectFromStyle(customStyle, 'color');
+
   return (
     <Text style={[$textDefault, {color: black}, customStyle]} {...props}>
       {listTexts.map(tx => {
@@ -94,8 +99,8 @@ const StyleText = (props: StyleTextProps) => {
             key={tx.text}
             style={[
               $textDefault,
-              {color: black},
               customStyle,
+              {color: htmlTextBoldColor ?? (styleColor as string) ?? black},
               {fontWeight: 'bold'},
             ]}
             {...props}>

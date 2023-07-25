@@ -1,4 +1,3 @@
-import StatusPostCreated from 'navigation/components/StatusPostCreated';
 import React from 'react';
 import {
   ModalActionSheet,
@@ -15,7 +14,6 @@ import {
 const AppModal = () => {
   return (
     <>
-      <StatusPostCreated />
       <ModalCommentLikeAllApp />
       <ModalInputEdit />
       <ModalDateRangePicker />

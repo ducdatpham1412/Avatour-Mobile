@@ -1,3 +1,4 @@
+import {FONT_SIZE} from 'asset';
 import {useTheme} from 'hook';
 import React, {ReactNode, isValidElement} from 'react';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
@@ -6,11 +7,13 @@ import {borderWidthTiny} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import BoxView from './BoxView';
 import {StyleText} from './base';
+import {StyleTextProps} from './base/StyleText';
 
 type TypeInfoContent = {
   iconRight?: ReactNode;
   title: I18Normalize;
   content: string;
+  noteProps?: StyleTextProps;
   contentStyle?: StyleProp<TextStyle>;
 };
 
@@ -47,7 +50,7 @@ const BoxInformation = ({
           );
         }
         if (item === null) {
-          return null;
+          return <View key={index} />;
         }
         const itemContent: TypeInfoContent = item as TypeInfoContent;
 
@@ -55,32 +58,39 @@ const BoxInformation = ({
           <View
             key={index}
             style={[
-              $boxContainer,
+              $box,
               {
-                borderBottomColor: theme.gray_200,
+                borderBottomColor: theme.gray_300,
                 borderBottomWidth: isLatest ? 0 : borderWidthTiny,
               },
             ]}>
-            <View style={[$leftView, {flex: titleBoxFlex}]}>
+            <View style={$boxContainer}>
+              <View style={[$leftView, {flex: titleBoxFlex}]}>
+                <StyleText
+                  i18Text={itemContent?.title}
+                  customStyle={$textTitle}
+                />
+              </View>
               <StyleText
-                i18Text={itemContent?.title}
+                originValue={itemContent?.content}
                 customStyle={[
-                  $textTitle,
-                  {
-                    color: theme.gray_600,
-                  },
+                  $textContent,
+                  {marginRight: itemContent?.iconRight ? scale(4) : 0},
+                  itemContent.contentStyle,
                 ]}
               />
+              {itemContent?.iconRight}
             </View>
-            <StyleText
-              originValue={itemContent?.content}
-              customStyle={[
-                $textContent,
-                {marginRight: itemContent?.iconRight ? scale(4) : 0},
-                itemContent.contentStyle,
-              ]}
-            />
-            {itemContent?.iconRight}
+            {!!itemContent.noteProps && (
+              <StyleText
+                {...itemContent.noteProps}
+                customStyle={[
+                  $textNote,
+                  {color: theme.gray_500},
+                  itemContent.noteProps.customStyle,
+                ]}
+              />
+            )}
           </View>
         );
       })}
@@ -91,12 +101,15 @@ const BoxInformation = ({
 const $container: ViewStyle = {
   paddingVertical: 0,
 };
+const $box: ViewStyle = {
+  width: '100%',
+  paddingVertical: verticalScale(12),
+};
 const $boxContainer: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  paddingVertical: verticalScale(12),
 };
 const $leftView: ViewStyle = {
   flexDirection: 'row',
@@ -113,6 +126,10 @@ const $textContent: TextStyle = {
   flex: 1,
   fontWeight: 'bold',
   textAlign: 'right',
+};
+const $textNote: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  marginTop: verticalScale(4),
 };
 
 export default BoxInformation;

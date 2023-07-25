@@ -165,7 +165,7 @@ const discovery = {
   deposit: 'Deposit',
   allDeposited: 'Total deposited',
   numberGroupJoined: '{{value}} joins',
-  numberJoinsWithYou: '{{value}} joins with you',
+  numberJoinsWithYou: 'Currently quantities',
   beTheFirstJoin: 'Join group buying',
   bought: 'Full payment',
   confirmBought: 'Full payment confirm',
@@ -241,6 +241,7 @@ const discovery = {
   departure: 'Departure',
   comeback: 'Comeback',
   price: 'Price',
+  unitPrice: 'Unit price',
   allPrice: 'Total price',
   moreThan: 'More than {{value}}',
   valuePeople: '{{value}} people',
@@ -266,8 +267,13 @@ const discovery = {
   youHaveGroupBuying:
     'You have an order\nGo to deposit to confirm joining group buying',
   remainingTime: 'Remaining time',
-  estimatedPrice: 'Estimated price',
-  beInGroup: 'Với số lượng như trên.\nBạn sẽ được phân vào các nhóm sau:',
+  estimate: 'Estimate',
+  estimatedPrice: 'Estimated range',
+  appliedPrice: 'Applicable price',
+  nowPrice: 'Current total price',
+  priceCanBeChange:
+    'The price may fluctuate according to the <b>Estimated range</b> depending on the quantity in the buying group',
+  beInGroup: 'You will be classified into the following groups:',
   moneySaved: 'Money you saved',
   transactionHash: 'Transaction hash',
   transactionMoney: 'Amount to transfer',
@@ -283,9 +289,13 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
   goToDepositToConfirm:
     'Go to the deposit to confirm your successful joining in the group buying',
   scanQrAtShop: 'Scan QR code at the store',
-  todayIsTimeWillBuy: 'Today is the day to buy at {{value}}',
+  todayIsTimeWillBuy: 'Today is the day to buy at <b>{{value}}</b>',
   pleaseConfirmWithVendor:
     'Please <b>Contact with vendor</b> to confirm successful participation',
+  atAvatourWillBeDecrease:
+    'At Avatour, you will get an additional discount of <b>{{value}}</b> when your buying group reaches the maximum amount',
+  maximumMembers: 'Maximum number of purchases',
+  newGroup: 'New group',
 };
 
 const reputation = {
