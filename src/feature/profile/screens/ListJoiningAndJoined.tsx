@@ -32,6 +32,7 @@ const ListJoiningAndJoined = () => {
   }, []);
 
   const renderHeaderComponent = () => {
+    // TO DO: Check whey not have estimate => Crash app
     return (
       <>
         {!!estimates?.length && (

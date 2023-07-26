@@ -167,7 +167,7 @@ const discovery = {
   deposit: 'Đặt cọc',
   allDeposited: 'Tổng tiền đã cọc',
   numberGroupJoined: '{{value}} lượt tham gia',
-  numberJoinsWithYou: '{{value}} lượt tham gia với bạn',
+  numberJoinsWithYou: 'Số lượng hiện có',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',
   confirmBought: 'Xác nhận thanh toán đủ',
@@ -221,7 +221,7 @@ const discovery = {
   closed: 'Đã kết thúc',
   amount: 'Số lượng',
   noteForMerchant: 'Ghi chú cho người bán',
-  arrivalTime: 'Thời gian đến',
+  arrivalTime: 'Lịch hẹn',
   note: 'Ghi chú: ',
   numberRetailTurns: '{{value}} lượt mua riêng',
   addPhoneNumber: 'Thêm số điện thoại',
@@ -244,6 +244,7 @@ const discovery = {
   departure: 'Khởi hành',
   comeback: 'Ngày về',
   price: 'Giá tiền',
+  unitPrice: 'Đơn giá',
   allPrice: 'Tổng giá tiền',
   moreThan: 'Hơn {{value}}',
   valuePeople: '{{value}} người',
@@ -269,8 +270,13 @@ const discovery = {
   youHaveGroupBuying:
     'Bạn có một đơn mua chung\nĐi tới đặt cọc để xác nhận tham gia',
   remainingTime: 'Thời gian còn lại',
-  estimatedPrice: 'Giá tiền dự tính',
-  beInGroup: 'Với số lượng như trên.\nBạn sẽ được phân vào các nhóm sau:',
+  estimate: 'Dự tính',
+  estimatedPrice: 'Khoảng dự tính',
+  appliedPrice: 'Bảng giá áp dụng',
+  nowPrice: 'Tổng tiền hiện tại',
+  priceCanBeChange:
+    'Giá có thể giao động theo <b>Khoảng dự tính</b> tuỳ thuộc vào số lượng trong nhóm mua',
+  beInGroup: 'Bạn sẽ được phân vào các nhóm sau:',
   moneySaved: 'Bạn tiết kiệm được',
   transactionHash: 'Mã giao dịch',
   transactionMoney: 'Số tiền cần chuyển',
@@ -284,11 +290,15 @@ Nếu có bất kỳ sự cố nào, bạn vui lòng liên hệ Avatour qua mộ
   ・Email: support.avatour@gmail.com
 Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!`,
   goToDepositToConfirm:
-    'Đi tới đặt cọc để xác nhận tham gia mua chung thành công nhé bạn',
+    'Hãy đặt cọc để xác nhận tham gia mua chung thành công nhé bạn',
   scanQrAtShop: 'Quét mã QR tại cửa hàng',
-  todayIsTimeWillBuy: 'Hôm nay là ngày đến mua tại {{value}}',
+  todayIsTimeWillBuy: 'Hôm nay là ngày đến mua tại <b>{{value}}</b>',
   pleaseConfirmWithVendor:
     'Bạn vui lòng <b>Liên hệ với người bán</b> để xác nhận tham gia thành công nhé',
+  atAvatourWillBeDecrease:
+    'Tại Avatour, bạn sẽ giảm được thêm <b>{{value}}</b> khi nhóm mua của bạn đạt số lượng tối đa',
+  maximumMembers: 'Số lượt mua tối đa',
+  newGroup: 'Nhóm mới',
 };
 
 const reputation = {

@@ -1,12 +1,10 @@
 import {useAppSelector} from 'app-redux/store';
 import {SOCKET_EVENT, TYPE_NOTIFICATION} from 'asset/enum';
-import useEstimatesAndJoinings from 'hook/useEstimatesAndJoinings';
-import {navigate} from 'navigation/NavigationService';
-import {MAIN_SCREEN, ROOT_SCREEN} from 'navigation/config';
-import {ReactNode, useEffect, useRef} from 'react';
-import SocketManager from './SocketManager';
 import {showLocalNotification} from 'hook/notifications';
+import useEstimatesAndJoinings from 'hook/useEstimatesAndJoinings';
+import {ReactNode, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
+import SocketManager from './SocketManager';
 
 interface Props {
   children: ReactNode;

@@ -373,3 +373,9 @@ export enum TYPE_CHANGE {
   language = 'language',
   information = 'information',
 }
+
+export enum STATUS_JOIN_ESTIMATE {
+  notActive = 0,
+  active = 1,
+  confirmed = 2,
+}
