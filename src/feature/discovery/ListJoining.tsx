@@ -28,7 +28,7 @@ const ListJoining = ({
             item={item}
             containerStyle={$itemContainer}
             bottomComponent="join-status"
-            onPressMode="go-from-scan"
+            onPressMode="see-detail"
           />
         );
       })}

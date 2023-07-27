@@ -57,7 +57,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
         <StyleHeader
           {...headerProps}
           containerStyle={[
-            backgroundColor ? {backgroundColor} : {},
+            {backgroundColor: backgroundColor ?? theme.background},
             headerProps?.containerStyle,
           ]}
         />
@@ -74,11 +74,27 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
           keyboardShouldPersistTaps="handled"
           {...props}
           contentContainerStyle={[$contentContainer, customStyle]}>
-          {initLoading ? <LoadingScreen /> : children}
+          {initLoading ? (
+            <LoadingScreen
+              containerStyle={{
+                backgroundColor: backgroundColor ?? theme.background,
+              }}
+            />
+          ) : (
+            children
+          )}
         </KeyboardAwareScrollView>
       ) : (
         <View style={[$body, customStyle]}>
-          {initLoading ? <LoadingScreen /> : children}
+          {initLoading ? (
+            <LoadingScreen
+              containerStyle={{
+                backgroundColor: backgroundColor ?? theme.background,
+              }}
+            />
+          ) : (
+            children
+          )}
         </View>
       )}
       {BottomComponent}

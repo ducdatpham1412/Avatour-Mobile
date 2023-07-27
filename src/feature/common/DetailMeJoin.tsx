@@ -74,6 +74,8 @@ const DetailMeJoin = ({
     initValue: params.joinPersonal,
   });
 
+  const loadingAll = initLoading || loadingEstimate || loading;
+
   const {estimate: joinEstimate} = meJoins ?? {};
   const maximumMember = data?.prices[data?.prices.length - 1].number_people;
 
@@ -293,10 +295,12 @@ const DetailMeJoin = ({
     if (joinPersonal) {
       const priceRange = takePriceRange(data?.prices, joinPersonal.amount);
       const moneyCanSavedMore = joinPersonal.price - priceRange.min;
-      const textPrice: I18Normalize =
-        joinPersonal.status === GROUP_BUYING_STATUS.notBought
-          ? 'discovery.nowPrice'
-          : 'discovery.price';
+      const isNotBought =
+        joinPersonal.status === GROUP_BUYING_STATUS.notBought &&
+        mode !== 'go-from-scan';
+      const textPrice: I18Normalize = isNotBought
+        ? 'discovery.nowPrice'
+        : 'discovery.price';
 
       const groupFind = data?.groups.find(
         group => group.id === joinPersonal.group_id,
@@ -390,31 +394,33 @@ const DetailMeJoin = ({
               {
                 title: textPrice,
                 content: formatMoney(joinPersonal.price),
-                noteProps: {
-                  i18Text: 'discovery.priceCanBeDecrease',
-                  i18Params: {
-                    value: formatMoney(priceRange.min),
-                  },
-                  mode: 'html',
-                  htmlTextBoldColor: theme.gray_700,
-                  children: !!moneyCanSavedMore ? (
-                    <>
-                      <StyleText originValue={textDown} />
-                      <StyleText
-                        i18Text="discovery.atAvatourWillBeDecrease"
-                        mode="html"
-                        i18Params={{
-                          value: formatMoney(moneyCanSavedMore),
-                        }}
-                        customStyle={{
-                          fontSize: FONT_SIZE.f3,
-                          color: theme.gray_500,
-                        }}
-                        htmlTextBoldColor={theme.blue}
-                      />
-                    </>
-                  ) : null,
-                },
+                noteProps: isNotBought
+                  ? {
+                      i18Text: 'discovery.priceCanBeDecrease',
+                      i18Params: {
+                        value: formatMoney(priceRange.min),
+                      },
+                      mode: 'html',
+                      htmlTextBoldColor: theme.gray_700,
+                      children: !!moneyCanSavedMore ? (
+                        <>
+                          <StyleText originValue={textDown} />
+                          <StyleText
+                            i18Text="discovery.atAvatourWillBeDecrease"
+                            mode="html"
+                            i18Params={{
+                              value: formatMoney(moneyCanSavedMore),
+                            }}
+                            customStyle={{
+                              fontSize: FONT_SIZE.f3,
+                              color: theme.gray_500,
+                            }}
+                            htmlTextBoldColor={theme.blue}
+                          />
+                        </>
+                      ) : null,
+                    }
+                  : null,
               },
               {
                 title: 'discovery.deposited',
@@ -745,6 +751,10 @@ const DetailMeJoin = ({
   };
 
   const renderBottomComponent = () => {
+    if (loadingAll) {
+      return null;
+    }
+
     if (mode === 'go-to-deposit' || mode === 'go-to-deposit-from-profile') {
       return (
         <View
@@ -810,7 +820,7 @@ const DetailMeJoin = ({
         }}
         scrollEnabled
         customStyle={{paddingBottom: bottom || safePaddingNotZero}}
-        initLoading={loadingEstimate || initLoading}
+        initLoading={loadingAll}
         refreshControl={
           <RefreshControl
             refreshing={loading || validating}
