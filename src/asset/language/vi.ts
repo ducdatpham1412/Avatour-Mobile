@@ -250,7 +250,7 @@ const discovery = {
   valuePeople: '{{value}} người',
   tour: 'Tour',
   groupBuying: 'Đơn mua chung',
-  groupDay: 'Nhóm ngày {{value}}',
+  groupDay: 'Nhóm {{value}}',
   confirmArrived: 'Xác nhận đã đến cửa hàng',
   rememberConfirmWhenArrived:
     'Bạn có {{numberJoins}} đơn mua chung tại {{storeName}} trong ngày hôm nay\nVui lòng <b>"Xác nhận đã đến cửa hàng"</b> hoặc <b>"Xác nhận tất cả"</b> để xác nhận đã tham gia thành công nha',
@@ -276,6 +276,8 @@ const discovery = {
   nowPrice: 'Tổng tiền hiện tại',
   priceCanBeChange:
     'Giá có thể giao động theo <b>Khoảng dự tính</b> tuỳ thuộc vào số lượng trong nhóm mua',
+  priceCanBeDecrease:
+    'Giá tiền có thể giảm hơn, trong khoảng dự tính (giảm tối đa còn <b>{{value}}</b>) tuỳ thuộc vào số lượng trong nhóm mua',
   beInGroup: 'Bạn sẽ được phân vào các nhóm sau:',
   moneySaved: 'Bạn tiết kiệm được',
   transactionHash: 'Mã giao dịch',
@@ -284,10 +286,10 @@ const discovery = {
   backToHome: 'Về trang chủ',
   yourTransactionHash:
     'Mã giao dịch của bạn là: {{value}}.\nĐể xác nhận tham gia thành công với người bán, bạn vui lòng đặt cọc bằng hình thức chuyển khoản đến tài khoản ngân hàng sau:',
-  ifHaveAnyCase: `Sau khi chuyển khoản, đơn mua chung của bạn vẫn sẽ ở trạng thái “Đi tới đặt cọc”. Đừng lo lắng, Avatour sẽ phản hồi lại bạn trong thời gian tối đa 1 tiếng đồng hồ nếu thời gian đặt cọc từ 6h - 23h, 7 tiếng đồng hồ trong thời gian 23h - 6h ngày hôm sau.
+  ifHaveAnyCase: `Sau khi chuyển khoản, đơn mua chung của bạn vẫn sẽ ở trạng thái <b>“Đi tới đặt cọc”</b>. Đừng lo lắng, Avatour sẽ phản hồi lại bạn trong thời gian tối đa <b>1 tiếng đồng hồ</b> nếu thời gian đặt cọc từ 6h - 23h, <b>7 tiếng đồng hồ</b> trong thời gian 23h - 6h ngày hôm sau.
 Nếu có bất kỳ sự cố nào, bạn vui lòng liên hệ Avatour qua một trong các cách sau:
-  ・SĐT / Zalo: (+84) 862938350
-  ・Email: support.avatour@gmail.com
+  ・<b>SĐT / Zalo:</b> (+84) 862938350
+  ・<b>Email:</b> support.avatour@gmail.com
 Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!`,
   goToDepositToConfirm:
     'Hãy đặt cọc để xác nhận tham gia mua chung thành công nhé bạn',

@@ -10,9 +10,11 @@ import {renderIconGender} from 'utility/assistant';
 import {logOut} from 'utility/authentication';
 import {scale} from 'utility/scale';
 import TypeMainSetting from './components/TypeMainSetting';
+import {useSWRConfig} from 'swr';
 
 const SettingScreen = () => {
   const theme = useTheme();
+  const {mutate} = useSWRConfig();
   const {gender} = useAppSelector(state => state.accountSlice.passport.profile);
   const [loadingLogOut, setLoadingLogOut] = useState(false);
 
@@ -22,6 +24,7 @@ const SettingScreen = () => {
     }
     setLoadingLogOut(true);
     await logOut();
+    await mutate(() => true, undefined, {revalidate: false});
     setLoadingLogOut(false);
   };
 

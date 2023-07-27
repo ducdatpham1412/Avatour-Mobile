@@ -247,7 +247,7 @@ const discovery = {
   valuePeople: '{{value}} people',
   tour: 'Tour',
   groupBuying: 'Group buying',
-  groupDay: 'Group in {{value}}',
+  groupDay: 'Group {{value}}',
   confirmArrived: 'Confirm arrived store',
   rememberConfirmWhenArrived:
     'You have {{numberJoins}} group buying orders at {{storeName}} today\nPlease "Confirm arrived store" or <b>"Confirm all above"</b> to confirm your successful joining group buying',
@@ -273,6 +273,8 @@ const discovery = {
   nowPrice: 'Current total price',
   priceCanBeChange:
     'The price may fluctuate according to the <b>Estimated range</b> depending on the quantity in the buying group',
+  priceCanBeDecrease:
+    'The price can be reduced more, within the expected range (maximum reduction to <b>{{value}}</b>) depending on the quantity in the buying group',
   beInGroup: 'You will be classified into the following groups:',
   moneySaved: 'Money you saved',
   transactionHash: 'Transaction hash',
@@ -281,7 +283,7 @@ const discovery = {
   backToHome: 'Back to home',
   yourTransactionHash:
     'Your transaction hash is: {{value}}.\nIn order to confirm successful joining with the seller, please deposit by bank transfer to the following bank account:',
-  ifHaveAnyCase: `After the transfer, your group buying order will still be in “Go to Deposit” status. Don't worry, Avatour will respond to you in a maximum of 1 hour if the deposit time is from 6am to 11pm, 7 hours from 11pm to 6am the next day.
+  ifHaveAnyCase: `After the transfer, your group buying order will still be in <b>“Go to Deposit”</b> status. Don't worry, Avatour will respond to you in a maximum of <b>1 hour</b> if the deposit time is from 6am to 11pm, <b>7 hours</b> from 11pm to 6am the next day.
 If you have any problems, please contact Avatour through one of the following ways:
      ・Tel / Zalo: (+84) 862938350
      ・Email: support.avatour@gmail.com

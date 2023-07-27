@@ -298,11 +298,11 @@ const DetailMeJoin = ({
           ? 'discovery.nowPrice'
           : 'discovery.price';
 
-      const renderMembers = () => {
-        const groupFind = data?.groups.find(
-          group => group.id === joinPersonal.group_id,
-        );
+      const groupFind = data?.groups.find(
+        group => group.id === joinPersonal.group_id,
+      );
 
+      const renderMembers = () => {
         if (groupFind) {
           const totalBought = groupFind?.members
             ?.map(mem => mem.amount)
@@ -391,7 +391,10 @@ const DetailMeJoin = ({
                 title: textPrice,
                 content: formatMoney(joinPersonal.price),
                 noteProps: {
-                  i18Text: 'discovery.priceCanBeChange',
+                  i18Text: 'discovery.priceCanBeDecrease',
+                  i18Params: {
+                    value: formatMoney(priceRange.min),
+                  },
                   mode: 'html',
                   htmlTextBoldColor: theme.gray_700,
                   children: !!moneyCanSavedMore ? (
@@ -430,10 +433,7 @@ const DetailMeJoin = ({
             containerStyle={$depositView}
             listInformation={[
               <View style={{width: '100%'}}>
-                <StyleText
-                  i18Text="discovery.note"
-                  customStyle={{color: theme.black}}
-                />
+                <StyleText i18Text="discovery.note" />
                 <StyleText
                   originValue={joinPersonal.note}
                   customStyle={[$contentNote, {color: theme.gray_600}]}
@@ -443,7 +443,7 @@ const DetailMeJoin = ({
                 <StyleText
                   i18Text="discovery.groupDay"
                   i18Params={{
-                    value: 'A1',
+                    value: groupFind?.name ?? '',
                   }}
                   customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
                 />
@@ -553,19 +553,14 @@ const DetailMeJoin = ({
                 contentStyle: {flex: 1.7, fontWeight: 'normal'},
               },
               <View style={{width: '100%'}}>
-                <StyleText
-                  i18Text="discovery.note"
-                  customStyle={{color: theme.gray_600}}
-                />
+                <StyleText i18Text="discovery.note" />
                 <StyleText
                   originValue={joinEstimate.note}
-                  customStyle={[$contentNote, {color: theme.black}]}
+                  customStyle={[$contentNote, {color: theme.gray_600}]}
                 />
               </View>,
               <View style={$countdownView}>
-                <StyleText
-                  i18Text="discovery.remainingTime"
-                  customStyle={{color: theme.gray_600}}>
+                <StyleText i18Text="discovery.remainingTime">
                   <StyleText
                     originValue=":"
                     customStyle={{color: theme.gray_600}}
@@ -590,11 +585,10 @@ const DetailMeJoin = ({
 
   const renderListPersonal = () => {
     if (isGoToDeposit.current && joinEstimate) {
-      const renderMembers = (join: TypeJoinPersonal) => {
-        const groupFind = data?.groups.find(
-          group => group.id === join.group_id,
-        );
-
+      const renderMembers = (
+        join: TypeJoinPersonal,
+        groupFind: TypeGroupJoin | undefined,
+      ) => {
         if (groupFind) {
           const totalBought = groupFind?.members
             ?.map(mem => mem.amount)
@@ -655,6 +649,8 @@ const DetailMeJoin = ({
                   modalPeopleInGroup.current?.show({
                     group: {
                       id: null,
+                      name: t('discovery.estimate'),
+                      total_members: join.amount,
                       created: joinEstimate?.created,
                       members: [join],
                     },
@@ -697,6 +693,9 @@ const DetailMeJoin = ({
             customStyle={$textClassified}
           />
           {joinEstimate?.list_personals?.map((join, index) => {
+            const groupFind = data?.groups.find(
+              group => group.id === join.group_id,
+            );
             return (
               <BoxInformation
                 key={index}
@@ -705,7 +704,9 @@ const DetailMeJoin = ({
                     <StyleText
                       i18Text="discovery.groupDay"
                       i18Params={{
-                        value: 'A1',
+                        value: groupFind
+                          ? groupFind.name
+                          : `(${t('discovery.estimate')})`,
                       }}
                       customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
                     />
@@ -713,7 +714,7 @@ const DetailMeJoin = ({
                       <StyleText originValue={`: ${maximumMember}`} />
                     </StyleText>
                   </View>,
-                  renderMembers(join),
+                  renderMembers(join, groupFind),
                   {
                     title: 'discovery.unitPrice',
                     content: formatMoney(join.price / join.amount),
