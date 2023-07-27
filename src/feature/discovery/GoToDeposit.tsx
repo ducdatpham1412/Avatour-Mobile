@@ -117,14 +117,7 @@ const GoToDeposit = ({
             </View>
           </>,
           <View style={$countdownView}>
-            <StyleText
-              i18Text="discovery.remainingTime"
-              customStyle={{color: theme.gray_600}}>
-              <StyleText
-                originValue=":"
-                customStyle={{color: theme.gray_600}}
-              />
-            </StyleText>
+            <StyleText originValue={`${t('discovery.remainingTime')}: `} />
             <TextCountDown
               initSeconds={dayjs(joinEstimate.expired).diff(dayjs(), 'seconds')}
             />
@@ -137,6 +130,8 @@ const GoToDeposit = ({
         <StyleText
           i18Text="discovery.ifHaveAnyCase"
           customStyle={[$textEnd, {color: theme.gray_600}]}
+          mode="html"
+          htmlTextBoldColor={theme.gray_700}
         />
       </View>
     </StyleContainer>

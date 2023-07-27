@@ -47,8 +47,10 @@ interface TypePersonalJoin {
 
 interface TypeGroupJoin {
   id: number | null;
-  created: string;
+  name: string;
+  total_members: number;
   members: TypePersonalJoin[];
+  created: string;
 }
 
 interface TypePersonalJoinOfAdmin {

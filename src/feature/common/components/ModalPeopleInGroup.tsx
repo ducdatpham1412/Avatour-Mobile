@@ -15,7 +15,6 @@ import React, {
 } from 'react';
 import {View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {formatDDMMMMYY} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import ItemPersonalJoin from './ItemPersonalJoin';
 import ItemPersonalJoinOfAdmin, {
@@ -100,7 +99,6 @@ const ListPeopleOfAdmin = ({group}: Props) => {
       keyExtractor={item => String(item?.id)}
       ItemSeparatorComponent={Separator}
       initLoading={loading}
-      loading={loading || validating}
       refreshing={validating}
       onRefresh={mutate}
       contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
@@ -147,7 +145,7 @@ const ModalPeopleInGroup = (
       onClosed={() => setShowData(undefined)}
       title={showData ? 'discovery.groupDay' : 'common.null'}
       titleParams={{
-        value: showData ? formatDDMMMMYY(showData?.group?.created) : '',
+        value: showData?.group.name ?? '',
       }}
       containerStyle={{
         paddingHorizontal: showData?.isMySale ? scale(12) : scale(40),
