@@ -26,7 +26,6 @@ import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, ReactNode, useRef} from 'react';
 import {
   ImageSourcePropType,
-  ImageStyle,
   ScrollView,
   TextStyle,
   View,
@@ -433,11 +432,10 @@ const DetailSale = ({
               onPress={() => modalJoinedRef.current?.show()}>
               {listPersonalJoins.map((member, index) => {
                 return (
-                  <StyleIcon
+                  <Avatar
                     key={index}
                     source={{uri: member?.creator_avatar}}
                     size={30}
-                    customStyle={$avatarJoin}
                   />
                 );
               })}
@@ -684,9 +682,6 @@ const $listPeopleView: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   marginTop: verticalScale(4),
-};
-const $avatarJoin: ImageStyle = {
-  borderRadius: 50,
 };
 const $contentView: ViewStyle = {
   width: '100%',

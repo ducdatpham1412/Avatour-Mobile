@@ -2,7 +2,7 @@ import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, MapTour, TabView} from 'components';
 import {StyleButton, StyleText, StyleTouchable} from 'components/base';
-import {ButtonX} from 'components/common';
+import {ButtonX, IndicatorModal} from 'components/common';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
 import {useTheme} from 'hook';
@@ -18,7 +18,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {TextStyle, View, ViewStyle} from 'react-native';
+import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
@@ -26,6 +26,17 @@ import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
+import Animated, {
+  AnimateStyle,
+  Extrapolation,
+  interpolate,
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
+import {PanGestureHandler} from 'react-native-gesture-handler';
 
 type TypeContext = [
   {
@@ -54,7 +65,7 @@ const CreateTourContext = createContext<TypeContext>([
 ]);
 
 const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom, top} = useSafeAreaInsets();
   const theme = useTheme();
 
   const [
@@ -68,6 +79,76 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
   const timeOutRef = useRef(0);
   const saveLength = useRef(0);
   const numberOfDays = schedules.length;
+
+  const aim = useSharedValue(levelModalScheduleHeight.medium);
+
+  const modalStyle = useAnimatedStyle(() => ({
+    height: aim.value,
+  }));
+  const buttonStyle = useAnimatedStyle(() => {
+    const translateYButton = interpolate(
+      aim.value,
+      [
+        levelModalScheduleHeight.low,
+        levelModalScheduleHeight.medium,
+        levelModalScheduleHeight.high,
+      ],
+      [bottom + 100, 0, 0],
+      {
+        extrapolateRight: Extrapolation.CLAMP,
+      },
+    );
+
+    return {
+      transform: [
+        {
+          translateY: translateYButton,
+        },
+      ] as never,
+    };
+  }, []);
+  const buttonSaveSmallStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      aim.value,
+      [
+        levelModalScheduleHeight.low,
+        levelModalScheduleHeight.medium,
+        levelModalScheduleHeight.high,
+      ],
+      [1, 0, 0],
+      {
+        extrapolateRight: Extrapolation.CLAMP,
+      },
+    );
+
+    return {
+      transform: [
+        {
+          scale,
+        },
+      ] as never,
+    };
+  });
+
+  const gestureHandler = useAnimatedGestureHandler({
+    onStart: (_, ctx: CTX) => {
+      ctx.height = aim.value;
+    },
+    onActive: (event, ctx) => {
+      const newHeight = ctx.height - event.translationY;
+      if (
+        newHeight >= levelModalScheduleHeight.low &&
+        newHeight <= levelModalScheduleHeight.high
+      ) {
+        aim.value = newHeight;
+      }
+    },
+    onEnd: event => {
+      checkOnEnd(aim, event);
+    },
+  });
+
+  const isLoading = loadingCreateTour || loadingEditTour;
 
   useUpdateEffect(() => {
     /**
@@ -126,6 +207,14 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
     });
   };
 
+  const onChangeModalHeight = (value: number) => {
+    if (aim.value !== value) {
+      aim.value = withTiming(value, {
+        duration: 300,
+      });
+    }
+  };
+
   /**
    * Render views
    */
@@ -165,19 +254,58 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
 
   return (
     <View style={[$container, {backgroundColor: theme.background}]}>
-      <MapTour onGoBack={onGoBack} />
+      <MapTour
+        onGoBack={onGoBack}
+        onChangeModalHeight={onChangeModalHeight}
+        onTouchEnd={() => {
+          if (aim.value === levelModalScheduleHeight.high) {
+            onChangeModalHeight(levelModalScheduleHeight.medium);
+          }
+        }}>
+        <Animated.View style={[$buttonSaveSmall, buttonSaveSmallStyle]}>
+          <StyleTouchable
+            customStyle={[
+              $buttonSaveSmallBox,
+              {
+                backgroundColor: theme.p_700,
+                top: top || safePaddingNotZero,
+              },
+            ]}
+            onPress={onSave}
+            disable={isLoading}
+            disableOpacity={1}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={theme.white} />
+            ) : (
+              <StyleText
+                i18Text="common.save"
+                customStyle={[$textSave, {color: theme.white}]}
+              />
+            )}
+          </StyleTouchable>
+        </Animated.View>
+      </MapTour>
 
-      <View style={$body}>
-        <ToolSearch
-          location={searchParams?.location || ''}
-          numberPeople={searchParams?.number_people}
-          startPrice={searchParams?.start_price}
-          endPrice={searchParams?.end_price}
-          services={searchParams?.services}
-          containerStyle={$tool}
-          isEditMode
-          onPress={() => searchRef.current?.show()}
-        />
+      <Animated.View
+        style={[$body, {backgroundColor: theme.background}, modalStyle]}>
+        <PanGestureHandler onGestureEvent={gestureHandler}>
+          <Animated.View style={$gesture}>
+            <IndicatorModal />
+
+            <ToolSearch
+              location={searchParams?.location || ''}
+              numberPeople={searchParams?.number_people}
+              startPrice={searchParams?.start_price}
+              endPrice={searchParams?.end_price}
+              services={searchParams?.services}
+              isEditMode
+              onPress={() => searchRef.current?.show()}
+              containerStyle={$tool}
+            />
+
+            <View style={[$divider, {borderTopColor: theme.gray_300}]} />
+          </Animated.View>
+        </PanGestureHandler>
 
         <View style={$listView}>
           <TabView
@@ -219,13 +347,14 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
             }
           />
         </View>
-      </View>
+      </Animated.View>
 
-      <View style={[$button, {bottom: bottom || safePaddingNotZero}]}>
+      <Animated.View
+        style={[$button, buttonStyle, {bottom: bottom || safePaddingNotZero}]}>
         {tourId !== 'create-new' && (
           <>
             <StyleButton
-              title="common.cancel"
+              title="common.resetChanges"
               containerStyle={[
                 $buttonCancel,
                 {backgroundColor: theme.background},
@@ -246,9 +375,9 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
           title="common.save"
           containerStyle={$buttonSave}
           onPress={onSave}
-          isLoading={loadingCreateTour || loadingEditTour}
+          isLoading={isLoading}
         />
-      </View>
+      </Animated.View>
 
       <ModalSearchFilter
         ref={searchRef}
@@ -331,11 +460,15 @@ export const useContextCreateTour = (): TypeContext =>
 const $container: ViewStyle = {
   flex: 1,
 };
-const $body: ViewStyle = {
-  flex: 1,
+const $body: AnimateStyle<ViewStyle> = {
+  position: 'absolute',
+  width: '100%',
+  bottom: 0,
+  borderTopLeftRadius: moderateScale(16),
+  borderTopRightRadius: moderateScale(16),
 };
 const $tool: ViewStyle = {
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(16),
 };
 const $listView: ViewStyle = {
   flex: 1,
@@ -347,7 +480,7 @@ const $tabBar: ViewStyle = {
 const $textIndex: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
 };
-const $button: ViewStyle = {
+const $button: AnimateStyle<ViewStyle> = {
   position: 'absolute',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -378,11 +511,6 @@ const $iconPlus: TextStyle = {
 const $textAddDay: TextStyle = {
   marginLeft: scale(4),
 };
-const $loading: ViewStyle = {
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-};
 const $tabBox: ViewStyle = {
   width: '100%',
   height: '100%',
@@ -393,6 +521,26 @@ const $tabBox: ViewStyle = {
 const $buttonXDay: ViewStyle = {
   position: 'absolute',
   padding: moderateScale(2),
+};
+const $divider: ViewStyle = {
+  width: '100%',
+  borderTopWidth: borderWidthTiny,
+  marginTop: verticalScale(12),
+};
+const $gesture: AnimateStyle<ViewStyle> = {
+  width: '100%',
+};
+const $buttonSaveSmall: AnimateStyle<ViewStyle> = {
+  position: 'absolute',
+  right: scale(12),
+};
+const $buttonSaveSmallBox: ViewStyle = {
+  paddingVertical: moderateScale(5),
+  paddingHorizontal: moderateScale(16),
+  borderRadius: 50,
+};
+const $textSave: TextStyle = {
+  fontWeight: 'bold',
 };
 
 export default CreateTour;

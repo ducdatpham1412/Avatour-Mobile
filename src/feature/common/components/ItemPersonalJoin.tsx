@@ -1,8 +1,9 @@
 import {BORDER_RADIUS} from 'asset';
-import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {StyleText, StyleTouchable} from 'components/base';
+import {Avatar} from 'components/common';
 import {useTheme} from 'hook';
 import React from 'react';
-import {ImageStyle, TextStyle, ViewStyle} from 'react-native';
+import {TextStyle, ViewStyle} from 'react-native';
 import {onGoToProfile} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 
@@ -16,17 +17,13 @@ const ItemPersonalJoin = ({item}: Props) => {
     <StyleTouchable
       style={[$container, {backgroundColor: theme.white}]}
       onPress={() => onGoToProfile(item?.creator)}>
-      <StyleIcon
-        source={{uri: item?.creator_avatar}}
-        size={40}
-        customStyle={$avatar}
-      />
+      <Avatar source={{uri: item?.creator_avatar}} size={40} />
       <StyleText
         originValue={item?.creator_name}
         customStyle={$name}
         numberOfLines={2}
       />
-      <StyleText originValue={item?.amount} />
+      <StyleText originValue={`x${item?.amount}`} />
     </StyleTouchable>
   );
 };
@@ -43,9 +40,6 @@ const $name: TextStyle = {
   marginHorizontal: scale(8),
   fontWeight: '500',
   flex: 1,
-};
-const $avatar: ImageStyle = {
-  borderRadius: 100,
 };
 
 export default ItemPersonalJoin;

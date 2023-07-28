@@ -153,6 +153,7 @@ const SearchScreen = ({
                 />,
               ]}
               style={$resultView}
+              tabBarType="fix-width"
             />
           )}
 

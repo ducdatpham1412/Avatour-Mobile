@@ -121,7 +121,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       },
       options: async value => {
         await promiseForNextShow;
-        Vibration.vibrate();
+        impactMedium();
         setStatus('options');
         setTitle(value?.title ?? 'common.alert');
         setContent(

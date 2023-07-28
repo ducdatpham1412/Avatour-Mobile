@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
 import React from 'react';
@@ -19,7 +19,6 @@ const ItemModalProfile = ({profile, onSelect}: Props) => {
   return (
     <StyleTouchable
       customStyle={[$container, {backgroundColor: theme.background}]}
-      //   onPress={() => ModalProfile.show({userId: profile?.id})}
       onPress={() => onGoToProfile(profile?.id)}>
       <Avatar source={{uri: profile?.avatar}} size={40} />
 
@@ -40,10 +39,10 @@ const ItemModalProfile = ({profile, onSelect}: Props) => {
       </View>
 
       <StyleTouchable
-        customStyle={[$buttonSelect, {backgroundColor: theme.blue}]}
+        customStyle={[$buttonSelect, {backgroundColor: theme.p_700}]}
         onPress={onSelect}>
         <StyleText
-          i18Text="common.imageUpload.selected"
+          i18Text="common.add"
           customStyle={[$textSelect, {color: theme.white}]}
         />
       </StyleTouchable>
@@ -77,12 +76,13 @@ const $textLocation: TextStyle = {
   marginLeft: scale(4),
 };
 const $buttonSelect: ViewStyle = {
-  paddingHorizontal: scale(10),
-  paddingVertical: verticalScale(2),
+  paddingHorizontal: scale(12),
+  paddingVertical: verticalScale(4),
   borderRadius: 30,
 };
 const $textSelect: TextStyle = {
   fontWeight: 'bold',
+  fontSize: FONT_SIZE.f3,
 };
 
 export default ItemModalProfile;

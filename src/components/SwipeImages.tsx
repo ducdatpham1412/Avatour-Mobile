@@ -1,19 +1,19 @@
-import {Metrics} from 'asset/metrics';
-import {useTheme} from 'hook';
+import {Metrics, horizontalPadding} from 'asset/metrics';
 import {goBack} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import Feather from 'react-native-vector-icons/Feather';
+import {ViewStyle} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {verticalScale} from 'react-native-size-matters';
 import PanZoomImage from './PanZoomImage';
 import StyleTabView from './StyleTabView';
-import {StyleTouchable} from './base';
+import {ButtonX} from './common';
 
 type Props = RouteParams<AppParamsList[ROOT_SCREEN.swipeImages]>;
 
 const SwipeImages = ({route}: Props) => {
   const {listImages, initIndex = 0} = route.params;
-  const theme = useTheme();
+  const {top} = useSafeAreaInsets();
 
   return (
     <>
@@ -27,32 +27,17 @@ const SwipeImages = ({route}: Props) => {
         ))}
       </StyleTabView>
 
-      <StyleTouchable
-        customStyle={[styles.comebackView, {backgroundColor: theme.background}]}
+      <ButtonX
+        containerStyle={[$buttonX, {top: top + verticalScale(4)}]}
+        size={20}
         onPress={goBack}
-        hitSlop={15}>
-        <Feather name="x" style={[styles.iconComeBack, {color: theme.black}]} />
-      </StyleTouchable>
+      />
     </>
   );
 };
 
-const styles = ScaledSheet.create({
-  elementView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  comebackView: {
-    position: 'absolute',
-    padding: '4@ms',
-    right: '20@s',
-    top: Metrics.safeTopPadding + verticalScale(10),
-    borderRadius: '20@ms',
-  },
-  iconComeBack: {
-    fontSize: '14@ms',
-  },
-});
+const $buttonX: ViewStyle = {
+  right: horizontalPadding,
+};
 
 export default SwipeImages;

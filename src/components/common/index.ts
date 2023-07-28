@@ -5,6 +5,7 @@ export {default as CircleButton} from './CircleButton';
 export {default as IconLiked} from './IconLiked';
 export {default as IconNotLiked} from './IconNotLiked';
 export {default as IconTabBar} from './IconTabBar';
+export {default as IndicatorModal} from './IndicatorModal';
 export {default as InputBox} from './InputBox';
 export {default as InputSearch} from './InputSearch';
 export {default as LeftIcon} from './LeftIcon';

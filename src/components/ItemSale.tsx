@@ -13,7 +13,7 @@ import {
 } from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
-import {IconLiked, IconNotLiked} from './common';
+import {Avatar, IconLiked, IconNotLiked} from './common';
 import {formatLocaleNumber} from 'utility/format';
 
 interface Props {
@@ -47,21 +47,9 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
     if (!listPersonalJoins.length) {
       return (
         <>
-          <StyleIcon
-            source={Images.images.defaultAvatar}
-            size={15}
-            customStyle={$iconBorder}
-          />
-          <StyleIcon
-            source={Images.images.defaultAvatar}
-            size={15}
-            customStyle={$iconBorder}
-          />
-          <StyleIcon
-            source={Images.images.defaultAvatar}
-            size={15}
-            customStyle={$iconBorder}
-          />
+          <Avatar source={Images.images.defaultAvatar} size={15} />
+          <Avatar source={Images.images.defaultAvatar} size={15} />
+          <Avatar source={Images.images.defaultAvatar} size={15} />
           <StyleText
             i18Text="discovery.beTheFirstJoin"
             customStyle={[$textInfo, {color: theme.gray_500}]}
@@ -73,11 +61,10 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
       <>
         {listPersonalJoins.map((personal, index) => {
           return (
-            <StyleIcon
+            <Avatar
               key={index}
               source={{uri: personal?.creator_avatar}}
               size={15}
-              customStyle={$iconBorder}
             />
           );
         })}
@@ -132,11 +119,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
 
       {!hidingElements?.includes('name') && (
         <View style={$informationView}>
-          <StyleIcon
-            source={{uri: item?.creator_avatar}}
-            size={20}
-            customStyle={$iconBorder}
-          />
+          <Avatar source={{uri: item?.creator_avatar}} size={20} />
           <StyleText
             originValue={item?.name}
             customStyle={$textName}
@@ -220,9 +203,6 @@ const $textInfo: TextStyle = {
 const $textPrice: TextStyle = {
   fontWeight: 'bold',
   fontSize: FONT_SIZE.f4,
-};
-const $iconBorder: ImageStyle = {
-  borderRadius: 50,
 };
 
 export default memo(ItemSale, (pre: Props, next: Props) => {

@@ -1,5 +1,5 @@
 import LoadingScreen from 'feature/profile/screens/LoadingScreen';
-import * as React from 'react';
+import React from 'react';
 import {memo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {WebView, WebViewProps} from 'react-native-webview';
@@ -9,11 +9,10 @@ const StyleWebView = (props: WebViewProps) => {
   return (
     <View style={styles.container}>
       <WebView
-        {...props}
         pullToRefreshEnabled
-        startInLoadingState={true}
+        startInLoadingState
         renderLoading={() => <LoadingScreen />}
-        renderError={errorName => (
+        renderError={(errorName: any) => (
           <View style={styles.flex1}>
             <StyleText originValue={`Error name: ${errorName}`} />
             <StyleText
@@ -22,6 +21,7 @@ const StyleWebView = (props: WebViewProps) => {
             />
           </View>
         )}
+        {...props}
       />
     </View>
   );
