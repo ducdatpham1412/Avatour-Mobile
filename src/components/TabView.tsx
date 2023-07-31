@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   FunctionComponent,
   ReactNode,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -45,6 +46,7 @@ interface TypeTabViewRef {
 }
 
 const tabBarScrollMargin = scale(8);
+const scrollTab = scale(80);
 
 const TabView = (
   {
@@ -83,9 +85,19 @@ const TabView = (
   }, [listElements.length]);
 
   const translateXIndicator = useRef(new Animated.Value(0));
+  const scrollRef = useRef<ScrollView>(null);
 
   const [index, setIndex] = useState(initialIndex);
   const [indicatorWidth, setIndicatorWidth] = useState(0);
+
+  useEffect(() => {
+    const newScroll =
+      index * (tabBarElementScrollWidth + tabBarScrollMargin) - scrollTab;
+    scrollRef.current?.scrollTo({
+      x: newScroll,
+      animated: true,
+    });
+  }, [index, tabBarElementScrollWidth]);
 
   useImperativeHandle(
     ref,
@@ -161,14 +173,33 @@ const TabView = (
       return (
         <View style={[$tabBar, tabBarStyle]}>
           <ScrollView
+            ref={scrollRef}
             style={$scroll}
             contentContainerStyle={$scrollContent}
             horizontal
             showsHorizontalScrollIndicator={false}>
+            <View style={$background}>
+              {initValue.route.map((_, _index) => {
+                return (
+                  <View
+                    key={_index}
+                    style={[
+                      $tabBarScrollBox,
+                      {
+                        backgroundColor: theme.gray_200,
+                        width: tabBarElementScrollWidth,
+                        marginRight: tabBarScrollMargin,
+                      },
+                    ]}
+                  />
+                );
+              })}
+            </View>
+
             <Animated.View
               style={[
                 $indicatorScroll,
-                {backgroundColor: theme.p_800},
+                {backgroundColor: theme.p_600},
                 indicatorStyle,
                 {
                   width: indicatorWidth,
@@ -176,6 +207,7 @@ const TabView = (
                 },
               ]}
             />
+
             {initValue.route.map((_, _index) => {
               return (
                 <StyleTouchable
@@ -183,7 +215,6 @@ const TabView = (
                   customStyle={[
                     $tabBarScrollBox,
                     {
-                      borderColor: theme.gray_600,
                       width: tabBarElementScrollWidth,
                       marginRight: tabBarScrollMargin,
                     },
@@ -205,6 +236,7 @@ const TabView = (
                 </StyleTouchable>
               );
             })}
+
             {RightButtonTabBar}
           </ScrollView>
         </View>
@@ -269,9 +301,15 @@ const $scroll: ViewStyle = {
 const $scrollContent: ViewStyle = {
   paddingHorizontal: horizontalPadding,
 };
+const $background: ViewStyle = {
+  position: 'absolute',
+  height: moderateScale(30),
+  flexDirection: 'row',
+  alignItems: 'center',
+  left: horizontalPadding,
+};
 const $tabBarScrollBox: ViewStyle = {
   height: moderateScale(30),
-  borderWidth: borderWidthTiny,
   borderRadius: 100,
   alignItems: 'center',
   justifyContent: 'center',

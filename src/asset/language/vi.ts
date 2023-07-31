@@ -1,11 +1,6 @@
 const common = {
   yes: 'Có',
   no: 'Không',
-  imageUpload: {
-    selected: 'Chọn',
-    cancel: 'Huỷ',
-  },
-  // option image picker
   chooseFromLibrary: 'Chọn từ thư viện',
   chooseFromCamera: 'Chụp ảnh',
   cancel: 'Huỷ',
@@ -36,6 +31,9 @@ const common = {
   copy: 'Sao chép',
   copied: 'Đã sao chép',
   retry: 'Thử lại',
+  resetChanges: 'Bỏ thay đổi',
+  add: 'Thêm',
+  select: 'Chọn',
 };
 
 const login = {

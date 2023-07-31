@@ -15,10 +15,10 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {seeDetailImage} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useOtherProfile} from '../hooks';
 
@@ -114,14 +114,14 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
     }
     const arrayStars = Array(Math.floor(5)).fill(0);
     return (
-      <View style={styles.starBox}>
+      <View style={$starBox}>
         {arrayStars.map((_, index) => {
           const isStar = index + 1 <= average_stars;
           return (
             <AntDesign
               key={index}
               name={isStar ? 'star' : 'staro'}
-              style={[styles.iconStar, {color: theme.orange}]}
+              style={[$iconStar, {color: theme.orange}]}
             />
           );
         })}
@@ -204,60 +204,62 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
   return (
     <View style={$container} onLayout={onLayOut}>
       <View style={$introduceView}>
-        <StyleImage source={{uri: avatar}} customStyle={$avatarHeader} />
+        <StyleTouchable
+          onPress={() =>
+            seeDetailImage({
+              images: [avatar],
+            })
+          }>
+          <StyleImage source={{uri: avatar}} customStyle={$avatarHeader} />
+        </StyleTouchable>
         <View style={$boxNameAndDescription}>
           <StyleText customStyle={$textName} originValue={name} />
           {!!profile.location && isShopAccount && (
-            <View style={styles.locationBox}>
+            <View style={$locationBox}>
               <Ionicons
                 name="location"
-                style={[styles.iconLocation, {color: theme.blue}]}
+                style={[$iconLocation, {color: theme.blue}]}
               />
               <StyleText
                 originValue={profile.location}
-                customStyle={[styles.textLocation, {color: theme.gray_700}]}
-                numberOfLines={1}
+                customStyle={[$textLocation, {color: theme.gray_700}]}
               />
             </View>
           )}
-
-          {renderStars()}
-
           <View style={$followBox}>
             <StyleTouchable
-              customStyle={styles.elementFollow}
+              customStyle={$elementFollow}
               onPress={() => onNavigateFollow('follower')}>
               <StyleText
                 i18Text="profile.follower"
-                customStyle={{color: theme.gray_500}}
+                customStyle={[$textFollow, {color: theme.gray_500}]}
               />
               <StyleText
                 originValue={String(followers)}
-                customStyle={styles.numberFollow}
+                customStyle={$numberFollow}
               />
             </StyleTouchable>
 
             <StyleTouchable
-              customStyle={styles.elementFollow}
+              customStyle={$elementFollow}
               onPress={() => onNavigateFollow('following')}>
               <StyleText
                 i18Text="profile.following"
-                customStyle={{color: theme.gray_500}}
+                customStyle={[$textFollow, {color: theme.gray_500}]}
               />
               <StyleText
                 originValue={String(followings)}
-                customStyle={styles.numberFollow}
+                customStyle={$numberFollow}
               />
             </StyleTouchable>
           </View>
         </View>
       </View>
 
+      {renderStars()}
+
       {!!description && (
-        <StyleText
-          originValue={description}
-          customStyle={[$textDescription, {color: theme.gray_500}]}
-        />
+        <StyleText originValue={description} customStyle={$textDescription} />
       )}
 
       {renderButton()}
@@ -290,7 +292,8 @@ const $textName: TextStyle = {
   fontWeight: 'bold',
 };
 const $textDescription: TextStyle = {
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(8),
+  fontSize: FONT_SIZE.f3,
 };
 const $followBox: ViewStyle = {
   width: '100%',
@@ -324,46 +327,37 @@ const $textPostNew: TextStyle = {
 const $iconPlus: TextStyle = {
   fontSize: moderateScale(16),
 };
-
-const styles = ScaledSheet.create({
-  locationBox: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: '3@vs',
-  },
-  iconLocation: {
-    fontSize: '13@ms',
-  },
-  textLocation: {
-    fontSize: FONT_SIZE.small,
-    marginLeft: '2@s',
-  },
-  infoPart: {
-    flex: 1,
-  },
-  followBox: {
-    width: '100%',
-    flexDirection: 'row',
-  },
-  elementFollow: {
-    alignItems: 'center',
-    marginRight: '15@s',
-  },
-  numberFollow: {
-    marginLeft: '5@ms',
-    fontWeight: 'bold',
-  },
-  starBox: {
-    width: '100%',
-    flexDirection: 'row',
-    marginTop: '5@vs',
-    alignItems: 'flex-end',
-  },
-  iconStar: {
-    fontSize: '17@ms',
-    marginRight: '3@s',
-  },
-});
+const $locationBox: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: verticalScale(4),
+};
+const $iconLocation: TextStyle = {
+  fontSize: moderateScale(14),
+};
+const $textLocation: TextStyle = {
+  marginLeft: scale(4),
+};
+const $elementFollow: ViewStyle = {
+  flex: 1,
+  alignItems: 'center',
+};
+const $numberFollow: TextStyle = {
+  fontWeight: 'bold',
+};
+const $textFollow: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+};
+const $starBox: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'flex-end',
+  marginTop: verticalScale(12),
+};
+const $iconStar: TextStyle = {
+  fontSize: moderateScale(17),
+  marginRight: scale(4),
+};
 
 export default InformationProfile;

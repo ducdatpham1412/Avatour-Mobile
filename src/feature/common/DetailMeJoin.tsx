@@ -331,18 +331,20 @@ const DetailMeJoin = ({
                       key={index}
                       style={[$avatarMember, {borderColor: theme.gray_100}]}>
                       <Avatar source={{uri: mem.creator_avatar}} size={30} />
-                      <View
-                        style={[
-                          $amountAvatarMember,
-                          {
-                            backgroundColor: theme.gray_100,
-                          },
-                        ]}>
-                        <StyleText
-                          originValue={`x${mem.amount}`}
-                          customStyle={{fontSize: moderateScale(9)}}
-                        />
-                      </View>
+                      {mem.amount > 1 && (
+                        <View
+                          style={[
+                            $amountAvatarMember,
+                            {
+                              backgroundColor: theme.gray_100,
+                            },
+                          ]}>
+                          <StyleText
+                            originValue={`x${mem.amount}`}
+                            customStyle={{fontSize: moderateScale(9)}}
+                          />
+                        </View>
+                      )}
                     </View>
                   ))}
                 </StyleTouchable>
@@ -619,18 +621,20 @@ const DetailMeJoin = ({
                       key={index}
                       style={[$avatarMember, {borderColor: theme.gray_100}]}>
                       <Avatar source={{uri: mem.creator_avatar}} size={30} />
-                      <View
-                        style={[
-                          $amountAvatarMember,
-                          {
-                            backgroundColor: theme.gray_100,
-                          },
-                        ]}>
-                        <StyleText
-                          originValue={`x${mem.amount}`}
-                          customStyle={{fontSize: moderateScale(9)}}
-                        />
-                      </View>
+                      {mem.amount > 1 && (
+                        <View
+                          style={[
+                            $amountAvatarMember,
+                            {
+                              backgroundColor: theme.gray_100,
+                            },
+                          ]}>
+                          <StyleText
+                            originValue={`x${mem.amount}`}
+                            customStyle={{fontSize: moderateScale(9)}}
+                          />
+                        </View>
+                      )}
                     </View>
                   ))}
                 </StyleTouchable>
@@ -665,18 +669,20 @@ const DetailMeJoin = ({
                 }}>
                 <View style={[$avatarMember, {borderColor: theme.gray_100}]}>
                   <Avatar source={{uri: avatar}} size={30} />
-                  <View
-                    style={[
-                      $amountAvatarMember,
-                      {
-                        backgroundColor: theme.gray_100,
-                      },
-                    ]}>
-                    <StyleText
-                      originValue={`x${join.amount}`}
-                      customStyle={{fontSize: moderateScale(9)}}
-                    />
-                  </View>
+                  {join.amount > 1 && (
+                    <View
+                      style={[
+                        $amountAvatarMember,
+                        {
+                          backgroundColor: theme.gray_100,
+                        },
+                      ]}>
+                      <StyleText
+                        originValue={`x${join.amount}`}
+                        customStyle={{fontSize: moderateScale(9)}}
+                      />
+                    </View>
+                  )}
                 </View>
               </StyleTouchable>
             </View>

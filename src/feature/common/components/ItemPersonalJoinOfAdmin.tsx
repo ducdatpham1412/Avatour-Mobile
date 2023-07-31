@@ -1,11 +1,7 @@
 import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {BoxInformation} from 'components';
-import {
-  StyleButton,
-  StyleIcon,
-  StyleText,
-  StyleTouchable,
-} from 'components/base';
+import {StyleButton, StyleText, StyleTouchable} from 'components/base';
+import {Avatar} from 'components/common';
 import {useLoading, useTheme} from 'hook';
 import React, {Dispatch, SetStateAction} from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
@@ -75,20 +71,19 @@ const ItemPersonalJoinOfAdmin = ({item, onConfirmBought}: Props) => {
     <BoxInformation
       listInformation={[
         <View style={$creator}>
-          <StyleTouchable
-            customStyle={$creatorView}
-            onPress={() => onGoToProfile(item?.creator)}>
-            <StyleIcon
-              source={{uri: item?.creator_avatar}}
-              size={22}
-              customStyle={$avatar}
-            />
-            <StyleText
-              originValue={item?.creator_name}
-              customStyle={{color: theme.gray_600}}
-              numberOfLines={1}
-            />
-          </StyleTouchable>
+          <View style={$creatorView}>
+            <StyleTouchable
+              customStyle={$creatorBox}
+              onPress={() => onGoToProfile(item?.creator)}>
+              <Avatar
+                source={{uri: item?.creator_avatar}}
+                size={22}
+                style={$avatar}
+              />
+              <StyleText originValue={item?.creator_name} numberOfLines={1} />
+            </StyleTouchable>
+            <StyleText originValue={`x${item?.amount}`} />
+          </View>
         </View>,
         {
           title: 'discovery.arrivalTime',
@@ -115,10 +110,14 @@ const $creator: ViewStyle = {
   width: '100%',
 };
 const $avatar: ImageStyle = {
-  marginRight: scale(4),
-  borderRadius: 30,
+  marginRight: scale(8),
 };
 const $creatorView: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+};
+const $creatorBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
 };

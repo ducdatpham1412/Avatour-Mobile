@@ -5,6 +5,7 @@ import Images from 'asset/img/images';
 import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {Avatar} from 'components/common';
 import {useEstimatesAndJoinings, useTheme} from 'hook';
 import ROOT_SCREEN, {
   MAIN_SCREEN,
@@ -133,11 +134,7 @@ const HeaderDiscovery = () => {
         {!!estimates?.length ? (
           <IconHavingEstimate estimates={estimates} />
         ) : (
-          <StyleIcon
-            source={{uri: profile.avatar}}
-            size={45}
-            customStyle={$avatar}
-          />
+          <Avatar source={{uri: profile.avatar}} style={$avatar} size={48} />
         )}
         <View style={$sessionBox}>
           <StyleText
@@ -189,8 +186,6 @@ const $leftView: ViewStyle = {
 };
 const $avatar: ImageStyle = {
   borderRadius: BORDER_RADIUS.f3,
-  width: moderateScale(48),
-  height: moderateScale(48),
 };
 const $newEstimateBox: ViewStyle = {
   borderRadius: BORDER_RADIUS.f3,

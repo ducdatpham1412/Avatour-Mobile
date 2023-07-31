@@ -49,10 +49,14 @@ const EditProfile = () => {
       !location ||
       (name === profile.name &&
         location === profile.location &&
-        description === profile.description);
+        description === profile.description &&
+        avatar === profile.avatar);
   } else {
     disableButton =
-      !name || (name === profile.name && description === profile.description);
+      !name ||
+      (avatar === profile.avatar &&
+        name === profile.name &&
+        description === profile.description);
   }
 
   const onSaveChange = async () => {
@@ -61,18 +65,12 @@ const EditProfile = () => {
       const {modeExp} = Store.getState().accountSlice;
       const {token} = Store.getState().logicSlice;
 
-      const newAvatar = await ImageUploader.convertUrlToBase64(avatar);
+      let newAvatar: string | undefined;
+      if (avatar !== profile.avatar) {
+        newAvatar = await ImageUploader.convertUrlToBase64(avatar);
+      }
 
       if (!modeExp && token) {
-        // let newAvatar;
-        // if (avatar !== profile.avatar) {
-        //   if (avatar === '') {
-        //     newAvatar = '';
-        //   } else {
-        //     newAvatar = await ImageUploader.upLoad(avatar, 1000);
-        //   }
-        // }
-
         const newName = name === profile.name ? undefined : name;
         const newDescription =
           description === profile.description ? undefined : description;
@@ -281,12 +279,11 @@ const $avatar: ImageStyle = {
   width: '100%',
   height: '100%',
   borderWidth: moderateScale(2.5),
-  borderRadius: 150,
+  borderRadius: moderateScale(25),
 };
 const $avatarImg: ImageStyle = {
   width: '100%',
   height: '100%',
-  borderRadius: 150,
 };
 const $btnEditAvatar: ViewStyle = {
   width: moderateScale(27),

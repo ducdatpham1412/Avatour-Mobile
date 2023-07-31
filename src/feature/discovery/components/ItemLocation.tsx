@@ -193,19 +193,15 @@ const ItemLocation = ({
           </View>
 
           {item.account_type === ACCOUNT.shop && (
-            <View
-              style={[
-                $joinGroupBuying,
-                {borderColor: theme.p_700, backgroundColor: theme.p_300},
-              ]}>
+            <View style={[$joinGroupBuying, {backgroundColor: theme.p_100}]}>
               <StyleIcon
                 source={Images.icons.createGroup}
                 size={17}
-                customStyle={{tintColor: theme.p_900}}
+                customStyle={{tintColor: theme.black}}
               />
               <StyleText
                 i18Text="discovery.joinGroupBuying"
-                customStyle={[$textJoin, {color: theme.p_900}]}
+                customStyle={[$textJoin, {color: theme.black}]}
               />
             </View>
           )}
@@ -223,7 +219,7 @@ const $container: ViewStyle = {
   width: '100%',
   padding: scale(8),
   marginBottom: verticalScale(12),
-  borderRadius: moderateScale(8),
+  borderRadius: BORDER_RADIUS.f3,
 };
 const $body: ViewStyle = {
   width: '100%',
@@ -256,7 +252,7 @@ const $addLocation: ViewStyle = {
   width: '70%',
   paddingVertical: verticalScale(4),
   borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f2,
+  borderRadius: BORDER_RADIUS.f3,
   marginBottom: verticalScale(12),
   alignSelf: 'center',
   flexDirection: 'row',
@@ -285,7 +281,7 @@ const $iconX: ViewStyle = {
 const $joinGroupBuying: ViewStyle = {
   width: '80%',
   paddingVertical: verticalScale(4),
-  borderRadius: BORDER_RADIUS.f2,
+  borderRadius: BORDER_RADIUS.f4,
   borderWidth: 0,
   marginTop: verticalScale(8),
   alignSelf: 'center',

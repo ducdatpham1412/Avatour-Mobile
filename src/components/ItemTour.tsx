@@ -18,6 +18,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
+import {Avatar} from './common';
 
 interface Props {
   item: Tour;
@@ -79,7 +80,7 @@ const ItemTour = ({item, containerStyle}: Props) => {
         <View style={$infoView}>
           <StyleText
             originValue={formatLocaleNumber(
-              String(item?.start_price / item?.number_people),
+              String(Math.floor(item?.start_price / item?.number_people)),
             )}
             customStyle={[$textInfo, {color: theme.white, fontWeight: 'bold'}]}
             numberOfLines={1}>
@@ -110,10 +111,10 @@ const ItemTour = ({item, containerStyle}: Props) => {
         </View>
 
         <View style={$infoView}>
-          <StyleIcon
+          <Avatar
             source={{uri: item?.creator_avatar}}
             size={20}
-            customStyle={$iconAvatar}
+            style={$iconAvatar}
           />
           <StyleText
             originValue={item?.creator_name}
@@ -182,7 +183,6 @@ const $iconLocation: ImageStyle = {
   marginRight: scale(4),
 };
 const $iconAvatar: ImageStyle = {
-  borderRadius: 50,
   marginRight: scale(4),
 };
 

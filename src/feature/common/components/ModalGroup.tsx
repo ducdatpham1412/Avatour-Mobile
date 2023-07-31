@@ -12,8 +12,9 @@ import React, {
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {formatDDMMMMYY} from 'utility/format';
-import {verticalScale} from 'utility/scale';
+import {moderateScale, verticalScale} from 'utility/scale';
 import ModalPeopleInGroup from './ModalPeopleInGroup';
+import {useTheme} from 'hook';
 
 interface Props {
   groups: TypeGroupJoin[];
@@ -27,6 +28,7 @@ const ModalGroup = (
   ref: ForwardedRef<ElementRef<typeof AppModalize>>,
 ) => {
   const {bottom} = useSafeAreaInsets();
+  const theme = useTheme();
   const modalPeopleInGroup =
     useRef<ElementRef<typeof ModalPeopleInGroup>>(null);
 
@@ -45,11 +47,23 @@ const ModalGroup = (
           />
           <View style={$listPeople}>
             {item?.members?.map((mem, index) => (
-              <Avatar
-                key={index}
-                source={{uri: mem?.creator_avatar}}
-                size={40}
-              />
+              <View key={index}>
+                <Avatar source={{uri: mem?.creator_avatar}} size={40} />
+                {mem?.amount > 1 && (
+                  <View
+                    style={[
+                      $amountAvatarMember,
+                      {
+                        backgroundColor: theme.gray_100,
+                      },
+                    ]}>
+                    <StyleText
+                      originValue={`x${mem.amount}`}
+                      customStyle={{fontSize: moderateScale(9)}}
+                    />
+                  </View>
+                )}
+              </View>
             ))}
           </View>
         </StyleTouchable>
@@ -88,6 +102,16 @@ const $listPeople: ViewStyle = {
   flexDirection: 'row',
   justifyContent: 'center',
   marginTop: verticalScale(4),
+};
+const $amountAvatarMember: ViewStyle = {
+  position: 'absolute',
+  bottom: -moderateScale(5),
+  right: 0,
+  width: moderateScale(15),
+  height: moderateScale(15),
+  borderRadius: 30,
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 
 export default forwardRef(ModalGroup);

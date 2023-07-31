@@ -1,4 +1,9 @@
-export {default as DetailTour} from './DetailTour';
+export {
+  default as DetailTour,
+  checkOnEnd,
+  type CTX,
+  levelModalScheduleHeight,
+} from './DetailTour';
 export {default as DiscoveryScreen} from './DiscoveryScreen';
 export {default as GoToDeposit} from './GoToDeposit';
 export {default as JoinHistory} from './JoinsHistory';

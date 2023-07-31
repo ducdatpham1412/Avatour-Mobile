@@ -1,11 +1,6 @@
 const common = {
   yes: 'Yes',
   no: 'No',
-  imageUpload: {
-    selected: 'Select',
-    cancel: 'Cancel',
-  },
-  // option image picker
   chooseFromLibrary: 'Choose from library',
   chooseFromCamera: 'Open camera',
   cancel: 'Cancel',
@@ -36,6 +31,9 @@ const common = {
   copy: 'Copy',
   copied: 'Copied',
   retry: 'Retry',
+  resetChanges: 'Reset changes',
+  add: 'Add',
+  select: 'Select',
 };
 
 const login = {
