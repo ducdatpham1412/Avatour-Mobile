@@ -3,9 +3,6 @@ enum ROOT_SCREEN {
   mainScreen = '@ROOT_SCREEN/mainScreen',
   chatRoute = '@ROOT_SCREEN/chatRoute',
   // others
-  alert = '@ROOT_SCREEN/alert',
-  alertYesNo = '@ROOT_SCREEN/alertYesNo',
-  interactBubble = '@ROOT_SCREEN/interactBubble',
   swipeImages = '@ROOT_SCREEN/swipeImage',
   reportUser = '@ROOT_SCREEN/reportUser',
   webView = '@ROOT_SCREEN/webview',
@@ -32,6 +29,7 @@ enum ROOT_SCREEN {
   chatDetailGroup = '@ROOT_SCREEN/chatDetailGroup',
   chatDetailSetting = '@ROOT_SCREEN/chatDetailSetting',
   listJoining = '@ROOT_SCREEN/listJoining',
+  editSalePrice = '@ROOT_SCREEN/editSalePrice',
 }
 /**
  * ||
@@ -81,7 +79,6 @@ enum PROFILE_ROUTE {
   createPostPickImg = '@PROFILE_ROUTE/createPostPickImg',
   detailGroupBuying = '@PROFILE_ROUTE/detailGroupBuying',
   createSale = '@PROFILE_ROUTE/createSale',
-  updatePrices = '@PROFILE_ROUTE/updatePrice',
   listMyRequests = '@PROFILE_ROUTE/listMyRequest',
   myQRCode = '@PROFILE_ROUTE/myQRCode',
   createTour = '@PROFILE_ROUTE/createTour',

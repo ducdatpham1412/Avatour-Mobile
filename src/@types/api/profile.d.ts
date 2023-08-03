@@ -23,7 +23,6 @@ interface TypeEditProfileRequest {
   name?: string;
   description?: string;
   avatar?: string;
-  cover?: string;
   location?: string;
   bank_code?: string;
   bank_account?: string;

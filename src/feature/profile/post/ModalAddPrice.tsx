@@ -23,10 +23,15 @@ import {I18Normalize} from 'utility/I18Next';
 import {scale, verticalScale} from 'utility/scale';
 import {validateIsNumber} from 'utility/validate';
 
+export type TypeChangePrice = {
+  indexEdit: number;
+  value: TypePrice;
+};
+
 interface Props {
   prices: Array<TypePrice>;
   onAddPrice(value: TypePrice): void;
-  onChangePrice(params: {indexEdit: number; value: TypePrice}): void;
+  onChangePrice(params: TypeChangePrice): void;
 }
 
 interface TypeShow {

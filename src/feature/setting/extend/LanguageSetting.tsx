@@ -46,7 +46,7 @@ const LanguageSetting = ({isOpening}: Props) => {
   }, [isOpening]);
 
   const selectBorderColor = (lan: number) =>
-    isPicked === lan ? theme.highlightColor : theme.holderColor;
+    isPicked === lan ? theme.p_600 : theme.gray_200;
 
   const switchLanguage = async (newLanguage: number) => {
     if (newLanguage === isPicked) {

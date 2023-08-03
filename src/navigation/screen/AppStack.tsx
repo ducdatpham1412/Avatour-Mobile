@@ -9,7 +9,6 @@ import {DetailMeJoin, DetailSale} from 'feature/common';
 import EditHistory from 'feature/common/EditHistory';
 import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
-import UpdatePrices from 'feature/common/UpdatePrices';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
 import {
   DetailTour,
@@ -18,7 +17,6 @@ import {
   ListJoining,
   ScanResult,
 } from 'feature/discovery';
-import InteractBubble from 'feature/discovery/InteractBubble';
 import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
 import {SendOTP} from 'feature/login';
@@ -30,6 +28,7 @@ import {
   CreateSale,
   CreateTour,
   EditProfile,
+  EditSalePrice,
   ListFollows,
   ListMyRequests,
   MyProfile,
@@ -69,7 +68,7 @@ const AppStack = () => {
   const {gestureHandle} = useAppSelector(state => state.logicSlice);
 
   const cardStyle = {
-    backgroundColor: theme.backgroundColor,
+    backgroundColor: theme.background,
   };
 
   return (
@@ -82,17 +81,6 @@ const AppStack = () => {
       <Stack.Screen name={ROOT_SCREEN.myProfile} component={MyProfile} />
       <Stack.Screen name={ROOT_SCREEN.editProfile} component={EditProfile} />
       <Stack.Screen name={LOGIN_ROUTE.sendOTP} component={SendOTP} />
-
-      {/* Interact Bubble */}
-      <Stack.Screen
-        options={{
-          cardStyle: [{backgroundColor: theme.backgroundOpacity(0.3)}],
-          cardStyleInterpolator:
-            CardStyleInterpolators.forFadeFromBottomAndroid,
-        }}
-        name={ROOT_SCREEN.interactBubble}
-        component={InteractBubble}
-      />
 
       {/* Swipe Image */}
       <Stack.Screen
@@ -128,10 +116,6 @@ const AppStack = () => {
         options={{
           gestureEnabled: false,
         }}
-      />
-      <Stack.Screen
-        name={PROFILE_ROUTE.updatePrices}
-        component={UpdatePrices}
       />
       <Stack.Screen
         name={PROFILE_ROUTE.listMyRequests}
@@ -234,6 +218,10 @@ const AppStack = () => {
       />
       <Stack.Screen name={ROOT_SCREEN.joinsHistory} component={JoinHistory} />
       <Stack.Screen name={ROOT_SCREEN.listJoining} component={ListJoining} />
+      <Stack.Screen
+        name={ROOT_SCREEN.editSalePrice}
+        component={EditSalePrice}
+      />
     </Stack.Navigator>
   );
 };

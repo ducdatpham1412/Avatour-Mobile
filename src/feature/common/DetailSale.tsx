@@ -11,6 +11,7 @@ import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, TextCountDown} from 'components';
 import {
   RefreshControl,
+  StyleButton,
   StyleContainer,
   StyleIcon,
   StyleText,
@@ -21,13 +22,14 @@ import dayjs from 'dayjs';
 import {ScrollCropImages} from 'feature/profile/components';
 import {useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
-import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
+import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, ReactNode, useRef} from 'react';
 import {
   ImageSourcePropType,
   ScrollView,
   TextStyle,
+  Vibration,
   View,
   ViewStyle,
 } from 'react-native';
@@ -41,6 +43,7 @@ import {
   renderPersonalJoinsFromGroups,
 } from 'utility/assistant';
 import {formatLocaleNumber, formatddddDDMMYYYY} from 'utility/format';
+import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
 import {useDetailSale} from './hooks';
@@ -107,8 +110,8 @@ const DetailSale = ({
   );
 
   const [
-    {data, initLoading, meJoins, loadingJoin, refreshing},
-    {onReaction, onRefresh, onJoin, deleteEstimate},
+    {data, initLoading, meJoins, loadingJoin, refreshing, loadingRequestDelete},
+    {onReaction, onRefresh, onJoin, deleteEstimate, requestDeleteSale},
   ] = useDetailSale(saleId ?? sale?.id, {
     revalidateAll: true,
   });
@@ -117,7 +120,11 @@ const DetailSale = ({
 
   const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const modalDeleteRef = useRef<ElementRef<typeof AppModalize>>(null);
 
+  /**
+   * Function
+   */
   const onConfirmJoin = async (value: Omit<TypeJoinRequest, 'saleId'>) => {
     try {
       if (data) {
@@ -137,6 +144,71 @@ const DetailSale = ({
     }
   };
 
+  const onShowOptions = () => {
+    if (data) {
+      if (isMySale) {
+        ModalActionSheet.show({
+          options:
+            data.status !== STATUS.requestingDelete
+              ? [
+                  {
+                    title: 'common.edit',
+                    onPress: () => {
+                      navigate(PROFILE_ROUTE.createSale, {
+                        itemEdit: data,
+                      });
+                    },
+                  },
+                  {
+                    title: 'common.delete',
+                    onPress: () => {
+                      Vibration.vibrate();
+                      modalDeleteRef.current?.show();
+                    },
+                  },
+                ]
+              : [
+                  {
+                    title: 'common.edit',
+                    onPress: () => {
+                      navigate(PROFILE_ROUTE.createSale, {
+                        itemEdit: data,
+                      });
+                    },
+                  },
+                ],
+        });
+        return;
+      }
+
+      ModalActionSheet.show({
+        options: [
+          {
+            title: 'discovery.buyingHistory',
+            onPress: () => {
+              navigate(ROOT_SCREEN.joinsHistory, {
+                saleId: data.id,
+                mode: 'go-from-sale',
+              });
+            },
+          },
+          {
+            title: 'discovery.report.title',
+            onPress: () => {
+              navigate(ROOT_SCREEN.reportUser, {
+                idUser: data?.creator,
+                nameUser: data?.creator_name,
+              });
+            },
+          },
+        ],
+      });
+    }
+  };
+
+  /**
+   * Render
+   */
   const renderInformation = () => {
     let textStatus: I18Normalize = 'common.null';
     let colorStatus = theme.blue;
@@ -146,7 +218,14 @@ const DetailSale = ({
       data?.status === STATUS.temporarilyClose ||
       data?.status === STATUS.requestingDelete
     ) {
-      textStatus = 'discovery.temporarilyClosed';
+      if (!isMySale) {
+        textStatus = 'discovery.temporarilyClosed';
+      } else {
+        textStatus =
+          data?.status === STATUS.temporarilyClose
+            ? 'discovery.temporarilyClosed'
+            : 'discovery.requestingDelete';
+      }
       colorStatus = theme.red;
     } else if (data?.status === STATUS.notActive) {
       textStatus = 'discovery.closed';
@@ -285,6 +364,7 @@ const DetailSale = ({
       if (isMySale) {
         return null;
       }
+
       if (meJoins?.estimate) {
         const estimate = meJoins.estimate;
         const seconds = dayjs(estimate.expired).diff(dayjs(), 'seconds');
@@ -369,6 +449,11 @@ const DetailSale = ({
           </View>
         );
       }
+
+      if (data?.status !== STATUS.active) {
+        return null;
+      }
+
       return (
         <LinearGradient
           colors={[theme.p_800, theme.p_600]}
@@ -508,34 +593,7 @@ const DetailSale = ({
             backgroundColor: theme.white_opacity(0.8),
           },
         ]}
-        onPress={() =>
-          ModalActionSheet.show({
-            options: [
-              {
-                title: 'discovery.buyingHistory',
-                onPress: () => {
-                  if (data) {
-                    navigate(ROOT_SCREEN.joinsHistory, {
-                      saleId: data.id,
-                      mode: 'go-from-sale',
-                    });
-                  }
-                },
-              },
-              {
-                title: 'discovery.report.title',
-                onPress: () => {
-                  if (data) {
-                    navigate(ROOT_SCREEN.reportUser, {
-                      idUser: data?.creator,
-                      nameUser: data?.creator_name,
-                    });
-                  }
-                },
-              },
-            ],
-          })
-        }>
+        onPress={onShowOptions}>
         <StyleIcon
           source={Images.icons.more}
           size={15}
@@ -556,6 +614,36 @@ const DetailSale = ({
         onConfirm={onConfirmJoin}
         loadingJoin={loadingJoin}
       />
+
+      {isMySale && (
+        <AppModalize ref={modalDeleteRef}>
+          <StyleText
+            i18Text="alert.afterDeleteSale"
+            i18Params={{value: data.name}}
+            mode="html"
+            htmlTextBoldColor={theme.red}
+          />
+          <StyleButton
+            title="common.continue"
+            containerStyle={[
+              $buttonContinue,
+              {marginBottom: bottom || safePaddingNotZero},
+            ]}
+            isLoading={loadingRequestDelete}
+            onPress={async () => {
+              try {
+                await requestDeleteSale();
+                impactMedium();
+                modalDeleteRef.current?.hide();
+              } catch (err) {
+                ModalAlert.error({
+                  content: err,
+                });
+              }
+            }}
+          />
+        </AppModalize>
+      )}
     </>
   );
 };
@@ -694,6 +782,10 @@ const $meJoinView: ViewStyle = {
 };
 const $titleEstimate: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $buttonContinue: ViewStyle = {
+  width: '70%',
+  marginTop: verticalScale(12),
 };
 
 export default DetailSale;

@@ -16,7 +16,7 @@ import {loginSuccess, requestLoginSocial} from 'utility/authentication';
 
 const loginForm = __DEV__
   ? {
-      username: 'ducdat@gmail.com',
+      username: 'ducdat.avatour@gmail.com',
       password: 'Ducdat@123',
     }
   : {username: '', password: ''};

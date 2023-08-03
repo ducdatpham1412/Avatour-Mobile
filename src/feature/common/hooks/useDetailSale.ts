@@ -1,3 +1,4 @@
+import {apiRequestDeleteSale} from 'api/authentication';
 import {
   apiDeleteEstimate,
   apiEditEstimate,
@@ -5,7 +6,7 @@ import {
   apiJoinSale,
 } from 'api/discovery';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
-import {APP_EVENT, REACT} from 'asset/enum';
+import {APP_EVENT, REACT, STATUS} from 'asset/enum';
 import {emitAppEvent, useApi, useEstimatesAndJoinings} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import useSWRMutation from 'swr/mutation';
@@ -243,6 +244,30 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
       },
     );
 
+  const {trigger: requestDeleteSale, isMutating: loadingRequestDelete} =
+    useSWRMutation('api.requestDeleteSale', async () => {
+      if (data) {
+        await apiRequestDeleteSale(data.id);
+        await mutate(
+          pre => {
+            if (pre) {
+              return {
+                ...pre,
+                status: STATUS.requestingDelete,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+        emitAppEvent(APP_EVENT.editSale, {
+          post_id: data.id,
+          data: {
+            status: STATUS.requestingDelete,
+          },
+        });
+      }
+    });
+
   return [
     {
       data,
@@ -253,8 +278,18 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
       loadingEstimate,
       loadingDeleteEstimate,
       loadingEditEstimate,
+      loadingRequestDelete,
     },
-    {onRefresh, onReaction, onJoin, estimate, deleteEstimate, editEstimate},
+    {
+      onRefresh,
+      onReaction,
+      onJoin,
+      estimate,
+      deleteEstimate,
+      editEstimate,
+      mutate,
+      requestDeleteSale,
+    },
   ] as const;
 };
 

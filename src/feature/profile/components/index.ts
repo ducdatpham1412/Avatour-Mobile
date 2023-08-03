@@ -4,4 +4,5 @@ export {default as IconTabBarProfile} from './IconTabBarProfile';
 export {default as InformationProfile} from './InformationProfile';
 export {default as ItemEstimate} from './ItemEstimate';
 export {default as ItemRequest} from './ItemRequest';
+export {default as PricesEdit} from './PricesEdit';
 export {default as ScrollCropImages} from './ScrollCropImages';

@@ -100,20 +100,12 @@ class ModalCommentLike extends Component<Props> {
         modalStyle={{
           backgroundColor: 'transparent',
         }}
-        overlayStyle={{
-          backgroundColor: theme.backgroundOpacity(0.3),
-        }}
+        overlayStyle={{}}
         scrollViewProps={{
           keyboardShouldPersistTaps: 'handled',
           nestedScrollEnabled: true,
         }}>
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: theme.backgroundColor,
-            },
-          ]}>
+        <View style={[styles.container, {}]}>
           <View style={styles.headerTouch}>
             <StyleText
               i18Text="discovery.numberComments"
@@ -123,7 +115,6 @@ class ModalCommentLike extends Component<Props> {
               customStyle={[
                 styles.textNumberComments,
                 {
-                  color: theme.textColor,
                   opacity: tabIndex === 0 ? 1 : 0.6,
                 },
               ]}
@@ -137,7 +128,6 @@ class ModalCommentLike extends Component<Props> {
               customStyle={[
                 styles.textNumberLikes,
                 {
-                  color: theme.textColor,
                   opacity: tabIndex === 1 ? 1 : 0.6,
                 },
               ]}
@@ -147,10 +137,7 @@ class ModalCommentLike extends Component<Props> {
               customStyle={styles.iconTurnOffTouch}
               onPress={() => this.modalRef.current?.close()}
               hitSlop={15}>
-              <Feather
-                name="x"
-                style={[styles.iconTurnOff, {color: theme.textColor}]}
-              />
+              <Feather name="x" style={[styles.iconTurnOff]} />
             </StyleTouchable>
           </View>
 

@@ -65,12 +65,8 @@ const EditProfile = () => {
       const {modeExp} = Store.getState().accountSlice;
       const {token} = Store.getState().logicSlice;
 
-      let newAvatar: string | undefined;
-      if (avatar !== profile.avatar) {
-        newAvatar = await ImageUploader.convertUrlToBase64(avatar);
-      }
-
       if (!modeExp && token) {
+        const newAvatar = avatar === profile.avatar ? undefined : avatar;
         const newName = name === profile.name ? undefined : name;
         const newDescription =
           description === profile.description ? undefined : description;
@@ -129,7 +125,6 @@ const EditProfile = () => {
             try {
               setTimeout(async () => {
                 const res = await ImageUploader.pickLibrary();
-                console.log(res?.sourceURL);
                 setAvatar(res?.sourceURL ?? res?.path);
               }, 200);
             } catch (err) {
@@ -240,7 +235,7 @@ const EditProfile = () => {
               ModalActionSheet.show({
                 options: [
                   {
-                    title: 'profile.post.edit',
+                    title: 'common.edit',
                     onPress: () => navigate(ROOT_SCREEN.updateBankAccount),
                   },
                 ],

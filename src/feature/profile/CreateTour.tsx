@@ -303,7 +303,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
               containerStyle={$tool}
             />
 
-            <View style={[$divider, {borderTopColor: theme.gray_300}]} />
+            <View style={[$divider, {borderTopColor: theme.gray_400}]} />
           </Animated.View>
         </PanGestureHandler>
 

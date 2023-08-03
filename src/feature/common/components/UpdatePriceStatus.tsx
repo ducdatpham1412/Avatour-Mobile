@@ -1,144 +1,177 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import {apiEditSale} from 'api/discovery';
-import {FONT_SIZE} from 'asset/standardValue';
-import {StyleText, StyleTouchable} from 'components/base';
+import {TYPE_AUTH_REQUEST} from 'asset/enum';
+import {BORDER_RADIUS, FONT_SIZE} from 'asset/standardValue';
+import {SquareButton, StyleText} from 'components/base';
+import {useMyRequests} from 'feature/profile/hooks';
 import {useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
+import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
-import {View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {useTranslation} from 'react-i18next';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import {borderWidthTiny} from 'utility/assistant';
-import {formatLocaleNumber} from 'utility/format';
+import {formatMoney} from 'utility/format';
+import {scale, verticalScale} from 'utility/scale';
+import {useDetailSale} from '../hooks';
 
 interface Props {
-  postId: number;
-  prices: Array<TypePrice>;
+  saleId: number;
 }
 
-const UpdatePriceStatus = (props: Props) => {
-  const {postId, prices} = props;
+const UpdatePriceStatus = ({saleId}: Props) => {
   const theme = useTheme();
+  const {t} = useTranslation();
 
-  const onCancelRequesting = async () => {
-    try {
-      await apiEditSale({
-        postId,
-        data: {},
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    }
+  const [{data, initLoading, isCanceling}, {onDeleteRequest}] = useMyRequests();
+  const [{data: saleData}] = useDetailSale(saleId);
+
+  const findingRequest = data.find(item => {
+    return (
+      item.type === TYPE_AUTH_REQUEST.update_price &&
+      item.data?.sale_id === saleId
+    );
+  });
+  const pricesRequest: TypePrice[] | undefined = findingRequest?.data?.prices;
+
+  if (initLoading || !findingRequest || !pricesRequest) {
+    return (
+      <SquareButton
+        title="profile.editPrice"
+        containerStyle={$buttonEditPrice}
+        onPress={() => {
+          if (saleData) {
+            navigate(ROOT_SCREEN.editSalePrice, {
+              saleId,
+              prices: saleData?.prices,
+            });
+          }
+        }}
+      />
+    );
+  }
+
+  const onDelete = async () => {
+    const agree = async () => {
+      try {
+        await onDeleteRequest(findingRequest.id);
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    };
+
+    ModalAlert.options({
+      i18Content: 'profile.post.sureDeletePost',
+      onContinue: agree,
+    });
+  };
+
+  const onEdit = () => {
+    navigate(ROOT_SCREEN.editSalePrice, {
+      saleId: saleId,
+      prices: pricesRequest,
+    });
   };
 
   return (
-    <View
-      style={[styles.requestUpdatePriceView, {borderColor: theme.borderColor}]}>
-      <StyleText
-        i18Text="discovery.reviewUpdatePrice"
-        customStyle={[styles.textReviewingPrice, {color: theme.borderColor}]}
-      />
-      {/* <StyleText
-        i18Text="discovery.retailPrice"
-        customStyle={[styles.textUpdatePrice, {color: theme.borderColor}]}>
-        <StyleText
-          originValue={`: ${retailPrice}`}
-          customStyle={[styles.textUpdatePrice, {color: theme.borderColor}]}
-        />
-      </StyleText> */}
+    <View style={[$container, {borderColor: theme.gray_500}]}>
+      <StyleText i18Text="discovery.reviewUpdatePrice" customStyle={$title} />
 
-      <StyleText
-        i18Text="discovery.groupBuyingPrice"
-        customStyle={[styles.textUpdatePrice, {color: theme.borderColor}]}>
-        <StyleText
-          originValue=":"
-          customStyle={[styles.textUpdatePrice, {color: theme.borderColor}]}
-        />
-      </StyleText>
-      {prices.map(p => (
-        <View key={p.price} style={styles.updatePriceBox}>
+      <StyleText originValue={`${t('discovery.groupBuyingPrice')}:`} />
+
+      {pricesRequest.map(p => (
+        <View key={p.price} style={$updatePriceBox}>
           <StyleText
             i18Text="discovery.numberPeople"
             i18Params={{
               value: p.number_people,
             }}
             customStyle={[
-              styles.peoplePriceText,
+              $textPrice,
               {
                 width: '32%',
-                color: theme.borderColor,
+                color: theme.gray_600,
               },
             ]}
           />
           <StyleText
             originValue="-"
             customStyle={[
-              styles.peoplePriceText,
+              $textPrice,
               {
-                color: theme.borderColor,
                 marginRight: '12%',
+                color: theme.gray_600,
               },
             ]}
           />
           <StyleText
-            originValue={`${formatLocaleNumber(String(p.price))} vnd`}
-            style={[styles.peoplePriceText, {color: theme.borderColor}]}
+            originValue={formatMoney(p.price)}
+            customStyle={[$textPrice, {color: theme.gray_600}]}
           />
         </View>
       ))}
 
-      <StyleTouchable
-        customStyle={[
-          styles.buttonBox,
-          {borderColor: theme.holderColorLighter},
-        ]}
-        onPress={() => onCancelRequesting()}>
-        <StyleText
-          i18Text="discovery.cancelRequest"
-          customStyle={[styles.textCancel, {color: theme.borderColor}]}
+      <View style={$button}>
+        <SquareButton
+          title="discovery.cancelRequest"
+          containerStyle={$buttonBox}
+          loading={isCanceling}
+          titleStyle={$textButton}
+          onPress={onDelete}
         />
-      </StyleTouchable>
+        <View style={{width: 8}} />
+        <SquareButton
+          title="common.edit"
+          containerStyle={$buttonBox}
+          onPress={onEdit}
+          titleStyle={$textButton}
+        />
+      </View>
     </View>
   );
 };
 
-const styles = ScaledSheet.create({
-  requestUpdatePriceView: {
-    width: '80%',
-    paddingHorizontal: '15@s',
-    paddingVertical: '5@vs',
-    borderWidth: borderWidthTiny,
-    marginTop: '10@vs',
-    alignSelf: 'center',
-    borderRadius: '5@ms',
-  },
-  textReviewingPrice: {
-    fontSize: FONT_SIZE.small,
-    fontWeight: 'bold',
-  },
-  textUpdatePrice: {
-    fontSize: FONT_SIZE.small,
-  },
-  updatePriceBox: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  peoplePriceText: {
-    fontSize: FONT_SIZE.small,
-  },
-  buttonBox: {
-    marginTop: '10@vs',
-    borderWidth: borderWidthTiny,
-    alignItems: 'center',
-    paddingVertical: '5@vs',
-    borderRadius: '5@ms',
-  },
-  textCancel: {
-    fontSize: FONT_SIZE.normal,
-    fontWeight: 'bold',
-  },
-});
+const $container: ViewStyle = {
+  width: '80%',
+  paddingHorizontal: scale(15),
+  paddingVertical: verticalScale(5),
+  borderWidth: borderWidthTiny,
+  marginTop: verticalScale(12),
+  alignSelf: 'center',
+  borderRadius: BORDER_RADIUS.f3,
+};
+const $title: TextStyle = {
+  fontWeight: 'bold',
+};
+const $updatePriceBox: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: verticalScale(2),
+  paddingHorizontal: scale(8),
+};
+const $textPrice: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+};
+const $button: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: verticalScale(12),
+  marginBottom: verticalScale(2),
+};
+const $buttonBox: ViewStyle = {
+  flex: 1,
+};
+const $textButton: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+};
+const $buttonEditPrice: ViewStyle = {
+  width: '90%',
+  alignSelf: 'center',
+  marginTop: verticalScale(12),
+};
 
 export default UpdatePriceStatus;

@@ -142,7 +142,7 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
             onPress={() => {
               navigate(ROOT_SCREEN.editProfile);
             }}>
-            <StyleText i18Text="profile.post.edit" customStyle={$textButton} />
+            <StyleText i18Text="common.edit" customStyle={$textButton} />
           </StyleTouchable>
 
           <StyleTouchable

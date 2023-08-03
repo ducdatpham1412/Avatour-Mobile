@@ -15,10 +15,17 @@ const ListJoiningAndJoined = () => {
     mutate,
   } = useEstimatesAndJoinings();
 
-  const {list, refreshing, onRefresh, onLoadMore, loadingMore, initLoading} =
-    usePaging({
-      request: apiGetListGBJoined,
-    });
+  const {
+    list,
+    setList,
+    refreshing,
+    onRefresh,
+    onLoadMore,
+    loadingMore,
+    initLoading,
+  } = usePaging<TypeJoinPersonalAndSale>({
+    request: apiGetListGBJoined,
+  });
 
   const renderItemJoin = useCallback((item: TypeJoinPersonalAndSale) => {
     return (

@@ -1,4 +1,3 @@
-import {useRoute} from '@react-navigation/native';
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';

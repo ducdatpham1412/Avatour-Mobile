@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 import {ratioImageSale} from 'asset';
 import Theme from 'asset/theme/Theme';
 import {TabViewDynamic} from 'components';
@@ -228,7 +227,7 @@ const styles = ScaledSheet.create({
     height: '100%',
     borderRadius: 10,
     position: 'absolute',
-    backgroundColor: Theme.newTheme.likeHeart,
+    backgroundColor: Theme.newTheme.orange,
   },
   image: {
     width: '100%',

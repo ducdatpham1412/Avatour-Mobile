@@ -1,19 +1,20 @@
-import {apiCreateSale, apiEditSale} from 'api/discovery';
+import {apiCreateSale, apiEditSale, apiUpdateStatusSale} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import {APP_EVENT, POST_TYPE, STATUS} from 'asset/enum';
+import {useDetailSale} from 'feature/common/hooks';
 import {emitAppEvent} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
-import {MAIN_SCREEN, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
+import {PROFILE_ROUTE} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import {useState} from 'react';
 import isEqual from 'react-fast-compare';
-import ImageUploader from 'utility/ImageUploader';
 import {onGoToSignUp} from 'utility/assistant';
 import {getDateTimeNow} from 'utility/format';
+import {impactMedium} from 'utility/haptic';
 
 export interface UseCreateSaleParams {
   initValue: {
-    postId?: number | undefined;
+    postId: number | undefined;
     name: string;
     content: string;
     images: string[];
@@ -26,6 +27,9 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
     modeExp,
     passport: {profile},
   } = useAppSelector(state => state.accountSlice);
+  const [, {mutate}] = useDetailSale(initValue.postId, {
+    revalidateAll: false,
+  });
 
   const [name, setName] = useState(initValue.name);
   const [content, setContent] = useState(initValue.content);
@@ -41,16 +45,16 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
 
     if (!modeExp) {
       setLoadingCreate(true);
-      const saleImages = await Promise.all(
-        images.map(async url => {
-          const base64 = await ImageUploader.convertUrlToBase64(url);
-          return base64;
-        }),
-      );
+      //   const saleImages = await Promise.all(
+      //     images.map(async url => {
+      //       const base64 = await ImageUploader.convertUrlToBase64(url);
+      //       return base64;
+      //     }),
+      //   );
       const body: TypeCreateSale = {
         name,
         content,
-        images: saleImages,
+        images,
         prices,
       };
       try {
@@ -77,7 +81,10 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
         emitAppEvent(APP_EVENT.createNewSale, {
           newSale,
         });
-        navigate(PROFILE_ROUTE.myProfile);
+        ModalAlert.success({
+          i18Content: 'profile.createSaleSuccess',
+          onClose: () => navigate(PROFILE_ROUTE.myProfile),
+        });
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -96,30 +103,55 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
   const onEditPost = async () => {
     if (initValue?.postId) {
       try {
+        setLoadingCreate(true);
         const dataEdit: TypeEditSale = {
           post_id: initValue.postId,
           data: {},
         };
+        if (name !== initValue.name) {
+          dataEdit.data.name = name;
+        }
         if (content !== initValue.content) {
           dataEdit.data.content = content;
         }
-        if (!isEqual(images, initValue.images)) {
-          dataEdit.data.images = images;
-        }
-        if (!isEqual(prices, initValue.prices)) {
-          dataEdit.data.prices = prices;
-        }
+        // if (!isEqual(images, initValue.images)) {
+        //   dataEdit.data.images = images;
+        // }
+
         await apiEditSale(dataEdit);
+        emitAppEvent(APP_EVENT.editSale, {
+          post_id: initValue.postId,
+          data: dataEdit.data,
+        });
+        await mutate(
+          pre => {
+            if (pre) {
+              return {
+                ...pre,
+                ...dataEdit.data,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+          onClose: goBack,
+        });
       } catch (err) {
         ModalAlert.error({
           content: err,
         });
+      } finally {
+        setLoadingCreate(false);
       }
     }
   };
 
   const onGoBack = () => {
     const temp: typeof initValue = {
+      postId: initValue.postId,
       name,
       content,
       images,
@@ -135,8 +167,36 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
     }
   };
 
-  const onDeletePrice = (valuePrice: number) => {
-    setPrices(pre => pre.filter(item => item.price !== valuePrice));
+  const onUpdateStatusSale = async (status: number) => {
+    if (initValue.postId) {
+      try {
+        await apiUpdateStatusSale(initValue.postId, status);
+        await mutate(
+          pre => {
+            if (pre) {
+              return {
+                ...pre,
+                status,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+        if (status == STATUS.active) {
+          impactMedium();
+        }
+        emitAppEvent(APP_EVENT.editSale, {
+          post_id: initValue.postId,
+          data: {
+            status,
+          },
+        });
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    }
   };
 
   return [
@@ -145,10 +205,10 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
       onConfirmPost,
       onEditPost,
       onGoBack,
-      onDeletePrice,
       setContent,
       setPrices,
       setName,
+      onUpdateStatusSale,
     },
   ] as const;
 };

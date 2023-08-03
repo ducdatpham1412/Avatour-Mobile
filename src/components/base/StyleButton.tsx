@@ -24,10 +24,14 @@ const StyleButton = (props: StyleTouchableProps) => {
 
   return (
     <StyleTouchable
-      customStyle={[$container, {backgroundColor: theme.p_700}, containerStyle]}
+      customStyle={[
+        $container,
+        {backgroundColor: disable ? theme.gray_300 : theme.p_700},
+        containerStyle,
+      ]}
       onPress={onPress}
       disable={disable || isLoading}
-      disableOpacity={isLoading ? 1 : 0.4}>
+      disableOpacity={1}>
       {isLoading ? (
         <ActivityIndicator color={(tintColor as string) ?? theme.white} />
       ) : (

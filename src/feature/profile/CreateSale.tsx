@@ -11,40 +11,34 @@ import {
 import Theme from 'asset/theme/Theme';
 import {
   AppInput,
+  StyleButton,
   StyleContainer,
   StyleIcon,
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import UpdatePriceStatus from 'feature/common/components/UpdatePriceStatus';
+import {Avatar} from 'components/common';
+import {UpdatePriceStatus} from 'feature/common/components';
+import {useDetailSale} from 'feature/common/hooks';
 import {useTheme} from 'hook';
+import {goBack} from 'navigation/NavigationService';
+import HeaderLeftIcon from 'navigation/components/HeaderLeftIcon';
 import {AppParamsList} from 'navigation/config';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
-import React, {ElementRef, useRef} from 'react';
+import {ModalAlert} from 'navigation/screen/modals';
+import React, {useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
-import {
-  ActivityIndicator,
-  StyleProp,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny} from 'utility/assistant';
-import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {ScrollCropImages} from './components';
+import {PricesEdit, ScrollCropImages} from './components';
 import ButtonIconTitle from './components/ButtonIconTitle';
 import {UseCreateSaleParams, useCreateSale} from './hooks';
-import ModalAddPrice from './post/ModalAddPrice';
-import HeaderLeftIcon from 'navigation/components/HeaderLeftIcon';
-import {goBack} from 'navigation/NavigationService';
-import {Avatar} from 'components/common';
 
 interface Props {
   route: {
@@ -57,9 +51,7 @@ const {width} = Metrics;
 const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
   const {bottom} = useSafeAreaInsets();
-  const itemNew = useRef(route.params?.itemNew);
-  const itemEdit = useRef<TypeGroupBuying | undefined>(route.params?.itemEdit);
-  const itemError = useRef(route.params?.itemError);
+  const {itemNew, itemEdit, itemError} = route.params ?? {};
 
   const theme = useTheme();
   const {
@@ -69,15 +61,11 @@ const CreateSale = ({route}: Props) => {
   } = useAppSelector(state => state.accountSlice.passport.profile);
 
   const initValue = useRef<UseCreateSaleParams['initValue']>({
-    postId: itemEdit.current?.id,
-    name: itemEdit.current?.name || itemError.current?.name || '',
-    content: itemEdit.current?.content || itemError.current?.content || '',
-    images:
-      itemEdit.current?.images ||
-      itemError?.current?.images ||
-      itemNew.current?.images ||
-      [],
-    prices: itemEdit.current?.prices || itemError.current?.prices || [],
+    postId: itemEdit?.id,
+    name: itemEdit?.name || itemError?.name || '',
+    content: itemEdit?.content || itemError?.content || '',
+    images: itemEdit?.images || itemError?.images || itemNew?.images || [],
+    prices: itemEdit?.prices || itemError?.prices || [],
   });
 
   const [
@@ -86,18 +74,19 @@ const CreateSale = ({route}: Props) => {
       onConfirmPost,
       onEditPost,
       onGoBack,
-      onDeletePrice,
       setContent,
       setPrices,
       setName,
+      onUpdateStatusSale,
     },
   ] = useCreateSale({
     initValue: initValue.current,
   });
+  const [{data: dataSale}] = useDetailSale(initValue.current.postId, {
+    revalidateAll: false,
+  });
 
-  const modalPriceRef = useRef<ElementRef<typeof ModalAddPrice>>(null);
   const scrollRef = useRef<KeyboardAwareScrollView>(null);
-  const buttonAddPriceRef = useRef<ElementRef<typeof ButtonIconTitle>>(null);
 
   /**
    * Render views
@@ -123,253 +112,165 @@ const CreateSale = ({route}: Props) => {
   };
 
   const headerRight = () => {
-    let disableButtonEdit = true;
-    if (itemEdit.current) {
+    if (itemEdit) {
+      let disableButtonEdit = true;
       const temp: typeof initValue.current = {
+        postId: itemEdit.id,
         name,
         content,
         images,
         prices,
       };
-      disableButtonEdit = isEqual(temp, initValue);
+      disableButtonEdit = isEqual(temp, initValue.current);
+
+      return (
+        <View style={$header}>
+          <StyleButton
+            title="common.edit"
+            containerStyle={$postBox}
+            onPress={onEditPost}
+            disable={disableButtonEdit}
+            isLoading={loadingCreate}
+          />
+        </View>
+      );
     }
 
-    return (
-      <View style={$header}>
-        {(itemNew.current || itemError.current) && (
-          <StyleTouchable
-            customStyle={[
-              $postBox,
-              {
-                backgroundColor: theme.p_700,
-              },
-            ]}
+    if (itemNew || itemError) {
+      return (
+        <View style={$header}>
+          <StyleButton
+            title="profile.post.post"
+            containerStyle={$postBox}
             onPress={onConfirmPost}
-            disable={!prices.length}>
-            {loadingCreate ? (
-              <ActivityIndicator size="small" color={theme.white} />
-            ) : (
-              <StyleText
-                i18Text="profile.post.post"
-                customStyle={[$textPost, {color: theme.backgroundColor}]}
-              />
-            )}
-          </StyleTouchable>
-        )}
+            disable={!prices.length || !name}
+            isLoading={loadingCreate}
+          />
+        </View>
+      );
+    }
 
-        {/* {(itemNew || itemError) && (
-          <StyleTouchable
-            customStyle={[
-              $draftBox,
-              {
-                borderColor: theme.gray_700,
-              },
-            ]}
-            onPress={onConfirmPost}>
-            <StyleText
-              i18Text="profile.post.draft"
-              customStyle={[$textDraft, {color: theme.black}]}
-            />
-          </StyleTouchable>
-        )} */}
-
-        {itemEdit.current && (
-          <StyleTouchable
-            customStyle={[$postBox, {backgroundColor: theme.highlightColor}]}
-            onPress={() => onEditPost()}
-            disable={disableButtonEdit}>
-            <StyleText
-              i18Text="profile.post.edit"
-              customStyle={[$textPost, {color: theme.backgroundColor}]}
-            />
-          </StyleTouchable>
-        )}
-      </View>
-    );
+    return null;
   };
 
   const renderInfoBox = () => {
-    let textStatus: I18Normalize = 'discovery.available';
-    let textButton: I18Normalize = 'discovery.temporarilyClosed';
-
-    return (
-      <>
-        <ButtonIconTitle
-          icon={<Ionicons name="md-location-sharp" style={$iconLocation} />}
-          title={location as I18Normalize}
-          containerStyle={$buttonInfo}
-        />
-
-        <View style={$location}>
-          <ButtonIconTitle
-            icon={<StyleIcon source={Images.icons.calendar} size={13} />}
-            title={textStatus}
-          />
-          {!!itemEdit.current && (
+    if (itemEdit) {
+      if (dataSale?.status === STATUS.active) {
+        return (
+          <View style={$location}>
+            <ButtonIconTitle
+              icon={<StyleIcon source={Images.icons.calendar} size={13} />}
+              title="discovery.available"
+            />
             <StyleTouchable
               customStyle={$editStatusBox}
               onPress={() => {
-                // onChangePostStatus(
-                //   isClosingOrRequestingDelete
-                //     ? STATUS.active
-                //     : STATUS.temporarilyClose,
-                //   itemEdit.current.id,
-                // );
+                ModalAlert.options({
+                  content: t('alert.afterTemporarilyClose', {
+                    value: dataSale.name,
+                  }),
+                  onContinue: () => onUpdateStatusSale(STATUS.temporarilyClose),
+                });
               }}>
               <StyleText
-                i18Text={textButton}
+                i18Text="discovery.temporarilyClosed"
+                customStyle={[$textEditStatus, {color: theme.gray_600}]}
+              />
+            </StyleTouchable>
+          </View>
+        );
+      }
+
+      if (dataSale?.status === STATUS.requestingDelete) {
+        return (
+          <View style={$location}>
+            <ButtonIconTitle
+              icon={<StyleIcon source={Images.icons.calendar} size={13} />}
+              title="discovery.requestingDelete"
+              titleStyle={{color: theme.red}}
+            />
+            <StyleTouchable
+              customStyle={$editStatusBox}
+              onPress={() => {
+                onUpdateStatusSale(STATUS.active);
+              }}>
+              <StyleText
+                i18Text="discovery.openAvailable"
                 customStyle={[$textEditStatus, {color: theme.blue}]}
               />
             </StyleTouchable>
-          )}
+          </View>
+        );
+      }
+
+      return (
+        <View style={$location}>
+          <ButtonIconTitle
+            icon={<StyleIcon source={Images.icons.calendar} size={13} />}
+            title="discovery.temporarilyClosed"
+            titleStyle={{color: theme.red}}
+          />
+          <StyleTouchable
+            customStyle={$editStatusBox}
+            onPress={() => {
+              onUpdateStatusSale(STATUS.active);
+            }}>
+            <StyleText
+              i18Text="discovery.openAvailable"
+              customStyle={[$textEditStatus, {color: theme.blue}]}
+            />
+          </StyleTouchable>
         </View>
-      </>
+      );
+    }
+
+    return (
+      <View style={$location}>
+        <ButtonIconTitle
+          icon={<StyleIcon source={Images.icons.calendar} size={13} />}
+          title="discovery.available"
+        />
+      </View>
     );
   };
 
   const renderPrices = () => {
-    const buttonPrice = () => {
-      if (!itemEdit.current) {
-        return (
-          <ButtonIconTitle
-            ref={buttonAddPriceRef}
-            title="profile.addPrice"
-            onPress={() => modalPriceRef.current?.show()}
-            containerStyle={[$buttonInfo, {marginLeft: '5%'}]}
-            titleFontWeight="bold"
-            buttonStyle={{borderColor: theme.black}}
-          />
-        );
-      }
-
-      if (itemEdit.current?.status === STATUS.requestingDelete) {
-        return null;
-      }
-
-      //   if (!requestUpdatePrice) {
-      //     return (
-      //       <View style={styles.titlePriceView}>
-      //         <StyleTouchable
-      //           customStyle={styles.editPriceBox}
-      //           hitSlop={{
-      //             right: 15,
-      //             bottom: 15,
-      //           }}
-      //           onPress={() =>
-      //             navigate(PROFILE_ROUTE.updatePrices, {
-      //               item: itemEdit.current,
-      //               onUpdatePrice: (value: TypeGroupBuying) => {
-      //                 setRequestUpdatePrice({
-      //                   retailPrice: value.retailPrice,
-      //                   prices: value.prices,
-      //                 });
-      //               },
-      //             })
-      //           }>
-      //           <StyleText
-      //             i18Text="profile.editPrice"
-      //             customStyle={[styles.textEditPrice, {color: theme.borderColor}]}
-      //           />
-      //         </StyleTouchable>
-      //       </View>
-      //     );
-      //   }
-
+    if (itemEdit) {
       return (
-        <UpdatePriceStatus
-          postId={itemEdit.current.id}
-          prices={itemEdit.current.prices}
-        />
+        <>
+          <PricesEdit prices={prices} />
+          <UpdatePriceStatus saleId={itemEdit.id} />
+        </>
       );
-    };
-
-    const buttonDelete = (price: TypePrice) => {
-      if (itemEdit.current) {
-        return null;
-      }
-      if (price.number_people === 1) {
-        return <View style={$deleteBox} />;
-      }
-      return (
-        <StyleTouchable
-          customStyle={$deleteBox}
-          onPress={() => onDeletePrice(price.price)}>
-          <Feather name="x" style={[$iconDelete, {color: theme.gray_500}]} />
-        </StyleTouchable>
-      );
-    };
+    }
 
     return (
-      <View style={[$priceView, {borderTopColor: theme.gray_300}]}>
-        <View style={$titleView}>
-          <StyleIcon source={Images.icons.dollar} size={18} />
-          <StyleText
-            i18Text="discovery.salePriceAndExplain"
-            customStyle={[$textTitle, {color: theme.black}]}
-          />
-        </View>
-
-        {prices.map((price, index) => {
-          return (
-            <View
-              key={price.number_people}
-              style={$priceBox}
-              //   onPress={() => {
-              //     modalPriceRef.current?.show({
-              //       numberPeople: price.number_people,
-              //       price: price.price,
-              //       indexEdit: index,
-              //     });
-              //   }}
-            >
-              <View style={[$numberPeopleBox, {borderColor: theme.gray_500}]}>
-                <StyleText
-                  originValue={price.number_people}
-                  customStyle={[$textNumberPeople, {color: theme.black}]}
-                />
-              </View>
-              <StyleText
-                originValue="-"
-                customStyle={[$textMiddle, {color: theme.black}]}
-              />
-              <View style={[$priceValue, {borderColor: theme.p_800}]}>
-                <StyleText
-                  originValue={`${formatLocaleNumber(price.price)} vnd`}
-                  customStyle={{
-                    fontWeight: FONT_WEIGHT_MEDIUM,
-                    color: theme.p_800,
-                  }}
-                />
-              </View>
-              {!itemEdit.current && (
-                <StyleTouchable
-                  customStyle={$editBox}
-                  onPress={() => {
-                    modalPriceRef.current?.show({
-                      numberPeople: price.number_people,
-                      price: price.price,
-                      indexEdit: index,
-                    });
-                  }}>
-                  <Feather
-                    name="edit-2"
-                    style={[$iconEdit, {color: theme.gray_500}]}
-                  />
-                </StyleTouchable>
-              )}
-              {buttonDelete(price)}
-            </View>
-          );
-        })}
-
-        {buttonPrice()}
-      </View>
+      <PricesEdit
+        prices={prices}
+        enableEdit
+        onAddPrice={value => setPrices(pre => pre.concat(value))}
+        onDeletePrice={value =>
+          setPrices(pre =>
+            pre.filter(item => item.number_people !== value.number_people),
+          )
+        }
+        onEditPrice={e =>
+          setPrices(pre =>
+            pre.map((item, index) => {
+              if (index !== e.indexEdit) {
+                return item;
+              }
+              return e.value;
+            }),
+          )
+        }
+      />
     );
   };
 
   const renderContent = () => {
     const disableEditCaption =
-      !!itemEdit.current && itemEdit.current.status === STATUS.requestingDelete;
+      !!itemEdit && itemEdit.status === STATUS.requestingDelete;
 
     return (
       <View style={[$priceView, {borderTopColor: theme.gray_300}]}>
@@ -405,7 +306,7 @@ const CreateSale = ({route}: Props) => {
         height={width * ratioImageSale}
         enableRemoveImage={false}
       />
-      <View style={$body}>
+      <View style={[$body, {backgroundColor: theme.background}]}>
         <AppInput
           onChangeText={text => setName(text)}
           multiline
@@ -414,45 +315,27 @@ const CreateSale = ({route}: Props) => {
           style={[$inputName, {borderColor: theme.gray_500}]}
           maxLength={40}
         />
+        <ButtonIconTitle
+          icon={<Ionicons name="md-location-sharp" style={$iconLocation} />}
+          title={location as I18Normalize}
+          containerStyle={$buttonInfo}
+        />
         {renderInfoBox()}
-        {renderPrices()}
+
+        <View style={[$priceView, {borderTopColor: theme.gray_300}]}>
+          <View style={$titleView}>
+            <StyleIcon source={Images.icons.dollar} size={18} />
+            <StyleText
+              i18Text="discovery.salePriceAndExplain"
+              customStyle={[$textTitle, {color: theme.black}]}
+            />
+          </View>
+
+          {renderPrices()}
+        </View>
+
         {renderContent()}
       </View>
-
-      <ModalAddPrice
-        ref={modalPriceRef}
-        prices={prices}
-        onAddPrice={value => setPrices(pre => pre.concat(value))}
-        onChangePrice={e => {
-          setPrices(pre =>
-            pre.map((item, index) => {
-              if (index !== e.indexEdit) {
-                return item;
-              }
-              return {
-                ...item,
-                number_people: e.value.number_people,
-                price: e.value.price,
-              };
-            }),
-          );
-        }}
-      />
-
-      {/* <ModalTopic
-        ref={modalTopicRef}
-        topics={topics}
-        onChangeListTopics={value => {
-          setTopics(value);
-        }}
-      /> */}
-
-      {/* <ModalRetailPrice
-        ref={modalRetailPriceRef}
-        theme={theme}
-        price={retailPrice}
-        onChangePrice={value => setRetailPrice(value)}
-      /> */}
     </StyleContainer>
   );
 };
@@ -462,6 +345,12 @@ const $container: ViewStyle = {
 };
 const $body: ViewStyle = {
   paddingHorizontal: scale(12),
+  shadowColor: Theme.newTheme.black,
+  shadowOffset: {
+    width: 0,
+    height: -4,
+  },
+  shadowOpacity: 0.08,
 };
 const $headerContainer: ViewStyle = {
   paddingBottom: verticalScale(20),
@@ -485,20 +374,7 @@ const $postBox: ViewStyle = {
   width: scale(100),
   alignItems: 'center',
   paddingVertical: verticalScale(5),
-  borderRadius: BORDER_RADIUS.f2,
-};
-const $draftBox: ViewStyle = {
-  paddingHorizontal: scale(15),
-  paddingVertical: verticalScale(5),
-  borderRadius: BORDER_RADIUS.f2,
-  marginRight: scale(8),
-  borderWidth: moderateScale(1),
-};
-const $textPost: TextStyle = {
-  fontWeight: 'bold',
-};
-const $textDraft: TextStyle = {
-  fontWeight: FONT_WEIGHT_MEDIUM,
+  height: undefined,
 };
 const $buttonInfo: ViewStyle = {
   marginTop: verticalScale(12),
@@ -536,47 +412,6 @@ const $titleView: ViewStyle = {
 const $textTitle: TextStyle = {
   fontWeight: 'bold',
   marginLeft: scale(8),
-};
-const $priceBox: ViewStyle = {
-  width: '90%',
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginTop: verticalScale(8),
-  alignSelf: 'center',
-};
-const $numberPeopleBox: ViewStyle = {
-  flex: 1,
-  paddingVertical: verticalScale(4),
-  borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f4,
-  alignItems: 'center',
-};
-const $textNumberPeople: TextStyle = {
-  fontSize: FONT_SIZE.f2,
-};
-const $textMiddle: TextStyle = {
-  marginHorizontal: scale(12),
-  fontWeight: 'bold',
-};
-const $priceValue: ViewStyle = {
-  flex: 2,
-  paddingVertical: verticalScale(4),
-  borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f4,
-  paddingHorizontal: scale(20),
-};
-const $editBox: ViewStyle = {
-  marginLeft: scale(13),
-};
-const $iconEdit: TextStyle = {
-  fontSize: moderateScale(20),
-};
-const $deleteBox: ViewStyle = {
-  marginLeft: scale(20),
-  width: moderateScale(15),
-};
-const $iconDelete: TextStyle = {
-  fontSize: moderateScale(15),
 };
 const $inputContent: TextStyle = {
   marginTop: verticalScale(12),

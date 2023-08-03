@@ -437,7 +437,7 @@ const CreatePostPreview = ({
             customStyle={[styles.postBox, {borderColor: theme.highlightColor}]}
             onPress={onEditPost}>
             <StyleText
-              i18Text="profile.post.edit"
+              i18Text="common.edit"
               customStyle={[styles.textPost, {color: theme.highlightColor}]}
             />
           </StyleTouchable>

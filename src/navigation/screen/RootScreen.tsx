@@ -37,7 +37,7 @@ const RootScreen = () => {
         options={{
           cardStyle: [
             {
-              backgroundColor: theme.backgroundColor,
+              backgroundColor: theme.background,
             },
           ],
         }}
