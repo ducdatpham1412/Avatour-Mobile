@@ -34,6 +34,8 @@ const common = {
   resetChanges: 'Reset changes',
   add: 'Add',
   select: 'Select',
+  edit: 'Edit',
+  delete: 'Delete',
 };
 
 const login = {
@@ -211,6 +213,7 @@ const discovery = {
   category: 'Categories ({{value}})',
   available: 'Available',
   temporarilyClosed: 'Temporarily closed',
+  requestingDelete: 'Requesting to be deleted',
   notWorry:
     "Dont't worry.\nStore just is only temporarily not accepting any more orders\nYour booking is still being processed.",
   closed: 'Closed',
@@ -377,10 +380,8 @@ const profile = {
     caption: 'Write caption',
     post: 'Post',
     draft: 'Draft',
-    edit: 'Edit',
     archive: 'Archive',
     unArchive: 'Show on profile',
-    delete: 'Delete',
     sureDeletePost: 'Are you sure to delete?',
     enterTopic: 'Enter topic yourself',
     pickImage: 'Pick images',
@@ -452,6 +453,7 @@ const profile = {
   created: 'Date created',
   createTour: 'Create new tour',
   createTourSuccess: 'Create tour successfully',
+  createSaleSuccess: 'Create group buying successfully',
   createNameForYourTour: 'Create name for your tour',
   qrConfirm: 'QR Confirming',
   scanWhenGoToShop:
@@ -578,13 +580,20 @@ const alert = {
   canChooseMaximum3: 'You can only choose maximum 3 topics',
   requestDeleteGbSuccess:
     'Send request delete successfully.\nWe will review and return the result within 24 hours.\nYou can cancel this request by press "Update status", then Open receiving booking.',
-  ifUpdatePrice:
-    'We will review your prices change request within 24 hours.\nAlso, to protect the interests of who have deposited at the old price, people can also view your prices edit schedule.',
+  reviewUpdatePrice:
+    'Request to change price successfully\nWe will review your prices change request within 24 hours',
   sureUpdateBankAccount: 'Are you sure want to update your bank account?',
   requestUpdateBankSuccess:
     'Request updating bank account successfully\nOur team will review and respond to you within 1 day',
   sureToBlock: 'Are you sure you want to block this person?',
   sureToDeleteJoin: 'Are you sure you want to cancel this order?',
+  afterTemporarilyClose:
+    'After pressing <b>"Temporarily closed"</b>, people cannot participate in buying {{value}} until you reopen',
+  afterDeleteSale: `After pressing Continue, the order will go to <b>Delete Request</b> status.
+Everyone will not be able to participate in buying {{value}}.
+   
+We will review and get back to you within 24 hours.
+During that time, you can cancel the deletion request by <b>“Open receiving booking”</b> again.`,
 
   // PERMISSION
   permissionCamera: 'Access camera',

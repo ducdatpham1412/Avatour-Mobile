@@ -1,4 +1,9 @@
-import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
+import {
+  BORDER_RADIUS,
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+  ratioImageSale,
+} from 'asset';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
@@ -15,13 +20,40 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 import {Avatar, IconLiked, IconNotLiked} from './common';
 import {formatLocaleNumber} from 'utility/format';
+import {I18Normalize} from 'utility/I18Next';
+import {STATUS} from 'asset/enum';
 
 interface Props {
   item: TypeGroupBuying;
   onReact: (params: TypeParamsLikePost) => Promise<void>;
   containerStyle?: StyleProp<ViewStyle>;
-  hidingElements?: Array<'name' | 'location'>;
+  hidingElements?: Array<'name' | 'location' | 'status'>;
 }
+
+interface StatusProps {
+  status: number;
+}
+
+const Status = ({status}: StatusProps) => {
+  const theme = useTheme();
+  let textStatus: I18Normalize = 'discovery.available';
+  let color = theme.blue;
+
+  if (status === STATUS.temporarilyClose) {
+    textStatus = 'discovery.temporarilyClosed';
+    color = theme.red;
+  } else if (status === STATUS.requestingDelete) {
+    textStatus = 'discovery.requestingDelete';
+    color = theme.red;
+  }
+
+  return (
+    <View style={$informationView}>
+      <StyleIcon source={Images.icons.calendar} size={10} />
+      <StyleText i18Text={textStatus} customStyle={[$textInfo, {color}]} />
+    </View>
+  );
+};
 
 const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
   const theme = useTheme();
@@ -47,8 +79,6 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
     if (!listPersonalJoins.length) {
       return (
         <>
-          <Avatar source={Images.images.defaultAvatar} size={15} />
-          <Avatar source={Images.images.defaultAvatar} size={15} />
           <Avatar source={Images.images.defaultAvatar} size={15} />
           <StyleText
             i18Text="discovery.beTheFirstJoin"
@@ -147,9 +177,11 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
       <View style={$informationView}>
         <StyleText
           originValue={textPrice}
-          customStyle={[$textPrice, {color: theme.red}]}
+          customStyle={[$textPrice, {color: theme.orange}]}
         />
       </View>
+
+      {!hidingElements?.includes('status') && <Status status={item.status} />}
     </StyleTouchable>
   );
 };
@@ -190,18 +222,18 @@ const $informationView: ViewStyle = {
   alignItems: 'center',
   marginTop: verticalScale(4),
   overflow: 'hidden',
-  alignSelf: 'center',
+  paddingHorizontal: scale(4),
 };
 const $textName: TextStyle = {
   marginLeft: scale(8),
-  fontWeight: 'bold',
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $textInfo: TextStyle = {
   marginLeft: scale(4),
   fontSize: FONT_SIZE.f4,
 };
 const $textPrice: TextStyle = {
-  fontWeight: 'bold',
+  fontWeight: FONT_WEIGHT_MEDIUM,
   fontSize: FONT_SIZE.f4,
 };
 

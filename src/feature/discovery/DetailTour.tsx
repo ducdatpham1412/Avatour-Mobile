@@ -165,7 +165,7 @@ const DetailTour = ({
       ModalActionSheet.show({
         options: [
           {
-            title: 'profile.post.edit',
+            title: 'common.edit',
             onPress: () =>
               navigate(PROFILE_ROUTE.createTour, {
                 itemTour: data,
@@ -237,7 +237,7 @@ const DetailTour = ({
                     });
                   }}>
                   <StyleText
-                    i18Text={'profile.post.edit'}
+                    i18Text="common.edit"
                     customStyle={[$textEdit, {color: theme.blue}]}
                   />
                 </StyleTouchable>
@@ -256,7 +256,7 @@ const DetailTour = ({
                 }}
               />
 
-              <View style={[$divider, {borderTopColor: theme.gray_300}]} />
+              <View style={[$divider, {borderTopColor: theme.gray_400}]} />
             </Animated.View>
           </PanGestureHandler>
 

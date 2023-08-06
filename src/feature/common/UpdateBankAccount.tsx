@@ -180,7 +180,7 @@ const UpdateBankAccount = () => {
           </View>
           <StyleTouchable onPress={() => modalChooseBankRef.current?.show()}>
             <StyleText
-              i18Text="profile.post.edit"
+              i18Text="common.edit"
               customStyle={[styles.textEdit, {color: theme.p_900}]}
             />
           </StyleTouchable>
@@ -211,7 +211,7 @@ const UpdateBankAccount = () => {
               });
             }}>
             <StyleText
-              i18Text="profile.post.edit"
+              i18Text="common.edit"
               customStyle={[styles.textEdit, {color: theme.p_900}]}
             />
           </StyleTouchable>

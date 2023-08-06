@@ -1,37 +1,45 @@
-import {apiDeleteRequest, apiGetAllMyRequest} from 'api/authentication';
-import {useAppSelector} from 'app-redux/store';
-import {ModalAlert} from 'navigation/screen/modals';
+import {
+  apiDeleteRequest,
+  apiGetAllMyRequest,
+  apiRequestUpdatePrice,
+} from 'api/authentication';
 import useSWRImmutable from 'swr/immutable';
 import useSWRMutation from 'swr/mutation';
 
 const useMyRequests = () => {
-  const {id: myId} = useAppSelector(
-    state => state.accountSlice.passport.profile,
-  );
   const {data, mutate, isLoading, isValidating} = useSWRImmutable(
-    [myId, 'profile.getMyListRequest'],
+    'api.getMyListRequest',
     async () => {
       const res = await apiGetAllMyRequest();
       return res?.data;
     },
   );
 
-  const {
-    trigger: onCancelRequest,
-    isMutating: isCanceling,
-    error: errorCancel,
-  } = useSWRMutation('proifle.cancelRequest', async (_, {arg: requestId}) => {
-    await apiDeleteRequest(requestId);
-    await mutate(
-      pre => {
-        if (pre) {
-          return pre.filter(item => item?.id !== requestId);
-        }
-      },
-      {revalidate: false},
-    );
-  });
-  errorCancel && ModalAlert.error({content: errorCancel});
+  const {trigger: onDeleteRequest, isMutating: isCanceling} = useSWRMutation(
+    'api.cancelRequest',
+    async (_, {arg: requestId}) => {
+      await apiDeleteRequest(requestId);
+      await mutate(
+        pre => {
+          if (pre) {
+            return pre.filter(item => item?.id !== requestId);
+          }
+        },
+        {revalidate: false},
+      );
+    },
+  );
+
+  const {trigger: sendRequest, isMutating: loadingSendRequest} = useSWRMutation(
+    'api.sendRequest',
+    async (_, {arg}) => {
+      await apiRequestUpdatePrice({
+        sale_id: arg.sale_id,
+        prices: arg.prices,
+      });
+      await mutate();
+    },
+  );
 
   return [
     {
@@ -39,8 +47,9 @@ const useMyRequests = () => {
       initLoading: isLoading,
       validating: isValidating,
       isCanceling,
+      loadingSendRequest,
     },
-    {mutate, onCancelRequest},
+    {mutate, onDeleteRequest, sendRequest},
   ] as const;
 };
 

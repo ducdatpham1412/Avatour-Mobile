@@ -1,1 +1,1 @@
-export {default as ModalAddPrice} from './ModalAddPrice';
+export {default as ModalAddPrice, type TypeChangePrice} from './ModalAddPrice';

@@ -27,14 +27,14 @@ const IconLeftMyProfile = () => {
         </StyleTouchable>
       )}
 
-      <StyleTouchable
-        customStyle={$buttonRequest}
-        onPress={() => navigate(PROFILE_ROUTE.listMyRequests)}>
-        <AntDesign name="mail" style={[$iconQr, {color: theme.black}]} />
+      <View style={$buttonRequest}>
+        <StyleTouchable onPress={() => navigate(PROFILE_ROUTE.listMyRequests)}>
+          <AntDesign name="mail" style={[$iconQr, {color: theme.black}]} />
+        </StyleTouchable>
         <View style={$numberRequest}>
           <StyleText originValue={data?.length} customStyle={$textNumber} />
         </View>
-      </StyleTouchable>
+      </View>
     </View>
   );
 };
@@ -44,7 +44,11 @@ const $container: ViewStyle = {
   alignItems: 'center',
 };
 const $buttonQr: ViewStyle = {
-  marginRight: scale(12),
+  height: moderateScale(27),
+  width: moderateScale(22),
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginRight: scale(10),
 };
 const $iconQr: TextStyle = {
   fontSize: moderateScale(20),
@@ -53,10 +57,11 @@ const $buttonRequest: ViewStyle = {
   height: moderateScale(27),
   width: moderateScale(22),
   justifyContent: 'center',
+  alignItems: 'center',
 };
 const $numberRequest: ViewStyle = {
   position: 'absolute',
-  right: 0,
+  right: -4,
   top: 0,
   backgroundColor: 'red',
   width: moderateScale(13.5),

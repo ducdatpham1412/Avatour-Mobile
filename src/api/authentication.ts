@@ -134,3 +134,27 @@ export const apiGetAllMyRequest = (): Promise<
 export const apiDeleteRequest = (requestId: number) => {
   return request.delete('auth/request', {params: {request_id: requestId}});
 };
+
+export const apiRequestUpdatePrice = (
+  body: TypeRequestUpdatePrice,
+): Promise<TemplateApiResponse<TypeRequestResponse>> => {
+  return request.put('auth/request', body, {
+    params: {
+      type: TYPE_AUTH_REQUEST.update_price,
+    },
+  });
+};
+
+export const apiRequestDeleteSale = (saleId: number) => {
+  return request.put(
+    '/auth/request',
+    {
+      sale_id: saleId,
+    },
+    {
+      params: {
+        type: TYPE_AUTH_REQUEST.delete_gb,
+      },
+    },
+  );
+};

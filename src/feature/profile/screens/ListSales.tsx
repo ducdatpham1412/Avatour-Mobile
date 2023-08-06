@@ -23,7 +23,7 @@ const ListSalesSupplier = ({userId}: Props) => {
     onLoadMore,
     loadingMore,
     initLoading,
-  } = usePaging({
+  } = usePaging<TypeGroupBuying>({
     request: apiGetListGroupBuying,
     params: {
       userId,
@@ -31,7 +31,37 @@ const ListSalesSupplier = ({userId}: Props) => {
   });
 
   useAppEvent(APP_EVENT.createNewSale, data => {
-    setList(pre => pre.concat(data.newSale));
+    setList(pre => [data.newSale].concat(pre));
+  });
+
+  useAppEvent(APP_EVENT.reactSale, data => {
+    setList(pre => {
+      return pre.map(sale => {
+        if (sale.id !== data?.saleId) {
+          return sale;
+        }
+        const isLiked = data.type === 'like';
+        return {
+          ...sale,
+          is_liked: isLiked,
+          total_likes: isLiked ? sale.total_likes + 1 : sale.total_likes - 1,
+        };
+      });
+    });
+  });
+
+  useAppEvent(APP_EVENT.editSale, data => {
+    setList(pre => {
+      return pre.map(sale => {
+        if (sale.id !== data?.post_id) {
+          return sale;
+        }
+        return {
+          ...sale,
+          ...data.data,
+        };
+      });
+    });
   });
 
   const renderItemSale = useCallback((item: TypeGroupBuying, index: number) => {
@@ -68,18 +98,7 @@ const ListSalesSupplier = ({userId}: Props) => {
 };
 
 const ListSaleConsumer = (_: Props) => {
-  return (
-    <View style={$container}>
-      {/* {userId === myId && (
-        <StyleButton
-          title="profile.upgradeAccount"
-          onPress={() => navigate(ROOT_SCREEN.upgradeAccount)}
-          containerStyle={[$buttonUpgrade, {borderColor: theme.black}]}
-          titleStyle={{color: theme.black, fontWeight: 'normal'}}
-        />
-      )} */}
-    </View>
-  );
+  return <View style={$container} />;
 };
 
 const ListSales = ({userId, account_type}: Props) => {

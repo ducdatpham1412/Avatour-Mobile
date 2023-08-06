@@ -1,8 +1,9 @@
 import {apiGetListSalesLiked} from 'api/profile';
+import {APP_EVENT} from 'asset/enum';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
-import {usePaging} from 'hook';
+import {useAppEvent, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
@@ -17,8 +18,38 @@ const FavoriteSales = () => {
     loadingMore,
     onLoadMore,
     initLoading,
-  } = usePaging({
+  } = usePaging<TypeGroupBuying>({
     request: apiGetListSalesLiked,
+  });
+
+  useAppEvent(APP_EVENT.reactSale, data => {
+    setList(pre => {
+      return pre.map(sale => {
+        if (sale.id !== data?.saleId) {
+          return sale;
+        }
+        const isLiked = data.type === 'like';
+        return {
+          ...sale,
+          is_liked: isLiked,
+          total_likes: isLiked ? sale.total_likes + 1 : sale.total_likes - 1,
+        };
+      });
+    });
+  });
+
+  useAppEvent(APP_EVENT.editSale, data => {
+    setList(pre => {
+      return pre.map(sale => {
+        if (sale.id !== data?.post_id) {
+          return sale;
+        }
+        return {
+          ...sale,
+          ...data.data,
+        };
+      });
+    });
   });
 
   const renderItemSale = useCallback((item: TypeGroupBuying, index: number) => {
@@ -32,7 +63,6 @@ const FavoriteSales = () => {
           })
         }
         containerStyle={{marginLeft: index % 2 !== 0 ? scale(7) : 0}}
-        hidingElements={['location', 'name']}
       />
     );
   }, []);

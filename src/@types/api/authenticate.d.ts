@@ -103,3 +103,12 @@ interface TypeGetRequestResponse<T> {
   expired: string;
   data: T;
 }
+
+interface TypeRequestUpdatePrice {
+  sale_id: number;
+  prices: TypePrice[];
+}
+
+interface TypeRequestResponse {
+  request_id: number;
+}

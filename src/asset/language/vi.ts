@@ -34,6 +34,8 @@ const common = {
   resetChanges: 'Bỏ thay đổi',
   add: 'Thêm',
   select: 'Chọn',
+  edit: 'Chỉnh sửa',
+  delete: 'Xoá',
 };
 
 const login = {
@@ -214,6 +216,7 @@ const discovery = {
   category: 'Loại hình ({{value}})',
   available: 'Có sẵn',
   temporarilyClosed: 'Tạm dừng nhận đơn',
+  requestingDelete: 'Đang yêu cầu xoá',
   notWorry:
     'Đừng lo lắng.\nCửa hàng chỉ tạm thời không nhận thêm order nữa\nĐơn đặt hàng của bạn vẫn tiếp tục được tiến hành.',
   closed: 'Đã kết thúc',
@@ -357,10 +360,8 @@ const profile = {
     caption: 'Cảm nghĩ',
     post: 'Tải lên',
     draft: 'Lưu nháp',
-    edit: 'Chỉnh sửa',
     archive: 'Tạm ẩn',
     unArchive: 'Hiện lại bảng tin',
-    delete: 'Xoá',
     sureDeletePost: 'Bạn chắc chắn muốn xoá chứ?',
     enterTopic: 'Tự nhập chủ đề',
     pickImage: 'Chọn ảnh',
@@ -432,6 +433,7 @@ const profile = {
   created: 'Ngày tạo',
   createTour: 'Tạo tour mới',
   createTourSuccess: 'Tạo tour thành công',
+  createSaleSuccess: 'Tạo đơn mua chung thành công',
   createNameForYourTour: 'Đặt tên cho tour của bạn',
   qrConfirm: 'QR Xác nhận',
   scanWhenGoToShop:
@@ -588,14 +590,21 @@ const alert = {
   canChooseMaximum3: 'Bạn chỉ có thể chọn tối đa 3 chủ đề',
   requestDeleteGbSuccess:
     'Gửi yêu cầu xoá thành công.\nChúng tôi sẽ xét duyệt và gửi lại thông báo trong vòng 24h.\nBạn có thể huỷ yêu cầu xoá bằng việc ấn vào "Cập nhật trạng thái", sau đó Mở nhận đặt đơn.',
-  ifUpdatePrice:
-    'Chúng tôi sẽ xét duyệt yêu cầu thay đổi giá của bạn trong vòng 24h.\nNgoài ra, để đảm bảo quyền lợi của những người đã đặt cọc với giá cũ, mọi người cũng có thể xem lịch sửa chỉnh sửa giá của bạn.',
+  reviewUpdatePrice:
+    'Yêu cầu thay đổi giá thành công\nChúng tôi sẽ xét duyệt yêu cầu thay đổi giá của bạn trong vòng 24h',
   sureUpdateBankAccount:
     'Bạn chắc chắn muốn cập nhật tài khoản ngân hàng của mình?',
   requestUpdateBankSuccess:
     'Gửi yêu cầu cập nhật tài khoản nhận tiền thành công\nChúng tôi sẽ xem xét và phản hồi lại bạn trong thời gian 1 ngày',
   sureToBlock: 'Bạn có chắc chắn muốn chặn người này?',
   sureToDeleteJoin: 'Bạn chắc chắn muốn huỷ đơn mua chung chứ?',
+  afterTemporarilyClose:
+    'Sau khi ấn <b>"Tạm dừng"</b>, mọi người không thể tham gia mua {{value}} cho đến khi bạn mở lại',
+  afterDeleteSale: `Sau khi ấn Tiếp tục, đơn hàng sẽ chuyển đến trạng thái <b>Yêu cầu xoá</b>.
+Mọi người sẽ không thể tham gia mua {{value}}.
+  
+Chúng tôi sẽ xem xét và phản hồi lại cho bạn trong vòng 24h.
+Trong thời gian đó, bạn có thể huỷ yêu cầu xoá bằng cách <b>“Mở nhận đặt đơn”</b> trở lại.`,
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

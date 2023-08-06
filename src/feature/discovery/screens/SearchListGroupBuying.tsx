@@ -50,6 +50,20 @@ const SearchListGroupBuying = () => {
     });
   });
 
+  useAppEvent(APP_EVENT.editSale, e => {
+    setList(pre => {
+      return pre.map(sale => {
+        if (sale.id !== e?.post_id) {
+          return sale;
+        }
+        return {
+          ...sale,
+          ...e.data,
+        };
+      });
+    });
+  });
+
   useEffect(() => {
     if (!isEqual(searchParams, {})) {
       setParams({

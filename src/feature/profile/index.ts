@@ -1,8 +1,9 @@
-export {default as CreateSale} from './CreateSale';
 export {default as CreatePostPickImage} from './CreatePostPickImage';
 export {default as CreatePostPreview} from './CreatePostPreview';
+export {default as CreateSale} from './CreateSale';
 export {default as CreateTour} from './CreateTour';
 export {default as EditProfile} from './EditProfile';
+export {default as EditSalePrice} from './EditSalePrice';
 export {default as ListFollows} from './ListFollows';
 export {default as ListMyRequests} from './ListMyRequests';
 export {default as MyProfile} from './MyProfile';

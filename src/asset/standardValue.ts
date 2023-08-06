@@ -178,16 +178,10 @@ export const LIST_POST_TYPES: Array<{
 ];
 
 export const FONT_SIZE = {
-  big: '17@ms',
-  normal: '14@ms',
-  small: '11@ms',
-  tiny: '8@ms',
-
-  // new font
   h1: moderateScale(34),
   h2: moderateScale(22),
   f1: moderateScale(18),
-  f2: moderateScale(16),
+  f2: moderateScale(16), // This is root font size
   f3: moderateScale(14),
   f4: moderateScale(12),
   f5: moderateScale(10),

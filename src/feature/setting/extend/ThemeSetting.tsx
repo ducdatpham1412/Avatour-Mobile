@@ -1,8 +1,8 @@
 import {apiChangeTheme} from 'api/setting';
+import {useAppSelector} from 'app-redux/store';
 import {THEME_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
-import Theme from 'asset/theme/Theme';
 import {StyleImage} from 'components/base';
 import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
@@ -13,13 +13,16 @@ import {ScaledSheet} from 'react-native-size-matters';
 
 const ThemeSetting = () => {
   const theme = useTheme();
+  const {theme: themeSetting} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
   const isModeExp = Redux.getModeExp();
   const [isPicked, setIsPicked] = useState(
-    theme === Theme.darkTheme ? 'dark' : 'light',
+    themeSetting === 0 ? 'dark' : 'light',
   );
 
   const selectBdColor = (type: string) => {
-    return isPicked === type ? theme.highlightColor : theme.holderColor;
+    return isPicked === type ? theme.p_600 : theme.gray_200;
   };
 
   const switchTheme = async (type: string) => {

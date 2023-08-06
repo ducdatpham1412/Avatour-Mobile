@@ -67,9 +67,26 @@ export const apiGetProfile = (
 };
 
 export const apiEditProfile = (
-  params: TypeEditProfileRequest,
+  body: TypeEditProfileRequest,
 ): Promise<TypeEditProfileResponse> => {
-  return request.put('/profile/edit', params);
+  const payload = new FormData();
+
+  Object.entries(body).forEach(([key, value]) => {
+    if (value) {
+      if (key !== 'avatar') {
+        payload.append(key, value);
+      } else {
+        const formatAvatar = {
+          uri: body.avatar,
+          type: 'image/jpeg',
+          name: 'avatar',
+        };
+        payload.append('avatar', formatAvatar);
+      }
+    }
+  });
+
+  return request.put('/profile/edit', payload, {timeout: 10000});
 };
 
 export const apiFollowUser = (id: number) => {

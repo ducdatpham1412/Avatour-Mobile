@@ -235,7 +235,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             </Svg>
 
             <StyleText i18Text={title} customStyle={$title} />
-            <StyleText i18Text={content} customStyle={$content} />
+            <StyleText i18Text={content} customStyle={$content} mode="html" />
 
             {renderButton()}
           </View>

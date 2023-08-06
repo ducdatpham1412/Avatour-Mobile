@@ -62,11 +62,32 @@ export const apiConfirmUserBought = (list_joins_id: number[]) => {
 export const apiCreateSale = (
   body: TypeCreateSale,
 ): Promise<TypeCreateSaleResponse> => {
-  return request.post('profile/sales', body);
+  const payload = new FormData();
+
+  payload.append('name', body.name);
+  payload.append('content', body.content);
+  body.images.forEach(path => {
+    const formatImage = {
+      uri: path,
+      type: 'image/jpeg',
+      name: 'avatar',
+    };
+    payload.append('images', formatImage);
+  });
+  payload.append('prices', JSON.stringify(body.prices));
+
+  return request.post('profile/sales', payload, {timeout: 15000});
 };
 
 export const apiEditSale = (body: TypeEditSale) => {
   return request.put(`profile/sales/${body.post_id}`, body.data);
+};
+
+export const apiUpdateStatusSale = (saleId: number, status: number) => {
+  // Only for supplier switch between status_active and status_temporarily_closed
+  return request.put(`profile/sales/${saleId}`, {
+    status,
+  });
 };
 
 export const apiGetListEditHistory = ({params}: TypeParamsPaging) => {

@@ -350,6 +350,7 @@ export enum APP_EVENT {
   reactSale = 'react-sale',
   reactTour = 'react-tour',
   createNewSale = 'create-new-sale',
+  editSale = 'edit-sale',
 }
 
 export enum TYPE_AUTH_REQUEST {

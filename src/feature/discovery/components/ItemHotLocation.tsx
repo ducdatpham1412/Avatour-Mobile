@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
@@ -44,6 +44,7 @@ const $image: ImageStyle = {
 const $textName: TextStyle = {
   fontSize: FONT_SIZE.f1,
   marginTop: verticalScale(4),
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $textDescription: TextStyle = {
   marginTop: 0,

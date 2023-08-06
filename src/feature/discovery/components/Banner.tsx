@@ -21,7 +21,7 @@ const Banner = ({data, containerStyle}: Props) => {
   return (
     <View style={[$container, containerStyle]}>
       <Carousel
-        width={scale(351)}
+        width={scale(375)}
         height={scale(150)}
         data={data}
         renderItem={({item}) => {
@@ -45,9 +45,9 @@ const Banner = ({data, containerStyle}: Props) => {
         autoPlayInterval={3000}
         mode="parallax"
         modeConfig={{
-          parallaxScrollingOffset: 40,
-          parallaxScrollingScale: 0.96,
-          parallaxAdjacentItemScale: 0.86,
+          parallaxScrollingOffset: 36,
+          parallaxScrollingScale: 0.97,
+          parallaxAdjacentItemScale: 0.93,
         }}
       />
     </View>
@@ -62,9 +62,9 @@ const $contentBanner: ViewStyle = {
   alignSelf: 'center',
 };
 const $itemBannerView: ViewStyle = {
-  width: scale(335),
+  width: scale(375),
   height: scale(150),
-  marginHorizontal: scale(8),
+  paddingHorizontal: scale(12),
 };
 const $image: ImageStyle = {
   width: '100%',

@@ -143,7 +143,7 @@ const ReviewCommunity = () => {
         ref={optionMeRef}
         listTextAndAction={[
           {
-            text: 'profile.post.edit',
+            text: 'common.edit',
             action: () => {
               if (modalOptions) {
                 navigate(PROFILE_ROUTE.createPostPreview, {
@@ -153,7 +153,7 @@ const ReviewCommunity = () => {
             },
           },
           {
-            text: 'profile.post.delete',
+            text: 'common.delete',
             action: () => {
               if (modalOptions) {
                 onDeletePost(modalOptions.id, setList);

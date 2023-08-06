@@ -109,7 +109,7 @@ const DetailMeJoin = ({
           });
         }
       },
-      title: 'alert.sureToDeleteJoin',
+      i18Content: 'alert.sureToDeleteJoin',
     });
   };
 
@@ -490,7 +490,7 @@ const DetailMeJoin = ({
                     <StyleTouchable
                       onPress={() => modalConfirmJoinRef.current?.show()}>
                       <StyleText
-                        i18Text="profile.post.edit"
+                        i18Text="common.edit"
                         customStyle={{
                           color: theme.blue,
                           fontWeight: FONT_WEIGHT_MEDIUM,

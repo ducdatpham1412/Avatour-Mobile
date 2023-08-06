@@ -1,5 +1,5 @@
 import {APP_EVENT, SOCKET_EVENT} from 'asset/enum';
-import {ReactNode} from 'react';
+import {ParamsCreateTour} from 'feature/profile/hooks';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
@@ -10,7 +10,6 @@ import ROOT_SCREEN, {
   SETTING_ROUTE,
   TOUR_ROUTE,
 } from './routes';
-import {ParamsCreateTour} from 'feature/profile/hooks';
 
 export type AllRoutes =
   | ROOT_SCREEN
@@ -45,11 +44,6 @@ export type AppParamsList = {
     itemId?: string;
     setList?: any;
     isFromTopGroupBuying?: boolean;
-  };
-  [ROOT_SCREEN.interactBubble]: {
-    userId: number;
-    name: string;
-    avatar: string;
   };
   [ROOT_SCREEN.swipeImages]: {
     listImages: Array<{url: string}>;
@@ -91,10 +85,6 @@ export type AppParamsList = {
     itemDraft?: TypeGroupBuying;
     itemError?: TypeCreateSale;
   };
-  [PROFILE_ROUTE.updatePrices]: {
-    item: TypeGroupBuying;
-    onUpdatePrice(value: TypeGroupBuying): void;
-  };
   [ROOT_SCREEN.chatDetail]: {
     itemChatTag: TypeChatTagResponse;
     setListChatTags: any;
@@ -108,24 +98,6 @@ export type AppParamsList = {
   [DISCOVERY_ROUTE.searchScreen]: {
     services?: number;
     search?: string;
-  };
-  [ROOT_SCREEN.alert]: {
-    notice: I18Normalize;
-    actionClickOk?(): void;
-    moreNotice?: I18Normalize;
-    moreAction?(): void;
-  };
-  [ROOT_SCREEN.alertYesNo]: {
-    i18Title: I18Normalize;
-    agreeText?: I18Normalize;
-    refuseText?: I18Normalize;
-    i18Params?: object;
-    agreeChange(): void;
-    refuseChange(): void;
-    headerNode?: ReactNode;
-    displayButton?: boolean;
-    touchOutBack?: boolean;
-    agreeButtonOpacity?: number;
   };
   [ROOT_SCREEN.webView]: {
     title: I18Normalize;
@@ -209,6 +181,10 @@ export type AppParamsList = {
   [PROFILE_ROUTE.createTour]: {
     itemTour: Omit<TourDetail, 'id'> & {id: ParamsCreateTour};
   };
+  [ROOT_SCREEN.editSalePrice]: {
+    saleId: number;
+    prices: TypePrice[];
+  };
 };
 
 export type AppEventList = {
@@ -222,6 +198,10 @@ export type AppEventList = {
   };
   [APP_EVENT.createNewSale]: {
     newSale: TypeGroupBuying;
+  };
+  [APP_EVENT.editSale]: {
+    post_id: number;
+    data: Partial<TypeGroupBuying>;
   };
 };
 

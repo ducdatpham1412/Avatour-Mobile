@@ -3,13 +3,13 @@ import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import {BoxInformation} from 'components';
 import {StyleButton, StyleText} from 'components/base';
 import {useTheme} from 'hook';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {formatddddDDMMYYYY} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useMyRequests} from '../hooks';
-import {ModalAlert} from 'navigation/screen/modals';
 
 interface Props {
   item: TypeGetRequestResponse<any>;
@@ -18,7 +18,7 @@ interface Props {
 const ItemRequest = ({item}: Props) => {
   const {t} = useTranslation();
   const theme = useTheme();
-  const [{isCanceling}, {onCancelRequest}] = useMyRequests();
+  const [{isCanceling}, {onDeleteRequest}] = useMyRequests();
 
   const content = useCallback(
     (type: number) => {
@@ -58,10 +58,20 @@ const ItemRequest = ({item}: Props) => {
     return <StyleText originValue={item?.data} />;
   };
 
-  const onCancel = () => {
+  const onDelete = () => {
+    const agree = async () => {
+      try {
+        await onDeleteRequest(item.id);
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    };
+
     ModalAlert.options({
       i18Content: 'profile.post.sureDeletePost',
-      onContinue: () => onCancelRequest(item?.id),
+      onContinue: agree,
     });
   };
 
@@ -81,8 +91,8 @@ const ItemRequest = ({item}: Props) => {
           <StyleButton
             containerStyle={[$button, {borderColor: theme.black}]}
             titleStyle={{color: theme.black}}
-            title="common.cancel"
-            onPress={onCancel}
+            title="common.delete"
+            onPress={onDelete}
             isLoading={isCanceling}
           />
         </View>,

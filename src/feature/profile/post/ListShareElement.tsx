@@ -334,11 +334,11 @@ export default class ListShareElement extends Component<Props, States> {
           ref={this.myOptionRef}
           listTextAndAction={[
             {
-              text: 'profile.post.edit',
+              text: 'common.edit',
               action: onGoToEditPost,
             },
             {
-              text: 'profile.post.delete',
+              text: 'common.delete',
               action: () => {
                 if (postModal) {
                   this.onDeletePost(postModal.id);
@@ -356,11 +356,11 @@ export default class ListShareElement extends Component<Props, States> {
           ref={this.draftOptionRef}
           listTextAndAction={[
             {
-              text: 'profile.post.edit',
+              text: 'common.edit',
               action: onGoToEditPost,
             },
             {
-              text: 'profile.post.delete',
+              text: 'common.delete',
               action: () => {
                 if (postModal?.id) {
                   this.onDeletePost(postModal.id);
@@ -378,11 +378,11 @@ export default class ListShareElement extends Component<Props, States> {
           ref={this.draftOptionRef}
           listTextAndAction={[
             {
-              text: 'profile.post.edit',
+              text: 'common.edit',
               action: onGoToEditPost,
             },
             {
-              text: 'profile.post.delete',
+              text: 'common.delete',
               action: () => {
                 if (postModal?.id) {
                   this.onDeletePost(postModal.id);

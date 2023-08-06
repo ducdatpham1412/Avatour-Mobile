@@ -24,9 +24,9 @@ type TypeCreateSaleResponse = TemplateApiResponse<{
 type TypeEditSale = {
   post_id: number;
   data: {
+    name?: string;
     content?: string;
     images?: Array<string>;
-    prices?: Array<TypePrice>;
   };
 };
 
