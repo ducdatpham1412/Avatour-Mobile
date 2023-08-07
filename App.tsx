@@ -1,12 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {
   NavigationContainer,
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
 import Store from 'app-redux/store';
-import Config from 'asset/env';
 import {SocketProvider} from 'hook/sockets';
 import {navigationRef} from 'navigation/NavigationService';
 import {DynamicLink, Notification} from 'navigation/screen';
@@ -51,16 +49,18 @@ const trackActiveRoute = (
   level = 0,
 ) => {
   if (__DEV__) {
-    if (s?.index === undefined) return;
+    if (s?.index === undefined) {
+      return;
+    }
     const {name, params, state} = s.routes[s.index];
     console.info(' '.repeat(level), level ? '⎿' : '', name, params || '');
     trackActiveRoute(state, level + 1);
   }
 };
 
-GoogleSignin.configure({
-  webClientId: Config.WEB_CLIENT_ID_GOOGLE_SIGN_IN,
-});
+// GoogleSignin.configure({
+//   webClientId: Config.WEB_CLIENT_ID_GOOGLE_SIGN_IN,
+// });
 
 const App = () => {
   return (

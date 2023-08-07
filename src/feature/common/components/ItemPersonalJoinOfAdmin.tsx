@@ -93,6 +93,11 @@ const ItemPersonalJoinOfAdmin = ({item, onConfirmBought}: Props) => {
           title: 'discovery.deposit',
           content: formatMoney(item?.deposit),
         },
+        {
+          title: 'discovery.nowPrice',
+          content: formatMoney(item?.price),
+          contentStyle: {color: theme.red},
+        },
         <View style={$note}>
           <StyleText i18Text="discovery.note" style={{color: theme.gray_600}} />
           <StyleText originValue={item?.note} style={$contentNote} />

@@ -47,12 +47,12 @@ interface ErrorViewProps {
 const modalRef = createRef<ElementRef<typeof ModalScanQr>>();
 
 const ErrorView = ({onFinished}: ErrorViewProps) => {
-  const scale = useRef(new Animated.Value(1));
+  const scaleRef = useRef(new Animated.Value(1));
   const translateX = useRef(new Animated.Value(0));
-  const timeOut = useRef(0);
+  const timeOut = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    Animated.timing(scale.current, {
+    Animated.timing(scaleRef.current, {
       toValue: 1.5,
       useNativeDriver: true,
       duration: 100,
@@ -79,7 +79,7 @@ const ErrorView = ({onFinished}: ErrorViewProps) => {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        Animated.timing(scale.current, {
+        Animated.timing(scaleRef.current, {
           toValue: 1,
           useNativeDriver: true,
           duration: 100,
@@ -98,7 +98,12 @@ const ErrorView = ({onFinished}: ErrorViewProps) => {
     <Animated.View
       style={[
         $error,
-        {transform: [{scale: scale.current}, {translateX: translateX.current}]},
+        {
+          transform: [
+            {scale: scaleRef.current},
+            {translateX: translateX.current},
+          ],
+        },
       ]}>
       <StyleText i18Text="alert.invalidQr" customStyle={$textError} />
     </Animated.View>

@@ -1,10 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {
-  TypeBubblePalace,
-  TypeBubblePalaceAction,
-  TypeChatTagResponse,
-  TypeCreatePostRequest,
-} from 'api/interface';
 
 export type ReduxPostCreatedHandle = {
   status: 'loading' | 'success' | 'error' | 'done';
@@ -36,11 +30,8 @@ export const initialLogicState = {
   listChatTag: <Array<TypeChatTagResponse>>[],
   chatTagFocusing: '', // this flag to check if socket do action update chat tag hasNewMessage
 
-  bubblePalaceAction: <TypeBubblePalaceAction>{},
   isLogOut: false,
   borderMessRoute: 'yellow',
-
-  bubbleFocusing: <TypeBubblePalace>{},
 
   // notification
   numberNewMessages: 0,
@@ -83,9 +74,6 @@ const logicSlice = createSlice({
     setChatTagFocusing: (state, action) => {
       state.chatTagFocusing = action.payload;
     },
-    setBubblePalace: (state, action) => {
-      state.bubblePalaceAction = action.payload;
-    },
     setNumberNewMessages: (state, action) => {
       state.numberNewMessages = action.payload;
     },
@@ -97,9 +85,6 @@ const logicSlice = createSlice({
     },
     setShouldRenderOtherProfile: (state, action) => {
       state.shouldRenderOtherProfile = action.payload;
-    },
-    setBubbleFocusing: (state, action) => {
-      state.bubbleFocusing = action.payload;
     },
     setNumberNewNotification: (state, action) => {
       state.numberNewNotifications = action.payload;

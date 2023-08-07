@@ -1,16 +1,18 @@
 /* eslint-disable no-underscore-dangle */
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {BORDER_RADIUS} from 'asset';
 import {Metrics} from 'asset/metrics';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
-import {View} from 'react-native';
+import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import Pinchable from 'react-native-pinchable';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import RNFetchBlob from 'rn-fetch-blob';
 import {isIOS} from 'utility/assistant';
 import {checkSaveImage} from 'utility/permission/permission';
+import {moderateScale, scale} from 'utility/scale';
 import AutoHeightImage from './AutoHeightImage';
 import {StyleTouchable} from './base';
 
@@ -73,7 +75,7 @@ const onSaveToLibrary = async (uri: string) => {
 };
 
 const PanZoomImage = ({uri}: PanImageProps) => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   // const scale = useRef(new Animated.Value(1)).current;
   // const translate = useRef(new Animated.ValueXY()).current;
@@ -185,7 +187,7 @@ const PanZoomImage = ({uri}: PanImageProps) => {
   // ).current;
 
   return (
-    <View style={styles.imageView}>
+    <View style={$container}>
       {/* <Animated.View
                 style={{
                     paddingVertical: 20,
@@ -199,20 +201,17 @@ const PanZoomImage = ({uri}: PanImageProps) => {
                 <AutoHeightImage uri={uri} customStyle={styles.image} />
             </Animated.View> */}
       <Pinchable miminimumZoomScale={0.3}>
-        <AutoHeightImage uri={uri} customStyle={styles.image} />
+        <AutoHeightImage uri={uri} customStyle={$image} />
       </Pinchable>
 
       {false && (
         <StyleTouchable
-          customStyle={[
-            styles.saveTouch,
-            {backgroundColor: theme.backgroundButtonColor},
-          ]}
+          customStyle={[$saveTouch, {backgroundColor: theme.background}]}
           hitSlop={15}
           onPress={() => onSaveToLibrary(uri)}>
           <AntDesign
             name="arrowdown"
-            style={[styles.iconSave, {color: theme.textColor}]}
+            style={[$iconSave, {color: theme.black}]}
           />
         </StyleTouchable>
       )}
@@ -220,26 +219,24 @@ const PanZoomImage = ({uri}: PanImageProps) => {
   );
 };
 
-const styles = ScaledSheet.create({
-  imageView: {
-    width: Metrics.width,
-    height: Metrics.height,
-    justifyContent: 'center',
-  },
-  image: {
-    width: '100%',
-    borderRadius: '5@s',
-  },
-  saveTouch: {
-    position: 'absolute',
-    padding: '4@ms',
-    borderRadius: '20@ms',
-    right: '20@s',
-    bottom: Metrics.safeBottomPadding + verticalScale(20),
-  },
-  iconSave: {
-    fontSize: '16@ms',
-  },
-});
+const $container: ViewStyle = {
+  width: Metrics.width,
+  height: Metrics.height,
+  justifyContent: 'center',
+};
+const $image: ImageStyle = {
+  width: '100%',
+  borderRadius: BORDER_RADIUS.f4,
+};
+const $saveTouch: ViewStyle = {
+  position: 'absolute',
+  padding: scale(4),
+  borderRadius: moderateScale(20),
+  right: scale(20),
+  bottom: Metrics.safeBottomPadding + verticalScale(20),
+};
+const $iconSave: TextStyle = {
+  fontSize: moderateScale(16),
+};
 
 export default PanZoomImage;

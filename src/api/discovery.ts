@@ -54,7 +54,7 @@ export const apiGetListPeopleRetail = ({params}: TypeParamsPaging) => {
 };
 
 export const apiConfirmUserBought = (list_joins_id: number[]) => {
-  return request.put(`profile/sales/confirm`, {
+  return request.put('profile/sales/confirm', {
     list_joins_id,
   });
 };
@@ -124,23 +124,6 @@ export const apiReportUser = (params: {
   body: TypeReportUserRequest;
 }) => {
   return request.post(`/common/report-user/${params.userId}`, params.body);
-};
-
-export const apiGetListBubbleActive = ({
-  params,
-}: TypeParamsPaging): Promise<TypeSearchResponse> => {
-  return request.get('/common/search', {
-    params,
-  });
-};
-
-export const apiGetDetailBubble = (
-  idBubble: string,
-): Promise<{
-  success: true;
-  data: TypeBubblePalace & TypeGroupBuying;
-}> => {
-  return request.get(`/common/detail-bubble-profile/${idBubble}`);
 };
 
 export const apiGetListComments = ({params}: TypeParamsPaging) => {

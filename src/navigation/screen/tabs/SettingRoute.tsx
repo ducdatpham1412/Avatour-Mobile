@@ -3,10 +3,8 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import AboutUs from 'feature/setting/aboutUs/AboutUs';
-import ExtendSetting from 'feature/setting/extend/ExtendSetting';
 import EnterPassword from 'feature/setting/personalInfo/EnterPassword';
 import PersonalInformation from 'feature/setting/personalInfo/PersonalInformation';
-import SendOTPChangeInfo from 'feature/setting/personalInfo/SendOTPChangeInfo';
 import ConfirmDeleteAccount from 'feature/setting/security/ConfirmDeleteAccount';
 import ConfirmLockAccount from 'feature/setting/security/ConfirmLockAccount';
 import SecurityAndLogin from 'feature/setting/security/SecurityAndLogin';
@@ -52,10 +50,6 @@ const SettingRoute = () => {
       <Stack.Screen
         name={SETTING_ROUTE.enterPassword}
         component={EnterPassword}
-      />
-      <Stack.Screen
-        name={SETTING_ROUTE.sendOTPChangeInfo}
-        component={SendOTPChangeInfo}
       />
 
       {/* About us */}

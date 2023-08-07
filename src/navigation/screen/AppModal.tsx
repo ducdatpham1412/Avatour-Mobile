@@ -3,7 +3,6 @@ import {
   ModalActionSheet,
   ModalAlert,
   ModalCommentLike,
-  ModalCommentLikeAllApp,
   ModalDatePicker,
   ModalDateRangePicker,
   ModalInputEdit,
@@ -14,7 +13,6 @@ import {
 const AppModal = () => {
   return (
     <>
-      <ModalCommentLikeAllApp />
       <ModalInputEdit />
       <ModalDateRangePicker />
       <ModalDatePicker />

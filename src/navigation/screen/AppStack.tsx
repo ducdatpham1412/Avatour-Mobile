@@ -3,11 +3,9 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {useAppSelector} from 'app-redux/store';
-import ModalPreviewLink from 'components/ModalPreviewLink';
 import SwipeImages from 'components/SwipeImages';
 import {DetailMeJoin, DetailSale} from 'feature/common';
 import EditHistory from 'feature/common/EditHistory';
-import PostsArchived from 'feature/common/PostsArchived';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
 import {
@@ -21,10 +19,8 @@ import ReportUser from 'feature/discovery/ReportUser';
 import SearchScreen from 'feature/discovery/SearchScreen';
 import {SendOTP} from 'feature/login';
 import {ChatDetail, ChatDetailSetting, MessScreen} from 'feature/mess';
-import DetailBubble from 'feature/notification/DetailBubble';
 import {
   CreatePostPickImage,
-  CreatePostPreview,
   CreateSale,
   CreateTour,
   EditProfile,
@@ -56,11 +52,6 @@ import ROOT_SCREEN, {
 import React from 'react';
 import MainTabs from './MainTabs';
 
-const modalPreviewLinkRef = React.createRef<ModalPreviewLink>();
-export const showPreviewLink = (item: TypeBubblePalace) => {
-  modalPreviewLinkRef.current?.show(item);
-};
-
 const Stack = createStackNavigator<AppParamsList>();
 
 const AppStack = () => {
@@ -77,7 +68,6 @@ const AppStack = () => {
 
       <Stack.Screen name={ROOT_SCREEN.otherProfile} component={OtherProfile} />
       <Stack.Screen name={ROOT_SCREEN.listFollows} component={ListFollows} />
-      <Stack.Screen name={ROOT_SCREEN.detailBubble} component={DetailBubble} />
       <Stack.Screen name={ROOT_SCREEN.myProfile} component={MyProfile} />
       <Stack.Screen name={ROOT_SCREEN.editProfile} component={EditProfile} />
       <Stack.Screen name={LOGIN_ROUTE.sendOTP} component={SendOTP} />
@@ -95,13 +85,6 @@ const AppStack = () => {
 
       <Stack.Screen name={ROOT_SCREEN.reportUser} component={ReportUser} />
 
-      <Stack.Screen
-        name={PROFILE_ROUTE.createPostPreview}
-        component={CreatePostPreview}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
       <Stack.Screen
         name={PROFILE_ROUTE.createPostPickImg}
         component={CreatePostPickImage}
@@ -133,11 +116,6 @@ const AppStack = () => {
       <Stack.Screen
         name={ROOT_SCREEN.chatDetailSetting}
         component={ChatDetailSetting}
-      />
-
-      <Stack.Screen
-        name={ROOT_SCREEN.postsArchived}
-        component={PostsArchived}
       />
       <Stack.Screen
         name={ROOT_SCREEN.upgradeAccount}

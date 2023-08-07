@@ -145,14 +145,6 @@ export type AppParamsList = {
     };
     mode: 'change-information' | 'lock-account' | 'delete-account';
   };
-  [SETTING_ROUTE.sendOTPChangeInfo]: {
-    name: string;
-    newInfo: {
-      email?: string;
-      phone?: string;
-    };
-    paramsOTP: TypeRequestOTPRequest;
-  };
   [ROOT_SCREEN.detailTour]: {
     tourId: number;
     itemTour?: TourDetail;

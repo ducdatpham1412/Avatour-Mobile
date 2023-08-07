@@ -31,15 +31,6 @@ export const updateListChatTag = (newList: any) => {
   Store.dispatch(logicSliceAction.setListChatTag(newList));
 };
 
-export const updateBubbleFocusing = (value: Partial<TypeBubblePalace>) => {
-  Store.dispatch(
-    logicSliceAction.setBubbleFocusing({
-      ...Store.getState().logicSlice.bubbleFocusing,
-      ...value,
-    }),
-  );
-};
-
 export const setGestureHandle = (
   key: keyof RootState['logicSlice']['gestureHandle'],
   value: boolean,
@@ -49,10 +40,6 @@ export const setGestureHandle = (
     [key]: value,
   };
   Store.dispatch(logicSliceAction.setGestureHandle(newGestureHandle));
-};
-
-export const setBubblePalaceAction = (newBubble: TypeBubblePalaceAction) => {
-  Store.dispatch(logicSliceAction.setBubblePalace(newBubble));
 };
 
 export const setBorderMessRoute = (color: string) => {

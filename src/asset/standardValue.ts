@@ -195,13 +195,6 @@ export const BORDER_RADIUS = {
 
 export const FONT_WEIGHT_MEDIUM = '500';
 
-export const LINE_HEIGHT = {
-  normal: Platform.select({
-    ios: '17@ms',
-    android: '17@ms',
-  }),
-};
-
 export const ratioImageGroupBuying = 0.8; // height / width
 export const ratioImageTour = 144 / 200;
 export const ratioImageSale = 232 / 319;

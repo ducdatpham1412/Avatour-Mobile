@@ -1,9 +1,8 @@
-import Theme from 'asset/theme/Theme';
 import {StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React, {useEffect, useRef} from 'react';
 import {Animated, StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 interface Props {
@@ -32,17 +31,14 @@ const IconNotLiked = ({onPress, customStyle, touchableStyle}: Props) => {
       hitSlop={moderateScale(10)}>
       <AntDesign
         name="hearto"
-        style={[styles.heartNotLikeIcon, {color: theme.gray_600}, customStyle]}
+        style={[$icon, {color: theme.gray_600}, customStyle]}
       />
     </AnimatedTouch>
   );
 };
 
-const styles = ScaledSheet.create({
-  heartNotLikeIcon: {
-    fontSize: '40@ms',
-    color: Theme.common.white,
-  },
-});
+const $icon: TextStyle = {
+  fontSize: moderateScale(40),
+};
 
 export default IconNotLiked;

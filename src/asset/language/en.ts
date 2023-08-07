@@ -408,7 +408,6 @@ const profile = {
   thisPostInDraft: 'This post is in draft',
   goToPost: 'Go to post',
   reviewProvider: 'Write review',
-  postsArchived: 'Post archived',
   gotToCreateGb: 'Create first group buying campaign',
   createReviewPost: 'Review post',
   createGroupBuying: 'Group booking campaign',
@@ -428,7 +427,8 @@ const profile = {
   bankName: 'Bank',
   accountNumber: 'Account number',
   accountHolder: 'Account holder',
-  agreeSendInformation: `By tapping <b>"Confirm"</b>, you agree to send these information to us.\nReviewing process can take from 1-7 days, we'll notice to you within 24 hours via email <b>{{email}}</b>`,
+  agreeSendInformation:
+    'By tapping <b>"Confirm"</b>, you agree to send these information to us.\nReviewing process can take from 1-7 days, we\'ll notice to you within 24 hours via email <b>{{email}}</b>',
   phoneNumber: 'Your phone number',
   requestUpgradeSuccess: 'Send request successfully',
   description: 'Description about you',
@@ -544,7 +544,8 @@ const alert = {
   moreButtonContent: 'Go to Sign up',
   needToAddPhone: 'You need to add phone number\nin order to join services',
   phoneExisted: 'This phone have been used by one other',
-  beSureConfirmWhenInStore: `Make sure you press confirm only when you've arrived to pay at the store.\nAfter pressing confirm, you won't receive any additional discounts if someone joins the same group buying with you.`,
+  beSureConfirmWhenInStore:
+    "Make sure you press confirm only when you've arrived to pay at the store.\nAfter pressing confirm, you won't receive any additional discounts if someone joins the same group buying with you.",
 
   // FOR SETTING
   nowPassError: 'Current password not true',

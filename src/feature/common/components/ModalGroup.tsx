@@ -2,6 +2,7 @@ import {Metrics, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleList, StyleText, StyleTouchable} from 'components/base';
 import {Avatar} from 'components/common';
+import {useTheme} from 'hook';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -11,10 +12,8 @@ import React, {
 } from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {formatDDMMMMYY} from 'utility/format';
 import {moderateScale, verticalScale} from 'utility/scale';
 import ModalPeopleInGroup from './ModalPeopleInGroup';
-import {useTheme} from 'hook';
 
 interface Props {
   groups: TypeGroupJoin[];
@@ -42,7 +41,7 @@ const ModalGroup = (
           }}>
           <StyleText
             i18Text="discovery.groupDay"
-            i18Params={{value: formatDDMMMMYY(item?.created)}}
+            i18Params={{value: item.name}}
             customStyle={$titleGroup}
           />
           <View style={$listPeople}>

@@ -15,10 +15,15 @@ import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
 import React, {useRef, useState} from 'react';
-import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  ActivityIndicator,
+  ImageStyle,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {ICropperParams} from 'react-native-image-zoom-and-crop';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -232,7 +237,7 @@ const CreatePostPickImage = ({route}: Props) => {
           source={{
             uri: video,
           }}
-          style={styles.videoView}
+          style={$video}
           repeat
           controls
           muted={!isFocused}
@@ -281,7 +286,7 @@ const CreatePostPickImage = ({route}: Props) => {
         }}>
         <StyleImage
           source={{uri: images[0].url}}
-          customStyle={styles.imageBehind}
+          customStyle={$imageBehind}
           blurRadius={10}
         />
         <ScrollCropImages
@@ -318,19 +323,19 @@ const CreatePostPickImage = ({route}: Props) => {
     return (
       <View
         style={[
-          styles.toolView,
+          $toolView,
           {
             borderColor: theme.gray_300,
           },
         ]}>
         <StyleTouchable
-          customStyle={styles.touchImage}
+          customStyle={$touchImage}
           onPress={() => tabPickRef.current?.navigateToIndex(0)}
           hitSlop={15}>
           <FontAwesome
             name="image"
             style={[
-              styles.iconImage,
+              $iconImage,
               {
                 color: theme.black,
               },
@@ -338,13 +343,13 @@ const CreatePostPickImage = ({route}: Props) => {
           />
         </StyleTouchable>
         <StyleTouchable
-          customStyle={styles.touchCamera}
+          customStyle={$touchCamera}
           onPress={onChooseFromCamera}
           hitSlop={15}>
           <Ionicons
             name="camera-outline"
             style={[
-              styles.iconCamera,
+              $iconCamera,
               {
                 color: theme.black,
               },
@@ -355,7 +360,7 @@ const CreatePostPickImage = ({route}: Props) => {
         {tabIndex === 0 && (
           <StyleText
             originValue={`${images.length}`}
-            customStyle={[styles.indexText, {color: theme.black}]}
+            customStyle={[$textIndex, {color: theme.black}]}
           />
         )}
 
@@ -408,7 +413,7 @@ const CreatePostPickImage = ({route}: Props) => {
 
       <StyleTabView
         ref={tabPickRef}
-        containerStyle={styles.tabView}
+        containerStyle={$tabView}
         onChangeTabIndex={index => {
           setTabIndex(index);
         }}
@@ -417,7 +422,7 @@ const CreatePostPickImage = ({route}: Props) => {
           images={images}
           onChooseImage={onChooseImage}
           numberColumns={4}
-          containerStyle={styles.modalPickImageView}
+          containerStyle={$modalPickImage}
           initIndexImage={0}
           urlFocusing={imageFocusing}
         />
@@ -453,73 +458,48 @@ const $textNext: TextStyle = {
   fontSize: FONT_SIZE.f1,
   fontWeight: 'bold',
 };
-
-const styles = ScaledSheet.create({
-  videoView: {
-    width,
-    minHeight: width,
-    maxHeight: '80%',
-  },
-  // tool
-  toolView: {
-    width: '100%',
-    height: '35@ms',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopWidth: borderWidthTiny,
-    borderBottomWidth: borderWidthTiny,
-  },
-  touchImage: {
-    position: 'absolute',
-    left: '20@s',
-  },
-  iconImage: {
-    fontSize: '13@ms',
-  },
-  touchCamera: {
-    position: 'absolute',
-    left: '60@s',
-  },
-  iconCamera: {
-    fontSize: '16.5@ms',
-  },
-  videoTouch: {
-    position: 'absolute',
-    right: '10@s',
-    width: '25@ms',
-    height: '25@ms',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: borderWidthTiny,
-    borderRadius: 20,
-  },
-  spaceBackground: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: 20,
-    opacity: 0.9,
-  },
-  iconVideo: {
-    fontSize: '14@ms',
-  },
-  indexText: {
-    fontSize: FONT_SIZE.f3,
-    fontWeight: FONT_WEIGHT_MEDIUM,
-  },
-  // modal pick image view
-  tabView: {
-    flex: 1,
-  },
-  modalPickImageView: {
-    height: undefined,
-    flex: 1,
-  },
-  imageBehind: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-});
+const $video: ViewStyle = {
+  width,
+  minHeight: width,
+  maxHeight: '80%',
+};
+const $toolView: ViewStyle = {
+  width: '100%',
+  height: moderateScale(35),
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderTopWidth: borderWidthTiny,
+  borderBottomWidth: borderWidthTiny,
+};
+const $touchImage: ViewStyle = {
+  position: 'absolute',
+  left: scale(20),
+};
+const $iconImage: TextStyle = {
+  fontSize: moderateScale(13),
+};
+const $imageBehind: ImageStyle = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+};
+const $touchCamera: ViewStyle = {
+  position: 'absolute',
+  left: scale(60),
+};
+const $iconCamera: TextStyle = {
+  fontSize: moderateScale(16.5),
+};
+const $textIndex: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $tabView: ViewStyle = {
+  flex: 1,
+};
+const $modalPickImage: ViewStyle = {
+  height: undefined,
+  flex: 1,
+};
 
 export default CreatePostPickImage;
