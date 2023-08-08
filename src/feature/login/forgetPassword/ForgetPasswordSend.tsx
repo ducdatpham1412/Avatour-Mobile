@@ -13,11 +13,13 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {I18Normalize} from 'utility/I18Next';
 import HeaderLogo from '../components/HeaderLogo';
 import IconType from '../components/IconType';
+import {moderateScale, verticalScale} from 'utility/scale';
+import {useTheme} from 'hook';
 
 const ForgetPasswordSend = ({
   route,
 }: RouteParams<AppParamsList[LOGIN_ROUTE.forgetPasswordSend]>) => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
   const {username} = route.params;
 
   const onRequestOTP = async (targetInfo: number) => {
@@ -53,8 +55,8 @@ const ForgetPasswordSend = ({
 
       <View style={styles.contentView}>
         <StyleText
-          i18Text="login.forgetPassword.send.receiveThrow"
-          customStyle={[styles.textNotification, {color: theme.textColor}]}
+          i18Text="login.receiveThrow"
+          customStyle={[styles.textNotification, {color: theme.black}]}
         />
 
         <View style={styles.iconsBox}>
@@ -85,13 +87,13 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   textNotification: {
-    fontSize: '20@ms',
-    marginTop: '20@vs',
+    fontSize: moderateScale(20),
+    marginTop: verticalScale(20),
   },
   iconsBox: {
     width: '90%',
     flexDirection: 'row',
-    marginTop: '60@vs',
+    marginTop: verticalScale(60),
     justifyContent: 'space-around',
   },
 });

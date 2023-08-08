@@ -41,6 +41,7 @@ export const validatePassword = (pw: string) => {
     /[a-z]/.test(pw) &&
     /[0-9]/.test(pw) &&
     /[^A-Za-z0-9]/.test(pw) &&
+    !/\s/.test(pw) &&
     pw.length > 8
   );
 };

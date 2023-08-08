@@ -48,6 +48,11 @@ const login = {
   phone: 'Số điện thoại',
   yourAccountIsBeingLock:
     'Tài khoản của bạn đang khoá tạm thời.\nBằng việc ấn <b>"Tiếp tục"</b>, bạn xác nhận mở khoá tài khoản của mình.',
+  keepSignIn: 'Nhớ tài khoản',
+  receiveThrow: 'Nhận OTP qua',
+  forgetPassword: 'Quên mật khẩu',
+  chooseMethodSignUp: 'Chọn cách thức đăng ký tài khoản',
+  notHaveAccountYet: 'Bạn chưa có tài khoản? Hãy',
   component: {
     sendOTP: {
       enterCode: 'Nhập mã',
@@ -56,32 +61,7 @@ const login = {
       sendAgainNoCount: 'Gửi lại',
     },
   },
-  forgetPassword: {
-    type: {
-      header: 'Quên mật khẩu',
-      chooseMethod: 'Chọn cách thức khôi phục mật khẩu',
-      user: 'Tên đăng nhập',
-      username: 'Nhập email của bạn',
-      continue: 'Tiếp tục',
-      comeToFacebook: 'Đi tới facebook',
-    },
-    send: {
-      header: 'Quên mật khẩu',
-      receiveThrow: 'Nhận OTP qua',
-    },
-  },
   signUp: {
-    type: {
-      header: 'Đăng ký',
-      chooseMethod: 'Chọn cách thức đăng ký tài khoản',
-    },
-    form: {
-      header: 'Đăng ký',
-      confirmPass: 'Xác nhận mật khẩu',
-      confirmButton: 'Xác nhận',
-      enterEmail: 'Email',
-      enterPhone: 'Số điện thoại',
-    },
     hadReadAndAgree: 'Tôi đã đọc và đồng ý với',
     doffyTermsAndPolicy: 'Điều khoản sử dụng',
   },
@@ -92,18 +72,12 @@ const login = {
     chooseBirthday: 'Chọn ngày sinh',
   },
   loginScreen: {
-    slogan: 'Trò chuyện và tìm những người bạn thú vị',
-    username: 'Email',
-    password: 'Mật khẩu',
-    keepSignIn: 'Duy trì đăng nhập',
-    signIn: 'Đăng nhập',
     byLoginOrTappingEnjoy:
       'Bằng việc đăng nhập hoặc sử dụng "Trải nghiệm không tài khoản", bạn đồng ý với',
     termsOfUse: 'Điều khoản sử dụng',
     learnMore:
       ' của chúng tôi. Hiểu về cách chúng tôi xử lý dữ liệu của bạn tại',
     privacyPolicy: 'Chính sách bảo mật',
-    openAccountSuccess: 'Mở khoá tài khoản thành công!',
   },
   enjoy: 'Trải nghiệm',
   login: 'Đăng nhập',
@@ -119,6 +93,7 @@ const login = {
   password: 'Mật khẩu',
   confirmPassword: 'Xác nhận mật khẩu',
   newPassword: 'Mật khẩu mới',
+  openAccountSuccess: 'Mở khoá tài khoản thành công!',
 };
 
 const discovery = {
@@ -566,7 +541,7 @@ const alert = {
   require: 'Giá trị bắt buộc điền',
   minLength: 'Chỉ nhập từ {{min}} tới {{max}} ký tự',
   regexPass:
-    'Mật khẩu nhiều hơn 8 ký tự, và bao gồm ít nhất một chữ hoa và một ký tự đặc biệt',
+    'Mật khẩu nhiều hơn 8 ký tự, bao gồm ít nhất một chữ hoa và một ký tự đặc biệt, không bao gồm khoảng trắng',
   passNotMatch: 'Mật khẩu không trùng khớp',
   inValidEmail: 'Email không đúng định dạng',
   inValidPhone: 'Số điện thoại không đúng',

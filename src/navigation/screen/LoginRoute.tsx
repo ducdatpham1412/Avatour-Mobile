@@ -2,124 +2,70 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import ConfirmOpenAccount from 'feature/login/ConfirmOpenAccount';
-import ForgetPasswordForm from 'feature/login/forgetPassword/ForgetPasswordForm';
-import ForgetPasswordSend from 'feature/login/forgetPassword/ForgetPasswordSend';
-import ForgetPasswordType from 'feature/login/forgetPassword/ForgetPasswordType';
-import LoginScreen from 'feature/login/LoginScreen';
-import SendOTP from 'feature/login/SendOTP';
-import AgreeTermOfService from 'feature/login/signUp/AgreeTermOfService';
-import EditBasicInformation from 'feature/login/signUp/EditBasicInformation';
-import SignUpForm from 'feature/login/signUp/SignUpForm';
-import SignUpType from 'feature/login/signUp/SignUpType';
-import {useTheme} from 'hook';
-import HeaderLeftIcon from 'navigation/components/HeaderLeftIcon';
+import {
+  AgreeTermOfService,
+  ConfirmOpenAccount,
+  EditBasicInformation,
+  ForgetPasswordForm,
+  ForgetPasswordSend,
+  ForgetPasswordType,
+  LoginScreen,
+  SendOTP,
+  SignUpForm,
+} from 'feature/login';
+import {HeaderLeftIcon} from 'navigation/components';
 import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
-import {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
 
 const Stack = createStackNavigator<AppParamsList>();
 
-const LoginRoute: React.FunctionComponent = () => {
-  const theme = useTheme();
-  const {t} = useTranslation();
+const renderHeader = (props: any) => {
+  return <HeaderLeftIcon {...props} />;
+};
 
-  const headerTitleStyle: StyleProp<TextStyle> = {
-    fontSize: moderateScale(17),
-    fontWeight: 'bold',
-  };
-  const headerStyle: StyleProp<ViewStyle> = {
-    backgroundColor: theme.background,
-    borderBottomWidth: 0,
-  };
-
+const LoginRoute = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         gestureEnabled: true,
         gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        headerLeft: (props: any) => <HeaderLeftIcon {...props} />,
-      }}
-      //   initialRouteName={LOGIN_ROUTE.editBasicInformation}
-    >
-      <Stack.Screen
-        options={{headerShown: false}}
-        name={LOGIN_ROUTE.loginScreen}
-        component={LoginScreen}
-      />
+        headerLeft: (props: any) => renderHeader(props),
+        headerShown: false,
+      }}>
+      <Stack.Screen name={LOGIN_ROUTE.loginScreen} component={LoginScreen} />
 
       <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
         name={LOGIN_ROUTE.confirmOpenAccount}
         component={ConfirmOpenAccount}
       />
-
-      {/* SIGN UP */}
+      <Stack.Screen name={LOGIN_ROUTE.signUpForm} component={SignUpForm} />
       <Stack.Screen
-        options={{
-          headerTintColor: theme.black,
-          headerTitle: t('login.signUp.type.header'),
-          headerTitleStyle,
-          headerStyle,
-        }}
-        name={LOGIN_ROUTE.signUpType}
-        component={SignUpType}
-      />
-      <Stack.Screen
-        options={{
-          headerTintColor: theme.black,
-          headerTitle: t('login.signUp.form.header'),
-          headerTitleStyle,
-          headerStyle,
-        }}
-        name={LOGIN_ROUTE.signUpForm}
-        component={SignUpForm}
-      />
-      <Stack.Screen
-        options={{headerShown: false, gestureEnabled: false}}
         name={LOGIN_ROUTE.editBasicInformation}
         component={EditBasicInformation}
       />
 
       {/* Send OTP */}
-      <Stack.Screen
-        options={{headerShown: false}}
-        name={LOGIN_ROUTE.sendOTP}
-        component={SendOTP}
-      />
+      <Stack.Screen name={LOGIN_ROUTE.sendOTP} component={SendOTP} />
 
       <Stack.Screen
-        options={{headerShown: false, gestureEnabled: false}}
         name={LOGIN_ROUTE.agreeTermOfService}
         component={AgreeTermOfService}
       />
 
       {/* FORGET */}
       <Stack.Screen
-        options={{headerShown: false}}
         name={LOGIN_ROUTE.forgetPasswordType}
         component={ForgetPasswordType}
       />
 
       <Stack.Screen
-        options={{
-          headerTintColor: theme.black,
-          headerTitle: t('login.forgetPassword.type.header'),
-          headerTitleStyle,
-          headerStyle,
-        }}
         name={LOGIN_ROUTE.forgetPasswordSend}
         component={ForgetPasswordSend}
       />
 
       <Stack.Screen
-        options={{headerShown: false, gestureEnabled: false}}
         name={LOGIN_ROUTE.forgetPasswordForm}
         component={ForgetPasswordForm}
       />

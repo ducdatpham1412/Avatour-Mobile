@@ -61,7 +61,10 @@ const SignUpForm = () => {
     isValidEmail && isValidPassword && isValidConfirmPw && haveAgreed;
 
   return (
-    <StyleContainer containerStyle={$container}>
+    <StyleContainer
+      headerProps={{
+        title: 'login.register',
+      }}>
       <View style={$inputView}>
         <InputBox
           i18Placeholder="login.email"
@@ -69,6 +72,7 @@ const SignUpForm = () => {
           onSubmitEditing={() => passwordRef.current?.focus()}
           isError={!!username && !isValidEmail}
           textError="alert.inValidEmail"
+          width="90%"
         />
         <InputBox
           ref={passwordRef}
@@ -79,7 +83,9 @@ const SignUpForm = () => {
           isError={!!password && !isValidPassword}
           textError="alert.regexPass"
           style={$inputPassword}
+          containerStyle={$inputPassword}
           secureTextEntry
+          width="90%"
         />
         <InputBox
           ref={confirmPasswordRef}
@@ -89,7 +95,9 @@ const SignUpForm = () => {
           isError={!!confirmPassword && confirmPassword !== password}
           textError="alert.passNotMatch"
           style={$inputPassword}
+          containerStyle={$inputPassword}
           secureTextEntry
+          width="90%"
         />
       </View>
 
@@ -125,7 +133,7 @@ const SignUpForm = () => {
       </View>
 
       <StyleButton
-        title="login.signUp.form.confirmButton"
+        title="common.confirm"
         containerStyle={$button}
         onPress={() =>
           onSignUp(
@@ -144,20 +152,17 @@ const SignUpForm = () => {
   );
 };
 
-const $container: ViewStyle = {
-  paddingTop: 0,
-};
 const $inputView: ViewStyle = {
   width: '100%',
   marginTop: vs(20),
 };
 const $inputPassword: ViewStyle = {
-  marginTop: vs(5),
+  marginTop: vs(8),
 };
 const $termPolicyView: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
-  paddingHorizontal: '10%',
+  paddingHorizontal: '5%',
   marginTop: vs(15),
 };
 const $titleAgree: TextStyle = {

@@ -1,6 +1,5 @@
 import {apiRequestOTP} from 'api/authentication';
 import {TYPE_OTP} from 'asset/enum';
-import Theme from 'asset/theme/Theme';
 import {StyleButton, StyleContainer} from 'components/base';
 import InputBox from 'components/common/InputBox';
 import {useLoading} from 'hook';
@@ -8,8 +7,8 @@ import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
-import {View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {TextStyle, ViewStyle} from 'react-native';
+import {verticalScale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 
 const ForgetPasswordType = () => {
@@ -42,74 +41,41 @@ const ForgetPasswordType = () => {
 
   return (
     <StyleContainer
-      customStyle={styles.container}
+      customStyle={$container}
       headerProps={{
-        title: 'login.forgetPassword.type.header',
+        title: 'login.forgetPassword',
       }}>
-      <View style={styles.contentView}>
-        <InputBox
-          i18Placeholder="login.forgetPassword.type.username"
-          value={username}
-          onChangeText={text => {
-            setUsername(text);
-          }}
-          autoFocus
-          isError={disable && !!username}
-          textError="alert.invalidUsername"
-        />
-
-        <StyleButton
-          title="login.forgetPassword.type.continue"
-          containerStyle={styles.btnSendBox}
-          onPress={onRequestOTP}
-          disable={disable}
-          isLoading={loading}
-        />
-      </View>
+      <InputBox
+        i18Placeholder="login.emailPhone"
+        value={username}
+        onChangeText={text => {
+          setUsername(text);
+        }}
+        autoFocus
+        isError={disable && !!username}
+        textError="alert.invalidUsername"
+        width="90%"
+        style={$input}
+      />
+      <StyleButton
+        title="common.continue"
+        onPress={onRequestOTP}
+        disable={disable}
+        isLoading={loading}
+        containerStyle={$button}
+      />
     </StyleContainer>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  content: {
-    alignItems: 'center',
-    marginTop: '50@vs',
-  },
-  textNotification: {
-    fontSize: '17@ms',
-    marginTop: '20@vs',
-  },
-  iconsBox: {
-    width: '90%',
-    flexDirection: 'row',
-    marginTop: '30@vs',
-    justifyContent: 'space-around',
-  },
-  contentView: {
-    height: '100%',
-    width: '100%',
-    marginTop: '170@vs',
-    alignItems: 'center',
-  },
-  btnSendBox: {
-    paddingHorizontal: '30@s',
-    marginTop: '70@vs',
-  },
-  textComeToFacebook: {
-    fontSize: '20@ms',
-    fontStyle: 'italic',
-    textDecorationLine: 'underline',
-  },
-  wrapTextTitle: {
-    color: Theme.common.white,
-    fontSize: '16@ms0.3',
-    fontWeight: '400',
-    marginLeft: '35@s',
-    marginBottom: '10@vs',
-  },
-});
+const $container: ViewStyle = {
+  alignItems: 'center',
+};
+const $input: TextStyle = {
+  marginTop: verticalScale(160),
+};
+const $button: ViewStyle = {
+  marginTop: verticalScale(100),
+};
 
 export default ForgetPasswordType;

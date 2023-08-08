@@ -8,7 +8,7 @@ import {
 import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {TYPE_OTP} from 'asset/enum';
-import {standValue} from 'asset/standardValue';
+import {BORDER_RADIUS, standValue} from 'asset/standardValue';
 import {
   StyleButton,
   StyleContainer,
@@ -21,15 +21,23 @@ import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE, SETTING_ROUTE} from 'navigation/config/routes';
 import {navigate, replace} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Keyboard, Text, TextInput, Vibration, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Keyboard,
+  Text,
+  TextInput,
+  TextStyle,
+  Vibration,
+  View,
+  ViewStyle,
+} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import {
   CodeField,
   Cursor,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {ScaledSheet} from 'react-native-size-matters';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 
 const SendOTP = ({
@@ -43,6 +51,7 @@ const SendOTP = ({
   const {countdown, resetCountdown, clearCountdown} = useCountdown(
     standValue.COUNT_DOWN,
   );
+  const shouldSendAgain = countdown <= 0;
 
   const [isAnimation, setIsAnimation] = useState(false);
   const [code, setCode] = useState('');
@@ -141,7 +150,7 @@ const SendOTP = ({
           code,
         });
         ModalAlert.success({
-          i18Content: 'login.loginScreen.openAccountSuccess',
+          i18Content: 'login.openAccountSuccess',
           onClose: () => navigate(LOGIN_ROUTE.loginScreen),
         });
       } catch (err) {
@@ -215,51 +224,36 @@ const SendOTP = ({
     }
   };
 
-  /**
-   * Render view
-   */
-  const TextSendAgain = useMemo(() => {
-    return countdown > 0
-      ? 'login.component.sendOTP.sendAgain'
-      : 'login.component.sendOTP.sendAgainNoCount';
-  }, [countdown > 0]);
-
   return (
     <StyleContainer
-      customStyle={styles.container}
+      customStyle={$container}
       headerProps={{
         title: 'login.confirmOTP',
       }}>
-      <View style={styles.wrapTextNotification}>
-        <StyleText
-          i18Text="login.notiOTP"
-          customStyle={styles.textNotification}
-        />
+      <View style={$wrapNotification}>
+        <StyleText i18Text="login.notiOTP" customStyle={$textNotification} />
         <StyleText
           originValue={params.paramsOTP.username}
-          customStyle={[styles.textDestination]}
+          customStyle={[$textDestination]}
         />
       </View>
 
-      {/* OTP Code Field */}
-      <Animatable.View
-        animation={isAnimation ? 'shake' : ''}
-        style={styles.wrapViewCode}>
+      <Animatable.View animation={isAnimation ? 'shake' : ''} style={$viewCode}>
         <CodeField
           ref={codeRef}
           {...props}
           value={code}
           onChangeText={setCode}
           cellCount={standValue.OTP_LENGTH}
-          rootStyle={styles.otpInputBox}
+          rootStyle={$inputView}
           keyboardType={'number-pad'}
           textContentType="oneTimeCode"
           renderCell={({index, symbol, isFocused}) => (
             <View
               key={index}
               onLayout={getCellOnLayoutHandler(index)}
-              style={[styles.codeInput, {backgroundColor: theme.white}]}>
-              <Text style={[styles.codeInputText, {color: theme.p_800}]}>
+              style={[$input, {backgroundColor: theme.white}]}>
+              <Text style={[$textInput, {color: theme.p_800}]}>
                 {symbol || (isFocused ? <Cursor /> : null)}
               </Text>
             </View>
@@ -270,78 +264,71 @@ const SendOTP = ({
       <StyleButton
         title="login.component.sendOTP.confirmButton"
         onPress={onPressConfirm}
-        containerStyle={styles.confirmButton}
+        containerStyle={$confirmButton}
         disable={code.length !== standValue.OTP_LENGTH}
         isLoading={loading}
       />
 
       <StyleTouchable
-        customStyle={styles.buttonSendAgain}
-        disable={countdown > 0}
+        customStyle={$btnSendAgain}
+        disable={!shouldSendAgain}
         onPress={onSendAgain}>
         <StyleText
-          i18Text={TextSendAgain}
+          i18Text={
+            shouldSendAgain
+              ? 'login.component.sendOTP.sendAgain'
+              : 'login.component.sendOTP.sendAgainNoCount'
+          }
           i18Params={{countdown}}
-          customStyle={styles.titleSendAgain}
+          customStyle={$textSendAgain}
         />
       </StyleTouchable>
     </StyleContainer>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  wrapTextNotification: {
-    marginTop: '36@vs',
-    alignItems: 'center',
-  },
-  textNotification: {
-    marginBottom: '2%',
-  },
-  textDestination: {
-    fontWeight: 'bold',
-  },
-  enterCodeInputView: {
-    width: '150@vs',
-    marginTop: '30@vs',
-  },
-  enterCodeInput: {
-    paddingHorizontal: '20@vs',
-    textAlign: 'center',
-    fontSize: '20@ms',
-  },
-  buttonSendAgain: {
-    marginTop: '45@vs',
-  },
-  confirmButton: {
-    paddingHorizontal: '50@vs',
-  },
-  titleSendAgain: {
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-  },
-  codeInput: {
-    width: '52@s',
-    height: '52@s',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '5@s',
-  },
-  codeInputText: {
-    fontSize: '32@ms',
-  },
-  otpInputBox: {
-    width: '100%',
-  },
-  wrapViewCode: {
-    width: '100%',
-    paddingHorizontal: '30@s',
-    paddingVertical: '2@vs',
-    marginTop: '50@vs',
-    marginBottom: '132@vs',
-  },
-});
+const $container: ViewStyle = {
+  alignItems: 'center',
+};
+const $wrapNotification: ViewStyle = {
+  marginTop: verticalScale(36),
+  alignItems: 'center',
+};
+const $textNotification: TextStyle = {
+  marginBottom: '2%',
+};
+const $textDestination: TextStyle = {
+  fontWeight: 'bold',
+};
+const $inputView: ViewStyle = {
+  width: '100%',
+};
+const $input: ViewStyle = {
+  width: scale(52),
+  height: scale(52),
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: BORDER_RADIUS.f4,
+};
+const $textInput: TextStyle = {
+  fontSize: moderateScale(32),
+};
+const $viewCode: ViewStyle = {
+  width: '100%',
+  paddingHorizontal: scale(30),
+  paddingVertical: verticalScale(2),
+  marginTop: verticalScale(50),
+  marginBottom: verticalScale(132),
+};
+const $btnSendAgain: ViewStyle = {
+  marginTop: verticalScale(45),
+};
+const $confirmButton: ViewStyle = {
+  paddingHorizontal: scale(50),
+};
+const $textSendAgain: TextStyle = {
+  fontWeight: 'bold',
+  textDecorationLine: 'underline',
+};
 
 export default SendOTP;

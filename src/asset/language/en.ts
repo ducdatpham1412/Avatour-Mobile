@@ -48,6 +48,11 @@ const login = {
   phone: 'Phone',
   yourAccountIsBeingLock:
     'Your account is temporarily locked.\nBy tapping <b>"Continue"</b>, you confirm unlock your account.',
+  keepSignIn: 'Remember account',
+  receiveThrow: 'Receive OTP via',
+  forgetPassword: 'Forgot password',
+  chooseMethodSignUp: 'Choose method signing up',
+  notHaveAccountYet: "Do not have an account? Let's",
   component: {
     sendOTP: {
       enterCode: 'Enter',
@@ -56,32 +61,7 @@ const login = {
       sendAgainNoCount: 'Re-send',
     },
   },
-  forgetPassword: {
-    type: {
-      header: 'Forgot password',
-      chooseMethod: 'Choose method restoring password',
-      user: 'Username',
-      username: 'Enter your email',
-      continue: 'Continue',
-      comeToFacebook: 'Come to facebook',
-    },
-    send: {
-      header: 'Forgot password',
-      receiveThrow: 'Receive OTP via',
-    },
-  },
   signUp: {
-    type: {
-      header: 'Sign up',
-      chooseMethod: 'Choose method signing up',
-    },
-    form: {
-      header: 'Sign up',
-      confirmPass: 'Confirm password',
-      confirmButton: 'Confirm',
-      enterEmail: 'Email',
-      enterPhone: 'Phone number',
-    },
     hadReadAndAgree: 'I have read and agree to',
     doffyTermsAndPolicy: 'Terms Of Use',
   },
@@ -92,17 +72,11 @@ const login = {
     chooseBirthday: 'Choosing birthday',
   },
   loginScreen: {
-    slogan: 'Chat and find interesting friends',
-    username: 'Email',
-    password: 'Password',
-    keepSignIn: 'Keep sign in',
-    signIn: 'Sign in',
     byLoginOrTappingEnjoy:
       'By logging in or tapping "Enjoy without account",\nyou agree to our',
     termsOfUse: 'Terms Of Use',
     learnMore: '. Learn more about how we process your data in our',
     privacyPolicy: 'Privacy Policy',
-    openAccountSuccess: 'Open account successfully!',
   },
   enjoy: 'Enjoy',
   login: 'Login',
@@ -118,6 +92,7 @@ const login = {
   password: 'Password',
   confirmPassword: 'Confirm password',
   newPassword: 'New password',
+  openAccountSuccess: 'Open account successfully!',
 };
 
 const discovery = {
@@ -557,7 +532,7 @@ const alert = {
   require: 'This is a required field',
   minLength: 'Please enter from {{min}} to {{max}} characters',
   regexPass:
-    'Password must be more than 8 characters, and include at least one uppercase letter and one special character',
+    'Password must be more than 8 characters, include at least one uppercase letter and one special character, does not include spaces',
   passNotMatch: 'Password not match',
   inValidEmail: 'Invalid email',
   inValidPhone: 'Invalid phone number',
