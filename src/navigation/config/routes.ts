@@ -14,7 +14,6 @@ enum ROOT_SCREEN {
   detailGroupBuying = '@ROOT_SCREEN/detailGroupBuying',
   myProfile = '@ROOT_SCREEN/myProfile',
   editProfile = '@ROOT_SCREEN/editProfile',
-  postsArchived = '@ROOT_SCREEN/postsArchived',
   upgradeAccount = '@ROOT_SCREEN/upgradeAccount',
   editHistory = '@ROOT_SCREEN/editHistory',
   joinsHistory = '@ROOT_SCREEN/joinsHistory',

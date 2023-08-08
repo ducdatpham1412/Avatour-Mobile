@@ -1,7 +1,6 @@
-import {setBubblePalaceAction, setNumberNewNotifications} from 'app-redux';
+import {setNumberNewNotifications} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE} from 'asset';
-import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
@@ -14,10 +13,11 @@ import ROOT_SCREEN, {
 import {navigate} from 'navigation/NavigationService';
 import {ModalScanQr} from 'navigation/screen/modals';
 import React, {useMemo, useRef} from 'react';
-import {Animated, TextStyle, View} from 'react-native';
+import {Animated, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {verticalScale} from 'react-native-size-matters';
 import {borderWidthTiny, logger} from 'utility/assistant';
+import {moderateScale, scale} from 'utility/scale';
 
 const iconSize = 27;
 
@@ -56,15 +56,10 @@ const TabNavigator = (props: any) => {
     const tintColor = isFocusDiscovery ? theme.p_700 : theme.gray_500;
     return (
       <StyleTouchable
-        customStyle={styles.buttonView}
+        customStyle={$button}
         onPress={() => {
           if (!isFocusDiscovery) {
             navigate(MAIN_SCREEN.discoveryRoute);
-          } else {
-            setBubblePalaceAction({
-              action: TYPE_BUBBLE_PALACE_ACTION.scrollToTopDiscovery,
-              payload: null,
-            });
           }
         }}>
         <StyleIcon
@@ -78,13 +73,13 @@ const TabNavigator = (props: any) => {
         />
       </StyleTouchable>
     );
-  }, [isFocusDiscovery]);
+  }, [isFocusDiscovery, theme]);
 
   const FavoriteButton = useMemo(() => {
     const tintColor = isFocusHeart ? theme.p_700 : theme.gray_500;
     return (
       <StyleTouchable
-        customStyle={styles.buttonView}
+        customStyle={$button}
         onPress={() => navigate(MAIN_SCREEN.favorite)}>
         <StyleIcon
           source={
@@ -101,11 +96,11 @@ const TabNavigator = (props: any) => {
         />
       </StyleTouchable>
     );
-  }, [isFocusHeart]);
+  }, [isFocusHeart, theme]);
 
   const ScanButton = useRef(() => (
     <StyleTouchable
-      customStyle={[styles.buttonView, {justifyContent: 'flex-start'}]}
+      customStyle={[$button, {justifyContent: 'flex-start'}]}
       onPress={showModalQr}>
       <StyleIcon source={Images.icons.scan} size={30} />
     </StyleTouchable>
@@ -115,7 +110,7 @@ const TabNavigator = (props: any) => {
     const tintColor = isFocusNotification ? theme.p_700 : theme.gray_500;
     return (
       <StyleTouchable
-        customStyle={styles.buttonView}
+        customStyle={$button}
         onPress={() => {
           setNumberNewNotifications(0);
           navigate(MAIN_SCREEN.notificationRoute);
@@ -131,12 +126,12 @@ const TabNavigator = (props: any) => {
             customStyle={{tintColor}}
           />
           {numberNewNotifications > 0 && (
-            <View style={styles.newNotificationBox}>
+            <View style={$newNotificationBox}>
               <StyleText
                 originValue={
                   numberNewNotifications > 99 ? 99 : numberNewNotifications
                 }
-                customStyle={styles.textNewMessages}
+                customStyle={$textNewMessages}
               />
             </View>
           )}
@@ -147,7 +142,7 @@ const TabNavigator = (props: any) => {
         />
       </StyleTouchable>
     );
-  }, [isFocusNotification]);
+  }, [isFocusNotification, theme, numberNewNotifications]);
 
   const ProfileButton = useMemo(() => {
     const tintColor = isFocusProfile ? theme.p_700 : theme.gray_500;
@@ -158,15 +153,11 @@ const TabNavigator = (props: any) => {
             navigate(MAIN_SCREEN.profileRoute, {
               screen: PROFILE_ROUTE.myProfile,
             });
-            setBubblePalaceAction({
-              action: TYPE_BUBBLE_PALACE_ACTION.scrollToTopMyProfile,
-              payload: null,
-            });
           } else {
             navigate(MAIN_SCREEN.profileRoute);
           }
         }}
-        customStyle={styles.buttonView}>
+        customStyle={$button}>
         <StyleIcon
           source={
             isFocusProfile ? Images.icons.profileFocus : Images.icons.profile
@@ -180,12 +171,12 @@ const TabNavigator = (props: any) => {
         />
       </StyleTouchable>
     );
-  }, [isFocusProfile]);
+  }, [isFocusProfile, theme]);
 
   return (
     <Animated.View
       style={[
-        styles.tabBarDown,
+        $tabBarDown,
         {
           paddingBottom: bottom || safePaddingNotZero,
           paddingTop: verticalScale(8),
@@ -202,51 +193,34 @@ const TabNavigator = (props: any) => {
   );
 };
 
-const styles = ScaledSheet.create({
-  newNotificationBox: {
-    position: 'absolute',
-    width: '15@ms',
-    height: '15@ms',
-    borderRadius: '10@ms',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Theme.common.red,
-    top: '0@ms',
-    right: '0@ms',
-  },
-  // Tab bar down
-  tabBarDown: {
-    width: '100%',
-    flexDirection: 'row',
-    overflow: 'hidden',
-    paddingHorizontal: '5@s',
-    borderTopWidth: borderWidthTiny,
-  },
-  buttonView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconTabBar: {
-    width: '25@ms',
-    height: '25@ms',
-  },
-  createBox: {
-    paddingHorizontal: '8@ms',
-    paddingVertical: '2@ms',
-    borderRadius: '7@ms',
-  },
-  iconCreate: {
-    fontSize: '20@ms',
-    color: Theme.common.white,
-  },
-  textNewMessages: {
-    fontSize: '10@ms',
-    color: 'white',
-    fontFamily: undefined,
-  },
-});
-
+const $newNotificationBox: ViewStyle = {
+  position: 'absolute',
+  width: moderateScale(15),
+  height: moderateScale(15),
+  borderRadius: 20,
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: Theme.common.red,
+  top: 0,
+  right: 0,
+};
+const $textNewMessages: TextStyle = {
+  fontSize: moderateScale(10),
+  color: 'white',
+  fontFamily: undefined,
+};
+const $tabBarDown: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  overflow: 'hidden',
+  paddingHorizontal: scale(4),
+  borderTopWidth: borderWidthTiny,
+};
+const $button: ViewStyle = {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
 const $textTitle: TextStyle = {
   fontSize: FONT_SIZE.f5,
   marginTop: verticalScale(4),

@@ -56,6 +56,7 @@ interface TypeGroupJoin {
 interface TypePersonalJoinOfAdmin {
   id: number;
   deposit: number;
+  price: number;
   amount: number;
   time_will_buy: string;
   note: string;
@@ -138,36 +139,6 @@ interface TypeReportUserRequest {
   reason: number;
   description: string;
   listImages: Array<string>;
-}
-
-interface TypeBubblePalace {
-  id: string;
-  postType: number;
-  topic: Array<number>;
-  feeling: number | null;
-  location: string | null;
-  link: string | null;
-  userReviewed?: {
-    id: number;
-    name: string;
-    avatar: string;
-    location: string;
-    description: string;
-  };
-  content: string;
-  images: Array<string>;
-  stars: number;
-  totalLikes: number;
-  totalComments: number;
-  totalSaved: number;
-  creator: number;
-  creatorName: string;
-  creatorAvatar: string;
-  created: string;
-  isLiked: boolean;
-  isSaved: boolean;
-  isDraft?: boolean;
-  relationship: number;
 }
 
 interface TypeGetLikePostsResponse {

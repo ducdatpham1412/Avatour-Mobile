@@ -27,7 +27,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
 import Animated, {
-  AnimateStyle,
+  AnimatedStyle,
   Extrapolation,
   interpolate,
   useAnimatedGestureHandler,
@@ -76,7 +76,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
   const searchRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalAddLocationRef = useRef<ElementRef<typeof ModalAddLocation>>(null);
   const tabViewRef = useRef<ElementRef<typeof TabView>>(null);
-  const timeOutRef = useRef(0);
+  const timeOutRef = useRef<NodeJS.Timeout>();
   const saveLength = useRef(0);
   const numberOfDays = schedules.length;
 
@@ -108,7 +108,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
     };
   }, []);
   const buttonSaveSmallStyle = useAnimatedStyle(() => {
-    const scale = interpolate(
+    const scaleButtonSave = interpolate(
       aim.value,
       [
         levelModalScheduleHeight.low,
@@ -124,7 +124,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
     return {
       transform: [
         {
-          scale,
+          scale: scaleButtonSave,
         },
       ] as never,
     };
@@ -314,7 +314,6 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
               return () => (
                 <DayScheduleCreateTour
                   dayIndex={index}
-                  initEditMode
                   onShowModalAddLocation={value => {
                     modalAddLocationRef.current?.show(value);
                   }}
@@ -460,7 +459,7 @@ export const useContextCreateTour = (): TypeContext =>
 const $container: ViewStyle = {
   flex: 1,
 };
-const $body: AnimateStyle<ViewStyle> = {
+const $body: AnimatedStyle<ViewStyle> = {
   position: 'absolute',
   width: '100%',
   bottom: 0,
@@ -480,7 +479,7 @@ const $tabBar: ViewStyle = {
 const $textIndex: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
 };
-const $button: AnimateStyle<ViewStyle> = {
+const $button: AnimatedStyle<ViewStyle> = {
   position: 'absolute',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -527,10 +526,10 @@ const $divider: ViewStyle = {
   borderTopWidth: borderWidthTiny,
   marginTop: verticalScale(12),
 };
-const $gesture: AnimateStyle<ViewStyle> = {
+const $gesture: AnimatedStyle<ViewStyle> = {
   width: '100%',
 };
-const $buttonSaveSmall: AnimateStyle<ViewStyle> = {
+const $buttonSaveSmall: AnimatedStyle<ViewStyle> = {
   position: 'absolute',
   right: scale(12),
 };

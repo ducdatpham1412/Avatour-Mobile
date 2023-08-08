@@ -1,12 +1,11 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import {TypeBubblePalaceAction, TypeChatTagResponse} from 'api/interface';
+import {TypeChatTagResponse} from 'api/interface';
 import {
   accountSliceAction,
   initialAccountState,
 } from 'app-redux/account/accountSlice';
 import {
-  logicSliceAction,
   ReduxPostCreatedHandle,
+  logicSliceAction,
 } from 'app-redux/account/logicSlice';
 import FindmeStore, {RootState, useAppSelector} from 'app-redux/store';
 import {THEME_TYPE} from 'asset/enum';
@@ -111,10 +110,6 @@ export const Redux = {
 
   setToken: (newToken: string | null) => {
     FindmeStore.dispatch(logicSliceAction.setToken(newToken));
-  },
-
-  setBubblePalaceAction: (newBubble: TypeBubblePalaceAction) => {
-    FindmeStore.dispatch(logicSliceAction.setBubblePalace(newBubble));
   },
 
   setNumberNewMessage: (value: number) => {

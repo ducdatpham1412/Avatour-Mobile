@@ -1,14 +1,15 @@
+import {BORDER_RADIUS} from 'asset';
 import {StyleImage, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {ModalActionSheet} from 'navigation/screen/modals';
 import React, {memo, useCallback, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {StyleProp, View, ViewStyle} from 'react-native';
-import {ScaledSheet, scale} from 'react-native-size-matters';
+import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import {scale} from 'react-native-size-matters';
 import AntDesgin from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import ImageUploader from 'utility/ImageUploader';
 import {logger, seeDetailImage} from 'utility/assistant';
+import {moderateScale} from 'utility/scale';
 
 interface Props {
   numberImages: number;
@@ -19,7 +20,6 @@ interface Props {
 
 const RowPickImages = (props: Props) => {
   const {numberImages, listImages, setListImages, containerStyle} = props;
-  const {t} = useTranslation();
   const theme = useTheme();
 
   const [width, setWidth] = useState(0);
@@ -84,12 +84,12 @@ const RowPickImages = (props: Props) => {
       temp.splice(index, 1);
       setListImages(temp);
     },
-    [listImages],
+    [setListImages, listImages],
   );
 
   return (
     <View
-      style={[styles.container, containerStyle]}
+      style={[$container, containerStyle]}
       onLayout={({nativeEvent}) => setWidth(nativeEvent.layout.width)}>
       {checkArray().map((item: string, index: number) => {
         let paddingLeft = scale(2);
@@ -113,16 +113,15 @@ const RowPickImages = (props: Props) => {
             }}>
             <View
               style={[
-                styles.imageBoxIn,
+                $imageBoxIn,
                 {
                   borderColor: theme.gray_400,
                   borderWidth: listImages[index] ? 0 : scale(0.5),
                 },
               ]}>
-              {/* Image */}
               {listImages[index] ? (
                 <StyleTouchable
-                  customStyle={styles.touchImage}
+                  customStyle={$touchImage}
                   onPress={() =>
                     seeDetailImage({
                       images: listImages.map(url => url),
@@ -131,30 +130,23 @@ const RowPickImages = (props: Props) => {
                   }>
                   <StyleImage
                     source={{uri: listImages[index]}}
-                    customStyle={styles.image}
+                    customStyle={$image}
                   />
                 </StyleTouchable>
               ) : (
                 <StyleTouchable onPress={onOpenActionSheet}>
                   <AntDesgin
                     name="upload"
-                    style={[styles.iconUpload, {color: theme.black}]}
+                    style={[$iconUpload, {color: theme.black}]}
                   />
                 </StyleTouchable>
               )}
 
-              {/* Button delete */}
               {!!listImages[index] && (
                 <StyleTouchable
-                  customStyle={[
-                    styles.touchIconX,
-                    {backgroundColor: theme.white},
-                  ]}
+                  customStyle={[$buttonX, {backgroundColor: theme.white}]}
                   onPress={() => onDeleteImageAtIndex(index)}>
-                  <Feather
-                    name="x"
-                    style={[styles.iconX, {color: theme.black}]}
-                  />
+                  <Feather name="x" style={[$iconX, {color: theme.black}]} />
                 </StyleTouchable>
               )}
             </View>
@@ -165,39 +157,37 @@ const RowPickImages = (props: Props) => {
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '100%',
-    flexDirection: 'row',
-  },
-  imageBoxIn: {
-    flex: 1,
-    borderRadius: '7@s',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  touchImage: {
-    width: '100%',
-    height: '100%',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: '7@s',
-  },
-  iconUpload: {
-    fontSize: '20@ms',
-  },
-  touchIconX: {
-    position: 'absolute',
-    top: '-5@ms',
-    right: 0,
-    padding: '5@ms',
-    borderRadius: '10@s',
-  },
-  iconX: {
-    fontSize: '10@ms',
-  },
-});
+const $container: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+};
+const $imageBoxIn: ImageStyle = {
+  flex: 1,
+  borderRadius: BORDER_RADIUS.f4,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+const $touchImage: ViewStyle = {
+  width: '100%',
+  height: '100%',
+};
+const $image: ImageStyle = {
+  width: '100%',
+  height: '100%',
+  borderRadius: BORDER_RADIUS.f4,
+};
+const $iconUpload: TextStyle = {
+  fontSize: moderateScale(20),
+};
+const $buttonX: ViewStyle = {
+  position: 'absolute',
+  top: -moderateScale(5),
+  right: -moderateScale(5),
+  padding: 5,
+  borderRadius: 30,
+};
+const $iconX: TextStyle = {
+  fontSize: moderateScale(10),
+};
 
 export default memo(RowPickImages);

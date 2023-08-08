@@ -90,7 +90,7 @@ export const checkOnEnd = (
   }
 
   /**
-   * Hold and pull not to fast: Velocity not > 1300 or < -1300
+   * Hold and pull not to fast: -1300 < velocity < 1300
    */
   if (shareValue.value < levelModalScheduleHeight.middleLow) {
     shareValue.value = move(levelModalScheduleHeight.low);
@@ -125,7 +125,7 @@ const DetailTour = ({
   const [{data, loading}] = useDetailTour(tourId, {
     revalidateAll: true,
   });
-  const isMyTour = data?.creator == myId;
+  const isMyTour = data?.creator === myId;
 
   const aim = useSharedValue(levelModalScheduleHeight.high);
   const modalStyle = useAnimatedStyle(() => {

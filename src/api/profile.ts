@@ -27,7 +27,7 @@ export const apiUnLikePost = (params: TypeReactRequest) => {
 export const apiGetListGroupBuying = ({
   params,
 }: TypeParamsPaging<{userId: number}>) => {
-  return request.get(`/profile/sales`, {
+  return request.get('/profile/sales', {
     params: {
       user_id: params.userId,
       page_index: params.pageIndex,
@@ -96,15 +96,6 @@ export const apiUnFollowUser = (id: number) => {
   return request.delete(`/profile/follow/${id}`);
 };
 
-export const apiCreatePost = (
-  params: TypeCreatePostRequest,
-): Promise<{
-  success: boolean;
-  data: TypeBubblePalace;
-}> => {
-  return request.post('/profile/create-post', params);
-};
-
 export const apiEditPost = (params: {
   idPost: string;
   data: TypeEditPostRequest;
@@ -123,12 +114,6 @@ export const apiGetListSalesLiked = ({params}: TypeParamsPaging) => {
       take: params.take,
       type: TYPE_SALE_SEARCH.favorite,
     },
-  });
-};
-
-export const apiGetListPostsArchived = ({params}: TypeParamsPaging) => {
-  return request.get('/profile/list-posts-archived', {
-    params,
   });
 };
 

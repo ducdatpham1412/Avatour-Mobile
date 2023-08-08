@@ -1,13 +1,12 @@
-import { apiGetListComments } from 'api/discovery';
-import { TypeCommentResponse } from 'api/interface';
-import { TYPE_BUBBLE_PALACE_ACTION } from 'asset/enum';
-import { StyleText, StyleTouchable } from 'components/base';
+import {apiGetListComments} from 'api/discovery';
+import {TypeCommentResponse} from 'api/interface';
+import {TYPE_BUBBLE_PALACE_ACTION} from 'asset/enum';
+import {StyleText, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import usePaging from 'hook/usePaging';
-import Redux from 'hook/useRedux';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Animated, View } from 'react-native';
-import { moderateScale, scale, ScaledSheet } from 'react-native-size-matters';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Animated, View} from 'react-native';
+import {moderateScale, scale, ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ItemComment from './ItemComment';
 
@@ -51,10 +50,6 @@ const CommentReplies = (props: Props) => {
         preValue.concat(bubblePalaceAction.payload.data),
       );
     }
-    Redux.setBubblePalaceAction({
-      action: TYPE_BUBBLE_PALACE_ACTION.null,
-      payload: null,
-    });
   }, [bubblePalaceAction.action, repliedCommentId]);
 
   const RenderItemComment = useCallback(

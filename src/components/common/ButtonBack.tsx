@@ -2,8 +2,8 @@ import {StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {moderateScale, scale} from 'utility/scale';
 
 interface Props {
   containerStyle?: StyleProp<ViewStyle>;
@@ -16,25 +16,23 @@ const ButtonBack = ({containerStyle, onPress, iconStyle}: Props) => {
 
   return (
     <StyleTouchable
-      customStyle={[styles.container, {backgroundColor: white}, containerStyle]}
+      customStyle={[$container, {backgroundColor: white}, containerStyle]}
       onPress={onPress}>
       <MaterialIcons
         name="arrow-back"
-        style={[styles.iconX, {color: black}, iconStyle]}
+        style={[$iconX, {color: black}, iconStyle]}
       />
     </StyleTouchable>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    position: 'absolute',
-    padding: '5@ms',
-    borderRadius: '30@s',
-  },
-  iconX: {
-    fontSize: '17@ms',
-  },
-});
+const $container: ViewStyle = {
+  position: 'absolute',
+  padding: scale(4),
+  borderRadius: 50,
+};
+const $iconX: TextStyle = {
+  fontSize: moderateScale(17),
+};
 
 export default ButtonBack;

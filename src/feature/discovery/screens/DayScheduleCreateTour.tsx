@@ -1,7 +1,7 @@
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
 import {TypeShowModalAddLocation} from 'navigation/screen/modals';
-import React, {useState} from 'react';
+import React from 'react';
 import {View, ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -12,7 +12,6 @@ import {ItemLocationProps} from '../components/ItemLocation';
 
 interface Props {
   dayIndex: number;
-  initEditMode: boolean;
   onShowModalAddLocation: (value: TypeShowModalAddLocation) => void;
 }
 
@@ -40,16 +39,10 @@ export const renderItemLocation = (
   );
 };
 
-const DayScheduleCreateTour = ({
-  dayIndex,
-  initEditMode,
-  onShowModalAddLocation,
-}: Props) => {
+const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
   const {bottom} = useSafeAreaInsets();
   const [{schedules}, {setSchedules}] = useContextCreateTour();
   const listLocations = schedules[dayIndex];
-
-  const [isEditMode, setIsEditMode] = useState(initEditMode);
 
   return (
     <View style={{flex: 1}}>
@@ -60,7 +53,7 @@ const DayScheduleCreateTour = ({
             onDrag: drag,
             isActive,
             getIndex,
-            isEditMode,
+            isEditMode: true,
             onAddLocation: () =>
               onShowModalAddLocation({
                 onSave: newLocation => {
@@ -113,35 +106,31 @@ const DayScheduleCreateTour = ({
         contentContainerStyle={[
           $contentContainer,
           {
-            paddingBottom:
-              (bottom || safePaddingNotZero) +
-              (isEditMode ? verticalScale(50) : 0),
+            paddingBottom: (bottom || safePaddingNotZero) + verticalScale(50),
           },
         ]}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          isEditMode ? (
-            <ButtonAddLocation
-              isActive={false}
-              onPress={() =>
-                onShowModalAddLocation({
-                  onSave: newLocation => {
-                    impactLight();
-                    setSchedules(pre => {
-                      return pre.map((item, __index) => {
-                        if (__index !== dayIndex) {
-                          return item;
-                        }
-                        return [newLocation].concat(item);
-                      });
+        ListHeaderComponent={() => (
+          <ButtonAddLocation
+            isActive={false}
+            onPress={() =>
+              onShowModalAddLocation({
+                onSave: newLocation => {
+                  impactLight();
+                  setSchedules(pre => {
+                    return pre.map((item, __index) => {
+                      if (__index !== dayIndex) {
+                        return item;
+                      }
+                      return [newLocation].concat(item);
                     });
-                  },
-                  listCurrentIds: listLocations.map(item => item?.id),
-                })
-              }
-            />
-          ) : null
-        }
+                  });
+                },
+                listCurrentIds: listLocations.map(item => item?.id),
+              })
+            }
+          />
+        )}
       />
     </View>
   );

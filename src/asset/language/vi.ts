@@ -388,7 +388,6 @@ const profile = {
   thisPostInDraft: 'Bạn đang lưu nháp bài này',
   goToPost: 'Đi tới đăng bài',
   reviewProvider: 'Viết review',
-  postsArchived: 'Bài viết lưu trữ',
   gotToCreateGb: 'Tạo chiến dịch mua chung đầu tiên',
   createReviewPost: 'Bài review',
   createGroupBuying: 'Chiến dịch mua chung',
@@ -408,7 +407,8 @@ const profile = {
   bankName: 'Ngân hàng',
   accountNumber: 'Số tài khoản',
   accountHolder: 'Chủ tài khoản',
-  agreeSendInformation: `Bằng việc ấn <b>"Xác nhận"</b>, bạn đồng ý gửi các thông tin trên cho chúng tôi.\nQuá trình xét duyệt có thể mất từ 1 tới 7 ngày, chúng tôi sẽ thông báo tới bạn qua địa chỉ email <b>{{email}}</b>`,
+  agreeSendInformation:
+    'Bằng việc ấn <b>"Xác nhận"</b>, bạn đồng ý gửi các thông tin trên cho chúng tôi.\nQuá trình xét duyệt có thể mất từ 1 tới 7 ngày, chúng tôi sẽ thông báo tới bạn qua địa chỉ email <b>{{email}}</b>',
   phoneNumber: 'Số điện thoại của bạn',
   requestUpgradeSuccess: 'Gửi yêu cầu thành công',
   description: 'Mô tả về bạn',
