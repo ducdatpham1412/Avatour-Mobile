@@ -26,7 +26,7 @@ const StyleButton = (props: StyleTouchableProps) => {
     <StyleTouchable
       customStyle={[
         $container,
-        {backgroundColor: disable ? theme.gray_300 : theme.p_700},
+        {backgroundColor: disable ? theme.gray_300 : theme.p_600},
         containerStyle,
       ]}
       onPress={onPress}

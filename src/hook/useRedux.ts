@@ -220,24 +220,6 @@ export const Redux = {
   setModeExp: (value: boolean) => {
     FindmeStore.dispatch(accountSliceAction.setModeExp(value));
   },
-
-  logOut: () => {
-    const {passport} = initialAccountState;
-
-    // Set modeExp can not set here, cuz it make row choose socket
-    // of MessScreen render again while it's unmounting -> CRASH APP
-    // Instead we will set when press button in Login or ChoosingLoginOrEnjoy
-    // Redux.setModeExp(true);
-
-    Redux.setToken(null);
-    Redux.setModeExp(false);
-    Redux.updatePassport({
-      information: passport.information,
-      profile: passport.profile,
-    });
-    Redux.updateListChatTag([]);
-    Redux.setIsLogOut(true);
-  },
 };
 
 export const setPostCreatedHandling = (value: ReduxPostCreatedHandle) => {

@@ -36,11 +36,9 @@ enum ROOT_SCREEN {
  */
 enum LOGIN_ROUTE {
   starter = '@LOGIN_ROUTE/starter',
-  choosingLoginOrEnjoy = '@LOGIN_ROUTE/choosingLoginOrEnjoy',
   loginScreen = '@LOGIN_ROUTE/loginScreen',
   confirmOpenAccount = '@LOGIN_ROUTE/confirmOpenAccount',
   // THIS BLOCK IS FOR SIGN_UP FORM
-  signUpType = '@LOGIN_ROUTE/signUpType',
   signUpForm = '@LOGIN_ROUTE/signUpForm',
   editBasicInformation = '@LOGIN_ROUTE/editBasicInformation',
   // ------------------------------

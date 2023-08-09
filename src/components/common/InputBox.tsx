@@ -11,18 +11,55 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 import {I18Normalize} from 'utility/I18Next';
-import {ms, s, vs} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 
 type Props = TextInputProps & {
   i18Placeholder?: I18Normalize;
   containerStyle?: StyleProp<ViewStyle>;
   isError?: boolean;
   textError?: I18Normalize;
+  width?: ViewStyle['width'];
+};
+
+interface ErrorTextProps {
+  text: I18Normalize;
+}
+
+const ErrorText = ({text}: ErrorTextProps) => {
+  const theme = useTheme();
+  //   const aim = useSharedValue(0);
+  const viewStyle = useAnimatedStyle(() => {
+    return {
+      width: '100%',
+      //   height: aim.value,
+    };
+  });
+
+  return (
+    <Animated.View style={viewStyle}>
+      <StyleText
+        i18Text={text}
+        customStyle={[$textError, {color: theme.red}]}
+        onTextLayout={e => {
+          //   const totalHeight =
+          //     e.nativeEvent.lines.reduce(
+          //       (pre, current) => pre + current.height,
+          //       0,
+          //     ) + moderateScale(2);
+          //   console.log('total height is: ', totalHeight);
+          //   aim.value = withTiming(totalHeight, {
+          //     duration: 300,
+          //   });
+        }}
+      />
+    </Animated.View>
+  );
 };
 
 const InputBox = (
-  {i18Placeholder, containerStyle, isError, textError, ...rest}: Props,
+  {i18Placeholder, containerStyle, isError, textError, width, ...rest}: Props,
   ref: any,
 ) => {
   const theme = useTheme();
@@ -30,7 +67,7 @@ const InputBox = (
 
   if (isError !== undefined) {
     return (
-      <View style={[$container, containerStyle]}>
+      <View style={[$container, {width: width ?? '80%'}, containerStyle]}>
         <AppInput
           ref={ref}
           {...rest}
@@ -41,11 +78,7 @@ const InputBox = (
             rest.style,
           ]}
         />
-        <StyleText
-          i18Text={isError ? textError : 'common.null'}
-          customStyle={[$textError, {color: theme.red}]}
-          numberOfLines={2}
-        />
+        {isError && textError && <ErrorText text={textError} />}
       </View>
     );
   }
@@ -59,7 +92,11 @@ const InputBox = (
       placeholder={i18Placeholder ? t(i18Placeholder) : rest.placeholder}
       style={[
         $input,
-        {backgroundColor: theme.white, color: theme.black},
+        {
+          width: width ?? '80%',
+          backgroundColor: theme.white,
+          color: theme.black,
+        },
         rest.style,
       ]}
     />
@@ -67,26 +104,24 @@ const InputBox = (
 };
 
 const $container: ViewStyle = {
-  width: '80%',
   alignSelf: 'center',
 };
 const $input: TextStyle = {
   width: '80%',
   borderRadius: 100,
   paddingTop: Platform.select({
-    ios: vs(14),
-    android: vs(8),
+    ios: verticalScale(14),
+    android: verticalScale(8),
   }),
   paddingBottom: Platform.select({
-    ios: vs(14),
-    android: vs(8),
+    ios: verticalScale(14),
+    android: verticalScale(8),
   }),
-  paddingHorizontal: s(15),
+  paddingHorizontal: scale(15),
 };
 const $textError: TextStyle = {
   fontSize: FONT_SIZE.f4,
-  paddingHorizontal: s(15),
-  height: ms(30),
+  paddingHorizontal: scale(15),
 };
 
 export default forwardRef(InputBox);

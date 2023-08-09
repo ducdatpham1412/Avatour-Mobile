@@ -1,23 +1,24 @@
-import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {IconPaddingField} from 'asset/icons';
+import {Metrics} from 'asset/metrics';
+import Theme from 'asset/theme/Theme';
 import {
-  SafeView,
   StyleButton,
   StyleContainer,
-  StyleImage,
   StyleText,
+  StyleTouchable,
 } from 'components/base';
-import StyleTouchable from 'components/base/StyleTouchable';
 import InputBox from 'components/common/InputBox';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import React, {useRef, useState} from 'react';
-import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {moderateScale, ms, s, scale, verticalScale, vs} from 'utility/scale';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 import ListSaveAcc from './components/ListSaveAcc';
 import {useLogin} from './hooks';
+import {useTranslation} from 'react-i18next';
 
 const LoginScreen = () => {
   const [
@@ -31,206 +32,219 @@ const LoginScreen = () => {
     },
   ] = useLogin();
   const theme = useTheme();
+  const {t} = useTranslation();
 
   const inputPasswordRef = useRef<any>(null);
   const [userRef, setUserRef] = useState(false);
   const [isKeepSign, setIsKeepSign] = useState(false);
+  const [passwordPaddingRight, setPasswordPaddingRight] = useState(0);
 
   return (
-    <StyleContainer contentContainerStyle={$container}>
-      <StyleText
-        originValue="We make your trip as easy as possible"
-        customStyle={{
-          fontWeight: 'bold',
-          fontSize: moderateScale(30),
-          width: '80%',
-        }}
-      />
-      <StyleImage
-        source={{
-          uri: 'https://www.radfordmedicalpractice.co.uk/wp-content/uploads/sites/622/2022/02/travel.jpeg',
-        }}
-        customStyle={$imageBanner}
-        defaultImageSource="image"
-      />
-
-      <View style={$inputView}>
-        <InputBox
-          i18Placeholder="login.loginScreen.username"
-          value={username}
-          onChangeText={value => setUsername(value)}
-          onFocus={() => setUserRef(true)}
-          onBlur={() => setUserRef(false)}
-          onSubmitEditing={() => inputPasswordRef.current.focus()}
-          style={$input}
+    <View style={[$container, {backgroundColor: theme.p_600}]}>
+      <View style={$paddingField}>
+        <StyleText originValue="Avatour" customStyle={$textAvatour} />
+        <StyleText
+          originValue="Tôn vinh nét độc bản của du lịch Việt"
+          customStyle={$textHonneur}
         />
-
-        <InputBox
-          ref={inputPasswordRef}
-          i18Placeholder="login.loginScreen.password"
-          value={password}
-          onChangeText={value => setPassword(value)}
-          style={styles.inputForm}
-          returnKeyType="default"
-          secureTextEntry
-        />
-
-        <View style={$rememberView}>
-          <StyleTouchable
-            customStyle={[$rememberButton, {borderColor: theme.gray_600}]}
-            onPress={() => setIsKeepSign(!isKeepSign)}>
-            {isKeepSign && (
-              <AntDesign
-                name="check"
-                style={[$checkIcon, {color: theme.black}]}
-              />
-            )}
-          </StyleTouchable>
-          <StyleText
-            i18Text="login.loginScreen.keepSignIn"
-            style={{color: theme.gray_500}}
-          />
-        </View>
+        <IconPaddingField size={Metrics.width} />
       </View>
 
-      <StyleButton
-        title="login.loginScreen.signIn"
-        containerStyle={styles.loginButton}
-        isLoading={loading}
-        onPress={() => submitLogin(isKeepSign)}
-      />
-
-      <StyleTouchable
-        customStyle={styles.forgotPasswordView}
-        onPress={() => navigate(LOGIN_ROUTE.forgetPasswordType)}>
-        <StyleText
-          i18Text="login.forgotPassword"
-          customStyle={[styles.forgotPasswordText, {color: theme.black}]}
-        />
-      </StyleTouchable>
-      <StyleTouchable
-        customStyle={[
-          styles.forgotPasswordView,
-          {marginTop: verticalScale(15)},
-        ]}
-        onPress={() => navigate(LOGIN_ROUTE.signUpForm)}>
-        <StyleText
-          i18Text="login.signUp.form.header"
-          customStyle={[styles.forgotPasswordText, {color: theme.black}]}
-        />
-      </StyleTouchable>
-
-      {/* <View style={styles.signUpView}>
-        <StyleText i18Text="login.orSignIn" customStyle={styles.textOrSignIn} />
-        <View style={styles.signUpBox}>
-          {isIOS && (
-            <StyleTouchable onPress={signInWithApple}>
-              <StyleImage
-                source={Images.icons.apple}
-                customStyle={styles.iconSignIn}
+      <StyleContainer
+        containerStyle={$styleContainer}
+        customStyle={$body}
+        extraHeight={verticalScale(30)}>
+        <View
+          style={[
+            $modal,
+            {
+              backgroundColor: theme.white,
+            },
+          ]}>
+          <View style={$inputView}>
+            <StyleText i18Text="login.login" customStyle={$title} />
+            <InputBox
+              i18Placeholder="login.emailPhone"
+              value={username}
+              onChangeText={value => setUsername(value)}
+              onFocus={() => setUserRef(true)}
+              onBlur={() => setUserRef(false)}
+              onSubmitEditing={() => inputPasswordRef.current.focus()}
+              style={[$input, {backgroundColor: theme.gray_100}]}
+            />
+            <View style={$password}>
+              <InputBox
+                ref={inputPasswordRef}
+                i18Placeholder="login.password"
+                value={password}
+                onChangeText={value => setPassword(value)}
+                style={[
+                  $inputPassword,
+                  {
+                    backgroundColor: theme.gray_100,
+                    paddingRight: passwordPaddingRight,
+                  },
+                ]}
+                returnKeyType="default"
+                secureTextEntry
               />
-            </StyleTouchable>
-          )}
-          <StyleTouchable onPress={() => null}>
-            <StyleImage
-              source={Images.icons.facebook}
-              customStyle={styles.iconSignIn}
-            />
-          </StyleTouchable>
-          <StyleTouchable onPress={signInWithGoogle}>
-            <StyleImage
-              source={Images.icons.email}
-              customStyle={styles.iconSignIn}
-            />
-          </StyleTouchable>
-        </View>
-      </View> */}
+              <StyleTouchable
+                customStyle={$forgot}
+                onLayout={e =>
+                  setPasswordPaddingRight(
+                    e.nativeEvent.layout.width + scale(36),
+                  )
+                }
+                onPress={() => navigate(LOGIN_ROUTE.forgetPasswordType)}>
+                <StyleText
+                  i18Text="login.forgetPassword"
+                  customStyle={[$forgotText, {color: theme.gray_600}]}
+                />
+              </StyleTouchable>
+            </View>
+            <View style={$rememberView}>
+              <StyleTouchable
+                customStyle={[$rememberButton, {borderColor: theme.gray_600}]}
+                onPress={() => setIsKeepSign(!isKeepSign)}>
+                {isKeepSign && (
+                  <AntDesign
+                    name="check"
+                    style={[$checkIcon, {color: theme.black}]}
+                  />
+                )}
+              </StyleTouchable>
+              <StyleText
+                i18Text="login.keepSignIn"
+                style={{color: theme.gray_500}}
+              />
+            </View>
+          </View>
 
-      {userRef && !username && !!listSavedAccounts.length && (
-        <ListSaveAcc
-          listAcc={listSavedAccounts}
-          selectAcc={selectSavedAccount}
-          deleteAcc={deleteSavedAccount}
-        />
-      )}
-    </StyleContainer>
+          <StyleButton
+            title="login.login"
+            containerStyle={$loginButton}
+            isLoading={loading}
+            onPress={() => submitLogin(isKeepSign)}
+          />
+
+          <StyleText
+            i18Text="login.notHaveAccountYet"
+            customStyle={$signUpText}>
+            <StyleText
+              originValue={` ${t('login.register')}`}
+              customStyle={[$registerText, {color: theme.p_600}]}
+              onPress={() => navigate(LOGIN_ROUTE.signUpForm)}
+            />
+          </StyleText>
+
+          {userRef && !username && !!listSavedAccounts.length && (
+            <ListSaveAcc
+              listAcc={listSavedAccounts}
+              selectAcc={selectSavedAccount}
+              deleteAcc={deleteSavedAccount}
+            />
+          )}
+        </View>
+      </StyleContainer>
+    </View>
   );
 };
 
+const spaceHeight = verticalScale(310);
 const $container: ViewStyle = {
-  paddingHorizontal: scale(20),
+  flex: 1,
+};
+const $paddingField: ViewStyle = {
+  position: 'absolute',
+  top: 0,
+  width: '100%',
+  height: spaceHeight,
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+};
+const $textAvatour: TextStyle = {
+  color: Theme.common.white,
+  fontSize: moderateScale(40),
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $textHonneur: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  color: Theme.common.white,
+};
+const $styleContainer: ViewStyle = {
+  backgroundColor: 'transparent',
+  paddingTop: 0,
+};
+const $body: ViewStyle = {
+  paddingTop: spaceHeight - verticalScale(10),
+  paddingHorizontal: 0,
+};
+const $modal: ViewStyle = {
+  flex: 1,
+  paddingHorizontal: scale(16),
+  borderRadius: BORDER_RADIUS.f2,
 };
 const $inputView: ViewStyle = {
   width: '100%',
   alignItems: 'center',
-  marginTop: verticalScale(20),
+  marginTop: verticalScale(28),
+};
+const $title: TextStyle = {
+  alignSelf: 'center',
+  fontSize: FONT_SIZE.h2,
+  fontWeight: 'bold',
 };
 const $input: TextStyle = {
   width: '100%',
+  marginTop: verticalScale(20),
+};
+const $password: ViewStyle = {
+  width: '100%',
+  marginTop: verticalScale(16),
+  justifyContent: 'center',
+};
+const $inputPassword: TextStyle = {
+  width: '100%',
+};
+const $forgot: ViewStyle = {
+  position: 'absolute',
+  right: scale(20),
+};
+const $forgotText: TextStyle = {
+  fontSize: FONT_SIZE.f4,
+  textDecorationLine: 'underline',
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $rememberView: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
-  marginTop: vs(20),
+  marginTop: verticalScale(20),
   alignSelf: 'flex-start',
 };
 const $rememberButton: ViewStyle = {
-  width: vs(20),
-  height: vs(20),
-  borderWidth: ms(0.5),
-  borderRadius: ms(5),
-  marginRight: s(7),
+  width: verticalScale(20),
+  height: verticalScale(20),
+  borderWidth: moderateScale(0.5),
+  borderRadius: moderateScale(5),
+  marginRight: scale(7),
   alignItems: 'center',
   justifyContent: 'center',
 };
 const $checkIcon: TextStyle = {
-  fontSize: ms(20),
+  fontSize: moderateScale(20),
 };
-const $imageBanner: ImageStyle = {
-  width: '100%',
-  height: verticalScale(200),
-  borderRadius: 30,
-  marginTop: 20,
+const $loginButton: ViewStyle = {
+  marginTop: verticalScale(100),
 };
-
-const styles = ScaledSheet.create({
-  inputForm: {
-    marginTop: '15@vs',
-    width: '100%',
-  },
-  // button login
-  loginButton: {
-    marginTop: '20@vs',
-  },
-  // forgot password
-  forgotPasswordView: {
-    marginTop: '40@vs',
-    alignSelf: 'flex-start',
-  },
-  forgotPasswordText: {
-    fontSize: FONT_SIZE.f3,
-    textDecorationLine: 'underline',
-    fontWeight: FONT_WEIGHT_MEDIUM,
-  },
-  // question sign up
-  signUpView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textOrSignIn: {
-    fontWeight: 'bold',
-  },
-  signUpBox: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: '10@vs',
-  },
-  iconSignIn: {
-    width: '45@ms',
-    height: '45@ms',
-    marginHorizontal: '7@ms',
-  },
-});
+const $signUpText: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  alignSelf: 'center',
+  marginTop: verticalScale(40),
+};
+const $registerText: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  textDecorationLine: 'underline',
+  fontWeight: 'bold',
+};
 
 export default LoginScreen;
