@@ -67,7 +67,9 @@ const ButtonReaction = ({
 }: ButtonReactionProps) => {
   const theme = useTheme();
   const renderContent = () => {
-    if (children) return children;
+    if (children) {
+      return children;
+    }
     if (icon) {
       return (
         <StyleIcon
@@ -255,6 +257,17 @@ const DetailSale = ({
         </View>
 
         <View style={$informationBox}>
+          <Ionicons
+            name="location"
+            style={[$iconLocation, {color: theme.blue}]}
+          />
+          <StyleText
+            originValue={data?.creator_location}
+            customStyle={[$textStatus, {fontWeight: 'normal'}]}
+          />
+        </View>
+
+        <View style={$informationBox}>
           <StyleIcon source={Images.icons.calendar} size={16} />
           <StyleText
             i18Text={textStatus}
@@ -269,6 +282,7 @@ const DetailSale = ({
             customStyle={$textStatus}
           />
         </View>
+
         {data?.prices?.map(item => {
           return (
             <View style={$pricePart} key={item?.number_people}>
@@ -285,18 +299,6 @@ const DetailSale = ({
             </View>
           );
         })}
-
-        <View style={$informationBox}>
-          <StyleIcon
-            source={Images.icons.location}
-            size={18}
-            customStyle={{tintColor: theme.blue}}
-          />
-          <StyleText
-            originValue={data?.creator_location}
-            customStyle={$textStatus}
-          />
-        </View>
 
         <View style={[$divider, {backgroundColor: theme.gray_200}]} />
       </View>
@@ -315,7 +317,7 @@ const DetailSale = ({
             titleParams={{
               value: data?.total_likes,
             }}>
-            {!!data?.is_liked ? (
+            {data?.is_liked ? (
               <IconLiked customStyle={$likeIcon} onPress={onReaction} />
             ) : (
               <IconNotLiked
@@ -685,6 +687,9 @@ const $textName: TextStyle = {
   marginLeft: scale(8),
   fontWeight: 'bold',
   fontSize: FONT_SIZE.f1,
+};
+const $iconLocation: TextStyle = {
+  fontSize: moderateScale(16),
 };
 const $textStatus: TextStyle = {
   marginLeft: scale(8),

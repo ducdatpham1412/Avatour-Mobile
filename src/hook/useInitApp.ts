@@ -28,38 +28,22 @@ const useInitApp = () => {
       try {
         const activeUser = await AsyncStorage.getActiveUser();
 
-        const handleNotHaveActiveUser = async () => {
-          await AsyncStorage.logOut();
-          I18Next.changeLanguage(await AsyncStorage.getLanguageModeExp());
-        };
-
-        if (activeUser?.token) {
-          // although activeUser still save in async from last login
-          // but "index" not have -> handleNotHaveActiveUser and clear that user
-          const index = await AsyncStorage.getIndexNow();
-          const isHavingSocialAccount =
-            await AsyncStorage.getIsHavingSocialAccount();
-
-          // If both username - password and socialLoginAccount not saved
-          if (index === null && !isHavingSocialAccount) {
-            await handleNotHaveActiveUser();
-            return;
-          }
-
-          const {data: passport} = await apiGetPassport();
+        if (activeUser) {
+          const passport = await apiGetPassport();
           const resource = await apiGetResource();
 
-          updatePassport(passport);
+          updatePassport(passport.data);
           // passport must be above token to set in SocketProvider
-          setNumberNewNotifications(passport?.numberNewNotifications);
+          setNumberNewNotifications(passport?.data.numberNewNotifications);
           setToken(activeUser?.token);
           setModeExp(false);
           updateResource(resource?.data);
           I18Next.changeLanguage(
-            chooseLanguageFromId(passport?.profile?.language),
+            chooseLanguageFromId(passport?.data?.profile?.language),
           );
         } else {
-          await handleNotHaveActiveUser();
+          const savedLanguage = await AsyncStorage.getLanguageModeExp();
+          I18Next.changeLanguage(savedLanguage);
         }
       } catch (err) {
         setError(true);

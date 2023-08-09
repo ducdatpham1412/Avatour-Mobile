@@ -42,8 +42,8 @@ interface TypeLoginResponse {
 }
 
 interface TypeItemLoginSuccess {
-  username?: string;
-  password?: string;
+  username: string;
+  password: string;
   token: string;
   refreshToken: string;
 }

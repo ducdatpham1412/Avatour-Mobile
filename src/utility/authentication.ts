@@ -19,8 +19,7 @@ import {chooseLanguageFromId, isIOS} from './assistant';
 
 interface TypeParamsLoginSuccess {
   itemLoginSuccess: TypeItemLoginSuccess;
-  isKeepSign: boolean;
-  isLoginSocial: boolean;
+  rememberAccount: boolean;
 }
 
 interface RequestLoginSocialParams {
@@ -34,22 +33,18 @@ interface LogOutParams {
 }
 
 export const loginSuccess = async (params: TypeParamsLoginSuccess) => {
-  const {itemLoginSuccess, isKeepSign, isLoginSocial} = params;
-  await AsyncStorage.updateActiveUser(itemLoginSuccess);
+  const {itemLoginSuccess, rememberAccount} = params;
+  await AsyncStorage.setActiveUser(itemLoginSuccess);
 
   if (
-    isKeepSign &&
+    rememberAccount &&
     itemLoginSuccess.username &&
-    itemLoginSuccess.password &&
-    !isLoginSocial
+    itemLoginSuccess.password
   ) {
     await AsyncStorage.addStorageAcc({
       username: itemLoginSuccess.username,
       password: itemLoginSuccess.password,
     });
-  }
-  if (isLoginSocial) {
-    await AsyncStorage.setIsHavingSocialAccount(true);
   }
 
   const passport = await apiGetPassport();
@@ -89,8 +84,7 @@ export const requestLoginSocial = async (params: RequestLoginSocialParams) => {
       } else {
         await loginSuccess({
           itemLoginSuccess,
-          isKeepSign: false,
-          isLoginSocial: true,
+          rememberAccount: false,
         });
       }
     }
@@ -114,8 +108,8 @@ export const logOut = async (params?: LogOutParams) => {
     // }
 
     if (!isModeExp && callApiLogOut) {
-      const {refreshToken} = await AsyncStorage.getActiveUser();
-      await apiLogOut(refreshToken || '');
+      const activeUser = await AsyncStorage.getActiveUser();
+      await apiLogOut(activeUser?.refreshToken || '');
     }
     await AsyncStorage.logOut();
     reduxLogOut();

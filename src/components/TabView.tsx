@@ -1,3 +1,4 @@
+import {horizontalPadding} from 'asset/metrics';
 import {useTheme} from 'hook';
 import React, {
   ForwardedRef,
@@ -21,8 +22,6 @@ import {
 import {SceneMap, TabView as TabViewRoot} from 'react-native-tab-view';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleTouchable} from './base';
-import {horizontalPadding} from 'asset/metrics';
-import {borderWidthTiny} from 'utility/assistant';
 
 interface TabViewProps {
   listElements: FunctionComponent[];

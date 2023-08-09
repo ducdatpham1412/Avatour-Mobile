@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 export enum INFO_TYPE {
   facebook = 'facebook',
   email = 'email',
@@ -38,13 +37,9 @@ export enum LANGUAGE_TYPE {
 }
 
 export enum ASYNC_TYPE {
-  firstTimeOpenApp = 'true',
   storageAcc = 'storageAcc',
   activeUser = 'activeUser',
-  index = 'index',
-  // logged = 'logged',
   language = 'language',
-  socialLoginAccount = 'socialLoginAccount',
   searchParams = 'search_params',
 }
 

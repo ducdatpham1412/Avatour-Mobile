@@ -1,8 +1,8 @@
+import {setToken} from 'app-redux';
 import Store from 'app-redux/store';
 import {ERROR_KEY_ENUM} from 'asset/enum';
 import Config from 'asset/env';
 import axios, {InternalAxiosRequestConfig} from 'axios';
-import Redux from 'hook/useRedux';
 import {logger} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
 import {logOut} from 'utility/authentication';
@@ -43,7 +43,8 @@ request.interceptors.request.use(
     // Do something before api is sent
     let token: any = Store.getState().logicSlice.token;
     if (!token) {
-      token = (await AsyncStorage.getActiveUser()).token;
+      const activeUser = await AsyncStorage.getActiveUser();
+      token = activeUser?.token;
     }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -90,15 +91,15 @@ request.interceptors.response.use(
       config.retry = true;
       isRefreshing = true;
 
-      const {refreshToken} = await AsyncStorage.getActiveUser();
+      const activeUser = await AsyncStorage.getActiveUser();
       try {
         const res = await axios.post(AUTH_URL_REFRESH_TOKEN, {
-          refresh: refreshToken,
+          refresh: activeUser?.refreshToken,
         });
         const newToken = res.data.data.access;
 
         await AsyncStorage.updateActiveUser({token: newToken});
-        Redux.setToken(newToken);
+        setToken(newToken);
 
         config.headers.Authorization = `Bearer ${newToken}`;
         processQueue(null, newToken);

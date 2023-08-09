@@ -509,7 +509,7 @@ const alert = {
   // FOR LOGIN
   notNull: 'This is a required field !',
   passConfirmFalse: 'Password confirm is false !',
-  wantToSave: 'Do you want to save account for login later?',
+  wantToSave: 'Want to save your account information for the next login?',
   loginFail: 'Login Fail',
   wantToChange: 'Want to change ?',
 

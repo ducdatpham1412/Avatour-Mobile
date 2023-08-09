@@ -1,7 +1,6 @@
 import {apiChangeInformation} from 'api/setting';
 import {GENDER_TYPE} from 'asset/enum';
 import {BORDER_RADIUS, scrollItemHeight} from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
 import {
   StyleButton,
   StyleContainer,
@@ -15,8 +14,8 @@ import {useLoading, useTheme} from 'hook';
 import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
 import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
-import {FlatList, TextInput, View} from 'react-native';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
+import {FlatList, TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {verticalScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
@@ -72,12 +71,11 @@ const EditBasicInformation = ({
            * Have to update active user first
            * In order to set token for "apiChangeInformation" later
            */
-          await AsyncStore.updateActiveUser(itemLoginSuccess);
+          await AsyncStore.setActiveUser(itemLoginSuccess);
           await apiChangeInformation(updateObject);
           await loginSuccess({
             itemLoginSuccess,
-            isKeepSign: isKeep,
-            isLoginSocial,
+            rememberAccount: isKeep,
           });
         } catch (err) {
           await AsyncStore.logOut();
@@ -123,7 +121,7 @@ const EditBasicInformation = ({
         LeftComponent: null,
         title: 'login.detailInformation.title',
       }}>
-      <View style={[styles.pickerView, {backgroundColor: theme.white}]}>
+      <View style={[$pickerView, {backgroundColor: theme.white}]}>
         <StyleList
           ref={flatListRef}
           data={[0, 1, 2]}
@@ -133,7 +131,7 @@ const EditBasicInformation = ({
             }
             if (item === 1) {
               return (
-                <View style={styles.pickerBox}>
+                <View style={$pickerBox}>
                   <StyleText i18Text="login.detailInformation.enterYourName" />
                   <InputBox
                     ref={inputRef}
@@ -151,7 +149,7 @@ const EditBasicInformation = ({
             }
             if (item === 2) {
               return (
-                <View style={styles.pickerBox}>
+                <View style={$pickerBox}>
                   <StyleTouchable
                     hitSlop={20}
                     onPress={() => {
@@ -165,9 +163,7 @@ const EditBasicInformation = ({
                     <StyleText
                       i18Text={textBirthday as I18Normalize}
                       customStyle={
-                        birthday
-                          ? styles.textBirthday
-                          : styles.textChooseBirthday
+                        birthday ? $textBirthday : $textChooseBirthday
                       }
                     />
                   </StyleTouchable>
@@ -191,7 +187,7 @@ const EditBasicInformation = ({
                 style={{fontSize: moderateScale(20), color: theme.gray_700}}
               />
             }
-            containerStyle={styles.buttonUp}
+            containerStyle={$buttonUp}
             onPress={() => {
               if (index > 0) {
                 setIndex(pre => pre - 1);
@@ -209,7 +205,7 @@ const EditBasicInformation = ({
                 style={{fontSize: moderateScale(20), color: theme.gray_700}}
               />
             }
-            containerStyle={styles.buttonDown}
+            containerStyle={$buttonDown}
             onPress={() => {
               if (index < 2) {
                 setIndex(pre => pre + 1);
@@ -231,43 +227,35 @@ const EditBasicInformation = ({
   );
 };
 
-const styles = ScaledSheet.create({
-  buttonUp: {
-    position: 'absolute',
-    alignSelf: 'center',
-    top: '5@vs',
-  },
-  iconUp: {
-    fontSize: '20@ms',
-  },
-  buttonDown: {
-    position: 'absolute',
-    alignSelf: 'center',
-    bottom: '5@vs',
-  },
-  pickerView: {
-    width: '80%',
-    height: scrollItemHeight,
-    alignSelf: 'center',
-    marginTop: '28@vs',
-    borderRadius: BORDER_RADIUS.f2,
-  },
-  pickerBox: {
-    width: '100%',
-    height: scrollItemHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  nameText: {
-    color: Theme.common.white,
-  },
-  textChooseBirthday: {
-    textDecorationLine: 'underline',
-  },
-  textBirthday: {
-    fontSize: '40@ms',
-    fontWeight: 'bold',
-  },
-});
+const $buttonUp: ViewStyle = {
+  position: 'absolute',
+  alignSelf: 'center',
+  top: verticalScale(5),
+};
+const $buttonDown: ViewStyle = {
+  position: 'absolute',
+  alignSelf: 'center',
+  bottom: verticalScale(5),
+};
+const $pickerView: ViewStyle = {
+  width: '80%',
+  height: scrollItemHeight,
+  alignSelf: 'center',
+  marginTop: verticalScale(28),
+  borderRadius: BORDER_RADIUS.f2,
+};
+const $pickerBox: ViewStyle = {
+  width: '100%',
+  height: scrollItemHeight,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+const $textChooseBirthday: TextStyle = {
+  textDecorationLine: 'underline',
+};
+const $textBirthday: TextStyle = {
+  fontSize: moderateScale(40),
+  fontWeight: 'bold',
+};
 
 export default EditBasicInformation;

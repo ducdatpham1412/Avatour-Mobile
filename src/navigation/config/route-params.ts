@@ -33,12 +33,6 @@ export type AppParamsList = {
     name: string;
     initTab?: 'follower' | 'following';
   };
-  [ROOT_SCREEN.detailBubble]: {
-    bubbleId?: string;
-    bubble?: TypeBubblePalace;
-    displayComment?: boolean;
-    displayLike?: boolean;
-  };
   [ROOT_SCREEN.detailGroupBuying]: {
     item?: TypeGroupBuying;
     itemId?: string;
@@ -53,20 +47,6 @@ export type AppParamsList = {
   [ROOT_SCREEN.reportUser]: {
     idUser: number;
     nameUser?: string;
-  };
-  [PROFILE_ROUTE.createPostPreview]: {
-    itemNew?: {
-      images: Array<string>;
-      isVideo: boolean;
-      userReviewed?: {
-        id: number;
-        name: string;
-        avatar: string;
-      };
-    };
-    itemEdit?: TypeBubblePalace;
-    itemDraft?: TypeBubblePalace;
-    itemError?: TypeCreatePostRequest;
   };
   [PROFILE_ROUTE.createPostPickImg]: {
     userReviewed?: {

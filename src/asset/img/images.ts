@@ -1,6 +1,3 @@
-/* eslint-disable import/no-unresolved */
-// These are images used for both light and dark Theme
-
 const Images = {
   icons: {
     // login

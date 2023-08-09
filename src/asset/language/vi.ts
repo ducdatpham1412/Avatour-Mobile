@@ -88,7 +88,7 @@ const login = {
   contentSuggest:
     'Đăng ký thành công! 🥰\nBây giờ chúng ta hãy bắt đầu chỉnh sửa một số thông tin nào',
   letGo: 'Đi thôi',
-  emailPhone: 'Email/SDT',
+  emailPhone: 'Email/SĐT',
   email: 'Email',
   password: 'Mật khẩu',
   confirmPassword: 'Xác nhận mật khẩu',
@@ -516,7 +516,8 @@ const alert = {
   // FOR LOGIN
   notNull: 'Giá trị không được để trống !',
   passConfirmFalse: 'Mật khẩu xác nhận\nkhông đúng !',
-  wantToSave: 'Bạn muốn giữ trạng thái đăng nhập cho lần sau chứ?',
+  wantToSave:
+    'Bạn muốn lưu thông tin tài khoản của mình cho lần đăng nhập sau chứ?',
   loginFail: 'Đăng nhập thất bại',
   wantToChange: 'Xác nhận thay đổi',
 
