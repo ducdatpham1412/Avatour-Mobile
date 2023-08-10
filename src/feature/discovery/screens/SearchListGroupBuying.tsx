@@ -1,6 +1,6 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
-import {APP_EVENT, POST_SEARCH} from 'asset/enum';
+import {APP_EVENT, POST_SEARCH, STATUS} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
@@ -52,6 +52,9 @@ const SearchListGroupBuying = () => {
 
   useAppEvent(APP_EVENT.editSale, e => {
     setList(pre => {
+      if (e.data.status === STATUS.notActive) {
+        return pre.filter(sale => sale.id !== e.post_id);
+      }
       return pre.map(sale => {
         if (sale.id !== e?.post_id) {
           return sale;

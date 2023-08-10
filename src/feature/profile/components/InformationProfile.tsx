@@ -1,14 +1,18 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {BORDER_RADIUS, FONT_SIZE} from 'asset/standardValue';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
+import {FONT_SIZE} from 'asset/standardValue';
+import {
+  SquareButton,
+  StyleImage,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate, push} from 'navigation/NavigationService';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import React from 'react';
 import {
-  ActivityIndicator,
   ImageStyle,
   LayoutChangeEvent,
   TextStyle,
@@ -40,39 +44,28 @@ const ButtonOtherProfile = ({id}: ButtonOtherProfileProps) => {
 
   return (
     <View style={$buttonView}>
-      <StyleTouchable
-        customStyle={[$buttonTouch, {backgroundColor: theme.gray_300}]}
+      <SquareButton
+        containerStyle={$buttonTouch}
+        titleStyle={$textButton}
+        title={isFollowing ? 'profile.unFollow' : 'profile.follow'}
+        loading={loadingFollow}
         onPress={follow}
-        disableOpacity={1}
-        disable={loadingFollow}>
-        {loadingFollow ? (
-          <ActivityIndicator size={5} color={theme.p_900} />
-        ) : (
-          <StyleText
-            i18Text={isFollowing ? 'profile.unFollow' : 'profile.follow'}
-            customStyle={$textButton}
-          />
-        )}
-      </StyleTouchable>
+      />
       {isShopAccount && (
-        <StyleTouchable
-          customStyle={[
+        <SquareButton
+          containerStyle={[
             $buttonTouch,
             {
-              backgroundColor: theme.gray_300,
+              backgroundColor: theme.p_600,
               marginLeft: 5,
             },
           ]}
-          onPress={() => {
-            console.log('Writing review supplier');
-          }}
-          hitSlop={{right: 20}}>
-          <Entypo name="plus" style={[$iconPlus, {color: theme.black}]} />
-          <StyleText
-            i18Text="profile.reviewProvider"
-            customStyle={$textPostNew}
-          />
-        </StyleTouchable>
+          titleStyle={[$textButton, {color: theme.white}]}
+          title="profile.reviewProvider"
+          icon={
+            <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+          }
+        />
       )}
     </View>
   );
@@ -137,62 +130,62 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
     if (isMyProfile) {
       return (
         <View style={$buttonView}>
-          <StyleTouchable
-            customStyle={[$buttonTouch, {backgroundColor: theme.gray_300}]}
+          <SquareButton
+            containerStyle={$buttonTouch}
+            titleStyle={$textButton}
+            title="common.edit"
             onPress={() => {
               navigate(ROOT_SCREEN.editProfile);
-            }}>
-            <StyleText i18Text="common.edit" customStyle={$textButton} />
-          </StyleTouchable>
+            }}
+          />
 
-          <StyleTouchable
-            customStyle={[
+          <SquareButton
+            containerStyle={[
               $buttonTouch,
               {
                 backgroundColor: isShopAccount ? theme.gray_300 : theme.p_600,
                 marginLeft: 5,
               },
             ]}
+            titleStyle={$textButton}
+            title="profile.createTour"
             onPress={() => {
               navigate(PROFILE_ROUTE.createTour);
-            }}>
-            <Entypo
-              name="plus"
-              style={[
-                $iconPlus,
-                {color: isShopAccount ? theme.black : theme.white},
-              ]}
-            />
-            <StyleText
-              i18Text="profile.createTour"
-              customStyle={[
-                $textPostNew,
-                {color: isShopAccount ? theme.black : theme.white},
-              ]}
-            />
-          </StyleTouchable>
+            }}
+            icon={
+              <Entypo
+                name="plus"
+                style={[
+                  $iconPlus,
+                  {color: isShopAccount ? theme.black : theme.white},
+                ]}
+              />
+            }
+          />
 
           {isShopAccount && (
-            <StyleTouchable
-              customStyle={[
+            <SquareButton
+              containerStyle={[
                 $buttonTouch,
                 {
                   backgroundColor: theme.p_600,
                   marginLeft: 5,
                 },
               ]}
+              titleStyle={[
+                $textButton,
+                {color: theme.white, fontWeight: 'bold'},
+              ]}
               onPress={() => {
                 navigate(PROFILE_ROUTE.createPostPickImg, {
                   mode: 'sale',
                 });
               }}
-              hitSlop={{right: 20}}>
-              <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
-              <StyleText
-                i18Text="profile.postGroupBuying"
-                customStyle={[$textPostNew, {color: theme.white}]}
-              />
-            </StyleTouchable>
+              title="profile.postGroupBuying"
+              icon={
+                <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+              }
+            />
           )}
         </View>
       );
@@ -309,20 +302,10 @@ const $buttonView: ViewStyle = {
 };
 const $buttonTouch: ViewStyle = {
   flex: 1,
-  height: verticalScale(30),
-  borderRadius: BORDER_RADIUS.f4,
-  justifyContent: 'center',
-  flexDirection: 'row',
-  alignItems: 'center',
 };
 const $textButton: TextStyle = {
   fontSize: FONT_SIZE.f4,
   fontWeight: '500',
-};
-const $textPostNew: TextStyle = {
-  fontSize: FONT_SIZE.f4,
-  fontWeight: 'bold',
-  marginLeft: 5,
 };
 const $iconPlus: TextStyle = {
   fontSize: moderateScale(16),

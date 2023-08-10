@@ -164,13 +164,13 @@ const $moduleInput: TextStyle = {
   width: '100%',
   borderWidth: borderWidthTiny,
   borderRadius: BORDER_RADIUS.f3,
-  marginVertical: verticalScale(5),
+  marginTop: verticalScale(8),
   paddingTop: verticalScale(8),
   paddingBottom: verticalScale(8),
   paddingHorizontal: scale(10),
 };
 const $buttonConfirm: ViewStyle = {
-  marginVertical: verticalScale(15),
+  marginTop: verticalScale(16),
   paddingHorizontal: scale(30),
   paddingVertical: verticalScale(8),
 };

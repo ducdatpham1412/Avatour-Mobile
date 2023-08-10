@@ -17,7 +17,7 @@ const ItemInfo = (props: BoxInfoProps) => {
   const theme = useTheme();
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.background}]}>
+    <View style={[styles.container, {backgroundColor: theme.white}]}>
       <View style={styles.iconModule}>{icon}</View>
       <View style={styles.contentBox}>
         <StyleText

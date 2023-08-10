@@ -34,8 +34,7 @@ const ExtendSetting = () => {
       customStyle={styles.container}
       headerProps={{
         title: 'setting.extendSetting.headerTitle',
-      }}
-      backgroundColor={theme.white}>
+      }}>
       {/* <TypeDetailSetting
         title="setting.extendSetting.theme"
         onPress={openCloseSettingTheme}

@@ -1,5 +1,5 @@
 import {apiGetListSalesLiked} from 'api/profile';
-import {APP_EVENT} from 'asset/enum';
+import {APP_EVENT, STATUS} from 'asset/enum';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
@@ -38,15 +38,18 @@ const FavoriteSales = () => {
     });
   });
 
-  useAppEvent(APP_EVENT.editSale, data => {
+  useAppEvent(APP_EVENT.editSale, e => {
     setList(pre => {
+      if (e.data.status === STATUS.notActive) {
+        return pre.filter(sale => sale.id !== e.post_id);
+      }
       return pre.map(sale => {
-        if (sale.id !== data?.post_id) {
+        if (sale.id !== e?.post_id) {
           return sale;
         }
         return {
           ...sale,
-          ...data.data,
+          ...e.data,
         };
       });
     });

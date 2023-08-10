@@ -53,7 +53,7 @@ const TabNavigator = (props: any) => {
    * Render view
    */
   const DiscoveryButton = useMemo(() => {
-    const tintColor = isFocusDiscovery ? theme.p_700 : theme.gray_500;
+    const tintColor = isFocusDiscovery ? theme.p_600 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={$button}
@@ -76,7 +76,7 @@ const TabNavigator = (props: any) => {
   }, [isFocusDiscovery, theme]);
 
   const FavoriteButton = useMemo(() => {
-    const tintColor = isFocusHeart ? theme.p_700 : theme.gray_500;
+    const tintColor = isFocusHeart ? theme.p_600 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={$button}
@@ -107,7 +107,7 @@ const TabNavigator = (props: any) => {
   ));
 
   const NotificationButton = useMemo(() => {
-    const tintColor = isFocusNotification ? theme.p_700 : theme.gray_500;
+    const tintColor = isFocusNotification ? theme.p_600 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={$button}
@@ -145,7 +145,7 @@ const TabNavigator = (props: any) => {
   }, [isFocusNotification, theme, numberNewNotifications]);
 
   const ProfileButton = useMemo(() => {
-    const tintColor = isFocusProfile ? theme.p_700 : theme.gray_500;
+    const tintColor = isFocusProfile ? theme.p_600 : theme.gray_500;
     return (
       <StyleTouchable
         onPress={() => {

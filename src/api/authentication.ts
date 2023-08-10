@@ -144,17 +144,3 @@ export const apiRequestUpdatePrice = (
     },
   });
 };
-
-export const apiRequestDeleteSale = (saleId: number) => {
-  return request.put(
-    '/auth/request',
-    {
-      sale_id: saleId,
-    },
-    {
-      params: {
-        type: TYPE_AUTH_REQUEST.delete_gb,
-      },
-    },
-  );
-};

@@ -34,8 +34,7 @@ const SecurityAndLogin = () => {
       customStyle={$container}
       headerProps={{
         title: 'setting.securityAndLogin.headerTitle',
-      }}
-      backgroundColor={theme.white}>
+      }}>
       {/* Change password */}
       <TypeDetailSetting
         title="setting.securityAndLogin.changePass"

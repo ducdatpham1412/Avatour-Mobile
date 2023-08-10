@@ -576,11 +576,11 @@ const alert = {
   sureToDeleteJoin: 'Bạn chắc chắn muốn huỷ đơn mua chung chứ?',
   afterTemporarilyClose:
     'Sau khi ấn <b>"Tạm dừng"</b>, mọi người không thể tham gia mua {{value}} cho đến khi bạn mở lại',
-  afterDeleteSale: `Sau khi ấn Tiếp tục, đơn hàng sẽ chuyển đến trạng thái <b>Yêu cầu xoá</b>.
-Mọi người sẽ không thể tham gia mua {{value}}.
-  
-Chúng tôi sẽ xem xét và phản hồi lại cho bạn trong vòng 24h.
-Trong thời gian đó, bạn có thể huỷ yêu cầu xoá bằng cách <b>“Mở nhận đặt đơn”</b> trở lại.`,
+  stillHavePeopleJoin: `Bạn không thể xoá {{name}} tại thời điểm hiện tại vì vẫn đang có người tham gia mua chung.
+    
+Để có thể xoá, bạn vui lòng thực hiện theo hai bước sau:
+  1. Ấn <b>Tạm dừng nhận đơn</b> để tạm thời không nhận thêm đơn hàng mới.
+  2. Sau khi tất cả người hiện tại đến check-in tại cửa hàng, bạn có thể thực hiện xoá đơn hàng trở lại.`,
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

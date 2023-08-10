@@ -39,6 +39,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {PricesEdit, ScrollCropImages} from './components';
 import ButtonIconTitle from './components/ButtonIconTitle';
 import {UseCreateSaleParams, useCreateSale} from './hooks';
+import {impactMedium} from 'utility/haptic';
 
 interface Props {
   route: {
@@ -77,7 +78,7 @@ const CreateSale = ({route}: Props) => {
       setContent,
       setPrices,
       setName,
-      onUpdateStatusSale,
+      updateStatus,
     },
   ] = useCreateSale({
     initValue: initValue.current,
@@ -87,6 +88,20 @@ const CreateSale = ({route}: Props) => {
   });
 
   const scrollRef = useRef<KeyboardAwareScrollView>(null);
+
+  /**
+   * Functions
+   */
+  const onUpdateStatus = async (status: number) => {
+    try {
+      await updateStatus(status);
+      impactMedium();
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
+  };
 
   /**
    * Render views
@@ -169,34 +184,12 @@ const CreateSale = ({route}: Props) => {
                   content: t('alert.afterTemporarilyClose', {
                     value: dataSale.name,
                   }),
-                  onContinue: () => onUpdateStatusSale(STATUS.temporarilyClose),
+                  onContinue: () => onUpdateStatus(STATUS.temporarilyClose),
                 });
               }}>
               <StyleText
                 i18Text="discovery.temporarilyClosed"
                 customStyle={[$textEditStatus, {color: theme.gray_600}]}
-              />
-            </StyleTouchable>
-          </View>
-        );
-      }
-
-      if (dataSale?.status === STATUS.requestingDelete) {
-        return (
-          <View style={$location}>
-            <ButtonIconTitle
-              icon={<StyleIcon source={Images.icons.calendar} size={13} />}
-              title="discovery.requestingDelete"
-              titleStyle={{color: theme.red}}
-            />
-            <StyleTouchable
-              customStyle={$editStatusBox}
-              onPress={() => {
-                onUpdateStatusSale(STATUS.active);
-              }}>
-              <StyleText
-                i18Text="discovery.openAvailable"
-                customStyle={[$textEditStatus, {color: theme.blue}]}
               />
             </StyleTouchable>
           </View>
@@ -213,7 +206,7 @@ const CreateSale = ({route}: Props) => {
           <StyleTouchable
             customStyle={$editStatusBox}
             onPress={() => {
-              onUpdateStatusSale(STATUS.active);
+              onUpdateStatus(STATUS.active);
             }}>
             <StyleText
               i18Text="discovery.openAvailable"
@@ -270,7 +263,7 @@ const CreateSale = ({route}: Props) => {
 
   const renderContent = () => {
     const disableEditCaption =
-      !!itemEdit && itemEdit.status === STATUS.requestingDelete;
+      !!itemEdit && itemEdit.status === STATUS.notActive;
 
     return (
       <View style={[$priceView, {borderTopColor: theme.gray_300}]}>

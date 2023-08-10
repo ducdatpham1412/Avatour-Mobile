@@ -2,27 +2,32 @@ import Images from 'asset/img/images';
 import {useTheme} from 'hook';
 import LottieView from 'lottie-react-native';
 import React from 'react';
-import {StyleProp, StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
 import {moderateScale} from 'utility/scale';
 
 interface Props {
   hasLogo?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
+  size?: number;
 }
 
-export const LoadingIcon = () => {
+interface LoadingIconProps {
+  size?: number;
+}
+
+export const LoadingIcon = ({size = 100}: LoadingIconProps) => {
   return (
     <LottieView
-      source={Images.images.loadingPlane}
-      style={$iconFly}
+      source={Images.images.loadingTravel}
+      style={{width: moderateScale(size), height: moderateScale(size)}}
       autoPlay
       loop
-      speed={1}
+      speed={0.65}
     />
   );
 };
 
-const LoadingScreen = ({hasLogo = true, containerStyle}: Props) => {
+const LoadingScreen = ({hasLogo = true, containerStyle, size = 150}: Props) => {
   const theme = useTheme();
 
   return (
@@ -34,7 +39,7 @@ const LoadingScreen = ({hasLogo = true, containerStyle}: Props) => {
         },
         containerStyle,
       ]}>
-      {hasLogo && <LoadingIcon />}
+      {hasLogo && <LoadingIcon size={size} />}
     </View>
   );
 };
@@ -46,9 +51,5 @@ const $container: StyleProp<ViewStyle> = [
     justifyContent: 'center',
   },
 ];
-const $iconFly: TextStyle = {
-  width: moderateScale(70),
-  height: moderateScale(70),
-};
 
 export default LoadingScreen;

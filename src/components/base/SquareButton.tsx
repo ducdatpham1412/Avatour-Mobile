@@ -1,6 +1,6 @@
 import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
 import {useTheme} from 'hook';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {ActivityIndicator, StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {scale, verticalScale} from 'utility/scale';
@@ -14,6 +14,7 @@ interface Props {
   titleStyle?: StyleProp<TextStyle>;
   loading?: boolean;
   disable?: boolean;
+  icon?: ReactNode;
 }
 
 const SquareButton = ({
@@ -23,6 +24,7 @@ const SquareButton = ({
   titleStyle,
   loading = false,
   disable = false,
+  icon,
 }: Props) => {
   const theme = useTheme();
 
@@ -39,7 +41,13 @@ const SquareButton = ({
       {loading ? (
         <ActivityIndicator size="small" color={theme.black} />
       ) : (
-        <StyleText i18Text={title} customStyle={[$title, titleStyle]} />
+        <>
+          {icon}
+          <StyleText
+            i18Text={title}
+            customStyle={[$title, {marginLeft: icon ? 4 : 0}, titleStyle]}
+          />
+        </>
       )}
     </StyleTouchable>
   );
@@ -51,6 +59,7 @@ const $container: ViewStyle = {
   borderRadius: BORDER_RADIUS.f4,
   alignItems: 'center',
   justifyContent: 'center',
+  flexDirection: 'row',
 };
 const $title: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
