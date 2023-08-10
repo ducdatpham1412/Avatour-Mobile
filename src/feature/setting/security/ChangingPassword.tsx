@@ -15,7 +15,7 @@ import Animated, {
 import {verticalScale} from 'react-native-size-matters';
 import {useAsync} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
-import AppAsyncStorage from 'utility/asyncStore';
+import AsyncStorage from 'utility/asyncStore';
 import {moderateScale, scale} from 'utility/scale';
 import {validatePassword} from 'utility/validate';
 
@@ -49,52 +49,53 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
   }, [isOpening]);
 
   const confirmChangePassword = async () => {
-    const savedPassword = (await AppAsyncStorage.getActiveUser()).password;
-    try {
-      setLoading(true);
+    const activeAccount = await AsyncStorage.getActiveUser();
 
-      if (currentPassword !== savedPassword) {
+    if (activeAccount) {
+      try {
+        setLoading(true);
+
+        if (currentPassword !== activeAccount.password) {
+          ModalAlert.error({
+            i18Content: 'alert.nowPassError',
+          });
+          return;
+        }
+
+        if (!validatePassword(newPassword)) {
+          ModalAlert.error({
+            i18Content: 'alert.regexPass',
+          });
+          return;
+        }
+
+        if (!modeExp) {
+          await apiChangePassword({
+            old_password: currentPassword,
+            new_password: newPassword,
+            confirm_password: confirmPassword,
+          });
+          await AsyncStorage.updateActiveUser({
+            password: newPassword,
+          });
+        }
+
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+          onClose: () => {
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            onChangeOpening(false);
+          },
+        });
+      } catch (err) {
         ModalAlert.error({
-          i18Content: 'alert.nowPassError',
+          content: err,
         });
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      if (!validatePassword(newPassword)) {
-        ModalAlert.error({
-          i18Content: 'alert.regexPass',
-        });
-        return;
-      }
-
-      if (!modeExp) {
-        await apiChangePassword({
-          old_password: currentPassword,
-          new_password: newPassword,
-          confirm_password: confirmPassword,
-        });
-        await AppAsyncStorage.updateActiveUser({
-          password: newPassword,
-        });
-        await AppAsyncStorage.editIndexNowAccount({
-          password: newPassword,
-        });
-      }
-      ModalAlert.success({
-        i18Content: 'alert.successChange',
-        onClose: () => {
-          setCurrentPassword('');
-          setNewPassword('');
-          setConfirmPassword('');
-          onChangeOpening(false);
-        },
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    } finally {
-      setLoading(false);
     }
   };
 

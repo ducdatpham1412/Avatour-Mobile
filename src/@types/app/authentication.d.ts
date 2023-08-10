@@ -1,4 +1,4 @@
-type AccountSavedAsync = {
+type TypeAccount = {
   username: string;
   password: string;
 };

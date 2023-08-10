@@ -5,12 +5,13 @@ import {
 } from '@react-native-google-signin/google-signin';
 import {useIsFocused} from '@react-navigation/native';
 import {apiLogin} from 'api/authentication';
-import {RootState, useAppSelector} from 'app-redux/store';
+import {useAppSelector} from 'app-redux/store';
 import {TYPE_SOCIAL_LOGIN} from 'asset/enum';
 import {navigate} from 'navigation/NavigationService';
 import {LOGIN_ROUTE} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
-import {useEffect, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
+import {useAsync} from 'react-use';
 import AsyncStorage from 'utility/asyncStore';
 import {loginSuccess, requestLoginSocial} from 'utility/authentication';
 
@@ -31,19 +32,12 @@ const useLogin = () => {
   const [password, setPassword] = useState(initPassword || loginForm?.password);
 
   const [loading, setLoading] = useState(false);
+  const [listSavedAccounts, setListSavedAccount] = useState<TypeAccount[]>([]);
 
-  const [listSavedAccounts, setListSavedAccount] = useState<
-    Array<RootState['accountSlice']['login']>
-  >([]);
-
-  const getListAcc = async () => {
-    const res = await AsyncStorage.getStorageAcc();
-    setListSavedAccount(res);
-  };
-
-  useEffect(() => {
+  useAsync(async () => {
     if (isFocused) {
-      getListAcc();
+      const res = await AsyncStorage.getAccounts();
+      setListSavedAccount(res);
     }
   }, [isFocused]);
 
@@ -95,7 +89,7 @@ const useLogin = () => {
     }
   }).current;
 
-  const submitLogin = async (isKeepSign: boolean) => {
+  const submitLogin = async (rememberAccount: boolean) => {
     try {
       setLoading(true);
       const res = await apiLogin({username, password});
@@ -120,8 +114,7 @@ const useLogin = () => {
             token: res.data.token,
             refreshToken: res.data.refreshToken,
           },
-          isKeepSign,
-          isLoginSocial: false,
+          rememberAccount,
         });
       }
     } catch (err) {
@@ -133,16 +126,16 @@ const useLogin = () => {
     }
   };
 
-  const selectSavedAccount = (index: number) => {
-    setUsername(listSavedAccounts[index].username);
-    setPassword(listSavedAccounts[index].password);
+  const selectSavedAccount = (value: TypeAccount) => {
+    setUsername(value.username);
+    setPassword(value.password);
   };
 
-  const deleteSavedAccount = async (index: number) => {
-    const tempt = listSavedAccounts.slice();
-    tempt.splice(index, 1);
-    setListSavedAccount(tempt);
-    await AsyncStorage.deleteAccAtIndex(index);
+  const deleteSavedAccount = async (deleteUsername: string) => {
+    setListSavedAccount(pre =>
+      pre.filter(item => item.username !== deleteUsername),
+    );
+    await AsyncStorage.deleteAccount(deleteUsername);
   };
 
   return [

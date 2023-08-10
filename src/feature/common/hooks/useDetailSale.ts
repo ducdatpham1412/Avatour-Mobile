@@ -10,6 +10,7 @@ import {APP_EVENT, REACT, STATUS} from 'asset/enum';
 import {emitAppEvent, useApi, useEstimatesAndJoinings} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import useSWRMutation from 'swr/mutation';
+import {impactLight, impactMedium} from 'utility/haptic';
 
 interface Params {
   revalidateAll?: boolean;
@@ -62,6 +63,7 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
             {...data, is_liked: !currentLiked, total_likes: newTotalLikes},
             {revalidate: false},
           );
+          impactLight();
           if (currentLiked) {
             await apiUnLikePost({
               type: REACT.sale,

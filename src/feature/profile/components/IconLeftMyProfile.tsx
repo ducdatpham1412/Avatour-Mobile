@@ -31,9 +31,11 @@ const IconLeftMyProfile = () => {
         <StyleTouchable onPress={() => navigate(PROFILE_ROUTE.listMyRequests)}>
           <AntDesign name="mail" style={[$iconQr, {color: theme.black}]} />
         </StyleTouchable>
-        <View style={$numberRequest}>
-          <StyleText originValue={data?.length} customStyle={$textNumber} />
-        </View>
+        {!!data.length && (
+          <View style={$numberRequest}>
+            <StyleText originValue={data?.length} customStyle={$textNumber} />
+          </View>
+        )}
       </View>
     </View>
   );
