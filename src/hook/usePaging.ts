@@ -21,7 +21,8 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [initLoading, setInitLoading] = useState(
-    !paramsPaging?.isInitNotRunRequest,
+    // !paramsPaging?.isInitNotRunRequest,
+    true,
   );
 
   const [pageIndex, setPageIndex] = useState(

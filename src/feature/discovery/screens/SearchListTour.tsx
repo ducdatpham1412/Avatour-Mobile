@@ -6,14 +6,9 @@ import {ItemTour} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging} from 'hook';
 import React, {useEffect} from 'react';
-import isEqual from 'react-fast-compare';
 import {View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {scale, verticalScale} from 'utility/scale';
-
-interface Props {
-  searchParams: Omit<TypeSearchRequest, 'post_search'>;
-}
 
 const SearchListTour = () => {
   const {bottom} = useSafeAreaInsets();
@@ -24,7 +19,6 @@ const SearchListTour = () => {
     onLoadMore,
     refreshing,
     onRefresh,
-    loading,
     loadingMore,
     initLoading,
   } = usePaging<TypeSearchResponse, TypeSearchRequest>({
@@ -37,12 +31,10 @@ const SearchListTour = () => {
   });
 
   useEffect(() => {
-    if (!isEqual(searchParams, {})) {
-      setParams({
-        ...searchParams,
-        post_search: POST_SEARCH.tour,
-      });
-    }
+    setParams({
+      ...searchParams,
+      post_search: POST_SEARCH.tour,
+    });
   }, [searchParams]);
 
   return (
@@ -53,7 +45,7 @@ const SearchListTour = () => {
           <ItemTour item={item} containerStyle={$itemView} />
         )}
         keyExtractor={item => item.id}
-        refreshing={refreshing || loading}
+        refreshing={refreshing}
         onRefresh={onRefresh}
         onLoadMore={onLoadMore}
         loadingMore={loadingMore}

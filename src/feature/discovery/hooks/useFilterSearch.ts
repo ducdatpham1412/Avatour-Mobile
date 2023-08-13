@@ -95,16 +95,18 @@ const useFilterSearch = ({
     }));
   };
 
-  return {
-    searchParams,
-    setSearchParams,
-    actions: {
+  return [
+    {
+      searchParams,
+      setSearchParams,
+    },
+    {
       onPressVehicle,
       onPressService,
       onChangeNumberPeople,
       onSavePrice,
     },
-  };
+  ] as const;
 };
 
 export default useFilterSearch;
