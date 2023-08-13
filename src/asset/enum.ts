@@ -178,12 +178,14 @@ export enum FEELING {
 }
 
 export enum TOPIC {
+  // transport, hotel => TODO: Develop after running business
   transport_motorbike = 6,
   transport_car = 7,
   hotel = 1,
+  // category
   food = 2,
   camping = 3,
-  volunteer = 4,
+  backpacking = 4,
   team_building = 5,
 }
 
@@ -200,6 +202,7 @@ export enum STATUS {
   active = 1,
   draft = 2,
   temporarilyClose = 3,
+  suggest = 4,
 }
 
 export enum POST_TYPE {
@@ -348,7 +351,6 @@ export enum APP_EVENT {
 }
 
 export enum TYPE_AUTH_REQUEST {
-  all = -1,
   lock_account = 0,
   delete_account = 1,
   upgrade_to_shop = 2,

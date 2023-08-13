@@ -1,5 +1,5 @@
 import {APP_EVENT, SOCKET_EVENT} from 'asset/enum';
-import {ParamsCreateTour} from 'feature/profile/hooks';
+import {ParamsCreateLocation, ParamsCreateTour} from 'feature/profile/hooks';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
@@ -156,6 +156,10 @@ export type AppParamsList = {
   [ROOT_SCREEN.editSalePrice]: {
     saleId: number;
     prices: TypePrice[];
+  };
+  [ROOT_SCREEN.createLocation]: {
+    itemNew?: Pick<ParamsCreateLocation, 'name'>;
+    itemEdit?: TypeGetProfileResponse;
   };
 };
 

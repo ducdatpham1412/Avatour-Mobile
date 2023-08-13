@@ -1,9 +1,8 @@
 interface TypeGetProfileResponse {
   id: number;
-  avatar: string;
   account_type: number;
-  services: Array<number>;
   name: string;
+  avatar: string;
   description: string;
   followers: number;
   followings: number;
@@ -16,6 +15,8 @@ interface TypeGetProfileResponse {
   duration: number;
   total_ratings: number;
   average_stars: number;
+  services: Array<number>;
+  status: number;
   relationship: number;
 }
 

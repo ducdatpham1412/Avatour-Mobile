@@ -61,7 +61,7 @@ const CreateSale = ({route}: Props) => {
     name: myName,
   } = useAppSelector(state => state.accountSlice.passport.profile);
 
-  const initValue = useRef<UseCreateSaleParams['initValue']>({
+  const initValue = useRef<UseCreateSaleParams>({
     postId: itemEdit?.id,
     name: itemEdit?.name || itemError?.name || '',
     content: itemEdit?.content || itemError?.content || '',
@@ -80,9 +80,7 @@ const CreateSale = ({route}: Props) => {
       setName,
       updateStatus,
     },
-  ] = useCreateSale({
-    initValue: initValue.current,
-  });
+  ] = useCreateSale(initValue.current);
   const [{data: dataSale}] = useDetailSale(initValue.current.postId, {
     revalidateAll: false,
   });

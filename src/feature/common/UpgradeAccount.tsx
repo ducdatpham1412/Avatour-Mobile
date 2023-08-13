@@ -23,7 +23,7 @@ import ModalBankAccount from './components/ModalBankAccount';
 import ModalChooseBank from './components/ModalChooseBank';
 
 const UpgradeAccount = () => {
-  const timeOutRef = useRef(0);
+  const timeOutRef = useRef<NodeJS.Timeout>();
   const {loading, setLoading} = useLoading();
   const theme = useTheme();
   const {email} = useAppSelector(
@@ -140,7 +140,7 @@ const UpgradeAccount = () => {
         <InputBox
           ref={locationInputRef}
           style={[$input, {backgroundColor: theme.white}]}
-          i18Placeholder="profile.location"
+          i18Placeholder="profile.address"
           defaultValue={location}
           onChangeText={text => setLocation(text)}
         />
@@ -347,7 +347,7 @@ const styles = ScaledSheet.create({
   accountNumberView: {
     width: '100%',
     alignItems: 'center',
-    marginTop: '20@vs',
+    marginTop: verticalScale(20),
   },
   titleConfirm: {
     lineHeight: '20@ms',

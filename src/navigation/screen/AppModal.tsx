@@ -8,6 +8,7 @@ import {
   ModalInputEdit,
   ModalScanQr,
   Toast,
+  ToolTip,
 } from './modals';
 
 const AppModal = () => {
@@ -21,6 +22,7 @@ const AppModal = () => {
       <ModalActionSheet />
       <ModalAlert />
       <Toast />
+      <ToolTip />
     </>
   );
 };

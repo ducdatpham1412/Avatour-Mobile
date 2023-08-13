@@ -1,34 +1,19 @@
 import {apiGetListTours, apiGetListToursFavorite} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
+import {safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import {ItemTour, TabView} from 'components';
-import {StyleIcon, StyleText} from 'components/base';
+import {StyleContainer, StyleIcon, StyleText} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import {IconTabBar} from 'components/common';
 import {useTheme} from 'hook';
 import usePaging from 'hook/usePaging';
 import React, {useCallback} from 'react';
-import {Platform, View, ViewStyle} from 'react-native';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import {scale} from 'utility/scale';
-
-const TourEnjoy = () => {
-  const theme = useTheme();
-  return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      <View style={[styles.titleView, {borderBottomColor: theme.holderColor}]}>
-        <StyleIcon
-          source={Images.icons.tour}
-          size={15}
-          customStyle={{tintColor: theme.p_900}}
-        />
-        <StyleText i18Text="tour.tours" customStyle={styles.textTitle} />
-      </View>
-    </View>
-  );
-};
+import {borderWidthTiny} from 'utility/assistant';
+import {scale, verticalScale} from 'utility/scale';
 
 const MyTour = () => {
   const {id: myId} = useAppSelector(
@@ -87,19 +72,12 @@ const ToursScreen = () => {
   const {modeExp} = useAppSelector(state => state.accountSlice);
   const theme = useTheme();
 
-  if (modeExp) {
-    return <TourEnjoy />;
-  }
-  return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
-      <View style={[styles.titleView, {borderBottomColor: theme.holderColor}]}>
-        <StyleIcon
-          source={Images.icons.tour}
-          size={15}
-          customStyle={{tintColor: theme.p_900}}
-        />
-        <StyleText i18Text="tour.tours" customStyle={styles.textTitle} />
-      </View>
+  const renderContent = () => {
+    if (modeExp) {
+      return null;
+    }
+
+    return (
       <TabView
         style={$body}
         listElements={[MyTour, TourFavorite]}
@@ -109,30 +87,38 @@ const ToursScreen = () => {
         ]}
         tabBarStyle={$tabBar}
       />
-    </View>
+    );
+  };
+
+  return (
+    <StyleContainer layOut="view">
+      <View style={[$titleView, {borderBottomColor: theme.gray_300}]}>
+        <StyleIcon
+          source={Images.icons.tour}
+          size={15}
+          customStyle={{tintColor: theme.p_900}}
+        />
+        <StyleText i18Text="tour.tours" customStyle={$textTitle} />
+      </View>
+      {renderContent()}
+    </StyleContainer>
   );
 };
 
+const $titleView: ViewStyle = {
+  paddingVertical: verticalScale(4),
+  paddingHorizontal: scale(20),
+  borderBottomWidth: borderWidthTiny,
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+const $textTitle: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+  marginLeft: scale(8),
+};
+
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Metrics.safeTopPadding,
-  },
-  titleView: {
-    paddingVertical: '3@vs',
-    paddingHorizontal: '20@s',
-    borderBottomWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  textTitle: {
-    fontSize: FONT_SIZE.f1,
-    fontWeight: 'bold',
-    marginLeft: '8@s',
-  },
   iconHeart: {
     fontSize: '20@ms',
   },

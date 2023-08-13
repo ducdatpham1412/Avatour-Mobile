@@ -56,7 +56,7 @@ const LoginScreen = () => {
       <StyleContainer
         containerStyle={$styleContainer}
         customStyle={$body}
-        extraHeight={verticalScale(200)}>
+        extraHeight={verticalScale(30)}>
         <View
           style={[
             $modal,

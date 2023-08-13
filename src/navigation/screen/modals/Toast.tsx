@@ -51,7 +51,7 @@ const ItemToast = memo(
     const opacityStyle = useAnimatedStyle(() => ({
       opacity: opacity.value,
     }));
-    const timeOut = useRef<number>(0);
+    const timeOut = useRef<NodeJS.Timeout>();
 
     useEffect(() => {
       timeOut.current = setTimeout(() => {
@@ -149,9 +149,11 @@ const $icon: TextStyle = {
 const $title: TextStyle = {
   fontSize: FONT_SIZE.f4,
   fontWeight: FONT_WEIGHT_MEDIUM,
+  textAlign: 'center',
 };
 const $content: TextStyle = {
   fontSize: FONT_SIZE.f5,
+  textAlign: 'center',
 };
 
 export default Object.assign(Toast, {

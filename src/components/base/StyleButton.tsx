@@ -3,7 +3,7 @@ import React from 'react';
 import {ActivityIndicator, StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {detectFromStyle} from 'utility/assistant';
-import {scale, verticalScale} from 'utility/scale';
+import {moderateScale, scale} from 'utility/scale';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
 
@@ -46,7 +46,7 @@ const StyleButton = (props: StyleTouchableProps) => {
 
 const $container: ViewStyle = {
   width: scale(200),
-  height: verticalScale(40),
+  height: moderateScale(46),
   borderRadius: 100,
   alignItems: 'center',
   justifyContent: 'center',

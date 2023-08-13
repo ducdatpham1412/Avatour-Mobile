@@ -64,6 +64,7 @@ const Images = {
     tourTabBar: require('./ic_tour_tab_bar.png'),
     tourTabBarFocus: require('./ic_tour_tab_bar_focus.png'),
     clock: require('./ic_clock.png'),
+    camera: require('./ic_camera.png'),
   },
   images: {
     logo: require('./img_logo.png'),

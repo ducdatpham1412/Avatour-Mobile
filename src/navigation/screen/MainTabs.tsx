@@ -12,10 +12,14 @@ import ProfileRoute from './tabs/ProfileRoute';
 
 const BottomTab = createBottomTabNavigator();
 
+const renderTabBar = (props: BottomTabBarProps) => {
+  return <TabNavigator {...props} />;
+};
+
 const MainTabs = () => {
   return (
     <BottomTab.Navigator
-      tabBar={(props: BottomTabBarProps) => <TabNavigator {...props} />}
+      tabBar={(props: BottomTabBarProps) => renderTabBar(props)}
       screenOptions={{
         headerShown: false,
       }}>

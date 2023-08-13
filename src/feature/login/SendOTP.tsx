@@ -113,13 +113,17 @@ const SendOTP = ({
     /**
      * Register
      */
-    if (paramsOTP.type_otp === TYPE_OTP.register) {
+    if (
+      paramsOTP.type_otp === TYPE_OTP.register &&
+      paramsOTP.password &&
+      paramsOTP.confirm_password
+    ) {
       try {
         setLoading(true);
         const res = await apiRegister({
           username: paramsOTP.username,
-          password: paramsOTP?.password || '',
-          confirm_password: paramsOTP?.confirm_password || '',
+          password: paramsOTP.password,
+          confirm_password: paramsOTP.confirm_password,
           code,
         });
         const itemLoginSuccess: TypeItemLoginSuccess = {

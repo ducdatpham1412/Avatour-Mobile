@@ -2,7 +2,7 @@ import {BlurView} from '@react-native-community/blur';
 import {GROUP_BUYING_STATUS, RELATIONSHIP} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
-import {FONT_SIZE, ratioImageGroupBuying} from 'asset/standardValue';
+import {FONT_SIZE, ratioImageSale} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
 import {
   StyleIcon,
@@ -297,7 +297,7 @@ const BubbleGroupBuying = (props: Props) => {
         <View
           style={{
             width: imageWidth,
-            height: imageWidth * ratioImageGroupBuying,
+            height: imageWidth * ratioImageSale,
           }}>
           <StyleVideo
             source={{uri: item.images[0]}}
@@ -305,7 +305,7 @@ const BubbleGroupBuying = (props: Props) => {
               styles.imagePreview,
               {
                 width: imageWidth,
-                height: imageWidth * ratioImageGroupBuying,
+                height: imageWidth * ratioImageSale,
               },
             ]}
             currentTime={2}
@@ -322,7 +322,7 @@ const BubbleGroupBuying = (props: Props) => {
       <SharedElement
         style={{
           width: imageWidth,
-          height: imageWidth * ratioImageGroupBuying,
+          height: imageWidth * ratioImageSale,
         }}
         id={`item.group_buying.${item.id}.false`}>
         <StyleImage
@@ -331,7 +331,7 @@ const BubbleGroupBuying = (props: Props) => {
             styles.imagePreview,
             {
               width: imageWidth,
-              height: imageWidth * ratioImageGroupBuying,
+              height: imageWidth * ratioImageSale,
             },
           ]}
           defaultSource={Images.images.defaultImage}
@@ -343,7 +343,7 @@ const BubbleGroupBuying = (props: Props) => {
     //     <SharedElement
     //         style={{
     //             width: imageWidth,
-    //             height: imageWidth * ratioImageGroupBuying,
+    //             height: imageWidth * ratioImageSale,
     //         }}
     //         id={`item.group_buying.${item.id}.false`}>
     //         {isVideo ? (
@@ -353,7 +353,7 @@ const BubbleGroupBuying = (props: Props) => {
     //                     styles.imagePreview,
     //                     {
     //                         width: imageWidth,
-    //                         height: imageWidth * ratioImageGroupBuying,
+    //                         height: imageWidth * ratioImageSale,
     //                     },
     //                 ]}
     //                 currentTime={2}
@@ -368,7 +368,7 @@ const BubbleGroupBuying = (props: Props) => {
     //                     styles.imagePreview,
     //                     {
     //                         width: imageWidth,
-    //                         height: imageWidth * ratioImageGroupBuying,
+    //                         height: imageWidth * ratioImageSale,
     //                     },
     //                 ]}
     //             />
@@ -491,7 +491,7 @@ const BubbleGroupBuying = (props: Props) => {
         containerStyle,
         {
           width: containerWidth,
-          height: imageWidth * ratioImageGroupBuying,
+          height: imageWidth * ratioImageSale,
         },
       ]}
       onPress={() => onGoToDetailGroupBuying(item)}

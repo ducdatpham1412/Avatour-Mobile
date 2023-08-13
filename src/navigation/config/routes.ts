@@ -29,6 +29,7 @@ enum ROOT_SCREEN {
   chatDetailSetting = '@ROOT_SCREEN/chatDetailSetting',
   listJoining = '@ROOT_SCREEN/listJoining',
   editSalePrice = '@ROOT_SCREEN/editSalePrice',
+  createLocation = '@ROOT_SCREEN/createLocation',
 }
 /**
  * ||

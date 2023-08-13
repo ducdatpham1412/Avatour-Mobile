@@ -17,7 +17,7 @@ import {
   PanGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
 import Animated, {
-  AnimateStyle,
+  AnimatedStyle,
   SharedValue,
   useAnimatedGestureHandler,
   useAnimatedStyle,
@@ -25,7 +25,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {borderWidthTiny, onGoToProfile} from 'utility/assistant';
+import {onGoToProfile} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import {useDetailTour} from './hooks';
@@ -107,6 +107,10 @@ export const checkOnEnd = (
     shareValue.value = move(levelModalScheduleHeight.high);
     return;
   }
+};
+
+const renderDaySchedule = (tourId: number, dayIndex: number) => {
+  return () => <DayScheduleDetailTour tourId={tourId} dayIndex={dayIndex} />;
 };
 
 const DetailTour = ({
@@ -198,7 +202,7 @@ const DetailTour = ({
         <Animated.View
           style={[$body, {backgroundColor: theme.background}, modalStyle]}>
           <IndicatorModal />
-          <LoadingScreen />
+          <LoadingScreen containerStyle={{backgroundColor: 'transparent'}} />
         </Animated.View>
       );
     }
@@ -208,7 +212,7 @@ const DetailTour = ({
         <Animated.View
           style={[$body, {backgroundColor: theme.background}, modalStyle]}>
           <PanGestureHandler onGestureEvent={gestureHandler}>
-            <Animated.View style={$gesture}>
+            <Animated.View style={[$gesture, {backgroundColor: theme.white}]}>
               <View
                 style={[
                   $avatar,
@@ -224,7 +228,7 @@ const DetailTour = ({
                       onGoToProfile(data?.creator);
                     }
                   }}>
-                  <Avatar source={{uri: data?.creator_avatar}} size={30} />
+                  <Avatar source={{uri: data?.creator_avatar}} size={36} />
                   <StyleText
                     originValue={data?.creator_name}
                     customStyle={$name}
@@ -254,9 +258,8 @@ const DetailTour = ({
                 onPress={() => {
                   searchRef.current?.show();
                 }}
+                haveBorder={false}
               />
-
-              <View style={[$divider, {borderTopColor: theme.gray_400}]} />
             </Animated.View>
           </PanGestureHandler>
 
@@ -265,9 +268,7 @@ const DetailTour = ({
           <View style={$listView}>
             <TabView
               listElements={data?.schedule?.map((_, index) => {
-                return () => (
-                  <DayScheduleDetailTour tourId={tourId} dayIndex={index} />
-                );
+                return renderDaySchedule(tourId, index);
               })}
               tabBarType="scroll"
               tabBarStyle={$tabBar}
@@ -347,15 +348,17 @@ const DetailTour = ({
 const $container: ViewStyle = {
   flex: 1,
 };
-const $body: AnimateStyle<ViewStyle> = {
+const $body: AnimatedStyle<ViewStyle> = {
   position: 'absolute',
   width: '100%',
   bottom: 0,
-  borderTopLeftRadius: 30,
-  borderTopRightRadius: 30,
+  borderTopLeftRadius: moderateScale(30),
+  borderTopRightRadius: moderateScale(30),
+  overflow: 'hidden',
 };
-const $gesture: AnimateStyle<ViewStyle> = {
+const $gesture: AnimatedStyle<ViewStyle> = {
   width: '100%',
+  paddingBottom: verticalScale(12),
 };
 const $avatar: ViewStyle = {
   flexDirection: 'row',
@@ -373,7 +376,7 @@ const $name: TextStyle = {
   fontWeight: 'bold',
 };
 const $tool: ViewStyle = {
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(4),
 };
 const $listView: ViewStyle = {
   flex: 1,
@@ -400,10 +403,4 @@ const $tabBox: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
 };
-const $divider: ViewStyle = {
-  width: '100%',
-  borderTopWidth: borderWidthTiny,
-  marginTop: verticalScale(12),
-};
-
 export default DetailTour;

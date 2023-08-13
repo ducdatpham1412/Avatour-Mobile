@@ -10,6 +10,7 @@ import {
 } from 'react-native-keyboard-aware-scroll-view';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'react-native-size-matters';
+import {isIOS} from 'utility/assistant';
 
 interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   children?: ReactNode;
@@ -25,14 +26,12 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   layOut?: 'view' | 'scroll';
 }
 
-// let offsetY = 0;
-
 const StyleContainer = (props: ScrollContainerProps, ref: any) => {
   const {
     children,
     containerStyle,
     customStyle,
-    extraHeight = verticalScale(120),
+    extraHeight = isIOS ? verticalScale(60) : verticalScale(120),
     headerProps,
     TopComponent,
     BottomComponent,

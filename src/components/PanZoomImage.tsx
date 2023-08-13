@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import {BORDER_RADIUS} from 'asset';
 import {Metrics} from 'asset/metrics';
