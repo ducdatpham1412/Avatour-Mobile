@@ -33,6 +33,7 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny} from 'utility/assistant';
 import {
   formatDDMMMM,
@@ -42,10 +43,9 @@ import {
   formatUTCDate,
 } from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {validateIsNumber} from 'utility/validate';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
-import {I18Normalize} from 'utility/I18Next';
-import {validateIsNumber} from 'utility/validate';
 
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
@@ -118,16 +118,10 @@ const ModalSearchFilter = (
   const [startPrice, setStartPrice] = useState('');
   const [endPrice, setEndPrice] = useState('');
 
-  const {
-    searchParams,
-    setSearchParams,
-    actions: {
-      onPressService,
-      onChangeNumberPeople,
-      onPressVehicle,
-      onSavePrice,
-    },
-  } = useFilterSearch({onChangeSearch, initSearchParams, isGetFromAsync});
+  const [
+    {searchParams, setSearchParams},
+    {onPressService, onChangeNumberPeople, onPressVehicle, onSavePrice},
+  ] = useFilterSearch({onChangeSearch, initSearchParams, isGetFromAsync});
 
   const onSave = async () => {
     const newValue: TypeSearchParams = {

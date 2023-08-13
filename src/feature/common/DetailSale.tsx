@@ -587,7 +587,7 @@ const DetailSale = ({
         onPress={onShowOptions}>
         <StyleIcon
           source={Images.icons.more}
-          size={15}
+          size={20}
           customStyle={{tintColor: theme.black}}
         />
       </StyleTouchable>

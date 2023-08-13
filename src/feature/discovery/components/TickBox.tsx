@@ -1,10 +1,10 @@
-import {View, Text, StyleProp, ViewStyle, TextStyle} from 'react-native';
-import React from 'react';
-import {I18Normalize} from 'utility/I18Next';
 import {StyleText, StyleTouchable} from 'components/base';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useTheme} from 'hook';
+import React from 'react';
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {I18Normalize} from 'utility/I18Next';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 export type OptionTickBox = {
   id: number;
@@ -39,7 +39,7 @@ const TickBox = ({
           const isChosen = !!listChosen.find(item => item.id === option.id);
 
           return (
-            <View style={$itemOptionView}>
+            <View key={index} style={$itemOptionView}>
               <StyleTouchable
                 customStyle={[
                   $itemOptionBox,
