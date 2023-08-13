@@ -48,6 +48,7 @@ const $textName: TextStyle = {
 };
 const $textDescription: TextStyle = {
   marginTop: 0,
+  fontSize: FONT_SIZE.f3,
 };
 
 export default ItemHotLocation;

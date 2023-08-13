@@ -326,14 +326,14 @@ const DetailTour = ({
           customStyle={[
             $iconMore,
             {
-              backgroundColor: theme.white,
+              backgroundColor: theme.white_opacity(0.8),
               top: top || safePaddingNotZero,
             },
           ]}
           onPress={onPressMore}>
           <StyleIcon
             source={Images.icons.more}
-            size={13}
+            size={20}
             customStyle={{tintColor: theme.black}}
           />
         </StyleTouchable>

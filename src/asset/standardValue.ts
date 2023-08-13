@@ -1,7 +1,5 @@
-/* eslint-disable no-shadow */
-import {Platform} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {moderateScale, verticalScale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
 import Images from './img/images';
 

@@ -188,7 +188,6 @@ const discovery = {
   category: 'Categories ({{value}})',
   available: 'Available',
   temporarilyClosed: 'Temporarily closed',
-  requestingDelete: 'Requesting to be deleted',
   notWorry:
     "Dont't worry.\nStore just is only temporarily not accepting any more orders\nYour booking is still being processed.",
   closed: 'Closed',

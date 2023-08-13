@@ -16,7 +16,7 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {Avatar, IconLiked, IconNotLiked} from 'components/common';
+import {Avatar, ButtonBack, IconLiked, IconNotLiked} from 'components/common';
 import dayjs from 'dayjs';
 import {ScrollCropImages} from 'feature/profile/components';
 import {useTheme} from 'hook';
@@ -560,21 +560,16 @@ const DetailSale = ({
         </ScrollView>
       )}
 
-      <StyleTouchable
-        customStyle={[
+      <ButtonBack
+        containerStyle={[
           $iconBackView,
           {
             top: top + verticalScale(5),
             backgroundColor: theme.white_opacity(0.8),
           },
         ]}
-        onPress={goBack}>
-        <Ionicons
-          name="arrow-back"
-          style={$iconBack}
-          customStyle={{tintColor: theme.black}}
-        />
-      </StyleTouchable>
+        onPress={goBack}
+      />
 
       <StyleTouchable
         customStyle={[
@@ -626,9 +621,6 @@ const $iconOptionView: ViewStyle = {
   right: scale(10),
   padding: moderateScale(5),
   borderRadius: 30,
-};
-const $iconBack: TextStyle = {
-  fontSize: moderateScale(20),
 };
 const $informationView: ViewStyle = {
   paddingHorizontal: scale(16),
