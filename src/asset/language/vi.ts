@@ -191,7 +191,6 @@ const discovery = {
   category: 'Loại hình ({{value}})',
   available: 'Có sẵn',
   temporarilyClosed: 'Tạm dừng nhận đơn',
-  requestingDelete: 'Đang yêu cầu xoá',
   notWorry:
     'Đừng lo lắng.\nCửa hàng chỉ tạm thời không nhận thêm order nữa\nĐơn đặt hàng của bạn vẫn tiếp tục được tiến hành.',
   closed: 'Đã kết thúc',

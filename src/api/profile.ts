@@ -86,7 +86,7 @@ export const apiEditProfile = (
     }
   });
 
-  return request.put('/profile/edit', payload, {timeout: 10000});
+  return request.put('/profile/edit', payload, {timeout: 30000});
 };
 
 export const apiFollowUser = (id: number) => {

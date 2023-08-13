@@ -42,9 +42,6 @@ const Status = ({status}: StatusProps) => {
   if (status === STATUS.temporarilyClose) {
     textStatus = 'discovery.temporarilyClosed';
     color = theme.red;
-  } else if (status === STATUS.requestingDelete) {
-    textStatus = 'discovery.requestingDelete';
-    color = theme.red;
   }
 
   return (
@@ -129,7 +126,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
           customStyle={$image}
         />
         <View style={[$heartBox, {backgroundColor: theme.white_opacity(0.8)}]}>
-          {!!item?.is_liked ? (
+          {item?.is_liked ? (
             <IconLiked
               customStyle={$iconLike}
               onPress={() =>
@@ -168,6 +165,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
           <StyleText
             originValue={item?.creator_location}
             customStyle={[$textInfo, {color: theme.gray_500}]}
+            numberOfLines={1}
           />
         </View>
       )}

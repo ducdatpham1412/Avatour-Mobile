@@ -53,7 +53,13 @@ const MapTour = ({
       />
 
       <ButtonBack
-        containerStyle={[$iconX, {top: top || verticalScale(3)}]}
+        containerStyle={[
+          $iconX,
+          {
+            top: top || verticalScale(3),
+            backgroundColor: theme.white_opacity(0.8),
+          },
+        ]}
         onPress={onGoBack ?? goBack}
       />
       {children}

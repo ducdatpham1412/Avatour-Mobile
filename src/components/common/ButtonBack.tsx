@@ -32,7 +32,7 @@ const $container: ViewStyle = {
   borderRadius: 50,
 };
 const $iconX: TextStyle = {
-  fontSize: moderateScale(17),
+  fontSize: moderateScale(20),
 };
 
 export default ButtonBack;
