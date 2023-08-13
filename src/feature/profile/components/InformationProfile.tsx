@@ -1,7 +1,7 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {FONT_SIZE} from 'asset/standardValue';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset/standardValue';
 import {
   SquareButton,
   StyleImage,
@@ -147,7 +147,13 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
                 marginLeft: 5,
               },
             ]}
-            titleStyle={$textButton}
+            titleStyle={[
+              $textButton,
+              {
+                color: isShopAccount ? theme.black : theme.white,
+                fontWeight: isShopAccount ? FONT_WEIGHT_MEDIUM : 'bold',
+              },
+            ]}
             title="profile.createTour"
             onPress={() => {
               navigate(PROFILE_ROUTE.createTour);
