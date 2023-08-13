@@ -1,12 +1,12 @@
 import {apiGetListGroupBuying} from 'api/profile';
-import {ACCOUNT, APP_EVENT} from 'asset/enum';
+import {ACCOUNT, APP_EVENT, STATUS} from 'asset/enum';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {View, ViewStyle} from 'react-native';
-import {borderWidthTiny, onReactSale} from 'utility/assistant';
+import {onReactSale} from 'utility/assistant';
 import {scale} from 'utility/scale';
 
 interface Props {
@@ -50,15 +50,18 @@ const ListSalesSupplier = ({userId}: Props) => {
     });
   });
 
-  useAppEvent(APP_EVENT.editSale, data => {
+  useAppEvent(APP_EVENT.editSale, e => {
     setList(pre => {
+      if (e.data.status === STATUS.notActive) {
+        return pre.filter(sale => sale.id !== e.post_id);
+      }
       return pre.map(sale => {
-        if (sale.id !== data?.post_id) {
+        if (sale.id !== e?.post_id) {
           return sale;
         }
         return {
           ...sale,
-          ...data.data,
+          ...e.data,
         };
       });
     });
@@ -117,10 +120,6 @@ const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingBottom: safePaddingNotZero,
   paddingHorizontal: horizontalPadding,
-};
-const $buttonUpgrade: ViewStyle = {
-  backgroundColor: 'transparent',
-  borderWidth: borderWidthTiny,
 };
 
 export default ListSales;

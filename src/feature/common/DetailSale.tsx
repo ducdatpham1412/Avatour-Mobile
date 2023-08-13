@@ -5,13 +5,12 @@ import {
   FONT_WEIGHT_MEDIUM,
   ratioImageSale,
 } from 'asset';
-import {STATUS} from 'asset/enum';
+import {ERROR_MESSAGE, STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {AppModalize, TextCountDown} from 'components';
+import {AppModalize, LoadingScreen, TextCountDown} from 'components';
 import {
   RefreshControl,
-  StyleButton,
   StyleContainer,
   StyleIcon,
   StyleText,
@@ -43,9 +42,13 @@ import {
   renderPersonalJoinsFromGroups,
 } from 'utility/assistant';
 import {formatLocaleNumber, formatddddDDMMYYYY} from 'utility/format';
-import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {ItemMeJoin, ModalConfirmJoinGb, ModalGroup} from './components';
+import {
+  ItemMeJoin,
+  ModalConfirmJoinGb,
+  ModalGroup,
+  ModalStillHavePeopleJoin,
+} from './components';
 import {useDetailSale} from './hooks';
 
 interface ButtonReactionProps {
@@ -112,8 +115,8 @@ const DetailSale = ({
   );
 
   const [
-    {data, initLoading, meJoins, loadingJoin, refreshing, loadingRequestDelete},
-    {onReaction, onRefresh, onJoin, deleteEstimate, requestDeleteSale},
+    {data, initLoading, meJoins, loadingJoin, refreshing, loadingDelete},
+    {onReaction, onRefresh, onJoin, deleteEstimate, deleteSale},
   ] = useDetailSale(saleId ?? sale?.id, {
     revalidateAll: true,
   });
@@ -122,7 +125,7 @@ const DetailSale = ({
 
   const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
-  const modalDeleteRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const modalStillHavePeopleJoin = useRef<ElementRef<typeof AppModalize>>(null);
 
   /**
    * Function
@@ -147,38 +150,44 @@ const DetailSale = ({
   };
 
   const onShowOptions = () => {
-    if (data) {
+    if (data && data.status !== STATUS.notActive) {
       if (isMySale) {
+        const agree = async () => {
+          try {
+            await deleteSale();
+            goBack();
+          } catch (err) {
+            if (err === ERROR_MESSAGE.still_having_people_join) {
+              Vibration.vibrate();
+              modalStillHavePeopleJoin.current?.show();
+            } else {
+              ModalAlert.error({
+                content: err,
+              });
+            }
+          }
+        };
+
         ModalActionSheet.show({
-          options:
-            data.status !== STATUS.requestingDelete
-              ? [
-                  {
-                    title: 'common.edit',
-                    onPress: () => {
-                      navigate(PROFILE_ROUTE.createSale, {
-                        itemEdit: data,
-                      });
-                    },
-                  },
-                  {
-                    title: 'common.delete',
-                    onPress: () => {
-                      Vibration.vibrate();
-                      modalDeleteRef.current?.show();
-                    },
-                  },
-                ]
-              : [
-                  {
-                    title: 'common.edit',
-                    onPress: () => {
-                      navigate(PROFILE_ROUTE.createSale, {
-                        itemEdit: data,
-                      });
-                    },
-                  },
-                ],
+          options: [
+            {
+              title: 'common.edit',
+              onPress: () => {
+                navigate(PROFILE_ROUTE.createSale, {
+                  itemEdit: data,
+                });
+              },
+            },
+            {
+              title: 'common.delete',
+              onPress: () => {
+                ModalAlert.options({
+                  i18Content: 'profile.post.sureDeletePost',
+                  onContinue: agree,
+                });
+              },
+            },
+          ],
         });
         return;
       }
@@ -216,18 +225,8 @@ const DetailSale = ({
     let colorStatus = theme.blue;
     if (data?.status === STATUS.active) {
       textStatus = 'discovery.available';
-    } else if (
-      data?.status === STATUS.temporarilyClose ||
-      data?.status === STATUS.requestingDelete
-    ) {
-      if (!isMySale) {
-        textStatus = 'discovery.temporarilyClosed';
-      } else {
-        textStatus =
-          data?.status === STATUS.temporarilyClose
-            ? 'discovery.temporarilyClosed'
-            : 'discovery.requestingDelete';
-      }
+    } else if (data?.status === STATUS.temporarilyClose) {
+      textStatus = 'discovery.temporarilyClosed';
       colorStatus = theme.red;
     } else if (data?.status === STATUS.notActive) {
       textStatus = 'discovery.closed';
@@ -307,52 +306,48 @@ const DetailSale = ({
 
   const renderReaction = () => {
     return (
-      <>
-        <View style={$reactionView}>
-          <ButtonReaction
-            onPress={onReaction}
-            title={
-              data?.total_likes ? 'discovery.numberLike' : 'discovery.like'
-            }
-            titleParams={{
-              value: data?.total_likes,
-            }}>
-            {data?.is_liked ? (
-              <IconLiked customStyle={$likeIcon} onPress={onReaction} />
-            ) : (
-              <IconNotLiked
-                customStyle={[$likeIcon, {color: theme.gray_800}]}
-                onPress={onReaction}
-              />
-            )}
-          </ButtonReaction>
+      <View style={$reactionView}>
+        <ButtonReaction
+          onPress={onReaction}
+          title={data?.total_likes ? 'discovery.numberLike' : 'discovery.like'}
+          titleParams={{
+            value: data?.total_likes,
+          }}>
+          {data?.is_liked ? (
+            <IconLiked customStyle={$likeIcon} onPress={onReaction} />
+          ) : (
+            <IconNotLiked
+              customStyle={[$likeIcon, {color: theme.gray_800}]}
+              onPress={onReaction}
+            />
+          )}
+        </ButtonReaction>
 
-          <ButtonReaction
-            icon={Images.icons.comment}
-            onPress={() => console.log('show modal comment')}
-            title={
-              data?.total_comments
-                ? 'discovery.numberComments'
-                : 'discovery.comment'
-            }
-            titleParams={{
-              value: data?.total_comments,
-            }}
-          />
+        <ButtonReaction
+          icon={Images.icons.comment}
+          onPress={() => console.log('show modal comment')}
+          title={
+            data?.total_comments
+              ? 'discovery.numberComments'
+              : 'discovery.comment'
+          }
+          titleParams={{
+            value: data?.total_comments,
+          }}
+        />
 
-          <ButtonReaction
-            icon={Images.icons.share}
-            onPress={() => console.log('Share')}
-            title="discovery.share.title"
-          />
+        <ButtonReaction
+          icon={Images.icons.share}
+          onPress={() => console.log('Share')}
+          title="discovery.share.title"
+        />
 
-          <ButtonReaction
-            icon={Images.icons.reputation}
-            onPress={() => console.log('Go to review')}
-            title="profile.rating"
-          />
-        </View>
-      </>
+        <ButtonReaction
+          icon={Images.icons.reputation}
+          onPress={() => console.log('Go to review')}
+          title="profile.rating"
+        />
+      </View>
     );
   };
 
@@ -535,14 +530,6 @@ const DetailSale = ({
     );
   };
 
-  const renderContent = () => {
-    return (
-      <View style={$contentView}>
-        <StyleText originValue={data?.content || ''} />
-      </View>
-    );
-  };
-
   return (
     <>
       {initLoading ? (
@@ -567,7 +554,9 @@ const DetailSale = ({
           {renderInformation()}
           {renderReaction()}
           {renderJoins()}
-          {renderContent()}
+          <View style={$contentView}>
+            <StyleText originValue={data?.content || ''} />
+          </View>
         </ScrollView>
       )}
 
@@ -618,34 +607,10 @@ const DetailSale = ({
       />
 
       {isMySale && (
-        <AppModalize ref={modalDeleteRef}>
-          <StyleText
-            i18Text="alert.afterDeleteSale"
-            i18Params={{value: data.name}}
-            mode="html"
-            htmlTextBoldColor={theme.red}
-          />
-          <StyleButton
-            title="common.continue"
-            containerStyle={[
-              $buttonContinue,
-              {marginBottom: bottom || safePaddingNotZero},
-            ]}
-            isLoading={loadingRequestDelete}
-            onPress={async () => {
-              try {
-                await requestDeleteSale();
-                impactMedium();
-                modalDeleteRef.current?.hide();
-              } catch (err) {
-                ModalAlert.error({
-                  content: err,
-                });
-              }
-            }}
-          />
-        </AppModalize>
+        <ModalStillHavePeopleJoin ref={modalStillHavePeopleJoin} sale={data} />
       )}
+
+      {loadingDelete && <LoadingScreen />}
     </>
   );
 };
@@ -787,10 +752,6 @@ const $meJoinView: ViewStyle = {
 };
 const $titleEstimate: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
-};
-const $buttonContinue: ViewStyle = {
-  width: '70%',
-  marginTop: verticalScale(12),
 };
 
 export default DetailSale;

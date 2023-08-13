@@ -2,10 +2,15 @@ import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React, {isValidElement} from 'react';
-import {ImageSourcePropType, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {
+  ImageSourcePropType,
+  ImageStyle,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {moderateScale} from 'utility/scale';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface TypeMainSettingProps {
   icon: ImageSourcePropType | Element;
@@ -18,65 +23,63 @@ const TypeMainSetting = (props: TypeMainSettingProps) => {
   const theme = useTheme();
 
   return (
-    <StyleTouchable customStyle={styles.container} onPress={onPress}>
-      <View style={[styles.blurBackground, {backgroundColor: theme.white}]} />
+    <StyleTouchable customStyle={$container} onPress={onPress}>
+      <View style={[$blur, {backgroundColor: theme.white}]} />
 
       <View
         style={[
-          styles.iconBox,
+          $iconBox,
           {
-            borderColor: theme.p_700,
+            borderColor: theme.p_600,
           },
         ]}>
         {isValidElement(icon) ? (
           icon
         ) : (
-          <StyleImage source={icon} customStyle={styles.icon} />
+          <StyleImage source={icon} customStyle={$icon} />
         )}
       </View>
 
-      <View style={[styles.cordBox, {borderColor: theme.p_700}]} />
+      <View style={[$cord, {borderTopColor: theme.p_600}]} />
 
-      <StyleText i18Text={title} customStyle={styles.text} />
+      <StyleText i18Text={title} customStyle={$text} />
     </StyleTouchable>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '100%',
-    height: '55@vs',
-    marginTop: '16@vs',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  blurBackground: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: '100@vs',
-  },
-  iconBox: {
-    width: '45@vs',
-    height: '45@vs',
-    borderRadius: '30@s',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    marginLeft: '10@s',
-  },
-  cordBox: {
-    width: '10@s',
-    borderWidth: moderateScale(1),
-    marginRight: '10@s',
-  },
-  text: {
-    fontWeight: FONT_WEIGHT_MEDIUM,
-  },
-  icon: {
-    width: '70%',
-    height: '70%',
-  },
-});
+const $container: ViewStyle = {
+  width: '100%',
+  height: verticalScale(55),
+  marginTop: verticalScale(16),
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+const $blur: ViewStyle = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  borderRadius: 100,
+};
+const $iconBox: ViewStyle = {
+  width: moderateScale(45),
+  height: moderateScale(45),
+  borderRadius: 50,
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderWidth: 2,
+  marginLeft: scale(8),
+};
+const $cord: ViewStyle = {
+  width: scale(8),
+  borderTopWidth: moderateScale(2),
+  marginRight: scale(12),
+};
+const $text: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $icon: ImageStyle = {
+  width: '70%',
+  height: '70%',
+};
 
 export default TypeMainSetting;

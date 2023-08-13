@@ -6,17 +6,16 @@ import {
 } from 'asset/standardValue';
 import {StyleContainer} from 'components/base';
 import TypeDetailSetting from 'components/common/TypeDetailSetting';
-import Redux from 'hook/useRedux';
+import {useTheme} from 'hook';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import React from 'react';
-import {ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {TextStyle, ViewStyle} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {scale} from 'utility/scale';
+import {moderateScale, scale} from 'utility/scale';
 
 const AboutUs = () => {
-  const theme = Redux.getTheme();
+  const theme = useTheme();
 
   const onOpenPolicy = () => {
     navigate(ROOT_SCREEN.webView, {
@@ -52,15 +51,14 @@ const AboutUs = () => {
         customStyle={$container}
         headerProps={{
           title: 'setting.aboutUs.headerTitle',
-        }}
-        backgroundColor={theme.white}>
+        }}>
         <TypeDetailSetting
           title="setting.aboutUs.privacyPolicy"
           onPress={onOpenPolicy}
           icon={
             <MaterialIcons
               name="privacy-tip"
-              style={[styles.stylesIcon, {color: theme.blue}]}
+              style={[$icon, {color: theme.blue}]}
             />
           }
         />
@@ -71,7 +69,7 @@ const AboutUs = () => {
           icon={
             <MaterialIcons
               name="description"
-              style={[styles.stylesIcon, {color: theme.blue}]}
+              style={[$icon, {color: theme.blue}]}
             />
           }
         />
@@ -82,7 +80,7 @@ const AboutUs = () => {
           icon={
             <MaterialIcons
               name="contact-support"
-              style={[styles.stylesIcon, {color: theme.pink}]}
+              style={[$icon, {color: theme.pink}]}
             />
           }
         />
@@ -93,7 +91,7 @@ const AboutUs = () => {
           icon={
             <MaterialIcons
               name="feedback"
-              style={[styles.stylesIcon, {color: theme.orange}]}
+              style={[$icon, {color: theme.orange}]}
             />
           }
         />
@@ -105,15 +103,8 @@ const AboutUs = () => {
 const $container: ViewStyle = {
   paddingHorizontal: scale(40),
 };
-
-const styles = ScaledSheet.create({
-  container: {
-    paddingHorizontal: '27@s',
-    alignItems: 'center',
-  },
-  stylesIcon: {
-    fontSize: '23@ms',
-  },
-});
+const $icon: TextStyle = {
+  fontSize: moderateScale(23),
+};
 
 export default AboutUs;

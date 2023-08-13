@@ -82,6 +82,7 @@ const Images = {
     defaultImage: require('./img_default_image.png'),
     defaultAvatar: require('./img_default_avatar.png'),
     loadingPlane: require('./img_loading_plane.json'),
+    loadingTravel: require('./img_loading_travel.json'),
     travelCamping: require('./img_travel_camping.png'),
     travelVolunteer: require('./img_travel_volunteer.png'),
     travelTeamBuilding: require('./img_travel_teambuilding.png'),

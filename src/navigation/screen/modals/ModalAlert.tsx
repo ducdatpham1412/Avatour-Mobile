@@ -60,6 +60,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const onContinueFunction = useRef<() => void>();
   const onCancelFunction = useRef<() => void>();
   const onCloseFunction = useRef<() => void>();
+  const handle = useRef<() => void>();
 
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<TypeStatus>();
@@ -74,7 +75,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   } else if (status === 'error') {
     tintColor = theme.red;
   } else if (status === 'options') {
-    tintColor = theme.p_800;
+    tintColor = theme.p_700;
   }
 
   useImperativeHandle(
@@ -167,7 +168,9 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
           title="common.ok"
           containerStyle={[$button, {backgroundColor: tintColor}]}
           onPress={() => {
-            onCloseFunction.current?.();
+            handle.current = () => {
+              onCloseFunction.current?.();
+            };
             modalRef.current?.hide();
           }}
         />
@@ -182,8 +185,10 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             containerStyle={[$buttonCancel, {borderColor: theme.black}]}
             titleStyle={{color: theme.black}}
             onPress={() => {
-              onCloseFunction.current?.();
-              onCancelFunction.current?.();
+              handle.current = () => {
+                onCloseFunction.current?.();
+                onCancelFunction.current?.();
+              };
               modalRef.current?.hide();
             }}
           />
@@ -192,8 +197,10 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             title="common.continue"
             containerStyle={[$buttonContinue, {backgroundColor: tintColor}]}
             onPress={() => {
-              onCloseFunction.current?.();
-              onContinueFunction?.current?.();
+              handle.current = () => {
+                onCloseFunction.current?.();
+                onContinueFunction?.current?.();
+              };
               modalRef.current?.hide();
             }}
           />
@@ -208,6 +215,8 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       isVisible={visible}
       onModalHide={() => {
         setVisible(false);
+        handle.current?.();
+        handle.current = undefined;
         onCloseFunction.current = undefined;
         onContinueFunction.current = undefined;
         onCancelFunction.current = undefined;

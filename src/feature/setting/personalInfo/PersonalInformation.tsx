@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+import {useIsFocused} from '@react-navigation/native';
 import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
@@ -15,7 +15,6 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {TextStyle, ViewStyle} from 'react-native';
-import {verticalScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -34,7 +33,6 @@ import {
 import {moderateScale, scale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 import ItemInfo from './ItemInfo';
-import {useIsFocused} from '@react-navigation/native';
 
 const PersonalInformation = () => {
   const {t} = useTranslation();
@@ -47,7 +45,7 @@ const PersonalInformation = () => {
     gender: profile.gender,
     birthday: profile.birthday,
   });
-  const timeOut = useRef<number>(0);
+  const timeOut = useRef<NodeJS.Timeout>();
 
   const [email, setEmail] = useState(profile.information.email);
   const [phone, setPhone] = useState(profile.information.phone);
@@ -161,7 +159,6 @@ const PersonalInformation = () => {
   return (
     <StyleContainer
       headerProps={{title: 'setting.personalInfo.headerTitle'}}
-      backgroundColor={theme.white}
       customStyle={$container}>
       <ItemInfo
         value={email}
@@ -235,14 +232,6 @@ const $icon: TextStyle = {
 };
 const $iconBirthday: TextStyle = {
   fontSize: moderateScale(15),
-};
-const $elementPicker: ViewStyle = {
-  height: verticalScale(50),
-  justifyContent: 'center',
-};
-const $textPicker: TextStyle = {
-  fontWeight: 'bold',
-  fontSize: moderateScale(20),
 };
 
 export default PersonalInformation;

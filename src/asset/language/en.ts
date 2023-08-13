@@ -565,11 +565,11 @@ const alert = {
   sureToDeleteJoin: 'Are you sure you want to cancel this order?',
   afterTemporarilyClose:
     'After pressing <b>"Temporarily closed"</b>, people cannot participate in buying {{value}} until you reopen',
-  afterDeleteSale: `After pressing Continue, the order will go to <b>Delete Request</b> status.
-Everyone will not be able to participate in buying {{value}}.
-   
-We will review and get back to you within 24 hours.
-During that time, you can cancel the deletion request by <b>“Open receiving booking”</b> again.`,
+  stillHavePeopleJoin: `You cannot delete {{name}} at the moment because there are still people participating in the joint purchase.
+    
+To be able to delete, please follow these two steps:
+  1. Press <b>Temporarily closed</b> to temporarily not accept new orders.
+  2. After all current people come to check-in at the store, you can proceed to delete the order again.`,
 
   // PERMISSION
   permissionCamera: 'Access camera',

@@ -142,3 +142,7 @@ export const apiRequestBought = (params: TypeRequestBought) => {
     list_joins_id: params.list_joins_id,
   });
 };
+
+export const apiDeleteSale = (saleId: number) => {
+  return request.delete(`/profile/sales/${saleId}`);
+};

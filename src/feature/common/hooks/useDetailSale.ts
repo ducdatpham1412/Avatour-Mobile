@@ -1,16 +1,15 @@
-import {apiRequestDeleteSale} from 'api/authentication';
 import {
   apiDeleteEstimate,
   apiEditEstimate,
   apiEstimate,
   apiJoinSale,
 } from 'api/discovery';
-import {apiLikePost, apiUnLikePost} from 'api/profile';
+import {apiDeleteSale, apiLikePost, apiUnLikePost} from 'api/profile';
 import {APP_EVENT, REACT, STATUS} from 'asset/enum';
 import {emitAppEvent, useApi, useEstimatesAndJoinings} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import useSWRMutation from 'swr/mutation';
-import {impactLight, impactMedium} from 'utility/haptic';
+import {impactLight} from 'utility/haptic';
 
 interface Params {
   revalidateAll?: boolean;
@@ -246,16 +245,17 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
       },
     );
 
-  const {trigger: requestDeleteSale, isMutating: loadingRequestDelete} =
-    useSWRMutation('api.requestDeleteSale', async () => {
+  const {trigger: deleteSale, isMutating: loadingDelete} = useSWRMutation(
+    'api.requestDeleteSale',
+    async () => {
       if (data) {
-        await apiRequestDeleteSale(data.id);
+        await apiDeleteSale(data.id);
         await mutate(
           pre => {
             if (pre) {
               return {
                 ...pre,
-                status: STATUS.requestingDelete,
+                status: STATUS.notActive,
               };
             }
           },
@@ -264,11 +264,12 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
         emitAppEvent(APP_EVENT.editSale, {
           post_id: data.id,
           data: {
-            status: STATUS.requestingDelete,
+            status: STATUS.notActive,
           },
         });
       }
-    });
+    },
+  );
 
   return [
     {
@@ -280,7 +281,7 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
       loadingEstimate,
       loadingDeleteEstimate,
       loadingEditEstimate,
-      loadingRequestDelete,
+      loadingDelete,
     },
     {
       onRefresh,
@@ -290,7 +291,7 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
       deleteEstimate,
       editEstimate,
       mutate,
-      requestDeleteSale,
+      deleteSale,
     },
   ] as const;
 };

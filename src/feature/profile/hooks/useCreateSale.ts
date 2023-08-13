@@ -8,9 +8,9 @@ import {PROFILE_ROUTE} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import {useState} from 'react';
 import isEqual from 'react-fast-compare';
+import useSWRMutation from 'swr/mutation';
 import {onGoToSignUp} from 'utility/assistant';
 import {getDateTimeNow} from 'utility/format';
-import {impactMedium} from 'utility/haptic';
 
 export interface UseCreateSaleParams {
   initValue: {
@@ -167,40 +167,35 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
     }
   };
 
-  const onUpdateStatusSale = async (status: number) => {
-    if (initValue.postId) {
-      try {
-        await apiUpdateStatusSale(initValue.postId, status);
-        await mutate(
-          pre => {
-            if (pre) {
-              return {
-                ...pre,
-                status,
-              };
-            }
-          },
-          {revalidate: false},
-        );
-        if (status == STATUS.active) {
-          impactMedium();
+  const {trigger: updateStatus, isMutating: loadingUpdateStatus} =
+    useSWRMutation(
+      'api.updateStatusSale',
+      async (_, {arg: status}: {arg: number}) => {
+        if (initValue.postId) {
+          await apiUpdateStatusSale(initValue.postId, status);
+          await mutate(
+            pre => {
+              if (pre) {
+                return {
+                  ...pre,
+                  status,
+                };
+              }
+            },
+            {revalidate: false},
+          );
+          emitAppEvent(APP_EVENT.editSale, {
+            post_id: initValue.postId,
+            data: {
+              status,
+            },
+          });
         }
-        emitAppEvent(APP_EVENT.editSale, {
-          post_id: initValue.postId,
-          data: {
-            status,
-          },
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
-    }
-  };
+      },
+    );
 
   return [
-    {content, images, prices, name, loadingCreate},
+    {content, images, prices, name, loadingCreate, loadingUpdateStatus},
     {
       onConfirmPost,
       onEditPost,
@@ -208,7 +203,7 @@ const useCreateSale = ({initValue}: UseCreateSaleParams) => {
       setContent,
       setPrices,
       setName,
-      onUpdateStatusSale,
+      updateStatus,
     },
   ] as const;
 };

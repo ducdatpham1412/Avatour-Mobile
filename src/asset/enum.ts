@@ -200,7 +200,6 @@ export enum STATUS {
   active = 1,
   draft = 2,
   temporarilyClose = 3,
-  requestingDelete = 4,
 }
 
 export enum POST_TYPE {
@@ -374,4 +373,8 @@ export enum STATUS_JOIN_ESTIMATE {
   notActive = 0,
   active = 1,
   confirmed = 2,
+}
+
+export enum ERROR_MESSAGE {
+  still_having_people_join = 'still_having_people_join',
 }

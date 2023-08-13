@@ -16,7 +16,7 @@ const RootScreen = () => {
   const {loading, error, isInApp, forceLogOut} = useInitApp();
 
   if (loading) {
-    return <LoadingScreen />;
+    return <LoadingScreen size={200} />;
   }
   if (error) {
     return <ErrorScreen onPress={forceLogOut} title="setting.logOut" />;
