@@ -13,6 +13,7 @@ import InputBox from 'components/common/InputBox';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
+import {ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Keyboard, TextStyle, View, ViewStyle} from 'react-native';
@@ -20,7 +21,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalAccounts} from './components';
 import {useLogin} from './hooks';
-import {ModalAlert} from 'navigation/screen/modals';
 
 const LoginScreen = () => {
   const [
@@ -50,13 +50,13 @@ const LoginScreen = () => {
           originValue="Tôn vinh nét độc bản của du lịch Việt"
           customStyle={$textHonneur}
         />
-        <IconPaddingField size={Metrics.width} />
+        <IconPaddingField size={Metrics.width} style={$field} />
       </View>
 
       <StyleContainer
         containerStyle={$styleContainer}
         customStyle={$body}
-        extraHeight={verticalScale(30)}>
+        extraHeight={verticalScale(200)}>
         <View
           style={[
             $modal,
@@ -202,6 +202,10 @@ const $textHonneur: TextStyle = {
   color: Theme.common.white,
   fontWeight: FONT_WEIGHT_MEDIUM,
 };
+const $field: ViewStyle = {
+  marginBottom: -verticalScale(30),
+  marginTop: verticalScale(10),
+};
 const $styleContainer: ViewStyle = {
   backgroundColor: 'transparent',
   paddingTop: 0,
@@ -277,7 +281,8 @@ const $checkIcon: TextStyle = {
   fontSize: moderateScale(20),
 };
 const $loginButton: ViewStyle = {
-  marginTop: verticalScale(100),
+  marginTop: verticalScale(72),
+  height: verticalScale(54),
 };
 const $signUpText: TextStyle = {
   fontSize: FONT_SIZE.f3,

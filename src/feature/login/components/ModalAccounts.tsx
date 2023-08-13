@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {BORDER_RADIUS} from 'asset';
 import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleText, StyleTouchable} from 'components/base';
@@ -6,8 +6,8 @@ import {useTheme} from 'hook';
 import React, {ForwardedRef, forwardRef} from 'react';
 import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface Props {
   listAccounts: TypeAccount[];
@@ -33,10 +33,7 @@ const ModalAccounts = (
                 <StyleTouchable
                   customStyle={[$content, {backgroundColor: theme.white}]}
                   onPress={() => onSelect?.(account)}>
-                  <StyleText
-                    originValue={account.username}
-                    customStyle={$textName}
-                  />
+                  <StyleText originValue={account.username} />
                 </StyleTouchable>
                 <StyleTouchable
                   customStyle={$buttonX}
@@ -61,10 +58,7 @@ const ModalAccounts = (
               <StyleTouchable
                 customStyle={[$content, {backgroundColor: theme.white}]}
                 onPress={() => onSelect?.(account)}>
-                <StyleText
-                  originValue={account.username}
-                  customStyle={$textName}
-                />
+                <StyleText originValue={account.username} />
               </StyleTouchable>
               <StyleTouchable
                 customStyle={$buttonX}
@@ -116,10 +110,7 @@ const $buttonX: ViewStyle = {
   marginLeft: scale(10),
 };
 const $iconX: TextStyle = {
-  fontSize: moderateScale(15),
-};
-const $textName: TextStyle = {
-  fontSize: FONT_SIZE.f3,
+  fontSize: moderateScale(20),
 };
 
 export default forwardRef(ModalAccounts);
