@@ -31,7 +31,7 @@ const ItemEstimate = ({item, containerStyle}: Props) => {
     <StyleTouchable
       customStyle={[
         $container,
-        {backgroundColor: theme.white, borderColor: theme.p_700},
+        {backgroundColor: theme.white, borderColor: theme.p_600},
         containerStyle,
       ]}
       onPress={() =>
@@ -100,7 +100,7 @@ const ItemEstimate = ({item, containerStyle}: Props) => {
 
       {!data?.name && <StyleText originValue="" customStyle={$textName} />}
 
-      <View style={[$button, {backgroundColor: theme.p_700}]}>
+      <View style={[$button, {backgroundColor: theme.p_600}]}>
         <StyleText
           i18Text="discovery.goToDeposit"
           customStyle={[$text, {fontWeight: FONT_WEIGHT_MEDIUM}]}

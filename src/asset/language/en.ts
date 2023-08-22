@@ -36,6 +36,7 @@ const common = {
   select: 'Select',
   edit: 'Edit',
   delete: 'Delete',
+  suggest: 'Suggest',
 };
 
 const login = {
@@ -167,7 +168,9 @@ const discovery = {
   goodMorning: 'Good morning 🌤',
   goodAfternoon: 'Good afternoon ☀️',
   goodEvening: 'Good evening 🌙',
-  thanksForJoin: 'Thanks for joining with us ❤️',
+  thankyou: 'Thanks you',
+  suggestHaveBeenAcknowledged:
+    'Your contribution to Avatour has been acknowledged. Thank you!',
   amountBookGb: 'Quantities orders: {{value}}',
   depositAmount: 'Deposit amount: {{value}}vnd',
   titleDeposit: 'You need to deposit a small amount',
@@ -235,8 +238,9 @@ const discovery = {
   arrivalTimePassed: 'The arrival time has passed',
   notRequestConfirm: 'No confirmation request yet',
   dayNumber: 'Day {{value}}',
-  timeHere: 'Duration in here',
+  durationHere: 'Duration in here',
   free: 'Free',
+  paid: 'Paid',
   addLocation: 'Add location',
   addDay: 'Add day',
   youHaveGroupBuying:
@@ -273,6 +277,16 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
     'At Avatour, you will get an additional discount of <b>{{value}}</b> when your buying group reaches the maximum amount',
   maximumMembers: 'Maximum number of purchases',
   newGroup: 'New group',
+  name: 'Name',
+  homeAddress: 'House number, street, district, city',
+  minCost: 'Min price',
+  maxCost: 'Max price',
+  hour: 'Hour',
+  newLocation:
+    '<b>{{value}}</b> is a new location. Would you suggest to Avatour??',
+  newLocationHaveAdded:
+    'Avatour is reviewing your suggestion to add new location <b>{{value}}</b>',
+  seeSuggest: 'View suggestion',
 };
 
 const reputation = {
@@ -396,6 +410,7 @@ const profile = {
     'In order to become touring supplier\nWe need some information to complete review process',
   firstEnterName: "First, enter your shop's name",
   shopLocation: "Let's us know your location",
+  address: 'Address',
   location: 'Location',
   bank: 'Choose bank',
   bankName: 'Bank',
@@ -405,7 +420,8 @@ const profile = {
     'By tapping <b>"Confirm"</b>, you agree to send these information to us.\nReviewing process can take from 1-7 days, we\'ll notice to you within 24 hours via email <b>{{email}}</b>',
   phoneNumber: 'Your phone number',
   requestUpgradeSuccess: 'Send request successfully',
-  description: 'Description about you',
+  description: 'Description',
+  locationDescription: 'Location description',
   shop: 'Shop',
   favorite: 'Favorite',
   rating: 'Rating',
@@ -436,6 +452,9 @@ const profile = {
   groupBuyingName: 'Group buying name',
   goToScan: 'Go to scan',
   status: 'Status',
+  noFoundLocation:
+    'The searched location could not be found. Do you want to add a new location?',
+  personal: 'Personal',
 };
 
 const setting = {
@@ -569,6 +588,7 @@ const alert = {
 To be able to delete, please follow these two steps:
   1. Press <b>Temporarily closed</b> to temporarily not accept new orders.
   2. After all current people come to check-in at the store, you can proceed to delete the order again.`,
+  createLocationSuccess: 'Create location successfully',
 
   // PERMISSION
   permissionCamera: 'Access camera',

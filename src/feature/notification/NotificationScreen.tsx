@@ -13,9 +13,9 @@ import Redux from 'hook/useRedux';
 import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {MAIN_SCREEN} from 'navigation/config/routes';
 import React, {useCallback} from 'react';
-import {Platform, View} from 'react-native';
+import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
-import {logger} from 'utility/assistant';
+import {borderWidthTiny, logger} from 'utility/assistant';
 import ItemNotification from './components/ItemNotification';
 
 /** ------------------------
@@ -159,10 +159,7 @@ const styles = ScaledSheet.create({
   titleView: {
     paddingVertical: '3@vs',
     paddingHorizontal: '20@s',
-    borderBottomWidth: Platform.select({
-      ios: '0.25@ms',
-      android: '0.5@ms',
-    }),
+    borderBottomWidth: borderWidthTiny,
     flexDirection: 'row',
     alignItems: 'center',
   },

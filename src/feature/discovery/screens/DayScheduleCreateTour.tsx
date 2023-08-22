@@ -1,13 +1,18 @@
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {STATUS} from 'asset/enum';
+import {horizontalPadding} from 'asset/metrics';
+import {SquareButton} from 'components/base';
+import {ItemLocation} from 'feature/discovery/components';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
+import {useMyRequests} from 'feature/profile/hooks';
+import {useSafeArea, useTheme} from 'hook';
 import {TypeShowModalAddLocation} from 'navigation/screen/modals';
 import React from 'react';
-import {View, ViewStyle} from 'react-native';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {borderWidthTiny} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
-import {verticalScale} from 'utility/scale';
-import {ButtonAddLocation, ItemLocation} from '../components';
+import {moderateScale, verticalScale} from 'utility/scale';
 import {ItemLocationProps} from '../components/ItemLocation';
 
 interface Props {
@@ -22,8 +27,8 @@ export const renderItemLocation = (
     isActive,
     getIndex,
     isEditMode,
-    onAddLocation,
     onDeleteLocation,
+    onSuggestLocation,
   }: Omit<ItemLocationProps, 'item'>,
 ) => {
   return (
@@ -33,16 +38,38 @@ export const renderItemLocation = (
       isActive={isActive}
       getIndex={getIndex}
       isEditMode={isEditMode}
-      onAddLocation={onAddLocation}
       onDeleteLocation={onDeleteLocation}
+      onSuggestLocation={onSuggestLocation}
     />
   );
 };
 
 const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
-  const {bottom} = useSafeAreaInsets();
+  const theme = useTheme();
+  const {bottom} = useSafeArea();
+  const [, {suggestLocation}] = useMyRequests();
   const [{schedules}, {setSchedules}] = useContextCreateTour();
   const listLocations = schedules[dayIndex];
+
+  const onSuggestLocation = async (value: TypeGetProfileResponse) => {
+    await suggestLocation(value.id);
+    setSchedules(pre => {
+      return pre.map((day, index) => {
+        if (index !== dayIndex) {
+          return day;
+        }
+        return day.map(location => {
+          if (location.id !== value.id) {
+            return location;
+          }
+          return {
+            ...location,
+            status: STATUS.suggesting,
+          };
+        });
+      });
+    });
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -54,41 +81,22 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
             isActive,
             getIndex,
             isEditMode: true,
-            onAddLocation: () =>
-              onShowModalAddLocation({
-                onSave: newLocation => {
-                  const index = getIndex();
-                  if (index !== undefined) {
-                    impactLight();
-                    setSchedules(pre => {
-                      return pre.map((item, __index) => {
-                        if (__index !== dayIndex) {
-                          return item;
-                        }
-                        const temp = [...item];
-                        temp.splice(index + 1, 0, newLocation);
-                        return temp;
-                      });
-                    });
-                  }
-                },
-                listCurrentIds: listLocations.map(item => item?.id),
-              }),
             onDeleteLocation: () => {
               const index = getIndex();
               if (index !== undefined) {
                 setSchedules(pre => {
-                  return pre.map((item, __index) => {
+                  return pre.map((__item, __index) => {
                     if (__index !== dayIndex) {
-                      return item;
+                      return __item;
                     }
-                    const temp = [...item];
+                    const temp = [...__item];
                     temp.splice(index, 1);
                     return temp;
                   });
                 });
               }
             },
+            onSuggestLocation,
           })
         }
         onDragEnd={({data}) => {
@@ -106,13 +114,16 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
         contentContainerStyle={[
           $contentContainer,
           {
-            paddingBottom: (bottom || safePaddingNotZero) + verticalScale(50),
+            paddingBottom: bottom + verticalScale(70),
           },
         ]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
-          <ButtonAddLocation
-            isActive={false}
+          <SquareButton
+            icon={
+              <AntDesign name="plus" style={[$iconAdd, {color: theme.black}]} />
+            }
+            title="discovery.addLocation"
             onPress={() =>
               onShowModalAddLocation({
                 onSave: newLocation => {
@@ -129,6 +140,7 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
                 listCurrentIds: listLocations.map(item => item?.id),
               })
             }
+            containerStyle={[$buttonAddLocation, {borderColor: theme.black}]}
           />
         )}
       />
@@ -141,6 +153,17 @@ const $container: ViewStyle = {
 };
 const $contentContainer: ViewStyle = {
   paddingHorizontal: horizontalPadding,
+};
+const $iconAdd: TextStyle = {
+  fontSize: moderateScale(15),
+};
+const $buttonAddLocation: ViewStyle = {
+  width: '80%',
+  height: verticalScale(35),
+  borderWidth: borderWidthTiny,
+  alignSelf: 'center',
+  backgroundColor: 'transparent',
+  marginBottom: verticalScale(12),
 };
 
 export default DayScheduleCreateTour;

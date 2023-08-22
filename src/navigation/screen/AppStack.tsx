@@ -20,6 +20,7 @@ import SearchScreen from 'feature/discovery/SearchScreen';
 import {SendOTP} from 'feature/login';
 import {ChatDetail, ChatDetailSetting, MessScreen} from 'feature/mess';
 import {
+  CreateLocation,
   CreatePostPickImage,
   CreateSale,
   CreateTour,
@@ -108,6 +109,11 @@ const AppStack = () => {
       <Stack.Screen
         name={PROFILE_ROUTE.createTour}
         component={CreateTour}
+        options={{gestureEnabled: false}}
+      />
+      <Stack.Screen
+        name={ROOT_SCREEN.createLocation}
+        component={CreateLocation}
         options={{gestureEnabled: false}}
       />
 

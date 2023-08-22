@@ -66,7 +66,7 @@ const MyQRCode = () => {
               content: profile.name,
             },
             {
-              title: 'profile.location',
+              title: 'profile.address',
               content: profile.location,
             },
           ]}

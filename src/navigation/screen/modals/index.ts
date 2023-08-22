@@ -11,3 +11,4 @@ export {default as ModalInputEdit} from './ModalInputEdit';
 export {default as ModalProfile} from './ModalProfile';
 export {default as ModalScanQr} from './ModalScanQr';
 export {default as Toast} from './Toast';
+export {default as ToolTip} from './ToolTip';

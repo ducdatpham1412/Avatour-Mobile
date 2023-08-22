@@ -3,15 +3,21 @@ import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, MapTour, TabView} from 'components';
 import {StyleButton, StyleText, StyleTouchable} from 'components/base';
 import {ButtonX, IndicatorModal} from 'components/common';
+import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, MAIN_SCREEN, PROFILE_ROUTE} from 'navigation/config';
-import {ModalAddLocation, ModalAlert} from 'navigation/screen/modals';
+import {
+  ModalAddLocation,
+  ModalAlert,
+  TypeShowModalAddLocation,
+} from 'navigation/screen/modals';
 import React, {
   Dispatch,
   ElementRef,
+  RefObject,
   SetStateAction,
   createContext,
   useContext,
@@ -19,13 +25,7 @@ import React, {
   useState,
 } from 'react';
 import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useUpdateEffect} from 'react-use';
-import {borderWidthTiny} from 'utility/assistant';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {defaultSearchParams} from 'utility/staticData';
-import {ParamsCreateTour, useCreateTour} from './hooks';
+import {PanGestureHandler} from 'react-native-gesture-handler';
 import Animated, {
   AnimatedStyle,
   Extrapolation,
@@ -35,8 +35,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
-import {PanGestureHandler} from 'react-native-gesture-handler';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useUpdateEffect} from 'react-use';
+import {borderWidthTiny} from 'utility/assistant';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {defaultSearchParams} from 'utility/staticData';
+import {ParamsCreateTour, useCreateTour} from './hooks';
 
 type TypeContext = [
   {
@@ -51,6 +55,10 @@ type TypeContext = [
   },
 ];
 
+interface CreateTourInstanceProps {
+  tourId: ParamsCreateTour;
+}
+
 const CreateTourContext = createContext<TypeContext>([
   {
     schedules: [],
@@ -64,8 +72,22 @@ const CreateTourContext = createContext<TypeContext>([
   },
 ]);
 
-const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
-  const {bottom, top} = useSafeAreaInsets();
+const renderDaySchedule = (
+  index: number,
+  modalAddLocationRef: RefObject<TypeShowModalize<TypeShowModalAddLocation>>,
+) => {
+  return () => (
+    <DayScheduleCreateTour
+      dayIndex={index}
+      onShowModalAddLocation={value => {
+        modalAddLocationRef.current?.show(value);
+      }}
+    />
+  );
+};
+
+const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
+  const {bottom, top} = useSafeArea();
   const theme = useTheme();
 
   const [
@@ -289,7 +311,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
       <Animated.View
         style={[$body, {backgroundColor: theme.background}, modalStyle]}>
         <PanGestureHandler onGestureEvent={gestureHandler}>
-          <Animated.View style={$gesture}>
+          <Animated.View style={[$gesture, {backgroundColor: theme.white}]}>
             <IndicatorModal />
 
             <ToolSearch
@@ -301,9 +323,8 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
               isEditMode
               onPress={() => searchRef.current?.show()}
               containerStyle={$tool}
+              haveBorder={false}
             />
-
-            <View style={[$divider, {borderTopColor: theme.gray_400}]} />
           </Animated.View>
         </PanGestureHandler>
 
@@ -311,14 +332,7 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
           <TabView
             ref={tabViewRef}
             listElements={schedules.map((_, index) => {
-              return () => (
-                <DayScheduleCreateTour
-                  dayIndex={index}
-                  onShowModalAddLocation={value => {
-                    modalAddLocationRef.current?.show(value);
-                  }}
-                />
-              );
+              return renderDaySchedule(index, modalAddLocationRef);
             })}
             tabBarType="scroll"
             tabBarStyle={$tabBar}
@@ -349,15 +363,20 @@ const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
       </Animated.View>
 
       <Animated.View
-        style={[$button, buttonStyle, {bottom: bottom || safePaddingNotZero}]}>
+        style={[
+          $button,
+          buttonStyle,
+          {
+            paddingBottom: bottom || safePaddingNotZero,
+            backgroundColor: theme.white,
+            shadowColor: theme.black,
+          },
+        ]}>
         {tourId !== 'create-new' && (
           <>
             <StyleButton
               title="common.resetChanges"
-              containerStyle={[
-                $buttonCancel,
-                {backgroundColor: theme.background},
-              ]}
+              containerStyle={[$buttonCancel, {borderColor: theme.black}]}
               titleStyle={{color: theme.black, fontWeight: FONT_WEIGHT_MEDIUM}}
               onPress={() =>
                 ModalAlert.options({
@@ -463,8 +482,9 @@ const $body: AnimatedStyle<ViewStyle> = {
   position: 'absolute',
   width: '100%',
   bottom: 0,
-  borderTopLeftRadius: moderateScale(16),
-  borderTopRightRadius: moderateScale(16),
+  borderTopLeftRadius: moderateScale(30),
+  borderTopRightRadius: moderateScale(30),
+  overflow: 'hidden',
 };
 const $tool: ViewStyle = {
   marginTop: verticalScale(16),
@@ -484,6 +504,13 @@ const $button: AnimatedStyle<ViewStyle> = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingHorizontal: scale(12),
+  paddingTop: verticalScale(16),
+  bottom: 0,
+  shadowOpacity: 0.1,
+  shadowOffset: {
+    width: 0,
+    height: -4,
+  },
 };
 const $buttonCancel: ViewStyle = {
   flex: 0.5,
@@ -521,13 +548,9 @@ const $buttonXDay: ViewStyle = {
   position: 'absolute',
   padding: moderateScale(2),
 };
-const $divider: ViewStyle = {
-  width: '100%',
-  borderTopWidth: borderWidthTiny,
-  marginTop: verticalScale(12),
-};
 const $gesture: AnimatedStyle<ViewStyle> = {
   width: '100%',
+  paddingBottom: verticalScale(12),
 };
 const $buttonSaveSmall: AnimatedStyle<ViewStyle> = {
   position: 'absolute',

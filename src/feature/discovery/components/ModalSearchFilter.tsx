@@ -37,13 +37,12 @@ import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny} from 'utility/assistant';
 import {
   formatDDMMMM,
+  formatInputNumber,
   formatLocaleNumber,
   formatMoney,
-  formatNormalNumberFromLocale,
   formatUTCDate,
 } from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {validateIsNumber} from 'utility/validate';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
 
@@ -178,6 +177,7 @@ const ModalSearchFilter = (
               )}
               onPressOption={onPressVehicle}
               disable={!editable}
+              pick="check-box"
             />
             <Indicator color={theme.gray_300} />
           </>
@@ -285,6 +285,8 @@ const ModalSearchFilter = (
           )}
           onPressOption={onPressService}
           disable={!editable}
+          layOut="grid"
+          pick="check-box"
         />
 
         <Indicator color={theme.gray_300} />
@@ -346,11 +348,9 @@ const ModalSearchFilter = (
             style={[$inputPrice, {borderColor: theme.gray_500}]}
             value={formatLocaleNumber(startPrice)}
             onChangeText={text => {
-              const temp = formatNormalNumberFromLocale(text);
-              if (validateIsNumber(temp)) {
+              const temp = formatInputNumber(text);
+              if (temp !== null) {
                 setStartPrice(temp);
-              } else if (text === '') {
-                setStartPrice('');
               }
             }}
             placeholder={t('discovery.price')}
@@ -363,11 +363,9 @@ const ModalSearchFilter = (
             style={[$inputPrice, {borderColor: theme.gray_500}]}
             value={formatLocaleNumber(endPrice)}
             onChangeText={text => {
-              const temp = formatNormalNumberFromLocale(text);
-              if (validateIsNumber(temp)) {
+              const temp = formatInputNumber(text);
+              if (temp !== null) {
                 setEndPrice(temp);
-              } else if (text === '') {
-                setEndPrice('');
               }
             }}
             placeholder={t('discovery.price')}

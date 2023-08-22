@@ -1,5 +1,6 @@
-import {apiGetUpdateBank, apiUpdateBankAccount} from 'api/authentication';
+import {apiUpdateBankAccount} from 'api/authentication';
 import {useAppSelector} from 'app-redux/store';
+import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import {
@@ -9,6 +10,7 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
+import {useMyRequests} from 'feature/profile/hooks';
 import {useLoading, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
@@ -16,7 +18,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet, scale} from 'react-native-size-matters';
-import useSWR from 'swr';
 import {borderWidthTiny, logger} from 'utility/assistant';
 import {verticalScale} from 'utility/scale';
 import ModalChooseBank from './components/ModalChooseBank';
@@ -42,11 +43,12 @@ const UpdateBankAccount = () => {
   const {
     profile: {information},
   } = useAppSelector(state => state.accountSlice.passport);
-
-  const getUpdateBank = useSWR('get-update-bank', async () => {
-    const res = await apiGetUpdateBank();
-    return res.data;
-  });
+  const [{data: listRequests}] = useMyRequests();
+  const updateBankData:
+    | TypeGetRequestResponse<TypeUpdateBankAccount>
+    | undefined = listRequests.find(
+    item => item.type === TYPE_AUTH_REQUEST.update_bank,
+  );
 
   const {loading, setLoading} = useLoading();
 
@@ -111,7 +113,7 @@ const UpdateBankAccount = () => {
   };
 
   const renderUpdateBefore = () => {
-    if (!getUpdateBank.data) {
+    if (!updateBankData) {
       return null;
     }
     return (
@@ -124,7 +126,7 @@ const UpdateBankAccount = () => {
           <StyleText i18Text="profile.bankName" />
           <StyleText originValue=": " />
           <StyleText
-            originValue={getUpdateBank?.data?.data?.bank_code}
+            originValue={updateBankData.data.bank_code}
             customStyle={$textBankCode}
           />
         </StyleText>
@@ -132,7 +134,7 @@ const UpdateBankAccount = () => {
           <StyleText i18Text="profile.accountNumber" />
           <StyleText originValue=": " />
           <StyleText
-            originValue={getUpdateBank?.data?.data?.bank_account}
+            originValue={updateBankData.data.bank_account}
             customStyle={$textBankCode}
           />
         </StyleText>
@@ -159,7 +161,7 @@ const UpdateBankAccount = () => {
           />
         }
         backgroundColor={theme.white}
-        customStyle={styles.container}>
+        customStyle={$container}>
         <StyleText
           i18Text="profile.bank"
           customStyle={styles.titleChooseBank}
@@ -234,9 +236,6 @@ const UpdateBankAccount = () => {
 };
 
 const styles = ScaledSheet.create({
-  container: {
-    paddingHorizontal: scale(32),
-  },
   titleChooseBank: {
     fontWeight: 'bold',
     marginTop: '10@vs',
@@ -271,7 +270,9 @@ const styles = ScaledSheet.create({
     height: scale((311 / 831) * 100),
   },
 });
-
+const $container: ViewStyle = {
+  paddingHorizontal: scale(32),
+};
 const $preViewUpdate: ViewStyle = {
   width: '100%',
   marginTop: verticalScale(20),

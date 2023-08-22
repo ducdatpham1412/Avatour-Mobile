@@ -36,6 +36,7 @@ const common = {
   select: 'Chọn',
   edit: 'Chỉnh sửa',
   delete: 'Xoá',
+  suggest: 'Đề xuất',
 };
 
 const login = {
@@ -170,7 +171,9 @@ const discovery = {
   goodMorning: 'Chào buổi sáng 🌤',
   goodAfternoon: 'Chào buổi chiều ☀️',
   goodEvening: 'Chào buổi tối 🌙',
-  thanksForJoin: 'Cảm ơn bạn đã tham gia cùng chúng mình ❤️',
+  thankyou: 'Cảm ơn',
+  suggestHaveBeenAcknowledged:
+    'Đóng góp của bạn cho Avatour đã được ghi nhận. Xin cảm ơn!',
   amountBookGb: 'Số lượng mua: {{value}}',
   depositAmount: 'Số tiền đặt cọc: {{value}}vnd',
   titleDeposit: 'Bạn cần đặt cọc một khoản tiền cho người bán',
@@ -238,8 +241,9 @@ const discovery = {
   arrivalTimePassed: 'Đã quá thời gian đến',
   notRequestConfirm: 'Chưa gửi yêu cầu xác nhận',
   dayNumber: 'Ngày {{value}}',
-  timeHere: 'Thời gian ở đây',
+  durationHere: 'Thời gian ở đây',
   free: 'Miễn phí',
+  paid: 'Có phí',
   addLocation: 'Thêm địa điểm',
   addDay: 'Thêm ngày',
   youHaveGroupBuying:
@@ -276,6 +280,16 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
     'Tại Avatour, bạn sẽ giảm được thêm <b>{{value}}</b> khi nhóm mua của bạn đạt số lượng tối đa',
   maximumMembers: 'Số lượt mua tối đa',
   newGroup: 'Nhóm mới',
+  name: 'Tên',
+  homeAddress: 'Số nhà, ngõ, phường, quận, thành phố',
+  minCost: 'Giá thấp nhất',
+  maxCost: 'Giá cao nhất',
+  hour: 'Giờ',
+  newLocation:
+    '<b>{{value}}</b> là một địa điểm mới. Bạn có muốn đề xuất với Avatour không?',
+  newLocationHaveAdded:
+    'Avatour đang xét duyệt đề xuất thêm địa điểm <b>{{value}}</b> của bạn',
+  seeSuggest: 'Xem đề xuất',
 };
 
 const reputation = {
@@ -376,7 +390,8 @@ const profile = {
     'Để trở thành một nhà cung cấp tour\ndu lịch\nChúng tôi cần một số thông tin phục vụ cho quá trình xét duyệt',
   firstEnterName: 'Đầu tiên, nhập tên cửa hàng của bạn',
   shopLocation: 'Địa chỉ cửa hàng',
-  location: 'Địa chỉ',
+  address: 'Địa chỉ',
+  location: 'Địa điểm',
   bank: 'Chọn ngân hàng',
   bankName: 'Ngân hàng',
   accountNumber: 'Số tài khoản',
@@ -385,8 +400,9 @@ const profile = {
     'Bằng việc ấn <b>"Xác nhận"</b>, bạn đồng ý gửi các thông tin trên cho chúng tôi.\nQuá trình xét duyệt có thể mất từ 1 tới 7 ngày, chúng tôi sẽ thông báo tới bạn qua địa chỉ email <b>{{email}}</b>',
   phoneNumber: 'Số điện thoại của bạn',
   requestUpgradeSuccess: 'Gửi yêu cầu thành công',
-  description: 'Mô tả về bạn',
-  shop: 'Shop',
+  description: 'Mô tả',
+  locationDescription: 'Mô tả địa điểm',
+  shop: 'Cửa hàng',
   favorite: 'Yêu thích',
   rating: 'Đánh giá',
   joining: 'Đang tham gia',
@@ -416,6 +432,9 @@ const profile = {
   groupBuyingName: 'Tên đơn mua chung',
   goToScan: 'Đi tới quét mã',
   status: 'Trạng thái',
+  noFoundLocation:
+    'Không tìm thấy địa điểm được tìm kiếm. Bạn có muốn thêm địa điểm mới không?',
+  personal: 'Cá nhân',
 };
 
 const mess = {
@@ -580,6 +599,7 @@ const alert = {
 Để có thể xoá, bạn vui lòng thực hiện theo hai bước sau:
   1. Ấn <b>Tạm dừng nhận đơn</b> để tạm thời không nhận thêm đơn hàng mới.
   2. Sau khi tất cả người hiện tại đến check-in tại cửa hàng, bạn có thể thực hiện xoá đơn hàng trở lại.`,
+  createLocationSuccess: 'Thêm địa điểm thành công',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

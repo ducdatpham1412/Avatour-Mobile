@@ -9,6 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {useEffect} from 'react';
 import I18Next from './I18Next';
 import {registerTranslation} from 'react-native-paper-dates';
+import {validateIsNumber} from './validate';
 
 dayjs.extend(relativeTime);
 dayjs.locale(vi);
@@ -99,8 +100,16 @@ export const formatDayGroupBuying = (date: string) => {
 };
 
 export const formatLocaleNumber = (value: string | number) => {
-  if (value === undefined || value === '') {
+  if (
+    value === undefined ||
+    value === '' ||
+    !validateIsNumber(value, {isDecimal: true})
+  ) {
     return '';
+  }
+  if (String(value).includes('.')) {
+    const temp = String(value).split('.');
+    return `${temp[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')}.${temp[1]}`;
   }
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
@@ -196,3 +205,31 @@ export const formatMoney = (value: number, options?: FormatMoneyOptions) => {
   return `${formatLocaleNumber(String(value || '0'))} (vnd)`;
 };
 export const formatPhone = (phone: string) => `(+84) ${phone}`;
+
+export const formatInputNumber = (
+  value: string | number,
+  params?: {isDecimal: boolean},
+) => {
+  if (value === '') {
+    return '';
+  }
+
+  value = String(value);
+  const lastCharacter = value[value.length - 1];
+  if (lastCharacter === ',' || lastCharacter === '.') {
+    if (!params?.isDecimal) {
+      return null;
+    }
+    value = `${value.slice(0, -1)}.`;
+  } else if (!validateIsNumber(lastCharacter)) {
+    return null;
+  }
+
+  //   const temp = formatNormalNumberFromLocale(value);
+  //   if (validateIsNumber(temp, {isDecimal: true})) {
+  //     return temp;
+  //   }
+  //   return null;
+
+  return formatNormalNumberFromLocale(value);
+};

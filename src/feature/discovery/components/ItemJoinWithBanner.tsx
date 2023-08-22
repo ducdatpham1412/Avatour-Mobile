@@ -40,7 +40,7 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
         $container,
         {backgroundColor: theme.white, borderColor: theme.gray_300},
         containerStyle,
-        {width: width.current},
+        {width: width.current as number},
       ]}
       onPress={() =>
         push(ROOT_SCREEN.detailMeJoin, {
@@ -70,7 +70,7 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
       }}>
       <StyleImage
         source={{uri: item?.sale?.images?.[0]}}
-        customStyle={{width: width.current, height}}
+        customStyle={{width: width.current as number, height}}
         defaultImageSource="image"
       />
 

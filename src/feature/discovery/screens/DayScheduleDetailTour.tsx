@@ -1,9 +1,11 @@
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {STATUS} from 'asset/enum';
+import {horizontalPadding} from 'asset/metrics';
 import {RefreshControl} from 'components/base';
+import {useMyRequests} from 'feature/profile/hooks';
+import {useSafeArea} from 'hook';
 import React from 'react';
 import {ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDetailTour} from '../hooks';
 import {renderItemLocation} from './DayScheduleCreateTour';
 
@@ -13,9 +15,34 @@ interface Props {
 }
 
 const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
+  const [, {suggestLocation}] = useMyRequests();
   const [{data, validating}, {mutate}] = useDetailTour(tourId);
   const listLocations = data?.schedule?.[dayIndex] ?? [];
+
+  const onSuggestLocation = async (value: TypeGetProfileResponse) => {
+    await suggestLocation(value.id);
+    await mutate(pre => {
+      if (pre) {
+        const newSchedule = pre.schedule.map((day, index) => {
+          if (index !== dayIndex) {
+            return day;
+          }
+          return day.map(location => {
+            if (location.id !== value.id) {
+              return location;
+            }
+            return {
+              ...location,
+              status: STATUS.suggesting,
+            };
+          });
+        });
+        pre.schedule = newSchedule;
+        return pre;
+      }
+    });
+  };
 
   return (
     <DraggableFlatList
@@ -26,15 +53,15 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
           isActive,
           getIndex,
           isEditMode: false,
-          onAddLocation: () => null,
           onDeleteLocation: () => null,
+          onSuggestLocation,
         })
       }
       keyExtractor={(item, index) => `${item.id}-${index}`}
       contentContainerStyle={[
         $contentContainer,
         {
-          paddingBottom: bottom || safePaddingNotZero,
+          paddingBottom: bottom,
         },
       ]}
       showsVerticalScrollIndicator={false}

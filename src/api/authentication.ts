@@ -75,12 +75,15 @@ export const apiLockAccount = () => {
 };
 
 export const apiOpenAccount = (params: TypeOpenAccountRequest) => {
-  return request.get('/auth/request', {
-    params: {
-      username: params.username,
-      code: params.code,
+  return request.put(
+    '/auth/request',
+    {username: params.username, code: params.code},
+    {
+      params: {
+        type: 'open-account',
+      },
     },
-  });
+  );
 };
 export const apiRequestDeleteAccount = () => {
   return request.put(
@@ -112,35 +115,9 @@ export const apiUpdateBankAccount = (params: TypeUpdateBankAccount) => {
 export const apiGetUpdateBank = (): Promise<
   TemplateApiResponse<TypeGetRequestResponse<TypeUpdateBankAccount> | null>
 > => {
-  return request.post(
-    'auth/request',
-    {},
-    {
-      params: {
-        type: TYPE_AUTH_REQUEST.update_bank,
-      },
-    },
-  );
-};
-
-export const apiGetAllMyRequest = (): Promise<
-  TemplateApiResponse<TypeGetRequestResponse<any>[]>
-> => {
-  return request.post('auth/request', null, {
-    params: {type: TYPE_AUTH_REQUEST.all},
-  });
-};
-
-export const apiDeleteRequest = (requestId: number) => {
-  return request.delete('auth/request', {params: {request_id: requestId}});
-};
-
-export const apiRequestUpdatePrice = (
-  body: TypeRequestUpdatePrice,
-): Promise<TemplateApiResponse<TypeRequestResponse>> => {
-  return request.put('auth/request', body, {
+  return request.get('auth/request', {
     params: {
-      type: TYPE_AUTH_REQUEST.update_price,
+      type: TYPE_AUTH_REQUEST.update_bank,
     },
   });
 };
