@@ -1,7 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {GROUP_BUYING_STATUS} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, BoxInformation, TextCountDown} from 'components';
 import {
   StyleButton,
@@ -12,7 +11,7 @@ import {
 } from 'components/base';
 import {Avatar} from 'components/common';
 import dayjs from 'dayjs';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert, ModalScanQr} from 'navigation/screen/modals';
@@ -25,7 +24,6 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny, logger, takePriceRange} from 'utility/assistant';
 import {
@@ -44,7 +42,7 @@ const DetailMeJoin = ({
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
   const {saleId, joinId, mode} = params;
   const theme = useTheme();
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const {t} = useTranslation();
   const {id: myId, avatar} = useAppSelector(
     state => state.accountSlice.passport.profile,
@@ -404,7 +402,7 @@ const DetailMeJoin = ({
                       },
                       mode: 'html',
                       htmlTextBoldColor: theme.gray_700,
-                      children: !!moneyCanSavedMore ? (
+                      children: moneyCanSavedMore ? (
                         <>
                           <StyleText originValue={textDown} />
                           <StyleText
@@ -525,7 +523,7 @@ const DetailMeJoin = ({
                   i18Text: 'discovery.priceCanBeChange',
                   mode: 'html',
                   htmlTextBoldColor: theme.gray_700,
-                  children: !!moneyCanSavedMore ? (
+                  children: moneyCanSavedMore ? (
                     <>
                       <StyleText originValue={textDown} />
                       <StyleText
@@ -767,7 +765,7 @@ const DetailMeJoin = ({
           style={[
             $buttonView,
             {
-              paddingBottom: bottom || safePaddingNotZero,
+              paddingBottom: bottom,
               backgroundColor: theme.background,
               shadowColor: theme.black,
             },
@@ -801,7 +799,7 @@ const DetailMeJoin = ({
           <StyleButton
             title="profile.goToScan"
             containerStyle={{
-              marginBottom: bottom || safePaddingNotZero,
+              marginBottom: bottom,
               width: '90%',
             }}
             onPress={() => {
@@ -825,7 +823,7 @@ const DetailMeJoin = ({
           title: data?.name as I18Normalize,
         }}
         scrollEnabled
-        customStyle={{paddingBottom: bottom || safePaddingNotZero}}
+        customStyle={{paddingBottom: bottom}}
         initLoading={loadingAll}
         refreshControl={
           <RefreshControl
@@ -886,20 +884,12 @@ const $saleInformation: ViewStyle = {
   paddingHorizontal: scale(12),
   justifyContent: 'space-between',
 };
-const $joinView: ViewStyle = {
-  width: '100%',
-};
+
 const $saleName: TextStyle = {
   fontWeight: 'bold',
 };
 const $textAmount: TextStyle = {
   fontWeight: 'bold',
-};
-const $listPeopleJoin: ViewStyle = {
-  width: '100%',
-  marginTop: verticalScale(4),
-  flexDirection: 'row',
-  alignItems: 'center',
 };
 const $textAlert: TextStyle = {
   fontSize: FONT_SIZE.f2,
@@ -921,7 +911,7 @@ const $buttonView: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  paddingTop: verticalScale(8),
+  paddingTop: verticalScale(16),
   shadowOpacity: 0.1,
   shadowOffset: {
     width: 0,

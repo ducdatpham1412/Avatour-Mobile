@@ -26,7 +26,6 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
           isActive,
           getIndex,
           isEditMode: false,
-          onAddLocation: () => null,
           onDeleteLocation: () => null,
         })
       }

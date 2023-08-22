@@ -1,5 +1,6 @@
-import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {ACCOUNT} from 'asset/enum';
+import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {ACCOUNT, STATUS} from 'asset/enum';
+import {IconTagStars} from 'asset/icons';
 import Images from 'asset/img/images';
 import {
   StyleIcon,
@@ -9,7 +10,8 @@ import {
 } from 'components/base';
 import {ButtonX} from 'components/common';
 import {useTheme} from 'hook';
-import React, {memo} from 'react';
+import {ModalAlert, ToolTip} from 'navigation/screen/modals';
+import React, {memo, useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {
@@ -21,9 +23,8 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ScaleDecorator, ShadowDecorator} from 'react-native-draggable-flatlist';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {borderWidthTiny, onGoToProfile} from 'utility/assistant';
+import {detectFromStyle, onGoToProfile} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
@@ -34,7 +35,6 @@ export interface ItemLocationProps {
   isActive: boolean;
   getIndex: () => number | undefined;
   isEditMode: boolean;
-  onAddLocation: () => void;
   onDeleteLocation: () => void;
 }
 
@@ -44,23 +44,21 @@ type InfoProps = {
   contentStyle?: StyleProp<TextStyle>;
 };
 
-type AddLocationProps = {
-  isActive: boolean;
-  onPress: () => void;
-};
-
 type DragProps = {
   onDrag: () => void;
 };
 
+type SuggestProps = Pick<ItemLocationProps, 'item'>;
+
 const Info = ({icon, content, contentStyle}: InfoProps) => {
   const theme = useTheme();
+  const color = detectFromStyle(contentStyle, 'color');
   return (
     <View style={$infoView}>
       <StyleIcon
         source={icon}
-        size={10}
-        customStyle={{tintColor: theme.gray_500}}
+        size={14}
+        customStyle={{tintColor: (color as string) ?? theme.gray_500}}
       />
       <StyleText
         numberOfLines={1}
@@ -86,20 +84,44 @@ const ButtonDrag = ({onDrag}: DragProps) => {
   );
 };
 
-export const ButtonAddLocation = ({isActive, onPress}: AddLocationProps) => {
-  const theme = useTheme();
+const Suggest = ({item}: SuggestProps) => {
+  const {t} = useTranslation();
+  const viewRef = useRef<View>(null);
+
+  const onPress = () => {
+    viewRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      ToolTip.show({
+        content: t('discovery.newLocation', {
+          value: item.name,
+        }),
+        button: {
+          title: 'common.suggest',
+          onPress: async () => {
+            try {
+              await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  reject('Error hehe');
+                }, 2000);
+              });
+              return 'success';
+            } catch (err) {
+              ModalAlert.error({
+                content: err,
+              });
+              return 'error';
+            }
+          },
+        },
+      });
+    });
+  };
+
   return (
-    <StyleTouchable
-      customStyle={[$addLocation, {borderColor: theme.gray_700}]}
-      disable={isActive}
-      disableOpacity={0.1}
-      onPress={onPress}>
-      <AntDesign name="plus" color={theme.black} />
-      <StyleText
-        i18Text="discovery.addLocation"
-        customStyle={$textAddLocation}
-      />
-    </StyleTouchable>
+    <View ref={viewRef} style={$stars}>
+      <StyleTouchable onPress={onPress}>
+        <IconTagStars />
+      </StyleTouchable>
+    </View>
   );
 };
 
@@ -109,7 +131,6 @@ const ItemLocation = ({
   getIndex,
   item,
   isEditMode,
-  onAddLocation,
   onDeleteLocation,
 }: ItemLocationProps) => {
   const theme = useTheme();
@@ -155,61 +176,53 @@ const ItemLocation = ({
             />
             <View style={$content}>
               <StyleText
-                originValue={`${(getIndex() ?? 0) + 1}. `}
+                originValue={`${(getIndex() ?? 0) + 1}. ${item.name}`}
                 numberOfLines={1}
-                customStyle={$textNameLocation}>
-                <StyleText originValue={item?.name} />
-              </StyleText>
-              {renderPrice()}
+                customStyle={$textName}
+              />
               <Info icon={Images.icons.location} content={item?.location} />
+              {renderPrice()}
               <Info
                 icon={Images.icons.clock}
-                content={t('discovery.timeHere')
-                  .concat(': ')
-                  .concat(`${item?.duration}h`)}
-              />
-              <StyleText
-                originValue={item?.description}
-                numberOfLines={1}
-                customStyle={[$textDescription, {color: theme.gray_500}]}
+                content={`${item?.duration}h`}
+                contentStyle={{color: theme.black}}
               />
             </View>
 
             {isEditMode && (
-              <>
-                <ButtonDrag
-                  onDrag={() => {
-                    impactLight();
-                    onDrag();
-                  }}
-                />
-                <ButtonX
-                  size={15}
-                  containerStyle={$iconX}
-                  onPress={onDeleteLocation}
-                />
-              </>
+              <ButtonDrag
+                onDrag={() => {
+                  impactLight();
+                  onDrag();
+                }}
+              />
             )}
           </View>
 
+          {isEditMode && (
+            <ButtonX
+              size={15}
+              containerStyle={$iconX}
+              onPress={onDeleteLocation}
+            />
+          )}
+
           {item.account_type === ACCOUNT.shop && (
-            <View style={[$joinGroupBuying, {backgroundColor: theme.p_100}]}>
+            <View style={[$joinGroupBuying, {backgroundColor: theme.p_200}]}>
               <StyleIcon
                 source={Images.icons.createGroup}
                 size={17}
-                customStyle={{tintColor: theme.black}}
+                customStyle={{tintColor: theme.brown}}
               />
               <StyleText
                 i18Text="discovery.joinGroupBuying"
-                customStyle={[$textJoin, {color: theme.black}]}
+                customStyle={[$textJoin, {color: theme.brown}]}
               />
             </View>
           )}
-        </StyleTouchable>
 
-        {isEditMode && (
-          <ButtonAddLocation isActive={isActive} onPress={onAddLocation} />
-        )}
+          {item.status === STATUS.draft && <Suggest item={item} />}
+        </StyleTouchable>
       </ScaleDecorator>
     </ShadowDecorator>
   );
@@ -217,7 +230,7 @@ const ItemLocation = ({
 
 const $container: ViewStyle = {
   width: '100%',
-  padding: scale(8),
+  padding: scale(12),
   marginBottom: verticalScale(12),
   borderRadius: BORDER_RADIUS.f3,
 };
@@ -235,9 +248,9 @@ const $content: ViewStyle = {
   paddingLeft: scale(8),
   justifyContent: 'space-between',
 };
-const $textNameLocation: TextStyle = {
-  fontSize: FONT_SIZE.f3,
-  fontWeight: FONT_WEIGHT_MEDIUM,
+const $textName: TextStyle = {
+  fontWeight: 'bold',
+  maxWidth: '80%',
 };
 const $infoView: ViewStyle = {
   width: '100%',
@@ -248,17 +261,6 @@ const $infoContent: TextStyle = {
   marginLeft: scale(4),
   fontSize: FONT_SIZE.f3,
 };
-const $addLocation: ViewStyle = {
-  width: '70%',
-  paddingVertical: verticalScale(4),
-  borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f3,
-  marginBottom: verticalScale(12),
-  alignSelf: 'center',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
 const $dragView: ViewStyle = {
   width: scale(50),
   height: verticalScale(100),
@@ -268,34 +270,31 @@ const $dragView: ViewStyle = {
 const $iconDrag: TextStyle = {
   fontSize: moderateScale(40),
 };
-const $textAddLocation: TextStyle = {
-  fontWeight: FONT_WEIGHT_MEDIUM,
-  marginLeft: scale(8),
-};
 const $iconX: ViewStyle = {
   position: 'absolute',
-  left: -5,
-  top: -5,
+  left: 2,
+  top: 2,
   right: undefined,
 };
 const $joinGroupBuying: ViewStyle = {
   width: '80%',
-  paddingVertical: verticalScale(4),
-  borderRadius: BORDER_RADIUS.f4,
+  height: verticalScale(36),
+  borderRadius: 100,
   borderWidth: 0,
-  marginTop: verticalScale(8),
+  marginTop: verticalScale(12),
   alignSelf: 'center',
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
 };
 const $textJoin: TextStyle = {
-  fontWeight: FONT_WEIGHT_MEDIUM,
-  fontSize: FONT_SIZE.f3,
+  fontWeight: 'bold',
   marginLeft: scale(4),
 };
-const $textDescription: TextStyle = {
-  fontSize: FONT_SIZE.f3,
+const $stars: ViewStyle = {
+  position: 'absolute',
+  top: scale(4),
+  right: scale(12),
 };
 
 export default memo(

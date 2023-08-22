@@ -4,6 +4,7 @@ import {useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useAsync} from 'react-use';
 import AppAsyncStorage from 'utility/asyncStore';
+import {impactLight} from 'utility/haptic';
 import {OptionTickBox} from '../components';
 
 interface Params {
@@ -43,6 +44,7 @@ const useFilterSearch = ({
 
   const onPressVehicle = (value: OptionTickBox) => {
     const included = !!searchParams?.transports?.find(id => id === value?.id);
+    impactLight();
     if (included) {
       setSearchParams(pre => ({
         ...pre,
@@ -51,13 +53,14 @@ const useFilterSearch = ({
     } else {
       setSearchParams(pre => ({
         ...pre,
-        transports: pre?.transports?.concat(value.id),
+        transports: pre?.transports?.concat(value.id as number),
       }));
     }
   };
 
   const onPressService = (value: OptionTickBox) => {
     const included = !!searchParams.services?.find(id => id === value.id);
+    impactLight();
     if (included) {
       if (searchParams?.services && searchParams?.services?.length > 1) {
         setSearchParams(pre => ({
@@ -68,7 +71,7 @@ const useFilterSearch = ({
     } else {
       setSearchParams(pre => ({
         ...pre,
-        services: pre?.services?.concat(value.id),
+        services: pre?.services?.concat(value.id as number),
       }));
     }
   };

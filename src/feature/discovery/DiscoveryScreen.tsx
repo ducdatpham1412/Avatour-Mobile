@@ -46,10 +46,7 @@ const DiscoveryScreen = () => {
         contentContainerStyle={$contentContainer}
         showsVerticalScrollIndicator={false}>
         <StyleTouchable
-          customStyle={[
-            $buttonSearch,
-            {backgroundColor: theme.white, borderColor: theme.gray_300},
-          ]}
+          customStyle={[$buttonSearch, {backgroundColor: theme.white}]}
           onPress={() => {
             navigate(DISCOVERY_ROUTE.searchScreen);
           }}>
@@ -150,7 +147,6 @@ const $buttonSearch: ViewStyle = {
   marginTop: verticalScale(16),
   flexDirection: 'row',
   alignItems: 'center',
-  borderWidth: borderWidthTiny,
   borderRadius: 100,
   paddingHorizontal: scale(13),
 };

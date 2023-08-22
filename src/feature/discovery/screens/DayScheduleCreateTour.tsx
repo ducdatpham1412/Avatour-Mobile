@@ -1,14 +1,18 @@
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {SquareButton} from 'components/base';
+import {ItemLocation} from 'feature/discovery/components';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
+import {useTheme} from 'hook';
 import {TypeShowModalAddLocation} from 'navigation/screen/modals';
 import React from 'react';
-import {View, ViewStyle} from 'react-native';
+import {TextStyle, View, ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {impactLight} from 'utility/haptic';
-import {verticalScale} from 'utility/scale';
-import {ButtonAddLocation, ItemLocation} from '../components';
+import {moderateScale, verticalScale} from 'utility/scale';
 import {ItemLocationProps} from '../components/ItemLocation';
+import {borderWidthTiny} from 'utility/assistant';
 
 interface Props {
   dayIndex: number;
@@ -22,7 +26,6 @@ export const renderItemLocation = (
     isActive,
     getIndex,
     isEditMode,
-    onAddLocation,
     onDeleteLocation,
   }: Omit<ItemLocationProps, 'item'>,
 ) => {
@@ -33,13 +36,13 @@ export const renderItemLocation = (
       isActive={isActive}
       getIndex={getIndex}
       isEditMode={isEditMode}
-      onAddLocation={onAddLocation}
       onDeleteLocation={onDeleteLocation}
     />
   );
 };
 
 const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
+  const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const [{schedules}, {setSchedules}] = useContextCreateTour();
   const listLocations = schedules[dayIndex];
@@ -54,26 +57,6 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
             isActive,
             getIndex,
             isEditMode: true,
-            onAddLocation: () =>
-              onShowModalAddLocation({
-                onSave: newLocation => {
-                  const index = getIndex();
-                  if (index !== undefined) {
-                    impactLight();
-                    setSchedules(pre => {
-                      return pre.map((item, __index) => {
-                        if (__index !== dayIndex) {
-                          return item;
-                        }
-                        const temp = [...item];
-                        temp.splice(index + 1, 0, newLocation);
-                        return temp;
-                      });
-                    });
-                  }
-                },
-                listCurrentIds: listLocations.map(item => item?.id),
-              }),
             onDeleteLocation: () => {
               const index = getIndex();
               if (index !== undefined) {
@@ -111,8 +94,11 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
         ]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
-          <ButtonAddLocation
-            isActive={false}
+          <SquareButton
+            icon={
+              <AntDesign name="plus" style={[$iconAdd, {color: theme.black}]} />
+            }
+            title="discovery.addLocation"
             onPress={() =>
               onShowModalAddLocation({
                 onSave: newLocation => {
@@ -129,6 +115,7 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
                 listCurrentIds: listLocations.map(item => item?.id),
               })
             }
+            containerStyle={[$buttonAddLocation, {borderColor: theme.black}]}
           />
         )}
       />
@@ -141,6 +128,17 @@ const $container: ViewStyle = {
 };
 const $contentContainer: ViewStyle = {
   paddingHorizontal: horizontalPadding,
+};
+const $iconAdd: TextStyle = {
+  fontSize: moderateScale(15),
+};
+const $buttonAddLocation: ViewStyle = {
+  width: '80%',
+  height: verticalScale(35),
+  borderWidth: borderWidthTiny,
+  alignSelf: 'center',
+  backgroundColor: 'transparent',
+  marginBottom: verticalScale(12),
 };
 
 export default DayScheduleCreateTour;

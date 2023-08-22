@@ -15,7 +15,7 @@ import {useLoading, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
-import React, {useRef, useState} from 'react';
+import React, {Dispatch, SetStateAction, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ImageStyle, TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -25,6 +25,43 @@ import ImageUploader from 'utility/ImageUploader';
 import {logger, seeDetailImage} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import BtnPenEdit from './components/BtnPenEdit';
+
+const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
+  ModalActionSheet.show({
+    options: [
+      {
+        title: 'common.chooseFromCamera',
+        onPress: async () => {
+          try {
+            setTimeout(async () => {
+              const res = await ImageUploader.pickCamera();
+              setAvatar(res?.sourceURL ?? res?.path);
+            }, 200);
+          } catch (err) {
+            logger(err);
+          }
+        },
+      },
+      {
+        title: 'common.chooseFromLibrary',
+        onPress: async () => {
+          try {
+            setTimeout(async () => {
+              const res = await ImageUploader.pickLibrary();
+              setAvatar(res?.sourceURL ?? res?.path);
+            }, 200);
+          } catch (err) {
+            logger(err);
+          }
+        },
+      },
+      {
+        title: 'profile.removeAvatar',
+        onPress: () => setAvatar(''),
+      },
+    ],
+  });
+};
 
 const EditProfile = () => {
   const {bottom} = useSafeAreaInsets();
@@ -103,43 +140,6 @@ const EditProfile = () => {
     }
   };
 
-  const onShowOptionAvatar = () => {
-    ModalActionSheet.show({
-      options: [
-        {
-          title: 'common.chooseFromCamera',
-          onPress: async () => {
-            try {
-              setTimeout(async () => {
-                const res = await ImageUploader.pickCamera();
-                setAvatar(res?.sourceURL ?? res?.path);
-              }, 200);
-            } catch (err) {
-              logger(err);
-            }
-          },
-        },
-        {
-          title: 'common.chooseFromLibrary',
-          onPress: async () => {
-            try {
-              setTimeout(async () => {
-                const res = await ImageUploader.pickLibrary();
-                setAvatar(res?.sourceURL ?? res?.path);
-              }, 200);
-            } catch (err) {
-              logger(err);
-            }
-          },
-        },
-        {
-          title: 'profile.removeAvatar',
-          onPress: () => setAvatar(''),
-        },
-      ],
-    });
-  };
-
   return (
     <>
       <StyleContainer
@@ -173,13 +173,13 @@ const EditProfile = () => {
                 });
               }
             }}
-            onLongPress={onShowOptionAvatar}>
+            onLongPress={() => onShowOptionAvatar(setAvatar)}>
             <StyleImage source={{uri: avatar}} customStyle={$avatarImg} />
           </StyleTouchable>
 
           <BtnPenEdit
             containerStyle={$btnEditAvatar}
-            onPress={onShowOptionAvatar}
+            onPress={() => onShowOptionAvatar(setAvatar)}
           />
         </View>
 
@@ -206,7 +206,7 @@ const EditProfile = () => {
             <AppInput
               defaultValue={location || ''}
               onChangeText={text => setLocation(text)}
-              placeholder={t('profile.location')}
+              placeholder={t('profile.address')}
               style={$inputName}
               maxLength={100}
             />

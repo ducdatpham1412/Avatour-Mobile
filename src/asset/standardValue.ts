@@ -2,6 +2,7 @@ import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, verticalScale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
 import Images from './img/images';
+import {ImageSourcePropType} from 'react-native';
 
 export const standValue = {
   USERNAME_MIN_LENGTH: 7,
@@ -117,11 +118,12 @@ export const LIST_FEELINGS: Array<{
   },
 ];
 
-export const LIST_TOPICS: Array<{
+export type TypeTopic = {
   id: number;
   text: I18Normalize;
-  icon: any;
-}> = [
+  icon: ImageSourcePropType;
+};
+export const LIST_TOPICS: TypeTopic[] = [
   {
     id: TOPIC.food,
     text: 'discovery.travelFood',
@@ -133,7 +135,7 @@ export const LIST_TOPICS: Array<{
     icon: Images.images.travelCamping,
   },
   {
-    id: TOPIC.volunteer,
+    id: TOPIC.backpacking,
     text: 'discovery.travelBackpacking',
     icon: Images.images.travelGreen,
   },
@@ -193,8 +195,11 @@ export const BORDER_RADIUS = {
 
 export const FONT_WEIGHT_MEDIUM = '500';
 
-export const ratioImageGroupBuying = 0.8; // height / width
+/**
+ * ratio = height / width
+ */
 export const ratioImageTour = 144 / 200;
 export const ratioImageSale = 232 / 319;
+export const ratioAvatarLocation = 153 / 341;
 
 export const scrollItemHeight = verticalScale(250);

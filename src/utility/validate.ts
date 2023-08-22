@@ -18,8 +18,18 @@ export const validateIsPhone = (phone: string) => {
   return REGEX_PHONE.test(phone);
 };
 
-export const validateIsNumber = (value: any) => {
-  return /^[0-9]+$/.test(value);
+type ValidateNumberOptions = {
+  isDecimal?: boolean;
+};
+export const validateIsNumber = (
+  value: string | number,
+  params?: ValidateNumberOptions,
+) => {
+  //   return /^[0-9]+$/.test(value);
+  if (!params?.isDecimal) {
+    return /^\d+?$/.test(String(value));
+  }
+  return /^\d+?$/.test(String(value)) || /^\d+(.(\d+)?)?$/.test(String(value));
 };
 
 export function validateIsLink(str: string) {
@@ -143,4 +153,21 @@ export const checkFileType = (fileName: string): 'image' | 'video' | null => {
     }
   }
   return null;
+};
+
+export const isPromise = (p: any) => {
+  if (typeof p === 'object' && typeof p.then === 'function') {
+    return true;
+  }
+  return false;
+};
+
+export const isReturnPromise = (f: any) => {
+  if (
+    f.constructor.name === 'AsyncFunction' ||
+    (typeof f === 'function' && isPromise(f()))
+  ) {
+    return true;
+  }
+  return false;
 };

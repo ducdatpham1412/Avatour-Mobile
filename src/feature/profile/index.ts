@@ -1,3 +1,4 @@
+export {default as CreateLocation} from './CreateLocation';
 export {default as CreatePostPickImage} from './CreatePostPickImage';
 export {default as CreateSale} from './CreateSale';
 export {default as CreateTour} from './CreateTour';

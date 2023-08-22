@@ -23,14 +23,14 @@ import {SceneMap, TabView as TabViewRoot} from 'react-native-tab-view';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleTouchable} from './base';
 
-interface TabViewProps {
+export interface TabViewProps {
   listElements: FunctionComponent[];
   listIconTabBar?: ReactNode[];
   RightButtonTabBar?: ReactNode; // Only for tabBarType = 'scroll'
   style?: StyleProp<ViewStyle>;
   tabBarStyle?: StyleProp<ViewStyle>;
   tabBarElementScrollWidth?: number;
-  indicatorStyle?: StyleProp<ViewStyle>;
+  tabBarElementBackground?: string;
   initialIndex?: number;
   onChangeIndex?: (value: number) => void;
   indicatorWidthRatio?: number;
@@ -55,7 +55,7 @@ const TabView = (
     style,
     tabBarStyle,
     tabBarElementScrollWidth = moderateScale(100),
-    indicatorStyle,
+    tabBarElementBackground,
     initialIndex = 0,
     onChangeIndex,
     indicatorWidthRatio = 0.5,
@@ -146,7 +146,7 @@ const TabView = (
               );
             })}
           </View>
-          <View style={[$indicator, indicatorStyle]}>
+          <View style={$indicator}>
             <Animated.View
               style={{
                 width: indicatorWidth,
@@ -185,7 +185,7 @@ const TabView = (
                     style={[
                       $tabBarScrollBox,
                       {
-                        backgroundColor: theme.gray_200,
+                        backgroundColor: tabBarElementBackground ?? theme.white,
                         width: tabBarElementScrollWidth,
                         marginRight: tabBarScrollMargin,
                       },
@@ -199,7 +199,6 @@ const TabView = (
               style={[
                 $indicatorScroll,
                 {backgroundColor: theme.p_600},
-                indicatorStyle,
                 {
                   width: indicatorWidth,
                   transform: [{translateX: translateXIndicator.current}],
@@ -273,6 +272,7 @@ const TabView = (
   );
 };
 
+const tabBarScrollHeight = moderateScale(35);
 const $tabBar: ViewStyle = {
   width: '100%',
   paddingTop: verticalScale(12),
@@ -295,20 +295,20 @@ const $indicatorView: ViewStyle = {
 };
 const $scroll: ViewStyle = {
   width: '100%',
-  height: moderateScale(30),
+  height: tabBarScrollHeight,
 };
 const $scrollContent: ViewStyle = {
   paddingHorizontal: horizontalPadding,
 };
 const $background: ViewStyle = {
   position: 'absolute',
-  height: moderateScale(30),
+  height: tabBarScrollHeight,
   flexDirection: 'row',
   alignItems: 'center',
   left: horizontalPadding,
 };
 const $tabBarScrollBox: ViewStyle = {
-  height: moderateScale(30),
+  height: tabBarScrollHeight,
   borderRadius: 100,
   alignItems: 'center',
   justifyContent: 'center',
@@ -316,7 +316,7 @@ const $tabBarScrollBox: ViewStyle = {
 const $indicatorScroll: ViewStyle = {
   position: 'absolute',
   left: horizontalPadding,
-  height: moderateScale(30),
+  height: tabBarScrollHeight,
   backgroundColor: 'red',
   borderRadius: 100,
 };

@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import {TypeBubblePalace, TypeInteractBubble} from 'api/interface';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
 import Store from 'app-redux/store';
 import {
@@ -12,42 +11,17 @@ import {
   TYPE_COLOR,
 } from 'asset/enum';
 import Images from 'asset/img/images';
-import {
-  LIST_POST_TYPES,
-  LIST_TOPICS,
-  PRIVATE_AVATAR,
-} from 'asset/standardValue';
+import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
-import Redux from 'hook/useRedux';
 import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
 import {ModalAlert, Toast} from 'navigation/screen/modals';
-import {Dispatch, SetStateAction, useState} from 'react';
+import {Dispatch, SetStateAction} from 'react';
 import {Platform, ViewStyle} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
-import {impactLight} from './haptic';
 import {logOut} from './authentication';
-
-export const interactBubble = (params: TypeInteractBubble) => {
-  navigate(ROOT_SCREEN.interactBubble, params);
-};
-
-export const choosePrivateAvatar = (_gender?: number) => {
-  const gender =
-    _gender || Store.getState().accountSlice.passport.profile.gender;
-
-  switch (gender) {
-    case GENDER_TYPE.man:
-      return PRIVATE_AVATAR.boy;
-    case GENDER_TYPE.woman:
-      return PRIVATE_AVATAR.girl;
-    case GENDER_TYPE.notToSay:
-      return PRIVATE_AVATAR.lgbt;
-    default:
-      return '';
-  }
-};
+import {impactLight} from './haptic';
 
 export const isIOS = Platform.OS === 'ios';
 
@@ -93,21 +67,6 @@ export const chooseLanguageFromId = (id: number) => {
   return 'vi';
 };
 
-export const modalizeGoToChatTagFromGroup = (params: {chatTagId: string}) => {
-  return [
-    {
-      text: 'profile.screen.goToChatTag',
-      action: () => {
-        Redux.setChatTagFromNotification(params.chatTagId);
-      },
-    },
-    {
-      text: 'common.cancel',
-      action: () => null,
-    },
-  ];
-};
-
 export const renderIconGender = (_gender?: number) => {
   const gender =
     _gender === undefined
@@ -145,22 +104,6 @@ export const reorderListChatTag = (listChatTag: Array<any>, index: number) => {
   const temp = [listChatTag[index]];
   listChatTag.splice(index, 1);
   return temp.concat(listChatTag);
-};
-
-export const modeExpUsePaging = () => {
-  const [list, setList] = useState<Array<any>>([]);
-
-  return {
-    list,
-    noMore: true,
-    refreshing: false,
-    loadingMore: false,
-    error: '',
-    onRefresh: () => null,
-    onLoadMore: () => null,
-    setParams: () => null,
-    setList,
-  };
 };
 
 export const chooseColorGradient = (params: {
@@ -216,6 +159,14 @@ export const $styleDropShadow: ViewStyle = {
     height: 4,
   },
 };
+export const $styleTopShadow: ViewStyle = {
+  shadowColor: Theme.newTheme.gray_600,
+  shadowOpacity: 0.1,
+  shadowOffset: {
+    width: 0,
+    height: -4,
+  },
+};
 
 export const chooseIconFeeling = (feeling: number) => {
   switch (feeling) {
@@ -244,29 +195,6 @@ export const chooseIconTopic = (topic: number) => {
 
 export const chooseIconPostType = (postType: number) => {
   return LIST_POST_TYPES.find(item => item.id === postType)?.icon || null;
-};
-
-export const fakeBubbleFocusing: TypeBubblePalace = {
-  id: '',
-  postType: 0,
-  topic: [0],
-  feeling: 0,
-  location: '',
-  link: '',
-  content: '',
-  images: [],
-  stars: 0,
-  totalLikes: 0,
-  totalComments: 0,
-  totalSaved: 0,
-  creator: 0,
-  creatorName: '',
-  creatorAvatar: '',
-  created: '',
-  isLiked: false,
-  isSaved: false,
-  isDraft: false,
-  relationship: 0,
 };
 
 export const onGoToProfile = (userId: number, params = {}) => {
@@ -493,4 +421,36 @@ export const takePriceRange = (listPrice: TypePrice[], amount: number) => {
     min: minPrice * amount,
     max: maxPrice * amount,
   };
+};
+
+export const removeVietnameseTones = (str: string) => {
+  str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
+  str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
+  str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
+  str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
+  str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
+  str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
+  str = str.replace(/đ/g, 'd');
+  str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, 'A');
+  str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, 'E');
+  str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, 'I');
+  str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, 'O');
+  str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, 'U');
+  str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, 'Y');
+  str = str.replace(/Đ/g, 'D');
+  // Some system encode vietnamese combining accent as individual utf-8 characters
+  // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này
+  str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ''); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng
+  str = str.replace(/\u02C6|\u0306|\u031B/g, ''); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
+  // Remove extra spaces
+  // Bỏ các khoảng trắng liền nhau
+  str = str.replace(/ + /g, ' ');
+  str = str.trim();
+  // Remove punctuations
+  // Bỏ dấu câu, kí tự đặc biệt
+  str = str.replace(
+    /!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
+    ' ',
+  );
+  return str;
 };

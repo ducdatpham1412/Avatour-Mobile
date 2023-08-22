@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset';
+import {FONT_WEIGHT_MEDIUM} from 'asset';
 import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
 import {ActivityIndicator, StyleProp, TextStyle, ViewStyle} from 'react-native';
@@ -56,7 +56,7 @@ const SquareButton = ({
 const $container: ViewStyle = {
   paddingHorizontal: scale(12),
   height: verticalScale(30),
-  borderRadius: BORDER_RADIUS.f4,
+  borderRadius: 100,
   alignItems: 'center',
   justifyContent: 'center',
   flexDirection: 'row',

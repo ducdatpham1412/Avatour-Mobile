@@ -3,7 +3,7 @@ import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {StyleContainer} from 'components/base';
-import {useTheme} from 'hook';
+import {useLoading, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {SETTING_ROUTE} from 'navigation/config/routes';
 import {
@@ -33,12 +33,14 @@ import {
 import {moderateScale, scale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 import ItemInfo from './ItemInfo';
+import {LoadingScreen} from 'components';
 
 const PersonalInformation = () => {
   const {t} = useTranslation();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const theme = useTheme();
   const isFocused = useIsFocused();
+  const {loading, setLoading} = useLoading();
 
   const informationValueRef = useRef({
     ...profile.information,
@@ -62,6 +64,7 @@ const PersonalInformation = () => {
   const agreeChange = async (newInfo: any) => {
     try {
       if (newInfo.gender !== undefined) {
+        setLoading(true);
         await apiChangeInformation({
           gender: newInfo.gender,
         });
@@ -76,6 +79,7 @@ const PersonalInformation = () => {
         return;
       }
       if (newInfo.birthday) {
+        setLoading(true);
         await apiChangeInformation({
           birthday: newInfo.birthday,
         });
@@ -104,6 +108,8 @@ const PersonalInformation = () => {
       }
     } catch (err) {
       refuseChange();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -143,7 +149,6 @@ const PersonalInformation = () => {
 
   useUpdateEffect(() => {
     if (isFocused) {
-      console.log('on focus');
       refuseChange();
     }
   }, [isFocused]);
@@ -154,73 +159,78 @@ const PersonalInformation = () => {
       gender: profile.gender,
       birthday: profile.birthday,
     };
-  }, [profile.information]);
+  }, [profile]);
 
   return (
-    <StyleContainer
-      headerProps={{title: 'setting.personalInfo.headerTitle'}}
-      customStyle={$container}>
-      <ItemInfo
-        value={email}
-        icon={<Entypo name="email" style={[$icon, {color: theme.blue}]} />}
-        onPressEdit={() =>
-          ModalInputEdit.show({
-            defaultValue: email,
-            checkEnableButton: value => validateIsEmail(value),
-            placeholder: 'login.email',
-            onSave: value => setEmail(value),
-          })
-        }
-      />
+    <>
+      <StyleContainer
+        headerProps={{title: 'setting.personalInfo.headerTitle'}}
+        customStyle={$container}>
+        <ItemInfo
+          value={email}
+          icon={<Entypo name="email" style={[$icon, {color: theme.blue}]} />}
+          onPressEdit={() =>
+            ModalInputEdit.show({
+              defaultValue: email,
+              checkEnableButton: value => validateIsEmail(value),
+              placeholder: 'login.email',
+              onSave: value => setEmail(value),
+            })
+          }
+        />
 
-      <ItemInfo
-        value={formatPhone(phone)}
-        icon={<Feather name="phone" style={[$icon, {color: theme.blue}]} />}
-        onPressEdit={() =>
-          ModalInputEdit.show({
-            defaultValue: formatPhone(phone),
-            validateInput: text => text.includes('(+84) '),
-            checkEnableButton: text => validateIsPhone(removePrefixPhone(text)),
-            placeholder: 'login.phone',
-            onSave: value => setPhone(removePrefixPhone(value)),
-            keyboardType: 'numeric',
-          })
-        }
-      />
+        <ItemInfo
+          value={formatPhone(phone)}
+          icon={<Feather name="phone" style={[$icon, {color: theme.blue}]} />}
+          onPressEdit={() =>
+            ModalInputEdit.show({
+              defaultValue: formatPhone(phone),
+              validateInput: text => text.includes('(+84) '),
+              checkEnableButton: text =>
+                validateIsPhone(removePrefixPhone(text)),
+              placeholder: 'login.phone',
+              onSave: value => setPhone(removePrefixPhone(value)),
+              keyboardType: 'numeric',
+            })
+          }
+        />
 
-      <ItemInfo
-        value={t(chooseTextFromIdGender(gender))}
-        icon={<Feather name="user" style={[$icon, {color: theme.blue}]} />}
-        onPressEdit={() => {
-          ModalActionSheet.show({
-            options: listGenders.map(value => ({
-              title: value.name,
-              onPress: () => setGender(value.id),
-            })),
-          });
-        }}
-      />
+        <ItemInfo
+          value={t(chooseTextFromIdGender(gender))}
+          icon={<Feather name="user" style={[$icon, {color: theme.blue}]} />}
+          onPressEdit={() => {
+            ModalActionSheet.show({
+              options: listGenders.map(value => ({
+                title: value.name,
+                onPress: () => setGender(value.id),
+              })),
+            });
+          }}
+        />
 
-      <ItemInfo
-        value={formatDateDayMonthYear(birthday)}
-        icon={
-          <FontAwesome
-            name="birthday-cake"
-            style={[$iconBirthday, {color: theme.blue}]}
-          />
-        }
-        onPressEdit={() =>
-          ModalDatePicker.show({
-            date: birthday ?? String(new Date()),
-            onChangeRange: value => setBirthday(formatUTCDate(value.date)),
-            validRange: {
-              endDate: new Date(),
-              startDate: undefined,
-            },
-          })
-        }
-      />
-    </StyleContainer>
+        <ItemInfo
+          value={formatDateDayMonthYear(birthday)}
+          icon={
+            <FontAwesome
+              name="birthday-cake"
+              style={[$iconBirthday, {color: theme.blue}]}
+            />
+          }
+          onPressEdit={() =>
+            ModalDatePicker.show({
+              date: birthday ?? String(new Date()),
+              onChangeRange: value => setBirthday(formatUTCDate(value.date)),
+              validRange: {
+                endDate: new Date(),
+                startDate: undefined,
+              },
+            })
+          }
+        />
+      </StyleContainer>
+
+      {loading && <LoadingScreen />}
+    </>
   );
 };
 

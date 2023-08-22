@@ -13,16 +13,14 @@ import {onGoToSignUp} from 'utility/assistant';
 import {getDateTimeNow} from 'utility/format';
 
 export interface UseCreateSaleParams {
-  initValue: {
-    postId: number | undefined;
-    name: string;
-    content: string;
-    images: string[];
-    prices: TypePrice[];
-  };
+  postId: number | undefined;
+  name: string;
+  content: string;
+  images: string[];
+  prices: TypePrice[];
 }
 
-const useCreateSale = ({initValue}: UseCreateSaleParams) => {
+const useCreateSale = (initValue: UseCreateSaleParams) => {
   const {
     modeExp,
     passport: {profile},

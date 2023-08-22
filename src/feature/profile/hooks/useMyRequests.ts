@@ -1,19 +1,16 @@
-import {
-  apiDeleteRequest,
-  apiGetAllMyRequest,
-  apiRequestUpdatePrice,
-} from 'api/authentication';
-import useSWRImmutable from 'swr/immutable';
+import {apiDeleteRequest, apiRequestUpdatePrice} from 'api/authentication';
+import {useApi} from 'hook';
 import useSWRMutation from 'swr/mutation';
 
 const useMyRequests = () => {
-  const {data, mutate, isLoading, isValidating} = useSWRImmutable(
-    'api.getMyListRequest',
-    async () => {
-      const res = await apiGetAllMyRequest();
-      return res?.data;
+  const {data, mutate, loading, validating} = useApi<
+    TypeGetRequestResponse<any>[]
+  >({
+    path: 'auth/request',
+    params: {
+      type: 'all',
     },
-  );
+  });
 
   const {trigger: onDeleteRequest, isMutating: isCanceling} = useSWRMutation(
     'api.cancelRequest',
@@ -44,8 +41,8 @@ const useMyRequests = () => {
   return [
     {
       data: data || ([] as TypeGetRequestResponse<any>[]),
-      initLoading: isLoading,
-      validating: isValidating,
+      initLoading: loading,
+      validating,
       isCanceling,
       loadingSendRequest,
     },

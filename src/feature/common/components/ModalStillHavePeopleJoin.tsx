@@ -22,13 +22,11 @@ const ModalStillHavePeopleJoin = (
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const [{loadingUpdateStatus}, {updateStatus}] = useCreateSale({
-    initValue: {
-      postId: sale.id,
-      name: sale.name,
-      content: sale.content,
-      images: sale.images,
-      prices: sale.prices,
-    },
+    postId: sale.id,
+    name: sale.name,
+    content: sale.content,
+    images: sale.images,
+    prices: sale.prices,
   });
 
   const onUpdateStatusSale = async () => {
