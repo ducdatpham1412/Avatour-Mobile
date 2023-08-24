@@ -3,6 +3,11 @@ interface TemplateApiResponse<T> {
   data: T;
 }
 
+type PromiseApiResponse<T> = Promise<{
+  success: boolean;
+  data: T;
+}>;
+
 interface TypeGetPassportResponse {
   success: boolean;
   data: {

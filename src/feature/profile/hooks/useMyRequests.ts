@@ -1,3 +1,4 @@
+import {TypeGetRequestResponse} from 'api/interface';
 import request from 'api/request';
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import {useApi} from 'hook';

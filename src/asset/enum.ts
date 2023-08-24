@@ -355,7 +355,6 @@ export enum TYPE_AUTH_REQUEST {
   delete_account = 1,
   upgrade_to_shop = 2,
   update_price = 3,
-  delete_gb = 4,
   update_bank = 5,
   suggest_location = 6,
 }

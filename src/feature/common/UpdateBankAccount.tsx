@@ -1,4 +1,5 @@
 import {apiUpdateBankAccount} from 'api/authentication';
+import {TypeGetRequestResponse} from 'api/interface';
 import {useAppSelector} from 'app-redux/store';
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
@@ -15,11 +16,11 @@ import {useLoading, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
-import {TextStyle, View, ViewStyle} from 'react-native';
+import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ScaledSheet, scale} from 'react-native-size-matters';
+import {scale} from 'react-native-size-matters';
 import {borderWidthTiny, logger} from 'utility/assistant';
-import {verticalScale} from 'utility/scale';
+import {moderateScale, verticalScale} from 'utility/scale';
 import ModalChooseBank from './components/ModalChooseBank';
 
 type TypeChosenBank = {
@@ -44,11 +45,8 @@ const UpdateBankAccount = () => {
     profile: {information},
   } = useAppSelector(state => state.accountSlice.passport);
   const [{data: listRequests}] = useMyRequests();
-  const updateBankData:
-    | TypeGetRequestResponse<TypeUpdateBankAccount>
-    | undefined = listRequests.find(
-    item => item.type === TYPE_AUTH_REQUEST.update_bank,
-  );
+  const updateBankData: TypeGetRequestResponse<'update_bank'> | undefined =
+    listRequests.find(item => item.type === TYPE_AUTH_REQUEST.update_bank);
 
   const {loading, setLoading} = useLoading();
 
@@ -162,16 +160,13 @@ const UpdateBankAccount = () => {
         }
         backgroundColor={theme.white}
         customStyle={$container}>
-        <StyleText
-          i18Text="profile.bank"
-          customStyle={styles.titleChooseBank}
-        />
-        <View style={styles.infoView}>
-          <View style={[styles.infoBox, {borderColor: theme.gray_500}]}>
+        <StyleText i18Text="profile.bank" customStyle={$titleChooseBank} />
+        <View style={$infoView}>
+          <View style={[$infoBox, {borderColor: theme.gray_500}]}>
             {chosenBank ? (
               <StyleImage
                 source={{uri: chosenBank.logo}}
-                customStyle={styles.logoBank}
+                customStyle={$logoBank}
               />
             ) : (
               <StyleText
@@ -183,17 +178,17 @@ const UpdateBankAccount = () => {
           <StyleTouchable onPress={() => modalChooseBankRef.current?.show()}>
             <StyleText
               i18Text="common.edit"
-              customStyle={[styles.textEdit, {color: theme.p_900}]}
+              customStyle={[$textEdit, {color: theme.p_900}]}
             />
           </StyleTouchable>
         </View>
 
         <StyleText
           i18Text="profile.accountNumber"
-          customStyle={styles.titleAccountNumber}
+          customStyle={$titleAccountNumber}
         />
-        <View style={styles.infoView}>
-          <View style={[styles.infoBox, {borderColor: theme.gray_500}]}>
+        <View style={$infoView}>
+          <View style={[$infoBox, {borderColor: theme.gray_500}]}>
             {bankAccount ? (
               <StyleText originValue={bankAccount} />
             ) : (
@@ -214,7 +209,7 @@ const UpdateBankAccount = () => {
             }}>
             <StyleText
               i18Text="common.edit"
-              customStyle={[styles.textEdit, {color: theme.p_900}]}
+              customStyle={[$textEdit, {color: theme.p_900}]}
             />
           </StyleTouchable>
         </View>
@@ -235,41 +230,35 @@ const UpdateBankAccount = () => {
   );
 };
 
-const styles = ScaledSheet.create({
-  titleChooseBank: {
-    fontWeight: 'bold',
-    marginTop: '10@vs',
-  },
-  titleAccountNumber: {
-    fontWeight: 'bold',
-    marginTop: '20@vs',
-  },
-  infoView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: '10@vs',
-  },
-  infoBox: {
-    minWidth: '100@s',
-    maxWidth: '70%',
-    paddingVertical: '5@vs',
-    borderWidth: borderWidthTiny,
-    borderRadius: '5@ms',
-    alignItems: 'center',
-    paddingHorizontal: '5@s',
-  },
-  textEdit: {
-    fontSize: FONT_SIZE.f3,
-    marginLeft: '10@s',
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-    marginVertical: '10@vs',
-  },
-  logoBank: {
-    width: '100@s',
-    height: scale((311 / 831) * 100),
-  },
-});
+const $infoBox: ViewStyle = {
+  minWidth: scale(100),
+  maxWidth: '70%',
+  paddingVertical: verticalScale(4),
+  borderWidth: borderWidthTiny,
+  borderRadius: moderateScale(5),
+  alignItems: 'center',
+  paddingHorizontal: scale(5),
+};
+const $infoView: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: verticalScale(10),
+};
+const $titleChooseBank: TextStyle = {
+  fontWeight: 'bold',
+  marginTop: verticalScale(12),
+};
+const $logoBank: ImageStyle = {
+  width: scale(100),
+  height: scale((311 / 831) * 100),
+};
+const $textEdit: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  marginLeft: scale(12),
+  textDecorationLine: 'underline',
+  fontWeight: 'bold',
+  marginVertical: verticalScale(12),
+};
 const $container: ViewStyle = {
   paddingHorizontal: scale(32),
 };
@@ -283,6 +272,10 @@ const $textUpdateBefore: TextStyle = {
 };
 const $textBankCode: TextStyle = {
   fontWeight: 'bold',
+};
+const $titleAccountNumber: TextStyle = {
+  fontWeight: 'bold',
+  marginTop: verticalScale(20),
 };
 
 export default UpdateBankAccount;

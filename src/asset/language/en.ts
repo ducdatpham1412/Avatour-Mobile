@@ -287,6 +287,7 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
   newLocationHaveAdded:
     'Avatour is reviewing your suggestion to add new location <b>{{value}}</b>',
   seeSuggest: 'View suggestion',
+  suggestNewLocation: 'Suggest new location',
 };
 
 const reputation = {

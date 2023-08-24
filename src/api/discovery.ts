@@ -3,7 +3,7 @@ import request from './request';
 
 export const apiJoinSale = (
   params: TypeJoinRequest,
-): Promise<TemplateApiResponse<TypeJoinEstimate>> => {
+): PromiseApiResponse<TypeJoinEstimate> => {
   return request.post(`/profile/sales/join/${params.saleId}`, {
     amount: params.amount,
     time_will_buy: params.time_will_buy,
@@ -13,7 +13,7 @@ export const apiJoinSale = (
 
 export const apiEstimate = (
   joinEstimateId: number,
-): Promise<TemplateApiResponse<TypeJoinEstimate>> => {
+): PromiseApiResponse<TypeJoinEstimate> => {
   return request.get(`/profile/sales/join/${joinEstimateId}`, {
     params: {
       type: 'estimate',
@@ -27,7 +27,7 @@ export const apiDeleteEstimate = (joinEstimateId: number) => {
 
 export const apiEditEstimate = (
   params: TypeEditEstimate,
-): Promise<TemplateApiResponse<TypeJoinEstimate>> => {
+): PromiseApiResponse<TypeJoinEstimate> => {
   return request.put(`/profile/sales/join/${params.estimateId}`, {
     amount: params?.amount,
     time_will_buy: params.time_will_buy,
@@ -199,7 +199,7 @@ export const apiCreateTour = (body: TypeCreateTour) => {
 
 export const apiScanJoinResult = (
   shopId: number,
-): Promise<TemplateApiResponse<TypeJoinResult>> => {
+): PromiseApiResponse<TypeJoinResult> => {
   return request.post('/common/scan', {
     type: 'get-money-sale',
     shop_id: shopId,

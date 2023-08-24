@@ -290,6 +290,7 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
   newLocationHaveAdded:
     'Avatour đang xét duyệt đề xuất thêm địa điểm <b>{{value}}</b> của bạn',
   seeSuggest: 'Xem đề xuất',
+  suggestNewLocation: 'Đề xuất địa điểm mới',
 };
 
 const reputation = {
