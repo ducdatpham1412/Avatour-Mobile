@@ -11,6 +11,7 @@ import {useTheme} from 'hook';
 import React, {
   ElementRef,
   ForwardedRef,
+  ReactElement,
   createRef,
   forwardRef,
   useImperativeHandle,
@@ -28,6 +29,7 @@ const modalRef = createRef<ElementRef<typeof ModalAlert>>();
 
 type TypeShowParams = {
   title?: I18Normalize;
+  icon?: ReactElement;
   i18Content?: I18Normalize;
   content?: any;
   onClose?: () => void;
@@ -64,7 +66,10 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
 
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<TypeStatus>();
-  const [title, setTitle] = useState<I18Normalize>('common.null');
+  const [icon, setIcon] = useState<ReactElement>();
+  const [title, setTitle] = useState<I18Normalize | ReactElement>(
+    'common.null',
+  );
   const [content, setContent] = useState<I18Normalize>('common.null');
 
   let tintColor = theme.white;
@@ -84,6 +89,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       notification: async value => {
         await promiseForNextShow;
         impactLight();
+        setIcon(value?.icon);
         setStatus('notification');
         setTitle(value?.title ?? 'common.alert');
         setContent(
@@ -97,6 +103,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       success: async value => {
         await promiseForNextShow;
         impactMedium();
+        setIcon(value?.icon);
         setStatus('success');
         setTitle(value?.title ?? 'common.success');
         setContent(
@@ -110,6 +117,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       error: async value => {
         await promiseForNextShow;
         Vibration.vibrate();
+        setIcon(value?.icon);
         setStatus('error');
         setTitle(value?.title ?? 'common.error');
         setContent(
@@ -123,6 +131,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       options: async value => {
         await promiseForNextShow;
         impactMedium();
+        setIcon(value?.icon);
         setStatus('options');
         setTitle(value?.title ?? 'common.alert');
         setContent(
@@ -146,6 +155,9 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   );
 
   const renderIcon = () => {
+    if (icon) {
+      return <View style={$icon}>{icon}</View>;
+    }
     if (status === 'success') {
       return <SuccessIcon style={$icon} tintColor={tintColor} />;
     }
@@ -223,6 +235,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
         setStatus(undefined);
         setTitle('common.null');
         setContent('common.null');
+        setIcon(undefined);
         resolveForNextShow?.('');
       }}
       animationIn="fadeIn"
@@ -243,7 +256,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
               />
             </Svg>
 
-            <StyleText i18Text={title} customStyle={$title} />
+            <StyleText i18Text={title as I18Normalize} customStyle={$title} />
             <StyleText i18Text={content} customStyle={$content} mode="html" />
 
             {renderButton()}

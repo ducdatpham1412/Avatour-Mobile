@@ -168,7 +168,9 @@ const discovery = {
   goodMorning: 'Good morning 🌤',
   goodAfternoon: 'Good afternoon ☀️',
   goodEvening: 'Good evening 🌙',
-  thanksForJoin: 'Thanks for joining with us ❤️',
+  thankyou: 'Thanks you',
+  suggestHaveBeenAcknowledged:
+    'Your contribution to Avatour has been acknowledged. Thank you!',
   amountBookGb: 'Quantities orders: {{value}}',
   depositAmount: 'Deposit amount: {{value}}vnd',
   titleDeposit: 'You need to deposit a small amount',
@@ -281,7 +283,11 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
   maxCost: 'Max price',
   hour: 'Hour',
   newLocation:
-    '<b>{{value}}</b> là một địa điểm mới. Bạn có muốn đề xuất với Avatour không?',
+    '<b>{{value}}</b> is a new location. Would you suggest to Avatour??',
+  newLocationHaveAdded:
+    'Avatour is reviewing your suggestion to add new location <b>{{value}}</b>',
+  seeSuggest: 'View suggestion',
+  suggestNewLocation: 'Suggest new location',
 };
 
 const reputation = {

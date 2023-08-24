@@ -1,18 +1,19 @@
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {STATUS} from 'asset/enum';
+import {horizontalPadding} from 'asset/metrics';
 import {SquareButton} from 'components/base';
 import {ItemLocation} from 'feature/discovery/components';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
-import {useTheme} from 'hook';
+import {useMyRequests} from 'feature/profile/hooks';
+import {useSafeArea, useTheme} from 'hook';
 import {TypeShowModalAddLocation} from 'navigation/screen/modals';
 import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {borderWidthTiny} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, verticalScale} from 'utility/scale';
 import {ItemLocationProps} from '../components/ItemLocation';
-import {borderWidthTiny} from 'utility/assistant';
 
 interface Props {
   dayIndex: number;
@@ -27,6 +28,7 @@ export const renderItemLocation = (
     getIndex,
     isEditMode,
     onDeleteLocation,
+    onSuggestLocation,
   }: Omit<ItemLocationProps, 'item'>,
 ) => {
   return (
@@ -37,15 +39,37 @@ export const renderItemLocation = (
       getIndex={getIndex}
       isEditMode={isEditMode}
       onDeleteLocation={onDeleteLocation}
+      onSuggestLocation={onSuggestLocation}
     />
   );
 };
 
 const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
   const theme = useTheme();
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
+  const [, {suggestLocation}] = useMyRequests();
   const [{schedules}, {setSchedules}] = useContextCreateTour();
   const listLocations = schedules[dayIndex];
+
+  const onSuggestLocation = async (value: TypeGetProfileResponse) => {
+    await suggestLocation(value.id);
+    setSchedules(pre => {
+      return pre.map((day, index) => {
+        if (index !== dayIndex) {
+          return day;
+        }
+        return day.map(location => {
+          if (location.id !== value.id) {
+            return location;
+          }
+          return {
+            ...location,
+            status: STATUS.suggesting,
+          };
+        });
+      });
+    });
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -61,17 +85,18 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
               const index = getIndex();
               if (index !== undefined) {
                 setSchedules(pre => {
-                  return pre.map((item, __index) => {
+                  return pre.map((__item, __index) => {
                     if (__index !== dayIndex) {
-                      return item;
+                      return __item;
                     }
-                    const temp = [...item];
+                    const temp = [...__item];
                     temp.splice(index, 1);
                     return temp;
                   });
                 });
               }
             },
+            onSuggestLocation,
           })
         }
         onDragEnd={({data}) => {
@@ -89,7 +114,7 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
         contentContainerStyle={[
           $contentContainer,
           {
-            paddingBottom: (bottom || safePaddingNotZero) + verticalScale(50),
+            paddingBottom: bottom + verticalScale(70),
           },
         ]}
         showsVerticalScrollIndicator={false}

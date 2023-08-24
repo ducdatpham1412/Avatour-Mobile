@@ -10,6 +10,8 @@ import {
 } from 'components/base';
 import {ButtonX} from 'components/common';
 import {useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
+import {PROFILE_ROUTE} from 'navigation/config';
 import {ModalAlert, ToolTip} from 'navigation/screen/modals';
 import React, {memo, useRef} from 'react';
 import isEqual from 'react-fast-compare';
@@ -36,6 +38,7 @@ export interface ItemLocationProps {
   getIndex: () => number | undefined;
   isEditMode: boolean;
   onDeleteLocation: () => void;
+  onSuggestLocation: (value: TypeGetProfileResponse) => Promise<void>;
 }
 
 type InfoProps = {
@@ -48,8 +51,11 @@ type DragProps = {
   onDrag: () => void;
 };
 
-type SuggestProps = Pick<ItemLocationProps, 'item'>;
+type SuggestProps = Pick<ItemLocationProps, 'item' | 'onSuggestLocation'>;
 
+/**
+ * Components
+ */
 const Info = ({icon, content, contentStyle}: InfoProps) => {
   const theme = useTheme();
   const color = detectFromStyle(contentStyle, 'color');
@@ -84,47 +90,71 @@ const ButtonDrag = ({onDrag}: DragProps) => {
   );
 };
 
-const Suggest = ({item}: SuggestProps) => {
+const Suggest = ({item, onSuggestLocation}: SuggestProps) => {
   const {t} = useTranslation();
+  const theme = useTheme();
   const viewRef = useRef<View>(null);
 
   const onPress = () => {
     viewRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      ToolTip.show({
-        content: t('discovery.newLocation', {
-          value: item.name,
-        }),
-        button: {
-          title: 'common.suggest',
-          onPress: async () => {
-            try {
-              await new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  reject('Error hehe');
-                }, 2000);
-              });
-              return 'success';
-            } catch (err) {
-              ModalAlert.error({
-                content: err,
-              });
-              return 'error';
-            }
+      if (item.status === STATUS.draft) {
+        ToolTip.show({
+          content: t('discovery.newLocation', {
+            value: item.name,
+          }),
+          button: {
+            title: 'common.suggest',
+            onPress: async () => {
+              try {
+                await onSuggestLocation(item);
+                ModalAlert.success({
+                  title: 'discovery.thankyou',
+                  i18Content: 'discovery.suggestHaveBeenAcknowledged',
+                  icon: <StyleIcon source={Images.icons.nice} size={80} />,
+                });
+                return 'success';
+              } catch (err) {
+                ModalAlert.error({
+                  content: err,
+                });
+                return 'error';
+              }
+            },
           },
-        },
-      });
+        });
+        return;
+      }
+
+      if (item.status === STATUS.suggesting) {
+        ToolTip.show({
+          content: t('discovery.newLocationHaveAdded', {
+            value: item.name,
+          }),
+          button: {
+            title: 'discovery.seeSuggest',
+            onPress: () => {
+              navigate(PROFILE_ROUTE.listMyRequests);
+            },
+          },
+        });
+      }
     });
   };
 
   return (
     <View ref={viewRef} style={$stars}>
       <StyleTouchable onPress={onPress}>
-        <IconTagStars />
+        <IconTagStars
+          tintColor={item.status === STATUS.draft ? theme.p_600 : theme.blue}
+        />
       </StyleTouchable>
     </View>
   );
 };
 
+/**
+ * Main
+ */
 const ItemLocation = ({
   onDrag,
   isActive,
@@ -132,6 +162,7 @@ const ItemLocation = ({
   item,
   isEditMode,
   onDeleteLocation,
+  onSuggestLocation,
 }: ItemLocationProps) => {
   const theme = useTheme();
   const {t} = useTranslation();
@@ -221,7 +252,9 @@ const ItemLocation = ({
             </View>
           )}
 
-          {item.status === STATUS.draft && <Suggest item={item} />}
+          {[STATUS.draft, STATUS.suggesting].includes(item.status) && (
+            <Suggest item={item} onSuggestLocation={onSuggestLocation} />
+          )}
         </StyleTouchable>
       </ScaleDecorator>
     </ShadowDecorator>

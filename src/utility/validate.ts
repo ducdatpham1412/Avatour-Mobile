@@ -155,19 +155,6 @@ export const checkFileType = (fileName: string): 'image' | 'video' | null => {
   return null;
 };
 
-export const isPromise = (p: any) => {
-  if (typeof p === 'object' && typeof p.then === 'function') {
-    return true;
-  }
-  return false;
-};
-
-export const isReturnPromise = (f: any) => {
-  if (
-    f.constructor.name === 'AsyncFunction' ||
-    (typeof f === 'function' && isPromise(f()))
-  ) {
-    return true;
-  }
-  return false;
+export const isAsync = (func: any) => {
+  return func.constructor.name === 'AsyncFunction';
 };

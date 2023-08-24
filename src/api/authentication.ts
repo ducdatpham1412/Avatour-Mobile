@@ -1,7 +1,8 @@
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import request from './request';
+import {TypeGetRequestResponse} from 'api/interface';
 
-export const apiUpgradeAccount = (body: TypeUpgradeAccount) => {
+export const apiUpgradeAccount = (body: TypeRequestUpgradeAccount) => {
   return request.put('auth/request', body, {
     params: {
       type: TYPE_AUTH_REQUEST.upgrade_to_shop,
@@ -97,7 +98,7 @@ export const apiRequestDeleteAccount = () => {
   );
 };
 
-export const apiUpdateBankAccount = (params: TypeUpdateBankAccount) => {
+export const apiUpdateBankAccount = (params: TypeRequestUpdateBankAccount) => {
   return request.put(
     'auth/request',
     {
@@ -112,26 +113,11 @@ export const apiUpdateBankAccount = (params: TypeUpdateBankAccount) => {
   );
 };
 
-export const apiGetUpdateBank = (): Promise<
-  TemplateApiResponse<TypeGetRequestResponse<TypeUpdateBankAccount> | null>
-> => {
-  return request.get('auth/request', {
-    params: {
-      type: TYPE_AUTH_REQUEST.update_bank,
-    },
-  });
-};
-
-export const apiDeleteRequest = (requestId: number) => {
-  return request.delete('auth/request', {params: {request_id: requestId}});
-};
-
-export const apiRequestUpdatePrice = (
-  body: TypeRequestUpdatePrice,
-): Promise<TemplateApiResponse<TypeRequestResponse>> => {
-  return request.put('auth/request', body, {
-    params: {
-      type: TYPE_AUTH_REQUEST.update_price,
-    },
-  });
-};
+export const apiGetUpdateBank =
+  (): PromiseApiResponse<TypeGetRequestResponse<'update_bank'> | null> => {
+    return request.get('auth/request', {
+      params: {
+        type: TYPE_AUTH_REQUEST.update_bank,
+      },
+    });
+  };

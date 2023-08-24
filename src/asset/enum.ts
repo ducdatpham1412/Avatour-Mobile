@@ -202,7 +202,7 @@ export enum STATUS {
   active = 1,
   draft = 2,
   temporarilyClose = 3,
-  suggest = 4,
+  suggesting = 4,
 }
 
 export enum POST_TYPE {
@@ -355,8 +355,8 @@ export enum TYPE_AUTH_REQUEST {
   delete_account = 1,
   upgrade_to_shop = 2,
   update_price = 3,
-  delete_gb = 4,
   update_bank = 5,
+  suggest_location = 6,
 }
 
 export enum TYPE_GET_TOUR {

@@ -17,13 +17,13 @@ import {I18Normalize} from 'utility/I18Next';
 import {$styleDropShadow} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {isPromise, isReturnPromise} from 'utility/validate';
 
 type TypeShow = {
   content: string;
   button?: {
     title: I18Normalize;
-    onPress: () => Promise<'success' | 'error'>;
+    //
+    onPress: () => Promise<'success' | 'error'> | void;
   };
 };
 
@@ -49,22 +49,15 @@ const ToolTip = forwardRef(
     };
 
     const onPress = async () => {
-      if (
-        isPromise(button.current?.onPress) ||
-        isReturnPromise(button.current?.onPress)
-      ) {
-        setLoading(true);
-        const res = await button.current?.onPress?.();
-        if (res === 'success') {
-          setLoading(false);
-          onHide();
-        } else if (res === 'error') {
-          setLoading(false);
-        }
-      } else {
-        button.current?.onPress?.();
-        onHide();
+      setLoading(true);
+      const res = await button.current?.onPress?.();
+      if (res === 'error') {
+        setLoading(false);
+        return;
       }
+
+      setLoading(false);
+      onHide();
     };
 
     useImperativeHandle(

@@ -62,7 +62,7 @@ export const apiDeleteGroupBooking = (postId: string) => {
 
 export const apiGetProfile = (
   id: number,
-): Promise<TemplateApiResponse<TypeGetProfileResponse>> => {
+): PromiseApiResponse<TypeGetProfileResponse> => {
   return request.get(`/profile/${id}`);
 };
 

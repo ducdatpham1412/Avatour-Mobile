@@ -82,28 +82,17 @@ interface TypeOpenAccountRequest {
   username: string;
   code: any;
 }
-
-interface TypeUpgradeAccount {
+interface TypeRequestUpgradeAccount {
   name: string;
   location: string;
   phone: string;
   bank_code: string;
   bank_account: string;
 }
-
-interface TypeUpdateBankAccount {
+interface TypeRequestUpdateBankAccount {
   bank_code: string;
   bank_account: string;
 }
-
-interface TypeGetRequestResponse<T> {
-  id: number;
-  type: number;
-  created: string;
-  expired: string;
-  data: T;
-}
-
 interface TypeRequestUpdatePrice {
   sale_id: number;
   prices: TypePrice[];

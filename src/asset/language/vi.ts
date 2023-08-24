@@ -171,7 +171,9 @@ const discovery = {
   goodMorning: 'Chào buổi sáng 🌤',
   goodAfternoon: 'Chào buổi chiều ☀️',
   goodEvening: 'Chào buổi tối 🌙',
-  thanksForJoin: 'Cảm ơn bạn đã tham gia cùng chúng mình ❤️',
+  thankyou: 'Cảm ơn',
+  suggestHaveBeenAcknowledged:
+    'Đóng góp của bạn cho Avatour đã được ghi nhận. Xin cảm ơn!',
   amountBookGb: 'Số lượng mua: {{value}}',
   depositAmount: 'Số tiền đặt cọc: {{value}}vnd',
   titleDeposit: 'Bạn cần đặt cọc một khoản tiền cho người bán',
@@ -285,6 +287,10 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
   hour: 'Giờ',
   newLocation:
     '<b>{{value}}</b> là một địa điểm mới. Bạn có muốn đề xuất với Avatour không?',
+  newLocationHaveAdded:
+    'Avatour đang xét duyệt đề xuất thêm địa điểm <b>{{value}}</b> của bạn',
+  seeSuggest: 'Xem đề xuất',
+  suggestNewLocation: 'Đề xuất địa điểm mới',
 };
 
 const reputation = {

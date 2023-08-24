@@ -55,6 +55,10 @@ type TypeContext = [
   },
 ];
 
+interface CreateTourInstanceProps {
+  tourId: ParamsCreateTour;
+}
+
 const CreateTourContext = createContext<TypeContext>([
   {
     schedules: [],
@@ -82,7 +86,7 @@ const renderDaySchedule = (
   );
 };
 
-const CreateTourInstance = ({tourId}: {tourId: ParamsCreateTour}) => {
+const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const {bottom, top} = useSafeArea();
   const theme = useTheme();
 
@@ -500,7 +504,7 @@ const $button: AnimatedStyle<ViewStyle> = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingHorizontal: scale(12),
-  paddingTop: verticalScale(12),
+  paddingTop: verticalScale(16),
   bottom: 0,
   shadowOpacity: 0.1,
   shadowOffset: {
