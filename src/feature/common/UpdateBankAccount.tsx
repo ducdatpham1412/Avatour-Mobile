@@ -44,7 +44,7 @@ const UpdateBankAccount = () => {
   const {
     profile: {information},
   } = useAppSelector(state => state.accountSlice.passport);
-  const [{data: listRequests}] = useMyRequests();
+  const [{data: listRequests}, {mutate}] = useMyRequests();
   const updateBankData: TypeGetRequestResponse<'update_bank'> | undefined =
     listRequests.find(item => item.type === TYPE_AUTH_REQUEST.update_bank);
 
@@ -90,6 +90,7 @@ const UpdateBankAccount = () => {
             bank_code: chosenBank?.code,
             bank_account: bankAccount,
           });
+          await mutate();
           ModalAlert.success({
             i18Content: 'alert.requestUpdateBankSuccess',
             onClose: goBack,

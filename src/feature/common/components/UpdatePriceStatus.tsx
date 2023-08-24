@@ -8,15 +8,67 @@ import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {TextStyle, View, ViewStyle} from 'react-native';
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {borderWidthTiny} from 'utility/assistant';
 import {formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import {useDetailSale} from '../hooks';
+import {TypeGetRequestResponse} from 'api/interface';
 
 interface Props {
   saleId: number;
 }
+
+interface BoxUpdatePriceProps {
+  prices: TypePrice[];
+  containerStyle?: StyleProp<ViewStyle>;
+}
+
+export const BoxUpdatePrice = ({
+  prices,
+  containerStyle,
+}: BoxUpdatePriceProps) => {
+  const theme = useTheme();
+  const {t} = useTranslation();
+
+  return (
+    <View style={containerStyle}>
+      <StyleText originValue={`${t('discovery.groupBuyingPrice')}:`} />
+
+      {prices.map(p => (
+        <View key={p.price} style={$updatePriceBox}>
+          <StyleText
+            i18Text="discovery.numberPeople"
+            i18Params={{
+              value: p.number_people,
+            }}
+            customStyle={[
+              $textPrice,
+              {
+                width: '32%',
+                color: theme.gray_600,
+              },
+            ]}
+          />
+          <StyleText
+            originValue="-"
+            customStyle={[
+              $textPrice,
+              {
+                marginRight: '12%',
+                color: theme.gray_600,
+              },
+            ]}
+          />
+          <StyleText
+            originValue={formatMoney(p.price)}
+            customStyle={[$textPrice, {color: theme.gray_600}]}
+          />
+        </View>
+      ))}
+    </View>
+  );
+};
 
 const UpdatePriceStatus = ({saleId}: Props) => {
   const theme = useTheme();
@@ -26,11 +78,17 @@ const UpdatePriceStatus = ({saleId}: Props) => {
   const [{data: saleData}] = useDetailSale(saleId);
 
   const findingRequest = data.find(item => {
-    return (
-      item.type === TYPE_AUTH_REQUEST.update_price &&
-      item.data?.sale_id === saleId
-    );
-  });
+    const check = item.type === TYPE_AUTH_REQUEST.update_price;
+    if (!check) {
+      return false;
+    }
+    if (check) {
+      const checkData =
+        item.data as unknown as TypeGetRequestResponse<'update_price'>['data'];
+      return checkData.sale.id === saleId;
+    }
+  }) as TypeGetRequestResponse<'update_price'> | undefined;
+
   const pricesRequest: TypePrice[] | undefined = findingRequest?.data?.prices;
 
   if (initLoading || !findingRequest || !pricesRequest) {
@@ -78,39 +136,7 @@ const UpdatePriceStatus = ({saleId}: Props) => {
     <View style={[$container, {borderColor: theme.gray_500}]}>
       <StyleText i18Text="discovery.reviewUpdatePrice" customStyle={$title} />
 
-      <StyleText originValue={`${t('discovery.groupBuyingPrice')}:`} />
-
-      {pricesRequest.map(p => (
-        <View key={p.price} style={$updatePriceBox}>
-          <StyleText
-            i18Text="discovery.numberPeople"
-            i18Params={{
-              value: p.number_people,
-            }}
-            customStyle={[
-              $textPrice,
-              {
-                width: '32%',
-                color: theme.gray_600,
-              },
-            ]}
-          />
-          <StyleText
-            originValue="-"
-            customStyle={[
-              $textPrice,
-              {
-                marginRight: '12%',
-                color: theme.gray_600,
-              },
-            ]}
-          />
-          <StyleText
-            originValue={formatMoney(p.price)}
-            customStyle={[$textPrice, {color: theme.gray_600}]}
-          />
-        </View>
-      ))}
+      <BoxUpdatePrice prices={pricesRequest} />
 
       <View style={$button}>
         <SquareButton

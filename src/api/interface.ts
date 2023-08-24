@@ -15,7 +15,12 @@ interface UpdateBank {
   bank_account: string;
 }
 interface UpdatePrice {
-  sale: TypeGroupBuying;
+  sale: {
+    id: number | null;
+    name: string;
+    content: string;
+    images: string[];
+  };
   prices: TypePrice[];
 }
 
