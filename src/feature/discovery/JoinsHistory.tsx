@@ -44,11 +44,11 @@ const JoinsHistory = ({
                 images: dataSale?.images,
                 name: dataSale?.name,
                 creator: dataSale?.creator,
+                creator_name: dataSale?.creator_name,
                 creator_avatar: dataSale?.creator_avatar,
               },
             }}
             containerStyle={$itemContainer}
-            bottomComponent="join-status"
             onPressMode="see-detail"
           />
         )}

@@ -80,6 +80,7 @@ enum PROFILE_ROUTE {
   listMyRequests = '@PROFILE_ROUTE/listMyRequest',
   myQRCode = '@PROFILE_ROUTE/myQRCode',
   createTour = '@PROFILE_ROUTE/createTour',
+  createTourSuccess = '@PROFILE_ROUTE/createTourSuccess',
 }
 /**
  * ||

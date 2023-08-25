@@ -27,7 +27,6 @@ const ListJoining = ({
             key={item.id}
             item={item}
             containerStyle={$itemContainer}
-            bottomComponent="join-status"
             onPressMode="see-detail"
           />
         );

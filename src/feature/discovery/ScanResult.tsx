@@ -1,4 +1,4 @@
-import {FONT_SIZE} from 'asset';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {GROUP_BUYING_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
@@ -25,10 +25,55 @@ import {formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemJoin} from './components';
 import {useJoinResult} from './hooks';
+import {borderWidthTiny} from 'utility/assistant';
 
 interface Props {
   shop_id: number;
 }
+
+interface ButtonConfirmProps {
+  item: TypeJoinPersonalAndSale;
+}
+
+const ButtonConfirm = ({item}: ButtonConfirmProps) => {
+  const theme = useTheme();
+
+  const [{loadingRequestBought}, {requestBought}] = useJoinResult(
+    item.sale.creator,
+    {
+      joinId: item.id,
+    },
+  );
+
+  const onRequestBought = () => {
+    const agree = async () => {
+      try {
+        await requestBought({
+          list_joins_id: [item.id],
+        });
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    };
+
+    ModalAlert.options({
+      i18Content: 'alert.beSureConfirmWhenInStore',
+      onContinue: agree,
+    });
+  };
+
+  return (
+    <StyleButton
+      containerStyle={$buttonConfirm}
+      onPress={onRequestBought}
+      title="discovery.confirmArrived"
+      titleStyle={{color: theme.black, fontWeight: FONT_WEIGHT_MEDIUM}}
+      isLoading={loadingRequestBought}
+    />
+  );
+};
 
 const JoinResult = ({shop_id}: Props) => {
   const theme = useTheme();
@@ -210,9 +255,10 @@ const JoinResult = ({shop_id}: Props) => {
               item={item}
               containerStyle={$itemContainer}
               bottomComponent={
-                isNotBought ? 'button-confirm-join' : 'join-status'
+                isNotBought ? <ButtonConfirm item={item} /> : undefined
               }
               onPressMode="go-from-scan"
+              showDeposited
             />
           );
         }}
@@ -344,6 +390,13 @@ const $textAlsoBox: ViewStyle = {
 };
 const $textAlso: TextStyle = {
   fontSize: FONT_SIZE.f3,
+};
+const $buttonConfirm: ViewStyle = {
+  marginTop: verticalScale(12),
+  width: scale(230),
+  paddingHorizontal: scale(20),
+  backgroundColor: 'transparent',
+  borderWidth: borderWidthTiny,
 };
 
 export default ScanResult;

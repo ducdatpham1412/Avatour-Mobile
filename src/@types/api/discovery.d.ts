@@ -61,6 +61,7 @@ interface TypeJoinPersonalAndSale {
     images: string[];
     name: string;
     creator: number;
+    creator_name: string;
     creator_avatar: string;
   };
 }
@@ -151,6 +152,7 @@ interface TourDetail {
   creator_avatar: string;
   is_liked: boolean;
   schedule: Array<Array<TypeGetProfileResponse>>;
+  status: number;
 }
 
 type Tour = Pick<
@@ -183,6 +185,11 @@ type TypeCreateTour = {
   >;
 };
 
+type TypeCreateTourResponse = {
+  tour_id: number;
+  status: 'active' | 'draft';
+};
+
 type TypeEditTour = Partial<
   Pick<
     TourDetail,
@@ -192,6 +199,7 @@ type TypeEditTour = Partial<
     | 'start_price'
     | 'end_price'
     | 'services'
+    | 'status'
   > & {
     schedule: number[][];
   }

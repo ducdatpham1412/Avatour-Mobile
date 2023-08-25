@@ -5,6 +5,7 @@ export {
 } from './ModalAddLocation';
 export {default as ModalAlert} from './ModalAlert';
 export {default as ModalCommentLike} from './ModalCommentLike';
+export {default as ModalCongratulation} from './ModalCongratulation';
 export {default as ModalDatePicker} from './ModalDatePicker';
 export {default as ModalDateRangePicker} from './ModalDateRangePicker';
 export {default as ModalInputEdit} from './ModalInputEdit';
