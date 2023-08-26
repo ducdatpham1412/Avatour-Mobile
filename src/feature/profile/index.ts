@@ -2,6 +2,7 @@ export {default as CreateLocation} from './CreateLocation';
 export {default as CreatePostPickImage} from './CreatePostPickImage';
 export {default as CreateSale} from './CreateSale';
 export {default as CreateTour} from './CreateTour';
+export {default as CreateTourSuccess} from './CreateTourSuccess';
 export {default as EditProfile} from './EditProfile';
 export {default as EditSalePrice} from './EditSalePrice';
 export {default as ListFollows} from './ListFollows';

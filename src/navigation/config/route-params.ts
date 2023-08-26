@@ -153,6 +153,9 @@ export type AppParamsList = {
   [PROFILE_ROUTE.createTour]: {
     itemTour: Omit<TourDetail, 'id'> & {id: ParamsCreateTour};
   };
+  [PROFILE_ROUTE.createTourSuccess]: {
+    data: TypeCreateTourResponse;
+  };
   [ROOT_SCREEN.editSalePrice]: {
     saleId: number;
     prices: TypePrice[];

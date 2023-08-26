@@ -118,9 +118,7 @@ const discovery = {
       'Your report has been sent\nWe will review this report and the denounced user for timely handling measures\n\nThank you for joining hands for a better Doffy community\n\nBest regards!\nDoffy Co.',
   },
   seeDetailImage: 'Watch image',
-  share: {
-    title: 'Share',
-  },
+  share: 'Share',
   all: 'All',
   like: 'Like',
   numberLike: '{{value}} likes',
@@ -443,7 +441,11 @@ const profile = {
   upgradeToShop: 'Upgrade to shop',
   created: 'Date created',
   createTour: 'Create new tour',
-  createTourSuccess: 'Create tour successfully',
+  createTourSuccess: 'Congratulations on creating a successful tour!',
+  wantToShareTour:
+    'Want to share the tour you just created with the community?',
+  havingNotVerifiedLocation:
+    'There are currently unverified locations in the tour, so your tour cannot be shared with the community yet',
   createSaleSuccess: 'Create group buying successfully',
   createNameForYourTour: 'Create name for your tour',
   qrConfirm: 'QR Confirming',

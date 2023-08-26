@@ -120,9 +120,7 @@ const discovery = {
       'Tố cáo của bạn đã được gửi đi\nChúng tôi sẽ xem xét đối với tố cáo của bạn và người dùng bị tố cáo để có những biện pháp xử lý kịp thời\n\nCám ơn bạn đã chung tay vì một cộng đồng Doffy ngày càng tốt hơn\n\nTrân trọng!\nDoffy Co.',
   },
   seeDetailImage: 'Xem ảnh',
-  share: {
-    title: 'Chia sẻ',
-  },
+  share: 'Chia sẻ',
   all: 'Tất cả',
   like: 'Thích',
   numberLike: '{{value}} thích',
@@ -423,8 +421,11 @@ const profile = {
   upgradeToShop: 'Chuyển sang tài khoản cửa hàng',
   created: 'Ngày tạo',
   createTour: 'Tạo tour mới',
-  createTourSuccess: 'Tạo tour thành công',
+  createTourSuccess: 'Chúc mừng bạn tạo tour thành công!',
   createSaleSuccess: 'Tạo đơn mua chung thành công',
+  wantToShareTour: 'Bạn muốn chia sẻ tour mình vừa tạo với cộng đồng chứ?',
+  havingNotVerifiedLocation:
+    'Hiện trong tour có những địa điểm chưa được xác thực, nên tour của bạn chưa thể được chia sẻ với cộng đồng',
   createNameForYourTour: 'Đặt tên cho tour của bạn',
   qrConfirm: 'QR Xác nhận',
   scanWhenGoToShop:

@@ -1,107 +1,36 @@
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {
-  StyleButton,
-  StyleImage,
-  StyleText,
-  StyleTouchable,
-} from 'components/base';
-import {Avatar} from 'components/common';
+import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
-import {ModalAlert} from 'navigation/screen/modals';
-import React, {isValidElement, memo} from 'react';
+import React, {ReactElement, memo} from 'react';
 import isEqual from 'react-fast-compare';
+import {useTranslation} from 'react-i18next';
 import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {borderWidthTiny, renderJoinStatus} from 'utility/assistant';
+import {renderJoinStatus} from 'utility/assistant';
 import {formatDDMMMMYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
-import {useJoinResult} from '../hooks';
 
 interface Props {
   item: TypeJoinPersonalAndSale;
   containerStyle?: StyleProp<ViewStyle>;
-  bottomComponent?: 'button-confirm-join' | 'join-status' | Element;
+  bottomComponent?: ReactElement;
   onPressMode?: AppParamsList[ROOT_SCREEN.detailMeJoin]['mode'];
+  showDeposited?: boolean;
 }
-
-interface ButtonConfirmProps {
-  item: TypeJoinPersonalAndSale;
-}
-
-const ButtonConfirm = ({item}: ButtonConfirmProps) => {
-  const theme = useTheme();
-
-  const [{loadingRequestBought}, {requestBought}] = useJoinResult(
-    item.sale.creator,
-    {
-      joinId: item.id,
-    },
-  );
-
-  const onRequestBought = () => {
-    const agree = async () => {
-      try {
-        await requestBought({
-          list_joins_id: [item.id],
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
-    };
-
-    ModalAlert.options({
-      i18Content: 'alert.beSureConfirmWhenInStore',
-      onContinue: agree,
-    });
-  };
-
-  return (
-    <StyleButton
-      containerStyle={$button}
-      onPress={onRequestBought}
-      title="discovery.confirmArrived"
-      titleStyle={{color: theme.black, fontWeight: FONT_WEIGHT_MEDIUM}}
-      isLoading={loadingRequestBought}
-    />
-  );
-};
 
 const ItemJoin = ({
   item,
   containerStyle,
   bottomComponent,
   onPressMode,
+  showDeposited,
 }: Props) => {
   const theme = useTheme();
+  const {t} = useTranslation();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
-
-  const renderBottomComponent = () => {
-    if (bottomComponent === 'button-confirm-join') {
-      return <ButtonConfirm item={item} />;
-    }
-    if (bottomComponent === 'join-status') {
-      const temp = renderJoinStatus(item.status, theme);
-      return (
-        <StyleText
-          i18Text="profile.status"
-          customStyle={[$textStatus, {color: theme.gray_600}]}>
-          <StyleText originValue=": " customStyle={{color: theme.gray_600}} />
-          <StyleText
-            i18Text={temp.text}
-            customStyle={{fontWeight: 'bold', color: temp.color}}
-          />
-        </StyleText>
-      );
-    }
-    if (isValidElement(bottomComponent)) {
-      return bottomComponent;
-    }
-    return null;
-  };
+  const status = renderJoinStatus(item.status, theme);
 
   return (
     <StyleTouchable
@@ -129,51 +58,15 @@ const ItemJoin = ({
           });
         }
       }}>
-      <View style={$informationView}>
-        <Avatar source={{uri: item?.sale?.creator_avatar}} size={20} />
+      <View style={$top}>
         <StyleText
-          originValue={item?.sale?.name}
+          originValue={item?.sale?.creator_name}
           customStyle={$textName}
           numberOfLines={1}
         />
-      </View>
-
-      <View style={$informationView}>
         <StyleText
-          i18Text="discovery.price"
-          customStyle={{color: theme.gray_600}}>
-          <StyleText originValue=": " customStyle={{color: theme.gray_600}} />
-        </StyleText>
-        <StyleText
-          originValue={formatMoney(item?.price)}
-          numberOfLines={1}
+          originValue={formatMoney(item.price)}
           customStyle={$textBold}
-        />
-      </View>
-
-      <View style={$informationView}>
-        <StyleText
-          i18Text="discovery.deposited"
-          customStyle={{color: theme.gray_600}}>
-          <StyleText originValue=": " customStyle={{color: theme.gray_600}} />
-        </StyleText>
-        <StyleText
-          originValue={formatMoney(item?.deposit)}
-          numberOfLines={1}
-          customStyle={$textBold}
-        />
-      </View>
-
-      <View style={$informationView}>
-        <StyleText
-          i18Text="discovery.moneyToPay"
-          customStyle={{color: theme.gray_600}}>
-          <StyleText originValue=": " customStyle={{color: theme.gray_600}} />
-        </StyleText>
-        <StyleText
-          originValue={formatMoney(item?.price - item?.deposit)}
-          numberOfLines={1}
-          customStyle={[$textBold, {color: theme.red}]}
         />
       </View>
 
@@ -183,35 +76,69 @@ const ItemJoin = ({
           customStyle={$imageSale}
         />
         <View style={$saleInfo}>
-          <StyleText
-            i18Text="discovery.amount"
-            customStyle={[$textInfo, {color: theme.gray_600}]}>
+          <View style={$nameAndAmount}>
             <StyleText
-              originValue=": "
-              customStyle={[$textInfo, {color: theme.gray_600}]}
+              originValue={item.sale.name}
+              customStyle={[$textInfo, {maxWidth: scale(200)}]}
+              numberOfLines={1}
             />
-            <StyleText originValue={item.amount} customStyle={$textInfo} />
-          </StyleText>
+            <StyleText
+              originValue={`  x ${item.amount}`}
+              customStyle={$textInfo}
+            />
+          </View>
 
           <View style={[$informationView, {marginTop: verticalScale(4)}]}>
-            <StyleText
-              i18Text="discovery.arrivalTime"
-              customStyle={[$textInfo, {color: theme.gray_600}]}>
-              <StyleText
-                originValue=": "
-                customStyle={[$textInfo, {color: theme.gray_600}]}
-              />
-            </StyleText>
             <StyleText
               originValue={formatDDMMMMYY(item?.time_will_buy)}
               numberOfLines={1}
               customStyle={$textInfo}
             />
+            <StyleText
+              originValue={` - ${t(status.text)}`}
+              customStyle={[$textInfo, {color: status.color}]}
+            />
           </View>
         </View>
       </View>
 
-      {renderBottomComponent()}
+      {showDeposited && (
+        <>
+          <View style={$informationView}>
+            <StyleText
+              i18Text="discovery.deposited"
+              customStyle={{color: theme.gray_600}}>
+              <StyleText
+                originValue=": "
+                customStyle={{color: theme.gray_600}}
+              />
+            </StyleText>
+            <StyleText
+              originValue={formatMoney(item?.deposit)}
+              numberOfLines={1}
+              customStyle={$textBold}
+            />
+          </View>
+
+          <View style={$informationView}>
+            <StyleText
+              i18Text="discovery.moneyToPay"
+              customStyle={{color: theme.gray_600}}>
+              <StyleText
+                originValue=": "
+                customStyle={{color: theme.gray_600}}
+              />
+            </StyleText>
+            <StyleText
+              originValue={formatMoney(item?.price - item?.deposit)}
+              numberOfLines={1}
+              customStyle={[$textBold, {color: theme.red}]}
+            />
+          </View>
+        </>
+      )}
+
+      {bottomComponent}
     </StyleTouchable>
   );
 };
@@ -220,7 +147,17 @@ const $container: ViewStyle = {
   width: '100%',
   borderRadius: BORDER_RADIUS.f3,
   paddingHorizontal: scale(8),
-  paddingBottom: verticalScale(8),
+  paddingVertical: verticalScale(8),
+};
+const $top: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+};
+const $nameAndAmount: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
 };
 const $informationView: ViewStyle = {
   width: '100%',
@@ -230,8 +167,7 @@ const $informationView: ViewStyle = {
 };
 const $textName: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
-  marginLeft: scale(8),
-  fontSize: FONT_SIZE.f1,
+  maxWidth: scale(200),
 };
 const $textBold: TextStyle = {
   fontWeight: 'bold',
@@ -247,16 +183,6 @@ const $saleInfo: ViewStyle = {
 };
 const $textInfo: TextStyle = {
   fontSize: FONT_SIZE.f3,
-};
-const $button: ViewStyle = {
-  marginTop: verticalScale(12),
-  width: scale(230),
-  paddingHorizontal: scale(20),
-  backgroundColor: 'transparent',
-  borderWidth: borderWidthTiny,
-};
-const $textStatus: ViewStyle = {
-  marginTop: verticalScale(8),
 };
 
 export default memo(ItemJoin, (pre: Props, next: Props) => {

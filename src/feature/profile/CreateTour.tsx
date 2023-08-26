@@ -8,7 +8,7 @@ import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
 import {useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
-import {AppParamsList, MAIN_SCREEN, PROFILE_ROUTE} from 'navigation/config';
+import {AppParamsList, PROFILE_ROUTE} from 'navigation/config';
 import {
   ModalAddLocation,
   ModalAlert,
@@ -41,6 +41,7 @@ import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
+import {impactMedium} from 'utility/haptic';
 
 type TypeContext = [
   {
@@ -196,11 +197,13 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const onSave = async () => {
     if (tourId === 'create-new') {
       try {
-        await createTour();
-        ModalAlert.success({
-          i18Content: 'profile.createTourSuccess',
-          onClose: () => navigate(MAIN_SCREEN.favorite),
-        });
+        const res = await createTour();
+        if (res) {
+          impactMedium();
+          navigate(PROFILE_ROUTE.createTourSuccess, {
+            data: res,
+          });
+        }
       } catch (err) {
         ModalAlert.error({
           content: err,

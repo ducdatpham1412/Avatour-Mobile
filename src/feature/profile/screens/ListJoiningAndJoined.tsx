@@ -15,31 +15,23 @@ const ListJoiningAndJoined = () => {
     mutate,
   } = useEstimatesAndJoinings();
 
-  const {
-    list,
-    setList,
-    refreshing,
-    onRefresh,
-    onLoadMore,
-    loadingMore,
-    initLoading,
-  } = usePaging<TypeJoinPersonalAndSale>({
-    request: apiGetListGBJoined,
-  });
+  const {list, refreshing, onRefresh, onLoadMore, loadingMore, initLoading} =
+    usePaging<TypeJoinPersonalAndSale>({
+      request: apiGetListGBJoined,
+    });
 
   const renderItemJoin = useCallback((item: TypeJoinPersonalAndSale) => {
     return (
       <ItemJoin
         item={item}
         containerStyle={$itemJoinSuccess}
-        bottomComponent="join-status"
         onPressMode="see-detail"
+        showDeposited={false}
       />
     );
   }, []);
 
   const renderHeaderComponent = () => {
-    // TO DO: Check whey not have estimate => Crash app
     return (
       <>
         {!!estimates?.length && (

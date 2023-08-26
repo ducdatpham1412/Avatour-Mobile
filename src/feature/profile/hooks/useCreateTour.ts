@@ -23,7 +23,7 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
       const scheduleNumber = schedules.map(day =>
         day.map(location => location.id),
       );
-      await apiCreateTour({
+      const res = await apiCreateTour({
         schedule: scheduleNumber,
         input_tour: {
           location: searchParams?.location || '',
@@ -37,6 +37,7 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
         },
       });
       onSave();
+      return res.data;
     },
   );
 

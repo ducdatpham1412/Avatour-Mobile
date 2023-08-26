@@ -193,7 +193,9 @@ export const apiEditTour = (tourId: number, body: TypeEditTour) => {
   return request.put(`/common/tours/${tourId}`, body);
 };
 
-export const apiCreateTour = (body: TypeCreateTour) => {
+export const apiCreateTour = (
+  body: TypeCreateTour,
+): PromiseApiResponse<TypeCreateTourResponse> => {
   return request.post('/common/tours', body);
 };
 

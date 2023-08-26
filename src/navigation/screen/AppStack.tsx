@@ -24,6 +24,7 @@ import {
   CreatePostPickImage,
   CreateSale,
   CreateTour,
+  CreateTourSuccess,
   EditProfile,
   EditSalePrice,
   ListFollows,
@@ -59,12 +60,11 @@ const AppStack = () => {
   const theme = useTheme();
   const {gestureHandle} = useAppSelector(state => state.logicSlice);
 
-  const cardStyle = {
-    backgroundColor: theme.background,
-  };
-
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator
+      screenOptions={{headerShown: false}}
+      //   initialRouteName={PROFILE_ROUTE.createTourSuccess}
+    >
       <Stack.Screen name={ROOT_SCREEN.mainScreen} component={MainTabs} />
 
       <Stack.Screen name={ROOT_SCREEN.otherProfile} component={OtherProfile} />
@@ -76,7 +76,9 @@ const AppStack = () => {
       {/* Swipe Image */}
       <Stack.Screen
         options={{
-          cardStyle,
+          cardStyle: {
+            backgroundColor: theme.background,
+          },
           cardStyleInterpolator:
             CardStyleInterpolators.forFadeFromBottomAndroid,
         }}
@@ -109,6 +111,11 @@ const AppStack = () => {
       <Stack.Screen
         name={PROFILE_ROUTE.createTour}
         component={CreateTour}
+        options={{gestureEnabled: false}}
+      />
+      <Stack.Screen
+        name={PROFILE_ROUTE.createTourSuccess}
+        component={CreateTourSuccess}
         options={{gestureEnabled: false}}
       />
       <Stack.Screen
