@@ -73,5 +73,5 @@ interface TypeRequestBought {
 
 interface TypeGetEstimatesAndJoinings {
   estimates: TypeJoinEstimate[];
-  joinings: TypeJoinPersonalAndSale[];
+  joinings: TypeJoinEstimate[];
 }

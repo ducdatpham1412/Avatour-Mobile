@@ -19,6 +19,7 @@ enum ROOT_SCREEN {
   joinsHistory = '@ROOT_SCREEN/joinsHistory',
   updateBankAccount = '@ROOT_SCREEN/updateBankAccount',
   detailSale = '@ROOT_SCREEN/detailSale',
+  myListJoins = '@ROOT_SCREEN/myListJoins',
   detailMeJoin = '@ROOT_SCREEN/detailMeJoin',
   detailTour = '@ROOT_SCREEN/detailTour',
   goToDeposit = '@ROOT_SCREEN/goToDeposit',

@@ -33,53 +33,38 @@ type TypeEditSale = {
 interface TypeJoinPersonal {
   id: number | null;
   sale_id: number;
-  group_id: number;
-  deposit: number;
-  price: number;
   amount: number;
-  time_will_buy: string;
-  note: string;
+  price: number;
+  deposit: number;
   creator: number;
   creator_name: string;
   creator_avatar: string;
   created: string;
-  status: number;
-}
-
-interface TypeJoinPersonalAndSale {
-  id: number;
-  sale_id: number;
-  group_id: number;
-  deposit: number;
-  price: number;
-  amount: number;
-  time_will_buy: string;
-  note: string;
-  created: string;
-  status: number;
-  sale: {
-    images: string[];
+  group: {
+    id: number | null;
     name: string;
-    creator: number;
-    creator_name: string;
-    creator_avatar: string;
+    total_members: number;
   };
 }
 
 interface TypeJoinEstimate {
   id: number;
-  sale_id: number;
   amount: number;
   time_will_buy: string;
   note: string;
-  deposit: number;
-  price: number;
   hash: string;
   creator: number;
+  creator_name: string;
   created: string;
   expired: string;
   status: number;
-  list_personals?: TypeJoinPersonal[];
+  sale: {
+    id: number;
+    name: string;
+    images: string[];
+    creator_name: string;
+  };
+  list_personals: TypeJoinPersonal[];
 }
 
 interface TypeMeJoinInSale {
@@ -208,6 +193,6 @@ type TypeEditTour = Partial<
 type TypeSearchResponse = TemplateApiResponse<Tour[]>;
 
 type TypeJoinResult = {
-  today: TypeJoinPersonalAndSale[];
-  next: TypeJoinPersonalAndSale[];
+  today: TypeJoinEstimate[];
+  next: TypeJoinEstimate[];
 };

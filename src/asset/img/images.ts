@@ -92,6 +92,10 @@ const Images = {
     travelGreen: require('./img_travel_green.png'),
     travelVisit: require('./img_travel_visit.png'),
     travelAll: require('./img_travel_all.png'),
+    avatar01: require('./img_avatar01.png'),
+    avatar02: require('./img_avatar02.png'),
+    avatar03: require('./img_avatar03.png'),
+    avatar04: require('./img_avatar04.png'),
   },
 };
 

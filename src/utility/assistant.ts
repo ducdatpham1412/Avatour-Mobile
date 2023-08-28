@@ -4,7 +4,7 @@ import Store from 'app-redux/store';
 import {
   FEELING,
   GENDER_TYPE,
-  GROUP_BUYING_STATUS,
+  JOIN_STATUS,
   LANGUAGE_TYPE,
   REACT,
   SIGN_UP_TYPE,
@@ -238,31 +238,6 @@ export const chosenBlurType: any = Platform.select({
   android: 'xlight',
 });
 
-type RenderPersonalOptions = {
-  maxNumber: number;
-};
-
-export const renderPersonalJoinsFromGroups = (
-  listGroups: TypeGroupBuying['groups'],
-  options: RenderPersonalOptions,
-) => {
-  const listPersonalJoins: TypePersonalJoin[] = [];
-  listGroups?.every?.(group => {
-    group?.members?.every?.((join: any) => {
-      if (listPersonalJoins.length < options.maxNumber) {
-        listPersonalJoins.push(join);
-        return true;
-      }
-      return false;
-    });
-    if (listPersonalJoins.length < options.maxNumber) {
-      return true;
-    }
-    return false;
-  });
-  return listPersonalJoins;
-};
-
 export const calculateTotalJoins = (group: TypeGroupJoin) => {
   let res = 0;
   group?.members?.forEach(item => {
@@ -376,25 +351,25 @@ export const renderJoinStatus = (
   theme: TypeTheme,
 ): RenderStatus => {
   switch (status) {
-    case GROUP_BUYING_STATUS.bought:
-      return {
-        text: 'profile.joinedSuccess',
-        color: theme.green,
-      };
-    case GROUP_BUYING_STATUS.notBought:
+    case JOIN_STATUS.adminConfirm:
       return {
         text: 'profile.joining',
         color: theme.blue,
       };
-    case GROUP_BUYING_STATUS.requestBought:
+    case JOIN_STATUS.overtime:
+      return {
+        text: 'discovery.arrivalTimePassed',
+        color: theme.red,
+      };
+    case JOIN_STATUS.consumerConfirmed:
       return {
         text: 'profile.waitingConfirm',
         color: theme.p_800,
       };
-    case GROUP_BUYING_STATUS.notBoughtButOvertime:
+    case JOIN_STATUS.supplierConfirmed:
       return {
-        text: 'discovery.arrivalTimePassed',
-        color: theme.red,
+        text: 'profile.joinedSuccess',
+        color: theme.green,
       };
     default:
       return {
@@ -453,4 +428,49 @@ export const removeVietnameseTones = (str: string) => {
     ' ',
   );
   return str;
+};
+
+/**
+ *
+ * @param sample: Must be list string had been remove Vietnamese tone and upperCase
+ */
+export const search = (sample: string[], text: string) => {
+  const resIndex: number[] = [];
+
+  const temp = text.split(' ');
+  const words = temp
+    .map(w => removeVietnameseTones(w.trim().toUpperCase()))
+    .filter(w => w !== '');
+
+  sample.forEach((name, index) => {
+    for (let i = 0; i < words.length; i++) {
+      const check = name.includes(removeVietnameseTones(words[i]));
+      if (check) {
+        resIndex.push(index);
+        break;
+      }
+    }
+  });
+
+  return resIndex;
+};
+
+export type PriceDeposit = {
+  price: number;
+  deposit: number;
+};
+export const calculatePriceDeposit = (joinEstimate: TypeJoinEstimate) => {
+  const res = joinEstimate.list_personals?.reduce(
+    (pre: PriceDeposit, current) => {
+      return {
+        price: pre.price + current.price,
+        deposit: pre.deposit + current.deposit,
+      };
+    },
+    {
+      price: 0,
+      deposit: 0,
+    },
+  );
+  return res;
 };

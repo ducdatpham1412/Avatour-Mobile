@@ -1,8 +1,7 @@
 import {apiScanJoinResult} from 'api/discovery';
 import {apiRequestBought} from 'api/profile';
-import {GROUP_BUYING_STATUS} from 'asset/enum';
+import {JOIN_STATUS} from 'asset/enum';
 import {useEstimatesAndJoinings} from 'hook';
-import {SWRConfiguration} from 'swr';
 import useSWRImmutable from 'swr/immutable';
 import useSWRMutation from 'swr/mutation';
 
@@ -12,18 +11,13 @@ interface Params {
 }
 
 const useJoinResult = (shopId: number, params?: Params) => {
-  const config: SWRConfiguration = params?.revalidateAll
-    ? {
-        revalidateOnMount: true,
-      }
-    : {};
   const {data, isLoading, isValidating, error, mutate} = useSWRImmutable(
     [shopId, 'api.checkJoinResult'],
     async () => {
       const res = await apiScanJoinResult(shopId);
       return res.data;
     },
-    config,
+    params?.revalidateAll ? {revalidateOnMount: true} : {},
   );
   const {mutate: mutateEstimatesAndJoining} = useEstimatesAndJoinings();
 
@@ -39,7 +33,7 @@ const useJoinResult = (shopId: number, params?: Params) => {
                 if (arg.list_joins_id.includes(item.id)) {
                   return {
                     ...item,
-                    status: GROUP_BUYING_STATUS.requestBought,
+                    status: JOIN_STATUS.consumerConfirmed,
                   };
                 }
                 return item;

@@ -174,7 +174,11 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   };
 
   const renderButton = () => {
-    if (status === 'success' || status === 'error') {
+    if (
+      status === 'success' ||
+      status === 'error' ||
+      status === 'notification'
+    ) {
       return (
         <StyleButton
           title="common.ok"
@@ -305,6 +309,7 @@ const $title: TextStyle = {
 const $content: TextStyle = {
   textAlign: 'center',
   marginTop: verticalScale(5),
+  fontSize: FONT_SIZE.f3,
 };
 const $button: ViewStyle = {
   marginTop: verticalScale(20),

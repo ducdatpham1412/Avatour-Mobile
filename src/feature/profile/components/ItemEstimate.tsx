@@ -6,7 +6,6 @@ import {
 } from 'asset';
 import {TextCountDown} from 'components';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
-import {Avatar} from 'components/common';
 import dayjs from 'dayjs';
 import {useDetailSale} from 'feature/common/hooks';
 import {useTheme} from 'hook';
@@ -14,7 +13,9 @@ import {push} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
+import {useTranslation} from 'react-i18next';
 import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import {calculatePriceDeposit} from 'utility/assistant';
 import {formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
@@ -24,8 +25,10 @@ interface Props {
 }
 
 const ItemEstimate = ({item, containerStyle}: Props) => {
+  const {t} = useTranslation();
   const theme = useTheme();
-  const [{data}] = useDetailSale(item.sale_id, {revalidateAll: false});
+  const [{data}] = useDetailSale(item.sale.id, {revalidateAll: false});
+  const priceDeposit = calculatePriceDeposit(item);
 
   return (
     <StyleTouchable
@@ -36,8 +39,9 @@ const ItemEstimate = ({item, containerStyle}: Props) => {
       ]}
       onPress={() =>
         push(ROOT_SCREEN.detailMeJoin, {
-          saleId: item.sale_id,
-          mode: 'go-to-deposit-from-profile',
+          estimateId: item.id,
+          initValue: item,
+          mode: 'see-detail',
         })
       }>
       <StyleImage
@@ -53,57 +57,43 @@ const ItemEstimate = ({item, containerStyle}: Props) => {
         />
       )}
 
-      <View style={$creatorView}>
-        <Avatar source={{uri: data?.creator_avatar}} size={17} />
+      <StyleText numberOfLines={1} customStyle={$textContent}>
         <StyleText
-          originValue={data?.creator_name}
-          customStyle={$textCreator}
+          originValue={`${t('discovery.nowPrice')}: `}
+          customStyle={[$title, {color: theme.gray_600}]}
         />
-      </View>
+        <StyleText
+          originValue={formatMoney(priceDeposit.price)}
+          customStyle={[$text, {color: theme.green, fontWeight: 'bold'}]}
+        />
+      </StyleText>
 
       <StyleText numberOfLines={1} customStyle={$textContent}>
         <StyleText
-          i18Text="discovery.estimatedPrice"
-          customStyle={[$text, {fontWeight: FONT_WEIGHT_MEDIUM}]}
+          originValue={`${t('discovery.deposit')}: `}
+          customStyle={[$title, {color: theme.gray_600}]}
         />
         <StyleText
-          originValue={` ${formatMoney(item?.price)}`}
+          originValue={formatMoney(priceDeposit.deposit)}
           customStyle={$text}
         />
       </StyleText>
 
       <StyleText numberOfLines={1} customStyle={$textContent}>
         <StyleText
-          i18Text="discovery.deposit"
-          customStyle={[$text, {fontWeight: FONT_WEIGHT_MEDIUM}]}
+          originValue={`${t('discovery.remainingTime')}: `}
+          customStyle={[$title, {color: theme.gray_600}]}
         />
-        <StyleText
-          originValue={` ${formatMoney(item?.deposit)}`}
-          customStyle={$text}
-        />
-      </StyleText>
-
-      <StyleText numberOfLines={1} customStyle={$textContent}>
-        <StyleText
-          i18Text="discovery.remainingTime"
-          customStyle={[$text, {fontWeight: FONT_WEIGHT_MEDIUM}]}>
-          <StyleText
-            originValue=": "
-            customStyle={[$text, {fontWeight: FONT_WEIGHT_MEDIUM}]}
-          />
-        </StyleText>
         <TextCountDown
           initSeconds={dayjs(item.expired).diff(dayjs(), 'seconds')}
           style={$text}
         />
       </StyleText>
 
-      {!data?.name && <StyleText originValue="" customStyle={$textName} />}
-
       <View style={[$button, {backgroundColor: theme.p_600}]}>
         <StyleText
           i18Text="discovery.goToDeposit"
-          customStyle={[$text, {fontWeight: FONT_WEIGHT_MEDIUM}]}
+          customStyle={[$text, {fontWeight: 'bold', color: theme.white}]}
         />
       </View>
     </StyleTouchable>
@@ -123,38 +113,27 @@ const $image: ImageStyle = {
 };
 const $textName: TextStyle = {
   width: '100%',
-  paddingHorizontal: scale(4),
-  fontSize: FONT_SIZE.f4,
+  paddingHorizontal: scale(8),
   marginTop: verticalScale(4),
-  fontWeight: 'bold',
-  height: FONT_SIZE.f4 + moderateScale(5),
-};
-const $creatorView: ViewStyle = {
-  width: '100%',
-  paddingHorizontal: scale(4),
-  marginTop: verticalScale(4),
-  flexDirection: 'row',
-  alignItems: 'center',
-};
-const $textCreator: TextStyle = {
-  fontSize: FONT_SIZE.f4,
-  marginLeft: scale(4),
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $textContent: TextStyle = {
   width: '100%',
-  paddingHorizontal: scale(4),
-  fontSize: FONT_SIZE.f4,
+  paddingHorizontal: scale(8),
   marginTop: verticalScale(4),
+};
+const $title: TextStyle = {
+  fontSize: FONT_SIZE.f4,
 };
 const $text: TextStyle = {
   fontSize: FONT_SIZE.f4,
 };
 const $button: ViewStyle = {
   width: '70%',
-  paddingVertical: verticalScale(5),
+  paddingVertical: verticalScale(8),
+  borderRadius: 30,
+  marginTop: verticalScale(8),
   alignSelf: 'center',
-  borderRadius: BORDER_RADIUS.f3,
-  marginTop: verticalScale(4),
   alignItems: 'center',
 };
 

@@ -3,7 +3,7 @@ import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
-import {FONT_SIZE} from 'asset/standardValue';
+import {BORDER_RADIUS, FONT_SIZE} from 'asset/standardValue';
 import {AppModalize} from 'components';
 import {
   StyleButton,
@@ -13,7 +13,7 @@ import {
 } from 'components/base';
 import AppInput from 'components/base/AppInput';
 import dayjs from 'dayjs';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {ModalDatePicker, ModalInputEdit} from 'navigation/screen/modals';
 import React, {
   ElementRef,
@@ -24,11 +24,9 @@ import React, {
   useState,
 } from 'react';
 import {useTranslation} from 'react-i18next';
-import {View} from 'react-native';
-import {Modalize} from 'react-native-modalize';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny, removePrefixPhone} from 'utility/assistant';
 import {
   addDate,
@@ -36,9 +34,8 @@ import {
   formatPhone,
   formatUTCDate,
 } from 'utility/format';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {validateIsPhone} from 'utility/validate';
-import AddPhone from './AddPhone';
-import {I18Normalize} from 'utility/I18Next';
 
 interface Props {
   onConfirm(params: Omit<TypeJoinRequest, 'saleId'>): void;
@@ -67,7 +64,7 @@ const ModalConfirmJoinGb = (
   {onConfirm, loadingJoin, initValue, titleButton}: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const {t} = useTranslation();
   const theme = useTheme();
   const {phone} = useAppSelector(
@@ -75,7 +72,6 @@ const ModalConfirmJoinGb = (
   );
 
   const modalizeRef = useRef<ElementRef<typeof AppModalize>>(null);
-  const modalAddPhoneRef = useRef<Modalize>(null);
 
   const [amount, setAmount] = useState(initValue?.amount ?? 1);
   const [timeWillJoin, setTimeWillJoin] = useState(
@@ -113,42 +109,42 @@ const ModalConfirmJoinGb = (
         containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
         <StyleText
           i18Text="discovery.joinGroupBuying"
-          customStyle={styles.textHeader}
+          customStyle={$textHeader}
         />
         <StyleIcon
           source={Images.images.squirrelLogin}
           size={50}
-          customStyle={styles.icon}
+          customStyle={$icon}
         />
 
-        <View style={styles.enterInfoView}>
+        <View style={$enterInfoView}>
           <StyleText
             i18Text="discovery.amount"
-            customStyle={styles.textTitleEnterInfo}
+            customStyle={$textTitleEnterInfo}
           />
-          <View style={styles.minusPlusBox}>
+          <View style={$minusPlusBox}>
             <StyleTouchable onPress={() => onChangeAmount(-1)} hitSlop={10}>
               <AntDesign
                 name="minussquareo"
-                style={[styles.iconMinusPlus, {color: theme.gray_500}]}
+                style={[$iconMinusPlus, {color: theme.gray_500}]}
               />
             </StyleTouchable>
-            <StyleText originValue={amount} customStyle={styles.textAmount} />
+            <StyleText originValue={amount} customStyle={$textAmount} />
             <StyleTouchable onPress={() => onChangeAmount(1)} hitSlop={10}>
               <AntDesign
                 name="plussquareo"
-                style={[styles.iconMinusPlus, {color: theme.gray_500}]}
+                style={[$iconMinusPlus, {color: theme.gray_500}]}
               />
             </StyleTouchable>
           </View>
         </View>
 
-        <View style={styles.enterInfoView}>
+        <View style={$enterInfoView}>
           <StyleText
             i18Text="discovery.arrivalTime"
-            customStyle={styles.textTitleEnterInfo}
+            customStyle={$textTitleEnterInfo}
           />
-          <View style={styles.minusPlusBox}>
+          <View style={$minusPlusBox}>
             <StyleTouchable
               onPress={() => {
                 ModalDatePicker.show({
@@ -163,31 +159,26 @@ const ModalConfirmJoinGb = (
               }}>
               <StyleText
                 originValue={`${formatDayGroupBuying(timeWillJoin)}`}
-                customStyle={styles.textJoinDate}
+                customStyle={$textJoinDate}
               />
             </StyleTouchable>
           </View>
         </View>
 
-        <View style={styles.enterInfoView}>
-          <StyleText
-            i18Text="login.phone"
-            customStyle={styles.textTitleEnterInfo}>
-            <StyleText
-              originValue=":"
-              customStyle={styles.textTitleEnterInfo}
-            />
+        <View style={$enterInfoView}>
+          <StyleText i18Text="login.phone" customStyle={$textTitleEnterInfo}>
+            <StyleText originValue=":" customStyle={$textTitleEnterInfo} />
           </StyleText>
-          <View style={styles.minusPlusBox}>
+          <View style={$minusPlusBox}>
             <StyleTouchable
               onPress={onAddPhone}
               disable={!!phone}
               disableOpacity={1}>
-              {!!phone ? (
+              {phone ? (
                 <StyleText
                   originValue={formatPhone(phone)}
                   customStyle={[
-                    styles.textJoinDate,
+                    $textJoinDate,
                     {
                       textDecorationLine: 'none',
                     },
@@ -197,7 +188,7 @@ const ModalConfirmJoinGb = (
                 <StyleText
                   i18Text="discovery.addPhoneNumber"
                   customStyle={[
-                    styles.textJoinDate,
+                    $textJoinDate,
                     {
                       color: theme.red,
                     },
@@ -212,7 +203,7 @@ const ModalConfirmJoinGb = (
           value={note}
           onChangeText={text => setNote(text)}
           style={[
-            styles.inputNote,
+            $inputNote,
             {
               borderColor: theme.gray_300,
             },
@@ -223,7 +214,7 @@ const ModalConfirmJoinGb = (
 
         <StyleButton
           title={titleButton ?? 'discovery.joinGroupBuying'}
-          containerStyle={styles.button}
+          containerStyle={$button}
           onPress={() => {
             onConfirm({
               amount,
@@ -235,75 +226,63 @@ const ModalConfirmJoinGb = (
           isLoading={loadingJoin}
         />
       </AppModalize>
-
-      <Modalize
-        ref={modalAddPhoneRef}
-        adjustToContentHeight
-        withHandle={false}
-        modalStyle={{
-          backgroundColor: 'transparent',
-        }}>
-        <AddPhone onCloseModal={() => modalAddPhoneRef.current?.close()} />
-      </Modalize>
     </>
   );
 };
 
-const styles = ScaledSheet.create({
-  textHeader: {
-    fontSize: FONT_SIZE.f1,
-    marginTop: '5@vs',
-    fontWeight: 'bold',
-    alignSelf: 'center',
-  },
-  icon: {
-    marginTop: '10@vs',
-    alignSelf: 'center',
-  },
-  button: {
-    width: '90%',
-    marginTop: '20@vs',
-    marginBottom: '5@vs',
-    paddingVertical: '5@vs',
-  },
-  enterInfoView: {
-    flexDirection: 'row',
-    marginTop: '20@vs',
-    alignItems: 'center',
-  },
-  textTitleEnterInfo: {
-    fontSize: FONT_SIZE.f2,
-    fontWeight: 'bold',
-  },
-  minusPlusBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: '20@s',
-  },
-  iconMinusPlus: {
-    fontSize: '20@ms',
-  },
-  textAmount: {
-    fontSize: FONT_SIZE.f2,
-    fontWeight: 'bold',
-    width: '50@ms',
-    textAlign: 'center',
-  },
-  textJoinDate: {
-    fontSize: FONT_SIZE.f2,
-    textDecorationLine: 'underline',
-  },
-  inputNote: {
-    width: '100%',
-    height: '100@vs',
-    borderWidth: borderWidthTiny,
-    borderRadius: '10@ms',
-    marginTop: '20@vs',
-    paddingHorizontal: '7@ms',
-    paddingTop: '7@ms',
-    paddingBottom: '7@ms',
-    fontSize: FONT_SIZE.f2,
-  },
-});
+const $textHeader: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  marginTop: verticalScale(4),
+  fontWeight: 'bold',
+  alignSelf: 'center',
+};
+const $icon: ImageStyle = {
+  marginTop: verticalScale(8),
+  alignSelf: 'center',
+};
+const $button: ViewStyle = {
+  width: '90%',
+  marginTop: verticalScale(20),
+  marginBottom: verticalScale(4),
+  paddingVertical: scale(4),
+};
+const $enterInfoView: ViewStyle = {
+  flexDirection: 'row',
+  marginTop: verticalScale(20),
+  alignItems: 'center',
+};
+const $textTitleEnterInfo: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  fontWeight: 'bold',
+};
+const $minusPlusBox: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginLeft: scale(20),
+};
+const $iconMinusPlus: TextStyle = {
+  fontSize: moderateScale(20),
+};
+const $textAmount: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  fontWeight: 'bold',
+  width: moderateScale(50),
+  textAlign: 'center',
+};
+const $textJoinDate: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  textDecorationLine: 'underline',
+};
+const $inputNote: TextStyle = {
+  width: '100%',
+  height: verticalScale(100),
+  borderWidth: borderWidthTiny,
+  borderRadius: BORDER_RADIUS.f3,
+  marginTop: verticalScale(20),
+  paddingHorizontal: scale(8),
+  paddingTop: verticalScale(8),
+  paddingBottom: verticalScale(8),
+  fontSize: FONT_SIZE.f2,
+};
 
 export default forwardRef(ModalConfirmJoinGb);

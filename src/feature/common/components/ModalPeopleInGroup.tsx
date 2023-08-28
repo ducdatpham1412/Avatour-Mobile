@@ -1,10 +1,7 @@
-import {apiConfirmUserBought} from 'api/discovery';
-import {GROUP_BUYING_STATUS} from 'asset/enum';
 import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {AppModalize} from 'components';
+import {AppModalize, Separator} from 'components';
 import {StyleList} from 'components/base';
-import {useApiImmutable, useTheme} from 'hook';
-import {ModalAlert} from 'navigation/screen/modals';
+import {useSafeArea, useTheme} from 'hook';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -13,95 +10,33 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {scale, verticalScale} from 'utility/scale';
+import {scale} from 'utility/scale';
+import {useJoinInGroup} from '../hooks';
 import ItemPersonalJoin from './ItemPersonalJoin';
-import ItemPersonalJoinOfAdmin, {
-  TypeConfirmBought,
-} from './ItemPersonalJoinOfAdmin';
 
 type TypeShow = {
-  group: TypeGroupJoin;
-  isMySale: boolean;
+  groupId: number | null;
+  initData?: TypeGroupJoin;
 };
 
-interface Props {
-  group: TypeGroupJoin;
+interface ListPeopleProps {
+  groupId: number;
 }
 
-const Separator = () => {
-  return <View style={{height: verticalScale(12)}} />;
-};
-
-const ListPeople = ({group}: Props) => {
-  const {bottom} = useSafeAreaInsets();
-  return (
-    <StyleList
-      data={group?.members}
-      renderItem={({item}) => <ItemPersonalJoin item={item} />}
-      keyExtractor={item => String(item?.id)}
-      ItemSeparatorComponent={Separator}
-      contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
-    />
-  );
-};
-
-const ListPeopleOfAdmin = ({group}: Props) => {
-  const {bottom} = useSafeAreaInsets();
-  const {data, loading, validating, mutate} = useApiImmutable<
-    TypePersonalJoinOfAdmin[]
-  >({
-    path: 'profile/sales/confirm',
-    params: {
-      group_id: group.id,
-    },
-  });
-
-  const onConfirmBought: TypeConfirmBought = async (
-    list_joins_id,
-    {setLoading},
-  ) => {
-    try {
-      setLoading(true);
-      await apiConfirmUserBought(list_joins_id);
-      await mutate(pre => {
-        if (pre) {
-          return pre.map(join => {
-            if (list_joins_id.includes(join?.id)) {
-              return {
-                ...join,
-                status: GROUP_BUYING_STATUS.bought,
-              };
-            }
-            return join;
-          });
-        }
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+const ListPeople = ({groupId}: ListPeopleProps) => {
+  const {bottom} = useSafeArea();
+  const [{data, loading, validating}, {mutate}] = useJoinInGroup(groupId);
 
   return (
     <StyleList
       data={data ?? []}
-      renderItem={({item}) => (
-        <ItemPersonalJoinOfAdmin
-          item={item}
-          onConfirmBought={onConfirmBought}
-        />
-      )}
+      renderItem={({item}) => <ItemPersonalJoin item={item} />}
       keyExtractor={item => String(item?.id)}
       ItemSeparatorComponent={Separator}
+      contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
       initLoading={loading}
       refreshing={validating}
       onRefresh={mutate}
-      contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
     />
   );
 };
@@ -110,14 +45,20 @@ const ModalPeopleInGroup = (
   _: any,
   ref: ForwardedRef<TypeShowModalize<TypeShow>>,
 ) => {
+  const theme = useTheme();
+  const {bottom} = useSafeArea();
+
   const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
   const [showData, setShowData] = useState<TypeShow>();
-  const theme = useTheme();
+  const [groupName, setGroupName] = useState('');
 
   useImperativeHandle(
     ref,
     () => ({
       show: value => {
+        if (value?.initData?.name) {
+          setGroupName(value.initData?.name);
+        }
         setShowData(value);
         modalRef.current?.show();
       },
@@ -132,10 +73,22 @@ const ModalPeopleInGroup = (
     if (!showData) {
       return null;
     }
-    if (showData.isMySale) {
-      return <ListPeopleOfAdmin group={showData.group} />;
+
+    if (showData.initData) {
+      return (
+        <StyleList
+          data={showData.initData.members}
+          renderItem={({item}) => <ItemPersonalJoin item={item} />}
+          keyExtractor={item => String(item?.id)}
+          ItemSeparatorComponent={Separator}
+          contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
+        />
+      );
     }
-    return <ListPeople group={showData.group} />;
+
+    if (showData.groupId) {
+      return <ListPeople groupId={showData.groupId} />;
+    }
   };
 
   return (
@@ -145,10 +98,10 @@ const ModalPeopleInGroup = (
       onClosed={() => setShowData(undefined)}
       title={showData ? 'discovery.groupDay' : 'common.null'}
       titleParams={{
-        value: showData?.group.name ?? '',
+        value: groupName,
       }}
       containerStyle={{
-        paddingHorizontal: showData?.isMySale ? scale(12) : scale(40),
+        paddingHorizontal: scale(40),
         backgroundColor: theme.background,
       }}>
       {renderContent()}

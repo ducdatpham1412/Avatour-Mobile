@@ -17,6 +17,7 @@ import {Animated, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'react-native-size-matters';
 import {borderWidthTiny, logger} from 'utility/assistant';
+import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale} from 'utility/scale';
 
 const iconSize = 27;
@@ -27,6 +28,7 @@ const showModalQr = async () => {
     if (res) {
       const dataQR: QrData = JSON.parse(res.data);
       ModalScanQr.hide();
+      impactMedium();
       navigate(ROOT_SCREEN.scanResult, {
         shop_id: dataQR.user_id,
         mode: 'join-result',

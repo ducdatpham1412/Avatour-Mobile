@@ -218,11 +218,13 @@ export enum ACCOUNT {
   shareTour = 4,
 }
 
-export enum GROUP_BUYING_STATUS {
-  notBought = 1,
-  notBoughtButOvertime = 2,
-  requestBought = 3,
-  bought = 4,
+export enum JOIN_STATUS {
+  notActive = 0,
+  active = 1,
+  adminConfirm = 2,
+  overtime = 3,
+  consumerConfirmed = 4,
+  supplierConfirmed = 5,
 }
 
 export enum FONT_FAMILY {
@@ -348,6 +350,7 @@ export enum APP_EVENT {
   reactTour = 'react-tour',
   createNewSale = 'create-new-sale',
   editSale = 'edit-sale',
+  confirmArrived = 'confirm-arrived',
 }
 
 export enum TYPE_AUTH_REQUEST {

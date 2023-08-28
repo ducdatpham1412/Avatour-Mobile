@@ -57,7 +57,7 @@ const Theme = {
     gray_100: '#f4f4f4',
     gray_50: '#f9f9f9',
     // Other colors
-    green: '#3CDF21',
+    green: '#349529',
     red: '#F34119',
     black_opacity: (value = 0.6) => `rgba(0, 0, 0, ${value})`,
     white_opacity: (value = 0.6) => `rgba(255, 255, 255, ${value})`,

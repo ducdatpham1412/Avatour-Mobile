@@ -1,30 +1,34 @@
-import {useAppSelector} from 'app-redux/store';
-import {BORDER_RADIUS, FONT_SIZE, ratioImageSale} from 'asset';
+import {
+  BORDER_RADIUS,
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+  ratioImageSale,
+} from 'asset';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
-import {Avatar} from 'components/common';
 import {useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
+import {useTranslation} from 'react-i18next';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {
   borderWidthTiny,
+  calculatePriceDeposit,
   detectFromStyle,
-  renderJoinStatus,
 } from 'utility/assistant';
 import {formatDDMMMMYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
-  item: TypeJoinPersonalAndSale;
+  item: TypeJoinEstimate;
   containerStyle?: StyleProp<ViewStyle>;
   contentFontSize?: number;
 }
 
 const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
+  const {t} = useTranslation();
   const theme = useTheme();
-  const {profile} = useAppSelector(state => state.accountSlice.passport);
   const width = useRef(
     detectFromStyle(containerStyle, 'width') || defaultWidth,
   );
@@ -32,7 +36,7 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
   const [height, setHeight] = useState(
     typeof width.current === 'number' ? width.current * ratioImageSale : 0,
   );
-  const status = renderJoinStatus(item?.status, theme);
+  const priceDeposit = calculatePriceDeposit(item);
 
   return (
     <StyleTouchable
@@ -44,22 +48,8 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
       ]}
       onPress={() =>
         push(ROOT_SCREEN.detailMeJoin, {
-          saleId: item?.sale_id,
-          joinPersonal: {
-            id: item.id,
-            group_id: item.group_id,
-            sale_id: item.sale_id,
-            deposit: item.deposit,
-            price: item.price,
-            amount: item.amount,
-            time_will_buy: item.time_will_buy,
-            note: item.note,
-            creator: profile.id,
-            creator_name: profile.name,
-            creator_avatar: profile.avatar,
-            created: item.created,
-            status: item.status,
-          },
+          estimateId: item.id,
+          initValue: item,
           mode: 'see-detail',
         })
       }
@@ -75,7 +65,6 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
       />
 
       <View style={$informationView}>
-        <Avatar source={{uri: item?.sale?.creator_avatar}} size={17} />
         <StyleText
           originValue={item?.sale?.name}
           customStyle={$textName}
@@ -85,52 +74,32 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
 
       <View style={$informationView}>
         <StyleText
-          i18Text="discovery.arrivalTime"
-          customStyle={[
-            $textTitle,
-            {color: theme.gray_600, fontSize: fontSize.current},
-          ]}>
-          <StyleText
-            originValue=": "
-            customStyle={[
-              $textTitle,
-              {color: theme.gray_600, fontSize: fontSize.current},
-            ]}
-          />
-        </StyleText>
+          originValue={`${t('discovery.arrivalTime')}: `}
+          customStyle={{color: theme.gray_600, fontSize: fontSize.current}}
+        />
         <StyleText
           originValue={formatDDMMMMYY(item?.time_will_buy)}
-          customStyle={[$textInfo, {fontSize: fontSize.current}]}
+          customStyle={{fontSize: fontSize.current}}
           numberOfLines={1}
         />
       </View>
 
       <View style={$informationView}>
         <StyleText
-          i18Text="discovery.deposit"
-          customStyle={[
-            $textTitle,
-            {color: theme.gray_600, fontSize: fontSize.current},
-          ]}>
-          <StyleText
-            originValue=": "
-            customStyle={[
-              $textTitle,
-              {color: theme.gray_600, fontSize: fontSize.current},
-            ]}
-          />
-        </StyleText>
+          originValue={`${t('discovery.nowPrice')}: `}
+          customStyle={{color: theme.gray_600, fontSize: fontSize.current}}
+        />
         <StyleText
-          originValue={formatMoney(item?.deposit)}
+          originValue={formatMoney(priceDeposit?.price)}
           customStyle={[
             $textInfo,
-            {color: theme.blue, fontSize: fontSize.current},
+            {color: theme.green, fontSize: fontSize.current},
           ]}
           numberOfLines={1}
         />
       </View>
 
-      <View style={$informationView}>
+      {/* <View style={$informationView}>
         <StyleText
           i18Text="profile.status"
           customStyle={[
@@ -156,7 +125,7 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
             ]}
           />
         </StyleText>
-      </View>
+      </View> */}
     </StyleTouchable>
   );
 };
@@ -172,17 +141,12 @@ const $informationView: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   marginTop: verticalScale(4),
-  paddingHorizontal: scale(4),
+  paddingHorizontal: scale(8),
 };
 const $textName: TextStyle = {
-  marginLeft: scale(8),
-  fontWeight: 'bold',
-};
-const $textTitle: TextStyle = {
-  fontSize: FONT_SIZE.f4,
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $textInfo: TextStyle = {
-  fontSize: FONT_SIZE.f4,
   fontWeight: 'bold',
 };
 

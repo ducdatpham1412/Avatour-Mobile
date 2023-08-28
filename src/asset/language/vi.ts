@@ -140,13 +140,15 @@ const discovery = {
   deposited: 'Đã đặt cọc',
   deposit: 'Đặt cọc',
   allDeposited: 'Tổng tiền đã cọc',
-  numberGroupJoined: '{{value}} lượt tham gia',
-  numberJoinsWithYou: 'Số lượng hiện có',
+  numberJoins: '{{value}} lượt tham gia',
+  numberJoinsNow: '{{value}} lượt tham gia hiện tại',
+  seeMembers: 'Xem các thành viên',
+  whenYouComeGroupHave: 'Khi bạn tham gia, nhóm sẽ tăng lên {{value}} lượt',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',
   confirmBought: 'Xác nhận thanh toán đủ',
-  participators: '{{value}} người tham gia',
-  gbExpired: 'Cửa hàng tạm thời không nhận thêm order',
+  expired: 'Quá hạn',
+  orderExpired: 'Đơn hàng này đã quá hạn\nBạn vui lòng đặt đơn hàng khác',
   reviewAbout: 'Bạn đang viết review về ',
   goToProfile: 'Xem trang cá nhân',
   openLink: 'Mở đường dẫn',
@@ -229,11 +231,11 @@ const discovery = {
   groupDay: 'Nhóm {{value}}',
   confirmArrived: 'Xác nhận đã đến cửa hàng',
   rememberConfirmWhenArrived:
-    'Bạn có {{numberJoins}} đơn mua chung tại {{storeName}} trong ngày hôm nay\nVui lòng <b>"Xác nhận đã đến cửa hàng"</b> hoặc <b>"Xác nhận tất cả"</b> để xác nhận đã tham gia thành công nha',
+    'Bạn có {{numberJoins}} đơn mua chung tại <b>{{storeName}}</b> trong ngày hôm nay',
   alsoHaveNextDay:
     'Bạn cũng có {{numberJoins}} đơn mua chung tại {{storeName}} trong những ngày tới',
   notHaveOrderToday:
-    'Bạn không có đơn mua chung nào ngày hôm nay tại {{storeName}}',
+    'Bạn không có đơn mua chung nào cần xác nhận ngày hôm nay tại {{storeName}}',
   confirmAll: 'Xác nhận tất cả',
   buyingHistory: 'Lịch sử mua chung',
   arrivalTimePassed: 'Đã quá thời gian đến',
@@ -250,12 +252,13 @@ const discovery = {
   estimate: 'Dự tính',
   estimatedPrice: 'Khoảng dự tính',
   appliedPrice: 'Bảng giá áp dụng',
-  nowPrice: 'Tổng tiền hiện tại',
+  nowPrice: 'Giá hiện tại',
   priceCanBeChange:
     'Giá có thể giao động theo <b>Khoảng dự tính</b> tuỳ thuộc vào số lượng trong nhóm mua',
   priceCanBeDecrease:
     'Giá tiền có thể giảm hơn, trong khoảng dự tính (giảm tối đa còn <b>{{value}}</b>) tuỳ thuộc vào số lượng trong nhóm mua',
-  beInGroup: 'Bạn sẽ được phân vào các nhóm sau:',
+  beInGroup: 'Bạn được phân vào các nhóm sau',
+  beInGroupEstimate: 'Bạn sẽ được phân vào các nhóm sau:',
   moneySaved: 'Bạn tiết kiệm được',
   transactionHash: 'Mã giao dịch',
   transactionMoney: 'Số tiền cần chuyển',
@@ -289,6 +292,7 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
     'Avatour đang xét duyệt đề xuất thêm địa điểm <b>{{value}}</b> của bạn',
   seeSuggest: 'Xem đề xuất',
   suggestNewLocation: 'Đề xuất địa điểm mới',
+  searchNameOrTransactionHash: 'Tìm kiếm tên hoặc mã đơn hàng',
 };
 
 const reputation = {
@@ -602,6 +606,8 @@ const alert = {
   1. Ấn <b>Tạm dừng nhận đơn</b> để tạm thời không nhận thêm đơn hàng mới.
   2. Sau khi tất cả người hiện tại đến check-in tại cửa hàng, bạn có thể thực hiện xoá đơn hàng trở lại.`,
   createLocationSuccess: 'Thêm địa điểm thành công',
+  timeBuyNotToday:
+    'Thời gian check-in không phải hôm nay\nBạn vui lòng quét mã tại cửa hàng vào <b>{{time}}</b> nha',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

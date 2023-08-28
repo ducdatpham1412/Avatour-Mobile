@@ -68,7 +68,7 @@ const ModalGroup = (
         </StyleTouchable>
       );
     },
-    [isMySale],
+    [isMySale, theme.gray_100],
   );
 
   return (

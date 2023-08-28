@@ -9,6 +9,7 @@ export interface IconSvgProps {
 
 export {default as ErrorIcon} from './ErrorIcon';
 export {default as IconPaddingField} from './IconPaddingField';
+export {default as IconPrice} from './IconPrice';
 export {default as IconTagStars} from './IconTagStars';
 export {default as NotificationIcon} from './NotificationIcon';
 export {default as QuestionIcon} from './QuestionIcon';

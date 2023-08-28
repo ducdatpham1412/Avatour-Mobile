@@ -13,6 +13,7 @@ import {
   GoToDeposit,
   JoinHistory,
   ListJoining,
+  MyListJoins,
   ScanResult,
 } from 'feature/discovery';
 import ReportUser from 'feature/discovery/ReportUser';
@@ -155,6 +156,13 @@ const AppStack = () => {
         }}
       />
       <Stack.Screen
+        name={ROOT_SCREEN.myListJoins}
+        component={MyListJoins}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
         name={ROOT_SCREEN.detailMeJoin}
         component={DetailMeJoin}
         options={{
@@ -200,13 +208,7 @@ const AppStack = () => {
         component={ExtendSetting}
       />
       <Stack.Screen name={ROOT_SCREEN.goToDeposit} component={GoToDeposit} />
-      <Stack.Screen
-        name={ROOT_SCREEN.scanResult}
-        component={ScanResult}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
+      <Stack.Screen name={ROOT_SCREEN.scanResult} component={ScanResult} />
       <Stack.Screen name={ROOT_SCREEN.joinsHistory} component={JoinHistory} />
       <Stack.Screen name={ROOT_SCREEN.listJoining} component={ListJoining} />
       <Stack.Screen

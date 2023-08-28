@@ -6,8 +6,9 @@ import {
   ratioImageSale,
 } from 'asset';
 import {ERROR_MESSAGE, STATUS} from 'asset/enum';
+import {IconPrice} from 'asset/icons';
 import Images from 'asset/img/images';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
+import {Metrics, verticalMargin} from 'asset/metrics';
 import {AppModalize, LoadingScreen, TextCountDown} from 'components';
 import {
   RefreshControl,
@@ -16,10 +17,10 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {Avatar, ButtonBack, IconLiked, IconNotLiked} from 'components/common';
+import {Avatar, IconLiked, IconNotLiked} from 'components/common';
 import dayjs from 'dayjs';
 import {ScrollCropImages} from 'feature/profile/components';
-import {useTheme} from 'hook';
+import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
@@ -33,20 +34,17 @@ import {
   ViewStyle,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {I18Normalize} from 'utility/I18Next';
 import {
   borderWidthTiny,
+  calculatePriceDeposit,
   onGoToProfile,
-  renderPersonalJoinsFromGroups,
 } from 'utility/assistant';
-import {formatLocaleNumber, formatddddDDMMYYYY} from 'utility/format';
+import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {
   ItemMeJoin,
   ModalConfirmJoinGb,
-  ModalGroup,
   ModalStillHavePeopleJoin,
 } from './components';
 import {useDetailSale} from './hooks';
@@ -105,25 +103,33 @@ const ButtonReaction = ({
 
 const DetailSale = ({
   route: {
-    params: {saleId, sale},
+    params: {saleId},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailSale]>) => {
-  const {top, bottom} = useSafeAreaInsets();
   const theme = useTheme();
   const {id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
+  const {bottom} = useSafeArea();
 
   const [
-    {data, initLoading, meJoins, loadingJoin, refreshing, loadingDelete},
-    {onReaction, onRefresh, onJoin, deleteEstimate, deleteSale},
-  ] = useDetailSale(saleId ?? sale?.id, {
+    {data, initLoading, loadingJoin, refreshing, loadingDelete},
+    {onReaction, onRefresh, onJoin, deleteSale},
+  ] = useDetailSale(saleId, {
     revalidateAll: true,
   });
+  const {data: estimateAndJoinings, mutate: mutateEstimateAndJoinings} =
+    useEstimatesAndJoinings();
+
+  const estimating = estimateAndJoinings.estimates.find(
+    item => item.sale.id === data?.id,
+  );
+  const joinings = estimateAndJoinings.joinings.filter(
+    item => item.sale.id === data?.id,
+  );
 
   const isMySale = data?.creator === myId;
 
-  const modalJoinedRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
   const modalStillHavePeopleJoin = useRef<ElementRef<typeof AppModalize>>(null);
 
@@ -136,8 +142,9 @@ const DetailSale = ({
         const res = await onJoin(value);
         if (res) {
           push(ROOT_SCREEN.detailMeJoin, {
-            saleId: data?.id,
-            mode: 'go-to-deposit',
+            estimateId: res.id,
+            initValue: res,
+            mode: 'see-detail-from-sale',
           });
         }
         modalConfirmJoinRef.current?.hide();
@@ -217,12 +224,25 @@ const DetailSale = ({
     }
   };
 
+  const onDeleteEstimate = async () => {
+    if (estimating) {
+      await mutateEstimateAndJoinings(pre => {
+        if (pre) {
+          return {
+            estimates: pre.estimates.filter(item => item.id !== estimating.id),
+            joinings: pre.joinings,
+          };
+        }
+      });
+    }
+  };
+
   /**
    * Render
    */
   const renderInformation = () => {
     let textStatus: I18Normalize = 'common.null';
-    let colorStatus = theme.blue;
+    let colorStatus = theme.green;
     if (data?.status === STATUS.active) {
       textStatus = 'discovery.available';
     } else if (data?.status === STATUS.temporarilyClose) {
@@ -239,132 +259,132 @@ const DetailSale = ({
           <StyleText originValue={data?.name} customStyle={$textNameSale} />
         )}
 
-        <View style={$informationBox}>
+        <StyleText
+          originValue={data?.content || ''}
+          customStyle={[$contentView, {color: theme.gray_500}]}
+        />
+
+        <StyleText
+          i18Text={textStatus}
+          customStyle={[$textStatus, {color: colorStatus}]}
+        />
+
+        <View style={$saleCreator}>
           <StyleTouchable
-            customStyle={$buttonName}
+            customStyle={$creatorBox}
             onPress={() => {
               if (data?.creator) {
-                onGoToProfile(data?.creator);
+                onGoToProfile(data.creator);
               }
             }}>
             <Avatar source={{uri: data?.creator_avatar}} size={25} />
             <StyleText
               originValue={data?.creator_name}
-              customStyle={$textName}
+              customStyle={$nameShop}
             />
           </StyleTouchable>
         </View>
 
-        <View style={$informationBox}>
-          <Ionicons
-            name="location"
-            style={[$iconLocation, {color: theme.blue}]}
-          />
-          <StyleText
-            originValue={data?.creator_location}
-            customStyle={[$textStatus, {fontWeight: 'normal'}]}
-          />
-        </View>
-
-        <View style={$informationBox}>
-          <StyleIcon source={Images.icons.calendar} size={16} />
-          <StyleText
-            i18Text={textStatus}
-            customStyle={[$textStatus, {color: colorStatus}]}
-          />
-        </View>
-
-        <View style={$informationBox}>
-          <StyleIcon source={Images.icons.dollar} size={18} />
+        <View style={$price}>
+          <IconPrice size={20} tintColor={theme.black} />
           <StyleText
             i18Text="discovery.groupBuyingPrice"
-            customStyle={$textStatus}
+            customStyle={$textTitlePrice}
           />
         </View>
 
-        {data?.prices?.map(item => {
-          return (
-            <View style={$pricePart} key={item?.number_people}>
-              <StyleText
-                i18Text="discovery.numberPeople"
-                i18Params={{value: item?.number_people}}
-                customStyle={[$textNumberPeople, {textAlign: 'right'}]}
-              />
-              <StyleText originValue="-" customStyle={$numberPeopleDivider} />
-              <StyleText
-                originValue={`${formatLocaleNumber(String(item?.price))} vnd`}
-                customStyle={$textNumberPeople}
-              />
-            </View>
-          );
-        })}
-
-        <View style={[$divider, {backgroundColor: theme.gray_200}]} />
+        <View style={$listPrices}>
+          <ScrollView horizontal contentContainerStyle={$scrollPrice}>
+            {data?.prices?.map((item, index) => {
+              const isLast = index === data?.prices?.length - 1;
+              return (
+                <View
+                  style={[
+                    $pricePart,
+                    {
+                      backgroundColor: theme.p_100,
+                      marginRight: isLast ? 0 : scale(8),
+                    },
+                  ]}
+                  key={item?.number_people}>
+                  <StyleText
+                    i18Text="discovery.numberPeople"
+                    i18Params={{value: item?.number_people}}
+                  />
+                  <StyleText
+                    originValue={formatMoney(item.price)}
+                    customStyle={$textNumberPeople}
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+        <View style={[$divider, {borderTopColor: theme.gray_100}]} />
       </View>
     );
   };
 
   const renderReaction = () => {
     return (
-      <View style={$reactionView}>
-        <ButtonReaction
-          onPress={onReaction}
-          title={data?.total_likes ? 'discovery.numberLike' : 'discovery.like'}
-          titleParams={{
-            value: data?.total_likes,
-          }}>
-          {data?.is_liked ? (
-            <IconLiked customStyle={$likeIcon} onPress={onReaction} />
-          ) : (
-            <IconNotLiked
-              customStyle={[$likeIcon, {color: theme.gray_800}]}
-              onPress={onReaction}
-            />
-          )}
-        </ButtonReaction>
+      <>
+        <View style={$reactionView}>
+          <ButtonReaction
+            onPress={onReaction}
+            title={
+              data?.total_likes ? 'discovery.numberLike' : 'discovery.like'
+            }
+            titleParams={{
+              value: data?.total_likes,
+            }}>
+            {data?.is_liked ? (
+              <IconLiked customStyle={$likeIcon} onPress={onReaction} />
+            ) : (
+              <IconNotLiked
+                customStyle={[$likeIcon, {color: theme.gray_800}]}
+                onPress={onReaction}
+              />
+            )}
+          </ButtonReaction>
 
-        <ButtonReaction
-          icon={Images.icons.comment}
-          onPress={() => console.log('show modal comment')}
-          title={
-            data?.total_comments
-              ? 'discovery.numberComments'
-              : 'discovery.comment'
-          }
-          titleParams={{
-            value: data?.total_comments,
-          }}
-        />
+          <ButtonReaction
+            icon={Images.icons.comment}
+            onPress={() => console.log('show modal comment')}
+            title={
+              data?.total_comments
+                ? 'discovery.numberComments'
+                : 'discovery.comment'
+            }
+            titleParams={{
+              value: data?.total_comments,
+            }}
+          />
 
-        <ButtonReaction
-          icon={Images.icons.share}
-          onPress={() => console.log('Share')}
-          title="discovery.share.title"
-        />
+          <ButtonReaction
+            icon={Images.icons.share}
+            onPress={() => console.log('Share')}
+            title="discovery.share"
+          />
 
-        <ButtonReaction
-          icon={Images.icons.reputation}
-          onPress={() => console.log('Go to review')}
-          title="profile.rating"
-        />
-      </View>
+          <ButtonReaction
+            icon={Images.icons.reputation}
+            onPress={() => console.log('Go to review')}
+            title="profile.rating"
+          />
+        </View>
+      </>
     );
   };
 
   const renderJoins = () => {
-    const listPersonalJoins = renderPersonalJoinsFromGroups(
-      data?.groups || [],
-      {maxNumber: 6},
-    );
-
     const button = () => {
       if (isMySale) {
         return null;
       }
 
-      if (meJoins?.estimate) {
-        const estimate = meJoins.estimate;
-        const seconds = dayjs(estimate.expired).diff(dayjs(), 'seconds');
+      if (estimating) {
+        const seconds = dayjs(estimating.expired).diff(dayjs(), 'seconds');
+        const priceDeposit = calculatePriceDeposit(estimating);
 
         return (
           <View style={[$depositView, {borderColor: theme.gray_400}]}>
@@ -375,7 +395,7 @@ const DetailSale = ({
                 i18Text="discovery.amount"
                 customStyle={$titleEstimate}
               />
-              <StyleText originValue={`: ${estimate.amount}`} />
+              <StyleText originValue={`: ${estimating.amount}`} />
             </StyleText>
             <StyleText>
               <StyleText
@@ -383,7 +403,9 @@ const DetailSale = ({
                 customStyle={$titleEstimate}
               />
               <StyleText
-                originValue={`: ${formatddddDDMMYYYY(estimate.time_will_buy)}`}
+                originValue={`: ${formatddddDDMMYYYY(
+                  estimating.time_will_buy,
+                )}`}
               />
             </StyleText>
             <StyleText>
@@ -391,7 +413,7 @@ const DetailSale = ({
                 i18Text="discovery.note"
                 customStyle={$titleEstimate}
               />
-              <StyleText originValue={estimate.note} />
+              <StyleText originValue={estimating.note} />
             </StyleText>
 
             <StyleText customStyle={{marginTop: verticalScale(8)}}>
@@ -399,17 +421,16 @@ const DetailSale = ({
                 i18Text="discovery.estimatedPrice"
                 customStyle={$titleEstimate}
               />
-              <StyleText
-                originValue={`: ${formatLocaleNumber(estimate.price)}vnd`}
-              />
+              <StyleText originValue={`: ${formatMoney(priceDeposit.price)}`} />
             </StyleText>
+
             <StyleText>
               <StyleText
                 i18Text="discovery.deposit"
                 customStyle={$titleEstimate}
               />
               <StyleText
-                originValue={`: ${formatLocaleNumber(estimate.deposit)}vnd`}
+                originValue={`: ${formatMoney(priceDeposit.deposit)}vnd`}
               />
             </StyleText>
 
@@ -419,7 +440,7 @@ const DetailSale = ({
               <StyleText originValue=": " />
               <TextCountDown
                 initSeconds={seconds}
-                onFinished={deleteEstimate}
+                onFinished={onDeleteEstimate}
               />
             </StyleText>
 
@@ -429,10 +450,11 @@ const DetailSale = ({
               <StyleTouchable
                 customStyle={$buttonInteract}
                 onPress={() => {
-                  if (data) {
+                  if (estimating) {
                     push(ROOT_SCREEN.detailMeJoin, {
-                      saleId: data?.id,
-                      mode: 'go-to-deposit',
+                      estimateId: estimating.id,
+                      initValue: estimating,
+                      mode: 'see-detail-from-sale',
                     });
                   }
                 }}>
@@ -447,37 +469,18 @@ const DetailSale = ({
         );
       }
 
-      if (data?.status !== STATUS.active) {
-        return null;
-      }
-
-      return (
-        <LinearGradient
-          colors={[theme.p_800, theme.p_600]}
-          style={$interactView}>
-          <StyleTouchable
-            customStyle={$buttonInteract}
-            onPress={() => modalConfirmJoinRef.current?.show()}>
-            <StyleIcon
-              source={Images.icons.createGroup}
-              size={15}
-              customStyle={{tintColor: theme.white}}
-            />
-            <StyleText
-              i18Text="discovery.joinGroupBuying"
-              customStyle={[$textJoin, {color: theme.white}]}
-            />
-          </StyleTouchable>
-        </LinearGradient>
-      );
+      return null;
     };
 
     return (
-      <View style={$informationView}>
-        {!!meJoins?.joinings?.length && (
+      <View style={$joinView}>
+        {!!joinings.length && (
           <View style={$meJoinView}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {meJoins?.joinings?.map(join => {
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={$contentMeJoin}>
+              {joinings?.map(join => {
                 return (
                   <ItemMeJoin
                     item={join}
@@ -485,12 +488,13 @@ const DetailSale = ({
                     onPress={() => {
                       if (data) {
                         push(ROOT_SCREEN.detailMeJoin, {
-                          saleId: data?.id,
-                          joinPersonal: join,
+                          estimateId: join.id,
+                          initValue: join,
                           mode: 'see-detail-from-sale',
                         });
                       }
                     }}
+                    containerStyle={{marginRight: scale(16)}}
                   />
                 );
               })}
@@ -503,171 +507,181 @@ const DetailSale = ({
         {!!data?.total_members && (
           <>
             <StyleText
-              i18Text="discovery.numberGroupJoined"
+              i18Text="discovery.numberJoins"
               i18Params={{
                 value: data?.total_members ?? 0,
               }}
-              customStyle={[$textNumberPeopleJoined, {color: theme.gray_600}]}
+              customStyle={$textNumberPeopleJoined}
             />
             <StyleTouchable
               customStyle={$listPeopleView}
-              onPress={() => modalJoinedRef.current?.show()}>
-              {listPersonalJoins.map((member, index) => {
-                return (
-                  <Avatar
-                    key={index}
-                    source={{uri: member?.creator_avatar}}
-                    size={30}
-                  />
-                );
+              onPress={() => {
+                if (isMySale) {
+                  navigate(ROOT_SCREEN.myListJoins, {
+                    saleId,
+                  });
+                }
+              }}
+              disable={!isMySale}
+              disableOpacity={1}>
+              {[
+                Images.images.avatar01,
+                Images.images.avatar02,
+                Images.images.avatar03,
+                Images.images.avatar04,
+              ].map((source, index) => {
+                return <Avatar key={index} source={source} size={36} />;
               })}
             </StyleTouchable>
           </>
         )}
-
-        <View style={[$divider, {backgroundColor: theme.gray_200}]} />
       </View>
+    );
+  };
+
+  const bottomComponent = () => {
+    if (isMySale || estimating) {
+      return null;
+    }
+
+    return (
+      <LinearGradient
+        colors={[theme.p_600, theme.p_600]}
+        style={[$interactView, {marginBottom: bottom}]}>
+        <StyleTouchable
+          customStyle={$buttonInteract}
+          onPress={() => modalConfirmJoinRef.current?.show()}>
+          <StyleIcon
+            source={Images.icons.createGroup}
+            size={15}
+            customStyle={{tintColor: theme.white}}
+          />
+          <StyleText
+            i18Text="discovery.joinGroupBuying"
+            customStyle={[$textJoin, {color: theme.white}]}
+          />
+        </StyleTouchable>
+      </LinearGradient>
     );
   };
 
   return (
     <>
-      {initLoading ? (
-        <StyleContainer initLoading />
-      ) : (
-        <ScrollView
-          style={{
-            backgroundColor: theme.white,
-          }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom: bottom + safePaddingNotZero}}>
-          <ScrollCropImages
-            images={data?.images || []}
-            width={width}
-            height={width * ratioImageSale}
-            enableRemoveImage={false}
-          />
-
-          {renderInformation()}
-          {renderReaction()}
-          {renderJoins()}
-          <View style={$contentView}>
-            <StyleText originValue={data?.content || ''} />
-          </View>
-        </ScrollView>
-      )}
-
-      <ButtonBack
-        containerStyle={[
-          $iconBackView,
-          {
-            top: top + verticalScale(5),
-            backgroundColor: theme.white_opacity(0.8),
-          },
-        ]}
-        onPress={goBack}
-      />
-
-      <StyleTouchable
-        customStyle={[
-          $iconOptionView,
-          {
-            top: top + verticalScale(5),
-            backgroundColor: theme.white_opacity(0.8),
-          },
-        ]}
-        onPress={onShowOptions}>
-        <StyleIcon
-          source={Images.icons.more}
-          size={20}
-          customStyle={{tintColor: theme.black}}
+      <StyleContainer
+        initLoading={initLoading}
+        headerProps={{
+          title: data?.creator_name as I18Normalize,
+          RightComponent: (
+            <StyleTouchable
+              customStyle={$iconOptionView}
+              onPress={onShowOptions}>
+              <StyleIcon
+                source={Images.icons.more}
+                size={20}
+                customStyle={{tintColor: theme.black}}
+              />
+            </StyleTouchable>
+          ),
+        }}
+        customStyle={[$container, {paddingBottom: bottom}]}
+        backgroundColor={theme.white}
+        scrollEnabled
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        BottomComponent={bottomComponent()}>
+        <ScrollCropImages
+          images={data?.images || []}
+          width={width}
+          height={width * ratioImageSale}
+          enableRemoveImage={false}
         />
-      </StyleTouchable>
-
-      <ModalGroup
-        ref={modalJoinedRef}
-        groups={data?.groups || []}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        isMySale={isMySale}
-      />
+        {renderInformation()}
+        {renderReaction()}
+        {renderJoins()}
+      </StyleContainer>
 
       <ModalConfirmJoinGb
         ref={modalConfirmJoinRef}
         onConfirm={onConfirmJoin}
         loadingJoin={loadingJoin}
       />
-
       {isMySale && (
         <ModalStillHavePeopleJoin ref={modalStillHavePeopleJoin} sale={data} />
       )}
-
       {loadingDelete && <LoadingScreen />}
     </>
   );
 };
 
-const $iconBackView: ViewStyle = {
-  position: 'absolute',
-  left: scale(10),
-  padding: moderateScale(5),
-  borderRadius: 30,
+const $container: ViewStyle = {
+  paddingHorizontal: 0,
 };
 const $iconOptionView: ViewStyle = {
-  position: 'absolute',
-  right: scale(10),
-  padding: moderateScale(5),
-  borderRadius: 30,
+  width: moderateScale(30),
+  height: moderateScale(30),
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 const $informationView: ViewStyle = {
   paddingHorizontal: scale(16),
+  marginTop: verticalMargin,
+};
+const $joinView: ViewStyle = {
+  width: '100%',
+  marginTop: verticalMargin,
 };
 const $textNameSale: TextStyle = {
   fontSize: FONT_SIZE.h2,
-  marginTop: verticalScale(12),
   fontWeight: 'bold',
-};
-const $informationBox: ViewStyle = {
-  width: '100%',
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginTop: verticalScale(12),
-};
-const $buttonName: ViewStyle = {
-  flexDirection: 'row',
-  alignItems: 'center',
-};
-const $textName: TextStyle = {
-  marginLeft: scale(8),
-  fontWeight: 'bold',
-  fontSize: FONT_SIZE.f1,
-};
-const $iconLocation: TextStyle = {
-  fontSize: moderateScale(16),
 };
 const $textStatus: TextStyle = {
-  marginLeft: scale(8),
   fontWeight: FONT_WEIGHT_MEDIUM,
+  marginTop: verticalScale(4),
 };
-const $pricePart: ViewStyle = {
+const $saleCreator: ViewStyle = {
   width: '100%',
-  paddingHorizontal: scale(16),
+  marginTop: verticalScale(4),
+  flexDirection: 'row',
+};
+const $creatorBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
+};
+const $nameShop: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  marginLeft: scale(8),
+};
+const $price: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: verticalMargin,
+};
+const $textTitlePrice: TextStyle = {
+  fontWeight: 'bold',
+  marginLeft: scale(2),
+};
+const $listPrices: ViewStyle = {
+  width: Metrics.width,
+  left: -scale(16),
   marginTop: verticalScale(8),
 };
-const $textNumberPeople: TextStyle = {
-  flex: 1,
+const $scrollPrice: ViewStyle = {
+  paddingLeft: scale(16),
+  paddingRight: scale(16),
 };
-const $numberPeopleDivider: TextStyle = {
-  marginHorizontal: scale(10),
+const $pricePart: ViewStyle = {
+  padding: moderateScale(8),
+  borderRadius: BORDER_RADIUS.f4,
+};
+const $textNumberPeople: TextStyle = {
+  marginTop: verticalScale(4),
+  fontWeight: 'bold',
 };
 const $divider: ViewStyle = {
-  marginTop: verticalScale(12),
-  height: moderateScale(0.5),
+  marginTop: verticalScale(20),
+  borderTopWidth: moderateScale(0.5),
   width: '100%',
 };
 const $reactionView: ViewStyle = {
@@ -675,7 +689,7 @@ const $reactionView: ViewStyle = {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(16),
 };
 const $reactionBox: ViewStyle = {
   width: moderateScale(65),
@@ -701,16 +715,16 @@ const $depositView: ViewStyle = {
   paddingVertical: verticalScale(12),
   paddingHorizontal: scale(12),
   borderWidth: borderWidthTiny,
-  marginTop: verticalScale(16),
   alignSelf: 'center',
-  borderRadius: BORDER_RADIUS.f4,
+  borderRadius: BORDER_RADIUS.f2,
+  marginBottom: verticalMargin,
 };
 const $interactView: ViewStyle = {
   width: '75%',
-  paddingVertical: verticalScale(10),
+  height: moderateScale(46),
   alignSelf: 'center',
-  borderRadius: BORDER_RADIUS.f2,
-  marginTop: verticalScale(16),
+  borderRadius: 100,
+  marginTop: verticalMargin,
 };
 const $buttonInteract: ViewStyle = {
   flex: 1,
@@ -724,7 +738,7 @@ const $textJoin: TextStyle = {
 };
 const $textNumberPeopleJoined: TextStyle = {
   alignSelf: 'center',
-  marginTop: verticalScale(16),
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $listPeopleView: ViewStyle = {
   alignSelf: 'center',
@@ -735,12 +749,14 @@ const $listPeopleView: ViewStyle = {
 };
 const $contentView: ViewStyle = {
   width: '100%',
-  paddingHorizontal: scale(16),
-  marginTop: verticalScale(12),
+  marginTop: verticalScale(4),
 };
 const $meJoinView: ViewStyle = {
-  width: '100%',
-  marginTop: verticalScale(16),
+  width: Metrics.width,
+  marginBottom: verticalMargin,
+};
+const $contentMeJoin: ViewStyle = {
+  paddingLeft: scale(16),
 };
 const $titleEstimate: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
