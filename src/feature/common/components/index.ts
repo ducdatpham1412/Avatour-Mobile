@@ -4,6 +4,6 @@ export {default as ModalGroup} from './ModalGroup';
 export {default as ModalPeopleInGroup} from './ModalPeopleInGroup';
 export {default as ModalStillHavePeopleJoin} from './ModalStillHavePeopleJoin';
 export {
-  default as UpdatePriceStatus,
   BoxUpdatePrice,
+  default as UpdatePriceStatus,
 } from './UpdatePriceStatus';

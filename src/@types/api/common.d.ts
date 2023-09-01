@@ -82,7 +82,6 @@ interface TypeGroupBuying {
   total_likes: number;
   total_comments: number;
   total_members: number;
-  groups: Array<TypeGroupJoin>;
   creator: number;
   creator_name: string;
   creator_avatar: string;
@@ -90,7 +89,6 @@ interface TypeGroupBuying {
   created: string;
   is_liked: boolean;
   status: number;
-  // check to add request update price in here
 }
 
 interface TypeHotLocation {
@@ -118,8 +116,6 @@ interface TypeResourceResponse {
       account_number: string;
       account_holder: string;
     };
-    // listPurchases: Array<TypePurchaseResource>;
-    // topGroupBookings: Array<TypeGroupBuying>;
   };
 }
 

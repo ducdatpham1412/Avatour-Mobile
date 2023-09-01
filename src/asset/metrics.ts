@@ -28,5 +28,7 @@ export const Metrics = {
   tabBarUp,
 };
 
-export const safePaddingNotZero = verticalScale(7);
-export const horizontalPadding = scale(12);
+export const safePaddingNotZero = verticalScale(8);
+export const horizontalPadding = scale(12); // TODO: Change this to scale(16)
+export const verticalMargin = verticalScale(16);
+export const horizontalMargin = scale(12);

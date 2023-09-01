@@ -11,28 +11,8 @@ export const apiJoinSale = (
   });
 };
 
-export const apiEstimate = (
-  joinEstimateId: number,
-): PromiseApiResponse<TypeJoinEstimate> => {
-  return request.get(`/profile/sales/join/${joinEstimateId}`, {
-    params: {
-      type: 'estimate',
-    },
-  });
-};
-
 export const apiDeleteEstimate = (joinEstimateId: number) => {
   return request.delete(`/profile/sales/join/${joinEstimateId}`);
-};
-
-export const apiEditEstimate = (
-  params: TypeEditEstimate,
-): PromiseApiResponse<TypeJoinEstimate> => {
-  return request.put(`/profile/sales/join/${params.estimateId}`, {
-    amount: params?.amount,
-    time_will_buy: params.time_will_buy,
-    note: params.note,
-  });
 };
 
 export const apiGetListGroupPeopleJoin = ({params}: TypeParamsPaging) => {

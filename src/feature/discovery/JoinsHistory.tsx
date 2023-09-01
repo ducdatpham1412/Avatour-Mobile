@@ -16,7 +16,7 @@ const JoinsHistory = ({
 }: RouteParams<AppParamsList[ROOT_SCREEN.joinsHistory]>) => {
   const {bottom} = useSafeAreaInsets();
 
-  const {data, loading, validating} = useApi<TypeJoinPersonal[]>({
+  const {data, loading, validating, mutate} = useApi<TypeJoinPersonal[]>({
     path: `/profile/sales/join/${saleId}`,
     params: {
       type: 'join_history',
@@ -55,6 +55,7 @@ const JoinsHistory = ({
         contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
         refreshing={validating}
         initLoading={loading}
+        onRefresh={mutate}
       />
     </StyleContainer>
   );

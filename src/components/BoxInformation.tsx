@@ -33,7 +33,8 @@ const BoxInformation = ({
   return (
     <BoxView containerStyle={[$container, containerStyle]}>
       {listInformation.map((item, index) => {
-        const isLatest = index === listInformation.length - 1;
+        const shouldHaveBorder = !!listInformation[index + 1];
+
         if (isValidElement(item)) {
           return (
             <View
@@ -42,7 +43,7 @@ const BoxInformation = ({
                 $boxContainerColumn,
                 {
                   borderBottomColor: theme.gray_200,
-                  borderBottomWidth: isLatest ? 0 : borderWidthTiny,
+                  borderBottomWidth: shouldHaveBorder ? borderWidthTiny : 0,
                 },
               ]}>
               {item}
@@ -61,7 +62,7 @@ const BoxInformation = ({
               $box,
               {
                 borderBottomColor: theme.gray_300,
-                borderBottomWidth: isLatest ? 0 : borderWidthTiny,
+                borderBottomWidth: shouldHaveBorder ? borderWidthTiny : 0,
               },
             ]}>
             <View style={$boxContainer}>

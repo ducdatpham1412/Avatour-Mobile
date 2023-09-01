@@ -16,7 +16,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {borderWidthTiny, copy} from 'utility/assistant';
+import {borderWidthTiny, calculatePriceDeposit, copy} from 'utility/assistant';
 import {formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
@@ -37,6 +37,7 @@ const GoToDeposit = ({
     language === 'vi' ? deposit_bank.name.vi : deposit_bank.name.en
   })`;
   const transactionContent = `Dat coc ${joinEstimate.hash}`;
+  const priceDeposit = calculatePriceDeposit(joinEstimate);
 
   return (
     <StyleContainer
@@ -87,7 +88,7 @@ const GoToDeposit = ({
           },
           {
             title: 'discovery.transactionMoney',
-            content: formatMoney(joinEstimate.deposit),
+            content: formatMoney(priceDeposit.deposit),
             contentStyle: {color: theme.red},
           },
           <>

@@ -20,7 +20,7 @@ import React from 'react';
 import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
-import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
+import {$styleDropShadow} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
 

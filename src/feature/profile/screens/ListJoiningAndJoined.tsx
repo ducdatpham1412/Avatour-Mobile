@@ -1,12 +1,21 @@
 import {apiGetListGBJoined} from 'api/profile';
-import {Metrics, horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {
+  Metrics,
+  horizontalMargin,
+  horizontalPadding,
+  safePaddingNotZero,
+  verticalMargin,
+} from 'asset/metrics';
+import {Separator} from 'components';
 import {StyleList, StyleText} from 'components/base';
 import {ItemJoin, ItemJoinWithBanner} from 'feature/discovery/components';
-import {useEstimatesAndJoinings, usePaging} from 'hook';
+import {useAppEvent, useEstimatesAndJoinings, usePaging} from 'hook';
 import React, {useCallback} from 'react';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
 import {ItemEstimate} from '../components';
+import {FONT_SIZE} from 'asset';
+import {APP_EVENT} from 'asset/enum';
 
 const ListJoiningAndJoined = () => {
   const {
@@ -16,11 +25,21 @@ const ListJoiningAndJoined = () => {
   } = useEstimatesAndJoinings();
 
   const {list, refreshing, onRefresh, onLoadMore, loadingMore, initLoading} =
-    usePaging<TypeJoinPersonalAndSale>({
+    usePaging<TypeJoinEstimate>({
       request: apiGetListGBJoined,
     });
 
-  const renderItemJoin = useCallback((item: TypeJoinPersonalAndSale) => {
+  useAppEvent(APP_EVENT.confirmArrived, () => {
+    /**
+     * Don't need to call mutate, we call it in component DetailMeJoin
+     * We do it to avoid: This component have not been rendered yet -> mutate is not called
+     * Tip: Search: "@Tag: Logic when confirm arrived"
+     */
+    // mutate();
+    onRefresh();
+  });
+
+  const renderItemJoin = useCallback((item: TypeJoinEstimate) => {
     return (
       <ItemJoin
         item={item}
@@ -108,6 +127,7 @@ const ListJoiningAndJoined = () => {
       onLoadMore={onLoadMore}
       contentContainerStyle={$contentContainer}
       ListHeaderComponent={renderHeaderComponent()}
+      ItemSeparatorComponent={Separator}
     />
   );
 };
@@ -123,7 +143,7 @@ const $header: ViewStyle = {
   marginTop: verticalScale(8),
 };
 const $containerHeader: ViewStyle = {
-  marginTop: verticalScale(8),
+  marginTop: verticalMargin,
 };
 const $contentHeader: ViewStyle = {
   paddingLeft: scale(12),
@@ -132,19 +152,19 @@ const $contentHeader: ViewStyle = {
 const $textJoining: TextStyle = {
   marginLeft: scale(12),
   fontWeight: 'bold',
+  fontSize: FONT_SIZE.f1,
 };
 const $textJoinSuccess: StyleProp<TextStyle> = [
   $textJoining,
   {
-    marginBottom: verticalScale(8),
+    marginBottom: verticalMargin,
   },
 ];
 const $itemJoining: ViewStyle = {
-  marginRight: scale(8),
+  marginRight: horizontalMargin,
 };
 const $itemJoinSuccess: ViewStyle = {
   width: scale(351),
-  marginBottom: verticalScale(8),
 };
 
 export default ListJoiningAndJoined;

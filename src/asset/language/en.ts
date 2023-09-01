@@ -138,13 +138,15 @@ const discovery = {
   deposited: 'Deposited',
   deposit: 'Deposit',
   allDeposited: 'Total deposited',
-  numberGroupJoined: '{{value}} joins',
-  numberJoinsWithYou: 'Currently quantities',
+  numberJoins: '{{value}} joins',
+  numberJoinsNow: '{{value}} joins currently',
+  seeMembers: 'View members',
+  whenYouComeGroupHave: 'When you join, this group will increase to 3 joins',
   beTheFirstJoin: 'Join group buying',
   bought: 'Full payment',
   confirmBought: 'Full payment confirm',
-  participators: '{{value}} participators',
-  gbExpired: 'Store is temporarily not accepting more orders',
+  expired: 'Expired',
+  orderExpired: 'Your order is expired\nPlease place another order',
   reviewAbout: "You're writing review about ",
   goToProfile: 'Visit profile',
   openLink: 'Open link',
@@ -226,11 +228,11 @@ const discovery = {
   groupDay: 'Group {{value}}',
   confirmArrived: 'Confirm arrived store',
   rememberConfirmWhenArrived:
-    'You have {{numberJoins}} group buying orders at {{storeName}} today\nPlease "Confirm arrived store" or <b>"Confirm all above"</b> to confirm your successful joining group buying',
+    'You have {{numberJoins}} group buying orders at <b>{{storeName}}</b> today',
   alsoHaveNextDay:
     'You also have {{numberJoins}} group buying orders at {{storeName}} in the coming days',
   notHaveOrderToday:
-    'You have no general group buying orders today at {{storeName}}',
+    'You have no general orders to confirm today at {{storeName}}',
   confirmAll: 'Confirm all above',
   buyingHistory: 'Buying history',
   arrivalTimePassed: 'The arrival time has passed',
@@ -247,12 +249,13 @@ const discovery = {
   estimate: 'Estimate',
   estimatedPrice: 'Estimated range',
   appliedPrice: 'Applicable price',
-  nowPrice: 'Current total price',
+  nowPrice: 'Your current price',
   priceCanBeChange:
     'The price may fluctuate according to the <b>Estimated range</b> depending on the quantity in the buying group',
   priceCanBeDecrease:
     'The price can be reduced more, within the expected range (maximum reduction to <b>{{value}}</b>) depending on the quantity in the buying group',
-  beInGroup: 'You will be classified into the following groups:',
+  beInGroup: 'You are classified into the following groups:',
+  beInGroupEstimate: 'You will be classified into the following groups:',
   moneySaved: 'Money you saved',
   transactionHash: 'Transaction hash',
   transactionMoney: 'Amount to transfer',
@@ -286,6 +289,7 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
     'Avatour is reviewing your suggestion to add new location <b>{{value}}</b>',
   seeSuggest: 'View suggestion',
   suggestNewLocation: 'Suggest new location',
+  searchNameOrTransactionHash: 'Search name or order number',
 };
 
 const reputation = {
@@ -592,6 +596,8 @@ To be able to delete, please follow these two steps:
   1. Press <b>Temporarily closed</b> to temporarily not accept new orders.
   2. After all current people come to check-in at the store, you can proceed to delete the order again.`,
   createLocationSuccess: 'Create location successfully',
+  timeBuyNotToday:
+    'Check-in time is not today\nPlease scan the code at the store on <b>{{time}}</b>',
 
   // PERMISSION
   permissionCamera: 'Access camera',

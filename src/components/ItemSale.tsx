@@ -4,6 +4,7 @@ import {
   FONT_WEIGHT_MEDIUM,
   ratioImageSale,
 } from 'asset';
+import {STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
@@ -11,17 +12,12 @@ import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {
-  $styleDropShadow,
-  borderWidthTiny,
-  renderPersonalJoinsFromGroups,
-} from 'utility/assistant';
+import {I18Normalize} from 'utility/I18Next';
+import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
+import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 import {Avatar, IconLiked, IconNotLiked} from './common';
-import {formatLocaleNumber} from 'utility/format';
-import {I18Normalize} from 'utility/I18Next';
-import {STATUS} from 'asset/enum';
 
 interface Props {
   item: TypeGroupBuying;
@@ -68,12 +64,8 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
     textPrice = `${formatLocaleNumber(temp)}vnd`;
   }
 
-  const listPersonalJoins = renderPersonalJoinsFromGroups(item?.groups, {
-    maxNumber: 3,
-  });
-
   const renderJoins = () => {
-    if (!listPersonalJoins.length) {
+    if (!item.total_members) {
       return (
         <>
           <Avatar source={Images.images.defaultAvatar} size={15} />
@@ -86,17 +78,13 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
     }
     return (
       <>
-        {listPersonalJoins.map((personal, index) => {
-          return (
-            <Avatar
-              key={index}
-              source={{uri: personal?.creator_avatar}}
-              size={15}
-            />
-          );
-        })}
+        {[Images.images.avatar01, Images.images.avatar03].map(
+          (source, index) => {
+            return <Avatar key={index} source={source} size={15} />;
+          },
+        )}
         <StyleText
-          i18Text="discovery.numberGroupJoined"
+          i18Text="discovery.numberJoins"
           i18Params={{
             value: item?.total_members,
           }}
@@ -116,7 +104,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
       ]}
       onPress={() =>
         push(ROOT_SCREEN.detailSale, {
-          sale: item,
+          saleId: item.id,
         })
       }>
       <View style={$imageView}>

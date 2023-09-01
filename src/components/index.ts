@@ -1,11 +1,12 @@
+export {default as LoadingScreen} from '../feature/profile/screens/LoadingScreen';
 export {default as BoxInformation} from './BoxInformation';
 export {default as BoxView} from './BoxView';
 export {default as ItemModalProfile} from './ItemModalProfile';
 export {default as ItemReview} from './ItemReview';
 export {default as ItemSale} from './ItemSale';
 export {default as ItemTour} from './ItemTour';
-export {default as LoadingScreen} from '../feature/profile/screens/LoadingScreen';
 export {default as MapTour} from './MapTour';
+export {default as Separator} from './Separator';
 export {default as StyleTabView} from './StyleTabView';
 export {default as TabView, type TabViewProps} from './TabView';
 export {default as TabViewDynamic} from './TabViewDynamic';

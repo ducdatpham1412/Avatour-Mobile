@@ -104,19 +104,12 @@ export type AppParamsList = {
     code: string;
   };
   [ROOT_SCREEN.detailSale]: {
-    saleId?: number;
-    sale?: TypeGroupBuying;
+    saleId: number;
   };
   [ROOT_SCREEN.detailMeJoin]: {
-    saleId: number;
-    joinId?: number;
-    joinPersonal?: TypeJoinPersonal; // for see detail a join personal
-    mode:
-      | 'go-to-deposit'
-      | 'go-to-deposit-from-profile'
-      | 'see-detail'
-      | 'see-detail-from-sale'
-      | 'go-from-scan';
+    estimateId: number;
+    initValue?: TypeJoinEstimate;
+    mode: 'see-detail' | 'see-detail-from-sale' | 'go-from-scan';
   };
   [SETTING_ROUTE.enterPassword]: {
     newInfo?: {
@@ -148,7 +141,7 @@ export type AppParamsList = {
     mode: 'go-from-sale' | 'go-from-notification';
   };
   [ROOT_SCREEN.listJoining]: {
-    list: TypeJoinPersonalAndSale[];
+    list: TypeJoinEstimate[];
   };
   [PROFILE_ROUTE.createTour]: {
     itemTour: Omit<TourDetail, 'id'> & {id: ParamsCreateTour};
@@ -163,6 +156,9 @@ export type AppParamsList = {
   [ROOT_SCREEN.createLocation]: {
     itemNew?: Pick<ParamsCreateLocation, 'name'>;
     itemEdit?: TypeGetProfileResponse;
+  };
+  [ROOT_SCREEN.myListJoins]: {
+    saleId: number;
   };
 };
 

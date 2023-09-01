@@ -1,4 +1,5 @@
 import {horizontalPadding} from 'asset/metrics';
+import {ErrorScreen} from 'feature/common';
 import {LoadingScreen} from 'feature/profile/screens';
 import {useTheme} from 'hook';
 import StyleHeader, {StyleHeaderProps} from 'navigation/components/StyleHeader';
@@ -23,6 +24,8 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   BottomComponent?: ReactNode;
   backgroundColor?: string;
   initLoading?: boolean;
+  error?: Error;
+  onPressError?: () => void;
   layOut?: 'view' | 'scroll';
 }
 
@@ -37,10 +40,32 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     BottomComponent,
     backgroundColor,
     initLoading = false,
+    error,
+    onPressError,
     layOut = 'scroll',
   } = props;
   const theme = useTheme();
   const {top} = useSafeAreaInsets();
+
+  const renderContent = () => {
+    if (initLoading) {
+      return (
+        <LoadingScreen
+          containerStyle={{
+            backgroundColor: backgroundColor ?? theme.background,
+          }}
+        />
+      );
+    }
+
+    if (error) {
+      return (
+        <ErrorScreen title="common.retry" onPress={() => onPressError?.()} />
+      );
+    }
+
+    return children;
+  };
 
   return (
     <View
@@ -73,28 +98,10 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
           keyboardShouldPersistTaps="handled"
           {...props}
           contentContainerStyle={[$contentContainer, customStyle]}>
-          {initLoading ? (
-            <LoadingScreen
-              containerStyle={{
-                backgroundColor: backgroundColor ?? theme.background,
-              }}
-            />
-          ) : (
-            children
-          )}
+          {renderContent()}
         </KeyboardAwareScrollView>
       ) : (
-        <View style={[$body, customStyle]}>
-          {initLoading ? (
-            <LoadingScreen
-              containerStyle={{
-                backgroundColor: backgroundColor ?? theme.background,
-              }}
-            />
-          ) : (
-            children
-          )}
-        </View>
+        <View style={[$body, customStyle]}>{renderContent()}</View>
       )}
       {BottomComponent}
     </View>

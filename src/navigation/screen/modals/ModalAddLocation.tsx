@@ -28,7 +28,7 @@ import {useTranslation} from 'react-i18next';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdate} from 'react-use';
-import {removeVietnameseTones} from 'utility/assistant';
+import {removeVietnameseTones, search} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import Toast from './Toast';
 
@@ -66,7 +66,7 @@ const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
     if (savedData) {
       setData(savedData);
       savedUpperCaseName.current = savedData.map(location =>
-        removeVietnameseTones(location.name).toUpperCase(),
+        removeVietnameseTones(location.name.toUpperCase()),
       );
     }
   }, [savedData]);
@@ -144,25 +144,10 @@ const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
               return;
             }
             emptyText.current = text;
-            const temp = text.split(' ');
-            const words = temp
-              .map(w => w.trim().toUpperCase())
-              .filter(w => w !== '');
 
             timeOut = setTimeout(() => {
-              const search: TypeGetProfileResponse[] = [];
-
-              savedUpperCaseName.current.forEach((name, index) => {
-                for (let i = 0; i < words.length; i++) {
-                  const check = name.includes(removeVietnameseTones(words[i]));
-                  if (check) {
-                    search.push(savedData?.[index]);
-                    break;
-                  }
-                }
-              });
-
-              setData(search);
+              const resIndex = search(savedUpperCaseName.current, text);
+              setData(savedData.filter((_, index) => resIndex.includes(index)));
             }, 100);
           }
         }}
