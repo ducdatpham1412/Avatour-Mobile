@@ -5,7 +5,6 @@ import {
 import {useAppSelector} from 'app-redux/store';
 import SwipeImages from 'components/SwipeImages';
 import {DetailMeJoin, DetailSale} from 'feature/common';
-import EditHistory from 'feature/common/EditHistory';
 import UpdateBankAccount from 'feature/common/UpdateBankAccount';
 import UpgradeAccount from 'feature/common/UpgradeAccount';
 import {
@@ -135,7 +134,6 @@ const AppStack = () => {
         name={ROOT_SCREEN.upgradeAccount}
         component={UpgradeAccount}
       />
-      <Stack.Screen name={ROOT_SCREEN.editHistory} component={EditHistory} />
       <Stack.Screen
         name={ROOT_SCREEN.updateBankAccount}
         component={UpdateBankAccount}

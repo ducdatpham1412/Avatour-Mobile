@@ -1,10 +1,8 @@
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-import {apiUploadFile} from 'api/discovery';
 import ImagePicker from 'react-native-image-crop-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 import I18Next from 'utility/I18Next';
 import {checkCamera, checkPhoto} from './permission/permission';
-import {checkIsVideo} from './validate';
-import RNFetchBlob from 'rn-fetch-blob';
 
 const MAX_WIDTH = 1500;
 const MAX_HEIGHT = 1500;
@@ -122,55 +120,6 @@ const ImageUploader = {
       include: ['filename', 'fileSize', 'imageSize', 'orientation'],
     });
     return res;
-  },
-
-  upLoad: async (path: string, quality: number | undefined = undefined) => {
-    const payload = new FormData();
-    const formatImage = {
-      uri: path,
-      // type: 'image/jpeg',
-      name: 'file',
-    };
-    payload.append('file', formatImage);
-    const uriImg = await apiUploadFile({
-      formData: payload,
-      quality,
-      timeout: checkIsVideo(path) ? 60000 : 10000,
-    });
-    if (uriImg?.data?.length > 0) {
-      return uriImg?.data[0];
-    }
-    return null;
-  },
-
-  upLoadManyImg: async (
-    arrPath: Array<string>,
-    quality: number | undefined = undefined,
-  ): Promise<Array<string>> => {
-    const payload = new FormData();
-    let timeout = 0;
-    arrPath.forEach((path: any) => {
-      const formatImage: any = {
-        uri: path,
-        // type: 'image/jpeg',
-        name: 'file',
-      };
-      payload.append('file', formatImage);
-      if (checkIsVideo(path)) {
-        timeout += 60000;
-      } else {
-        timeout += 10000;
-      }
-    });
-    const uriImg = await apiUploadFile({
-      formData: payload,
-      quality,
-      timeout,
-    });
-    if (uriImg?.data.length > 0) {
-      return uriImg?.data;
-    }
-    return [];
   },
 };
 

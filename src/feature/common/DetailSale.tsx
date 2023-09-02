@@ -378,10 +378,6 @@ const DetailSale = ({
 
   const renderJoins = () => {
     const button = () => {
-      if (isMySale) {
-        return null;
-      }
-
       if (estimating) {
         const seconds = dayjs(estimating.expired).diff(dayjs(), 'seconds');
         const priceDeposit = calculatePriceDeposit(estimating);
@@ -532,6 +528,12 @@ const DetailSale = ({
               ].map((source, index) => {
                 return <Avatar key={index} source={source} size={36} />;
               })}
+              {isMySale && (
+                <StyleText
+                  i18Text="discovery.manageJoins"
+                  customStyle={[$textManageJoins, {color: theme.blue}]}
+                />
+              )}
             </StyleTouchable>
           </>
         )}
@@ -739,6 +741,12 @@ const $textJoin: TextStyle = {
 const $textNumberPeopleJoined: TextStyle = {
   alignSelf: 'center',
   fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $textManageJoins: TextStyle = {
+  alignSelf: 'center',
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  marginLeft: verticalScale(4),
+  textDecorationLine: 'underline',
 };
 const $listPeopleView: ViewStyle = {
   alignSelf: 'center',

@@ -141,6 +141,7 @@ const discovery = {
   numberJoins: '{{value}} joins',
   numberJoinsNow: '{{value}} joins currently',
   seeMembers: 'View members',
+  manageJoins: 'Orders management',
   whenYouComeGroupHave: 'When you join, this group will increase to 3 joins',
   beTheFirstJoin: 'Join group buying',
   bought: 'Full payment',

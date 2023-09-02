@@ -15,30 +15,6 @@ export const apiDeleteEstimate = (joinEstimateId: number) => {
   return request.delete(`/profile/sales/join/${joinEstimateId}`);
 };
 
-export const apiGetListGroupPeopleJoin = ({params}: TypeParamsPaging) => {
-  return request.get(`/profile/list-group-joined/${params.postId}`, {
-    params: {
-      pageIndex: params.pageIndex,
-      take: params.take,
-    },
-  });
-};
-
-export const apiGetListPeopleRetail = ({params}: TypeParamsPaging) => {
-  return request.get(`/profile/list-people-retail/${params.postId}`, {
-    params: {
-      pageIndex: params.pageIndex,
-      take: params.take,
-    },
-  });
-};
-
-export const apiConfirmUserBought = (list_joins_id: number[]) => {
-  return request.put('profile/sales/confirm', {
-    list_joins_id,
-  });
-};
-
 export const apiCreateSale = (
   body: TypeCreateSale,
 ): Promise<TypeCreateSaleResponse> => {
@@ -70,15 +46,6 @@ export const apiUpdateStatusSale = (saleId: number, status: number) => {
   });
 };
 
-export const apiGetListEditHistory = ({params}: TypeParamsPaging) => {
-  return request.get(`/common/list-edit-history/${params.postId}`, {
-    params: {
-      pageIndex: params.pageIndex,
-      take: params.take,
-    },
-  });
-};
-
 export const apiGetPassport = (): Promise<TypeGetPassportResponse> => {
   return request.get('/common/passport');
 };
@@ -86,18 +53,6 @@ export const apiGetPassport = (): Promise<TypeGetPassportResponse> => {
 export const apiGetResource = (): Promise<TypeResourceResponse> => {
   return request.get('/common/resource');
 };
-
-export const apiUploadFile = (params: {
-  formData: FormData;
-  quality?: number;
-  timeout?: number;
-}) =>
-  request.post('/common/upload-file', params.formData, {
-    params: {
-      quality: params.quality || undefined,
-    },
-    timeout: params.timeout || 10000,
-  });
 
 export const apiReportUser = (params: {
   userId: number;
@@ -129,13 +84,6 @@ export const apiGetListReactsPost = ({
       type: params.type,
     },
   });
-};
-
-export const apiGetTopReviewers = (): Promise<{
-  success: boolean;
-  data: TypeGetTopReviewerResponse;
-}> => {
-  return request.get('/common/get-top-reputations');
 };
 
 export const apiSearch = ({

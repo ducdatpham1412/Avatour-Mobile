@@ -83,11 +83,11 @@ const StyleText = (props: StyleTextProps) => {
 
   return (
     <Text style={[$textDefault, {color: black}, customStyle]} {...props}>
-      {listTexts.map(tx => {
+      {listTexts.map((tx, index) => {
         if (tx.type === 'normal') {
           return (
             <Text
-              key={tx.text}
+              key={index}
               style={[$textDefault, {color: black}, customStyle]}
               {...props}>
               {tx.text}
@@ -96,7 +96,7 @@ const StyleText = (props: StyleTextProps) => {
         }
         return (
           <Text
-            key={tx.text}
+            key={index}
             style={[
               $textDefault,
               customStyle,

@@ -72,9 +72,6 @@ export type AppParamsList = {
   [ROOT_SCREEN.chatDetailSetting]: {
     itemChatTag: TypeChatTagResponse;
   };
-  [ROOT_SCREEN.editHistory]: {
-    postId: string;
-  };
   [DISCOVERY_ROUTE.searchScreen]: {
     services?: number;
     search?: string;
