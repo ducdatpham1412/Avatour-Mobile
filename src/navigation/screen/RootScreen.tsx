@@ -29,7 +29,7 @@ const RootScreen = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <RootStack.Screen name="check" component={ChooseRoute} />
+      <RootStack.Screen name="Check" component={ChooseRoute} />
 
       <RootStack.Screen
         name={ROOT_SCREEN.webView}

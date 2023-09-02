@@ -143,6 +143,7 @@ const discovery = {
   numberJoins: '{{value}} lượt tham gia',
   numberJoinsNow: '{{value}} lượt tham gia hiện tại',
   seeMembers: 'Xem các thành viên',
+  manageJoins: 'Quản lý đơn hàng',
   whenYouComeGroupHave: 'Khi bạn tham gia, nhóm sẽ tăng lên {{value}} lượt',
   beTheFirstJoin: 'Tham gia mua chung ',
   bought: 'Thanh toán đủ',

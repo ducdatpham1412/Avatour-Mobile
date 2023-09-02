@@ -1,5 +1,11 @@
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
+import {verticalMargin} from 'asset/metrics';
+import {
+  StyleButton,
+  StyleImage,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
 import {useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
@@ -10,6 +16,7 @@ import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {calculatePriceDeposit, renderJoinStatus} from 'utility/assistant';
 import {formatDDMMMMYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
+import {canSupplierConfirmBought} from 'utility/validate';
 
 interface Props {
   item: TypeJoinEstimate;
@@ -18,6 +25,7 @@ interface Props {
   onPressMode?: AppParamsList[ROOT_SCREEN.detailMeJoin]['mode'];
   showDeposited?: boolean;
   mode?: 'consumer' | 'supplier';
+  onConfirmBought?: () => void;
 }
 
 const ItemJoin = ({
@@ -27,6 +35,7 @@ const ItemJoin = ({
   onPressMode,
   showDeposited,
   mode = 'consumer',
+  onConfirmBought,
 }: Props) => {
   const theme = useTheme();
   const {t} = useTranslation();
@@ -95,17 +104,26 @@ const ItemJoin = ({
       </View>
 
       {mode === 'supplier' && (
-        <View style={$informationView}>
-          <StyleText
-            i18Text="discovery.transactionHash"
-            customStyle={{color: theme.gray_600}}>
-            <StyleText originValue=": " customStyle={{color: theme.gray_600}} />
-          </StyleText>
-          <StyleText
-            originValue={item.hash}
-            customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
-          />
-        </View>
+        <>
+          <View style={$informationView}>
+            <StyleText
+              originValue={`${t('discovery.transactionHash')}: `}
+              customStyle={{color: theme.gray_600}}
+            />
+            <StyleText
+              originValue={item.hash}
+              customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
+            />
+          </View>
+
+          {canSupplierConfirmBought(item?.status) && (
+            <StyleButton
+              title="discovery.confirmBought"
+              onPress={onConfirmBought}
+              containerStyle={$buttonConfirmBought}
+            />
+          )}
+        </>
       )}
 
       {showDeposited && (
@@ -191,6 +209,9 @@ const $saleInfo: ViewStyle = {
 };
 const $textInfo: TextStyle = {
   fontSize: FONT_SIZE.f3,
+};
+const $buttonConfirmBought: ViewStyle = {
+  marginTop: verticalMargin,
 };
 
 export default memo(ItemJoin, (pre: Props, next: Props) => {

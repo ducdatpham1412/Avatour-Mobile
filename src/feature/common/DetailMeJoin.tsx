@@ -13,6 +13,7 @@ import {
 } from 'components/base';
 import {Avatar} from 'components/common';
 import dayjs from 'dayjs';
+import {useSaleJoins} from 'feature/discovery/hooks';
 import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate, push, replace} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
@@ -29,7 +30,6 @@ import {
 import {I18Normalize} from 'utility/I18Next';
 import {
   $styleTopShadow,
-  PriceDeposit,
   borderWidthTiny,
   takePriceRange,
 } from 'utility/assistant';
@@ -42,20 +42,24 @@ import {
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalPeopleInGroup} from './components';
 import {useDetailSale, useJoinEstimate} from './hooks';
+import {canSupplierConfirmBought} from 'utility/validate';
 
 interface CountDownProps {
   estimate: TypeJoinEstimate;
 }
 
-interface ButtonProps {
+interface ButtonConfirmArrivedProps {
   estimate: TypeJoinEstimate;
-  priceDeposit: PriceDeposit;
   isGoFromScan: boolean;
+}
+
+interface ButtonConfirmBoughtProps {
+  estimate: TypeJoinEstimate;
 }
 
 const CountDown = ({estimate}: CountDownProps) => {
   const theme = useTheme();
-  const {mutate} = useEstimatesAndJoinings();
+  const {mutate: mutateEstimateAndJoinings} = useEstimatesAndJoinings();
 
   const [expired, setExpired] = useState(
     dayjs(estimate.expired).isBefore(dayjs()),
@@ -84,7 +88,7 @@ const CountDown = ({estimate}: CountDownProps) => {
         initSeconds={dayjs(estimate.expired).diff(dayjs(), 'seconds')}
         onFinished={async () => {
           setExpired(true);
-          await mutate(
+          await mutateEstimateAndJoinings(
             pre => {
               if (pre) {
                 return {
@@ -103,18 +107,18 @@ const CountDown = ({estimate}: CountDownProps) => {
   );
 };
 
-const ButtonConfirmBought = ({
+const ButtonConfirmArrived = ({
   estimate,
-  priceDeposit,
   isGoFromScan,
-}: ButtonProps) => {
+}: ButtonConfirmArrivedProps) => {
   const {bottom} = useSafeArea();
   const {t} = useTranslation();
   const theme = useTheme();
-  const {mutate} = useEstimatesAndJoinings();
-  const [{loadingConfirmArrived}, {confirmArrived}] = useJoinEstimate(
-    estimate.id,
-  );
+  const {mutate: mutateEstimateAndJoinings} = useEstimatesAndJoinings();
+  const [{loadingConfirmArrived, priceDeposit}, {confirmArrived}] =
+    useJoinEstimate(estimate.id, {
+      initValue: estimate,
+    });
 
   const onConfirmArrived = async () => {
     const isToday = checkIsToday(estimate.time_will_buy);
@@ -126,7 +130,19 @@ const ButtonConfirmBought = ({
           /**
            * @Tag: Logic when confirm arrived
            */
-          await mutate();
+          await mutateEstimateAndJoinings(
+            pre => {
+              if (pre) {
+                return {
+                  estimates: pre.estimates,
+                  joinings: pre.joinings.filter(
+                    item => item.id !== estimate.id,
+                  ),
+                };
+              }
+            },
+            {revalidate: false},
+          );
           ModalAlert.success({
             i18Content: 'profile.joinedSuccess',
           });
@@ -184,6 +200,62 @@ const ButtonConfirmBought = ({
   );
 };
 
+const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
+  const {bottom} = useSafeArea();
+  const theme = useTheme();
+  const [{loadingConfirmBought}, {confirmBought}] = useSaleJoins(
+    estimate?.sale?.id,
+  );
+  const [{data}, {mutate}] = useJoinEstimate(estimate.id, {
+    initValue: estimate,
+  });
+
+  const onConfirmBought = async () => {
+    try {
+      await confirmBought({
+        list_join_id: [estimate?.id],
+      });
+      await mutate(
+        () => {
+          if (data) {
+            return {
+              ...data,
+              status: JOIN_STATUS.supplierConfirmed,
+            };
+          }
+        },
+        {revalidate: false},
+      );
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
+  };
+
+  return (
+    <View
+      style={[
+        $buttonConfirmView,
+        $styleTopShadow,
+        {
+          paddingBottom: bottom,
+          backgroundColor: theme.white,
+          shadowColor: theme.black,
+          justifyContent: 'center',
+        },
+      ]}>
+      <StyleButton
+        containerStyle={$buttonConfirm}
+        title="discovery.confirmBought"
+        onPress={onConfirmBought}
+        isLoading={loadingConfirmBought}
+        disable={!canSupplierConfirmBought(estimate?.status)}
+      />
+    </View>
+  );
+};
+
 const DetailMeJoin = ({
   route: {params},
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
@@ -191,7 +263,9 @@ const DetailMeJoin = ({
   const theme = useTheme();
   const {bottom} = useSafeArea();
   const {t} = useTranslation();
-  const {avatar} = useAppSelector(state => state.accountSlice.passport.profile);
+  const {avatar, id: myId} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
 
   const {mutate: mutateEstimateAndJoin} = useEstimatesAndJoinings();
   const [
@@ -882,7 +956,15 @@ const DetailMeJoin = ({
   };
 
   const renderBottomComponent = () => {
-    if (loading) {
+    if (loading || !data) {
+      return null;
+    }
+
+    if (sale?.creator === myId) {
+      if (data?.status !== JOIN_STATUS.supplierConfirmed) {
+        return <ButtonConfirmBought estimate={data} />;
+      }
+
       return null;
     }
 
@@ -969,9 +1051,8 @@ const DetailMeJoin = ({
 
     if (data?.status === JOIN_STATUS.adminConfirm) {
       return (
-        <ButtonConfirmBought
+        <ButtonConfirmArrived
           estimate={data}
-          priceDeposit={priceDeposit}
           isGoFromScan={mode === 'go-from-scan'}
         />
       );

@@ -40,13 +40,7 @@ const useJoinEstimate = (id: number | null, params?: Params) => {
           list_joins_id: listJoinIds,
         });
         await mutate(
-          pre => {
-            if (pre) {
-              return {
-                ...pre,
-                status: JOIN_STATUS.consumerConfirmed,
-              };
-            }
+          () => {
             if (data) {
               return {
                 ...data,
