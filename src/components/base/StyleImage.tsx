@@ -13,7 +13,7 @@ const ImageIOS = ({
   customStyle,
   ...rest
 }: Props) => {
-  let defaultSource = undefined;
+  let defaultSource;
   if (defaultImageSource === 'avatar') {
     defaultSource = Images.images.defaultAvatar;
   } else if (defaultImageSource === 'image') {
@@ -29,7 +29,7 @@ const ImageAndroid = ({
   source,
   ...rest
 }: Props) => {
-  let defaultSource = undefined;
+  let defaultSource;
   if (defaultImageSource === 'avatar') {
     defaultSource = Images.images.defaultAvatar;
   } else if (defaultImageSource === 'image') {

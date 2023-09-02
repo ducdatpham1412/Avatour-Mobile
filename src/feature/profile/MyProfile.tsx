@@ -103,6 +103,7 @@ const MyProfile = ({
           />,
         ]}
         initialIndex={profile.account_type === ACCOUNT.shop ? 0 : 1}
+        tabBarType="fix-width"
       />
     </StyleContainer>
   );

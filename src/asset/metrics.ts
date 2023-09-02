@@ -30,5 +30,6 @@ export const Metrics = {
 
 export const safePaddingNotZero = verticalScale(8);
 export const horizontalPadding = scale(12); // TODO: Change this to scale(16)
+export const newHorizontalPadding = scale(16);
 export const verticalMargin = verticalScale(16);
 export const horizontalMargin = scale(12);

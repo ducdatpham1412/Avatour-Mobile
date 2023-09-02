@@ -1,7 +1,13 @@
 import {useAppSelector} from 'app-redux/store';
 import {STATUS} from 'asset/enum';
+import {IconPrice} from 'asset/icons';
 import Images from 'asset/img/images';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
+import {
+  Metrics,
+  newHorizontalPadding,
+  safePaddingNotZero,
+  verticalMargin,
+} from 'asset/metrics';
 import {
   BORDER_RADIUS,
   FONT_SIZE,
@@ -29,17 +35,13 @@ import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
-import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {StyleProp, TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {I18Normalize} from 'utility/I18Next';
-import {borderWidthTiny} from 'utility/assistant';
+import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {PricesEdit, ScrollCropImages} from './components';
+import {PricesEdit, ScrollCropImages, TitleAndInput} from './components';
 import ButtonIconTitle from './components/ButtonIconTitle';
 import {UseCreateSaleParams, useCreateSale} from './hooks';
-import {impactMedium} from 'utility/haptic';
 
 interface Props {
   route: {
@@ -55,11 +57,9 @@ const CreateSale = ({route}: Props) => {
   const {itemNew, itemEdit, itemError} = route.params ?? {};
 
   const theme = useTheme();
-  const {
-    location,
-    avatar,
-    name: myName,
-  } = useAppSelector(state => state.accountSlice.passport.profile);
+  const {avatar, name: myName} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
 
   const initValue = useRef<UseCreateSaleParams>({
     postId: itemEdit?.id,
@@ -68,6 +68,7 @@ const CreateSale = ({route}: Props) => {
     images: itemEdit?.images || itemError?.images || itemNew?.images || [],
     prices: itemEdit?.prices || itemError?.prices || [],
   });
+  const inputDescriptionRef = useRef<TextInput>(null);
 
   const [
     {content, name, images, prices, loadingCreate},
@@ -85,7 +86,7 @@ const CreateSale = ({route}: Props) => {
     revalidateAll: false,
   });
 
-  const scrollRef = useRef<KeyboardAwareScrollView>(null);
+  const disableEditCaption = !!itemEdit && itemEdit.status === STATUS.notActive;
 
   /**
    * Functions
@@ -259,27 +260,6 @@ const CreateSale = ({route}: Props) => {
     );
   };
 
-  const renderContent = () => {
-    const disableEditCaption =
-      !!itemEdit && itemEdit.status === STATUS.notActive;
-
-    return (
-      <View style={[$priceView, {borderTopColor: theme.gray_300}]}>
-        <AppInput
-          onChangeText={text => {
-            scrollRef.current?.scrollToEnd();
-            setContent(text);
-          }}
-          multiline
-          placeholder={t('common.writeSomething')}
-          defaultValue={initValue.current.content}
-          editable={!disableEditCaption}
-          style={$inputContent}
-        />
-      </View>
-    );
-  };
-
   return (
     <StyleContainer
       headerProps={{
@@ -298,24 +278,21 @@ const CreateSale = ({route}: Props) => {
         enableRemoveImage={false}
       />
       <View style={[$body, {backgroundColor: theme.background}]}>
-        <AppInput
-          onChangeText={text => setName(text)}
-          multiline
-          placeholder={t('profile.groupBuyingName')}
-          defaultValue={initValue.current.name}
-          style={[$inputName, {borderColor: theme.gray_500}]}
-          maxLength={40}
-        />
-        <ButtonIconTitle
-          icon={<Ionicons name="md-location-sharp" style={$iconLocation} />}
-          title={location as I18Normalize}
-          containerStyle={$buttonInfo}
+        <TitleAndInput
+          containerStyle={$inputName}
+          title="profile.groupBuyingName"
+          textInputProps={{
+            placeholder: t('profile.foodName'),
+            onChangeText: text => setName(text),
+            maxLength: 40,
+            defaultValue: name,
+          }}
         />
         {renderInfoBox()}
 
-        <View style={[$priceView, {borderTopColor: theme.gray_300}]}>
+        <View style={$priceView}>
           <View style={$titleView}>
-            <StyleIcon source={Images.icons.dollar} size={18} />
+            <IconPrice tintColor={theme.black} size={18} />
             <StyleText
               i18Text="discovery.salePriceAndExplain"
               customStyle={[$textTitle, {color: theme.black}]}
@@ -325,7 +302,23 @@ const CreateSale = ({route}: Props) => {
           {renderPrices()}
         </View>
 
-        {renderContent()}
+        <TitleAndInput
+          title="profile.description"
+          mandatory={false}
+          containerStyle={$description}>
+          <StyleTouchable
+            customStyle={[$inputDescriptionBox, {borderColor: theme.gray_300}]}
+            onPress={() => inputDescriptionRef.current?.focus()}>
+            <AppInput
+              ref={inputDescriptionRef}
+              onChangeText={setContent}
+              multiline
+              placeholder={t('common.writeSomething')}
+              defaultValue={initValue.current.content}
+              editable={!disableEditCaption}
+            />
+          </StyleTouchable>
+        </TitleAndInput>
       </View>
     </StyleContainer>
   );
@@ -335,7 +328,7 @@ const $container: ViewStyle = {
   paddingHorizontal: 0,
 };
 const $body: ViewStyle = {
-  paddingHorizontal: scale(12),
+  paddingHorizontal: newHorizontalPadding,
   shadowColor: Theme.newTheme.black,
   shadowOffset: {
     width: 0,
@@ -368,7 +361,7 @@ const $postBox: ViewStyle = {
   height: undefined,
 };
 const $buttonInfo: ViewStyle = {
-  marginTop: verticalScale(12),
+  marginTop: verticalMargin,
 };
 const $location: StyleProp<ViewStyle> = [
   $buttonInfo,
@@ -377,10 +370,6 @@ const $location: StyleProp<ViewStyle> = [
     alignItems: 'center',
   },
 ];
-const $iconLocation: TextStyle = {
-  fontSize: moderateScale(15),
-  color: Theme.newTheme.blue,
-};
 const $editStatusBox: ViewStyle = {
   alignSelf: 'center',
   marginLeft: scale(12),
@@ -392,29 +381,31 @@ const $textEditStatus: TextStyle = {
 };
 const $priceView: ViewStyle = {
   width: '100%',
-  marginTop: verticalScale(12),
-  borderTopWidth: borderWidthTiny,
+  marginTop: verticalMargin,
 };
 const $titleView: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
-  marginTop: verticalScale(12),
 };
 const $textTitle: TextStyle = {
   fontWeight: 'bold',
-  marginLeft: scale(8),
+  marginLeft: scale(4),
+  fontSize: FONT_SIZE.f3,
 };
-const $inputContent: TextStyle = {
-  marginTop: verticalScale(12),
+const $inputName: ViewStyle = {
+  marginTop: verticalMargin,
 };
-const $inputName: TextStyle = {
+const $description: ViewStyle = {
+  marginTop: verticalMargin,
+};
+const $inputDescriptionBox: ViewStyle = {
+  width: '100%',
+  height: verticalScale(120),
   marginTop: verticalScale(12),
-  borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f4,
-  paddingHorizontal: scale(8),
-  paddingTop: verticalScale(6),
-  paddingBottom: verticalScale(6),
-  fontSize: FONT_SIZE.f2,
+  borderWidth: moderateScale(1),
+  borderRadius: BORDER_RADIUS.f3,
+  paddingHorizontal: scale(12),
+  paddingTop: verticalScale(12),
 };
 
 export default CreateSale;

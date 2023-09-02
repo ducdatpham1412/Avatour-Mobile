@@ -8,7 +8,7 @@ import {
 import {ERROR_MESSAGE, STATUS} from 'asset/enum';
 import {IconPrice} from 'asset/icons';
 import Images from 'asset/img/images';
-import {Metrics, verticalMargin} from 'asset/metrics';
+import {Metrics, newHorizontalPadding, verticalMargin} from 'asset/metrics';
 import {AppModalize, LoadingScreen, TextCountDown} from 'components';
 import {
   RefreshControl,
@@ -308,7 +308,7 @@ const DetailSale = ({
                   ]}
                   key={item?.number_people}>
                   <StyleText
-                    i18Text="discovery.numberPeople"
+                    i18Text="discovery.numberServings"
                     i18Params={{value: item?.number_people}}
                   />
                   <StyleText
@@ -490,7 +490,7 @@ const DetailSale = ({
                         });
                       }
                     }}
-                    containerStyle={{marginRight: scale(16)}}
+                    containerStyle={{marginRight: newHorizontalPadding}}
                   />
                 );
               })}
@@ -626,7 +626,7 @@ const $iconOptionView: ViewStyle = {
   justifyContent: 'center',
 };
 const $informationView: ViewStyle = {
-  paddingHorizontal: scale(16),
+  paddingHorizontal: newHorizontalPadding,
   marginTop: verticalMargin,
 };
 const $joinView: ViewStyle = {
@@ -639,7 +639,7 @@ const $textNameSale: TextStyle = {
 };
 const $textStatus: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
-  marginTop: verticalScale(4),
+  marginTop: verticalMargin,
 };
 const $saleCreator: ViewStyle = {
   width: '100%',
@@ -666,12 +666,12 @@ const $textTitlePrice: TextStyle = {
 };
 const $listPrices: ViewStyle = {
   width: Metrics.width,
-  left: -scale(16),
+  left: -newHorizontalPadding,
   marginTop: verticalScale(8),
 };
 const $scrollPrice: ViewStyle = {
-  paddingLeft: scale(16),
-  paddingRight: scale(16),
+  paddingLeft: newHorizontalPadding,
+  paddingRight: newHorizontalPadding,
 };
 const $pricePart: ViewStyle = {
   padding: moderateScale(8),
@@ -764,7 +764,7 @@ const $meJoinView: ViewStyle = {
   marginBottom: verticalMargin,
 };
 const $contentMeJoin: ViewStyle = {
-  paddingLeft: scale(16),
+  paddingLeft: newHorizontalPadding,
 };
 const $titleEstimate: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,

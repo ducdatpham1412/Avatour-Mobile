@@ -19,7 +19,7 @@ const OtherProfile = ({
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>) => {
   const theme = useTheme();
-  const [{data, isFollowing, isBlocked}, {follow, block, report}] =
+  const [{data, isFollowing, isBlocked, loading}, {follow, block, report}] =
     useOtherProfile(id);
 
   const [tabViewHeight, setTabViewHeight] = useState(0);
@@ -94,7 +94,8 @@ const OtherProfile = ({
         setTabViewHeight(e.nativeEvent.layout.height);
       }}
       scrollEnabled
-      stickyHeaderIndices={[1]}>
+      stickyHeaderIndices={[1]}
+      initLoading={loading || !data}>
       {!isBlocked && data && (
         <>
           <InformationProfile profile={data} />

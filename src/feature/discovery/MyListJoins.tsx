@@ -10,6 +10,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {TextStyle, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {removeVietnameseTones, search} from 'utility/assistant';
+import {impactLight} from 'utility/haptic';
 import {ItemJoin} from './components';
 import {useSaleJoins} from './hooks';
 
@@ -46,6 +47,7 @@ const MyListJoins = ({
       await confirmBought({
         list_join_id: [estimateId],
       });
+      impactLight();
     } catch (err) {
       ModalAlert.error({
         content: err,
