@@ -12,10 +12,18 @@ import {Avatar} from './common';
 interface Props {
   profile: TypeGetProfileResponse;
   onSelect: () => void;
+  onDelete: () => void;
+  isChosen: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const ItemModalProfile = ({profile, onSelect, containerStyle}: Props) => {
+const ItemModalProfile = ({
+  profile,
+  onSelect,
+  onDelete,
+  containerStyle,
+  isChosen = false,
+}: Props) => {
   const theme = useTheme();
 
   return (
@@ -41,10 +49,21 @@ const ItemModalProfile = ({profile, onSelect, containerStyle}: Props) => {
       </View>
 
       <StyleTouchable
-        customStyle={[$buttonSelect, {backgroundColor: theme.p_600}]}
+        customStyle={[
+          $buttonSelect,
+          {backgroundColor: isChosen ? theme.blue : theme.p_600},
+        ]}
         onPress={onSelect}>
         <AntDesign name="plus" style={[$iconPlus, {color: theme.white}]} />
       </StyleTouchable>
+
+      {isChosen && (
+        <StyleTouchable
+          customStyle={[$buttonClear, {backgroundColor: theme.gray_200}]}
+          onPress={onDelete}>
+          <AntDesign name="close" style={[$iconDelete, {color: theme.black}]} />
+        </StyleTouchable>
+      )}
     </StyleTouchable>
   );
 };
@@ -85,6 +104,17 @@ const $buttonSelect: ViewStyle = {
 const $iconPlus: TextStyle = {
   fontWeight: 'bold',
   fontSize: moderateScale(20),
+};
+const $buttonClear: ViewStyle = {
+  width: moderateScale(30),
+  height: moderateScale(30),
+  borderRadius: 30,
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginLeft: scale(8),
+};
+const $iconDelete: TextStyle = {
+  fontSize: moderateScale(15),
 };
 
 export default ItemModalProfile;

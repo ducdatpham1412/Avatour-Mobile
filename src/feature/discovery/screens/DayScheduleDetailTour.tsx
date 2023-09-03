@@ -1,5 +1,5 @@
 import {STATUS} from 'asset/enum';
-import {horizontalPadding} from 'asset/metrics';
+import {newHorizontalPadding} from 'asset/metrics';
 import {RefreshControl} from 'components/base';
 import {useMyRequests} from 'feature/profile/hooks';
 import {useSafeArea} from 'hook';
@@ -8,6 +8,7 @@ import {ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {useDetailTour} from '../hooks';
 import {renderItemLocation} from './DayScheduleCreateTour';
+import {Separator} from 'components';
 
 interface Props {
   tourId: number;
@@ -69,6 +70,7 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
         <RefreshControl refreshing={validating} onRefresh={mutate} />
       }
       containerStyle={$container}
+      ItemSeparatorComponent={Separator}
     />
   );
 };
@@ -77,7 +79,7 @@ const $container: ViewStyle = {
   flex: 1,
 };
 const $contentContainer: ViewStyle = {
-  paddingHorizontal: horizontalPadding,
+  paddingHorizontal: newHorizontalPadding,
 };
 
 export default DayScheduleDetailTour;

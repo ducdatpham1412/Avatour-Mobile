@@ -22,6 +22,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
 import {SearchListGroupBuying, SearchListTour} from './screens';
+import {impactLight} from 'utility/haptic';
 
 const SearchScreen = ({
   route,
@@ -30,13 +31,18 @@ const SearchScreen = ({
   const {t} = useTranslation();
   const {searchParams} = useAppSelector(state => state.logicSlice);
 
-  const servicesRoute = useRef(route.params?.services).current;
+  const servicesRoute = useRef(route.params?.services);
   const searchRoute = useRef(route.params?.search);
   const isRouteParamsNull = useRef(
-    servicesRoute === undefined && searchRoute.current === undefined,
+    servicesRoute.current === undefined && searchRoute.current === undefined,
   );
-  const initSearchParams = useRef(
-    servicesRoute ? {services: [servicesRoute]} : {},
+  const initSearchParams = useRef<TypeSearchParams>(
+    servicesRoute.current
+      ? {
+          services: [servicesRoute.current],
+          text_search: searchRoute.current ?? '',
+        }
+      : {text_search: searchRoute.current ?? ''},
   );
 
   const modalFilterRef = useRef<ElementRef<typeof ModalSearchFilter>>(null);
@@ -46,7 +52,7 @@ const SearchScreen = ({
   const [displayHint, setDisplayHint] = useState(isRouteParamsNull.current);
   const [showResult, setShowResult] = useState(!isRouteParamsNull.current);
 
-  const [location, setLocation] = useState(searchRoute.current || '');
+  const [textSearch, setTextSearch] = useState(searchRoute.current || '');
 
   useEffect(() => {
     if (isRouteParamsNull.current) {
@@ -70,20 +76,17 @@ const SearchScreen = ({
   const SearchBox = (
     <View style={[$searchView, {borderBottomColor: theme.gray_200}]}>
       <StyleTouchable customStyle={$backView} onPress={goBack}>
-        <Ionicons
-          name="arrow-back"
-          style={[$iconBack, {color: theme.gray_800}]}
-        />
+        <Ionicons name="arrow-back" style={[$iconBack, {color: theme.black}]} />
       </StyleTouchable>
       <AppInput
         ref={inputRef}
         style={[$input, {color: theme.black}]}
         placeholder={t('discovery.searchAround')}
-        onChangeText={text => setLocation(text)}
+        onChangeText={text => setTextSearch(text)}
         defaultValue={searchRoute.current}
         returnKeyType="search"
         onSubmitEditing={() => {
-          setSearchParams({...searchParams, location});
+          setSearchParams({...searchParams, text_search: textSearch});
         }}
         placeholderTextColor={theme.gray_500}
         onFocus={() => setDisplayHint(true)}
@@ -93,23 +96,26 @@ const SearchScreen = ({
           }
         }}
       />
-      {!!location && (
+      {!!textSearch && (
         <StyleTouchable
           onPress={() => {
-            setLocation('');
+            setTextSearch('');
             inputRef.current?.clear();
           }}
           customStyle={$backView}>
-          <Feather name="x" style={[$iconClear, {color: theme.gray_800}]} />
+          <Feather name="x" style={[$iconClear, {color: theme.black}]} />
         </StyleTouchable>
       )}
       <StyleTouchable
         customStyle={$backView}
-        onPress={() => modalFilterRef.current?.show()}>
+        onPress={() => {
+          modalFilterRef.current?.show();
+          impactLight();
+        }}>
         <StyleIcon
           source={Images.icons.filter}
           size={17}
-          customStyle={{tintColor: theme.gray_800}}
+          customStyle={{tintColor: theme.black}}
         />
       </StyleTouchable>
     </View>
@@ -121,7 +127,6 @@ const SearchScreen = ({
     }
     return (
       <ToolSearch
-        location={searchParams?.location || 'Ha Noi'}
         numberPeople={searchParams?.number_people}
         startPrice={searchParams?.start_price}
         endPrice={searchParams?.end_price}
@@ -162,8 +167,8 @@ const SearchScreen = ({
               onTouchBackground={() => inputRef.current?.blur()}
               onSearch={text => {
                 inputRef.current?.blur();
-                setLocation(text);
-                setSearchParams({...searchParams, location: text});
+                setTextSearch(text);
+                setSearchParams({...searchParams, text_search: text});
               }}
             />
           )}
@@ -172,7 +177,9 @@ const SearchScreen = ({
 
       <ModalSearchFilter
         ref={modalFilterRef}
-        onChangeSearch={value => setSearchParams({...value, location})}
+        onChangeSearch={value =>
+          setSearchParams({...value, text_search: textSearch})
+        }
         initSearchParams={initSearchParams.current}
         isGetFromAsync
       />

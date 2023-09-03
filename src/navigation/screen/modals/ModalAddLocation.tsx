@@ -6,6 +6,7 @@ import {
   AppModalize,
   ItemModalProfile,
   LoadingScreen,
+  Separator,
   TabView,
   TabViewProps,
 } from 'components';
@@ -31,10 +32,12 @@ import {useUpdate} from 'react-use';
 import {removeVietnameseTones, search} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import Toast from './Toast';
+import {useContextCreateTour} from 'feature/profile/CreateTour';
+import ModalAlert from './ModalAlert';
 
 export type TypeShowModalAddLocation = {
-  onSave: (value: TypeGetProfileResponse) => void;
-  listCurrentIds: number[];
+  onSelect: (value: TypeGetProfileResponse) => void;
+  onDelete: (value: TypeGetProfileResponse) => void;
 };
 
 type ListLocationsProps = TypeShowModalAddLocation & {
@@ -43,10 +46,11 @@ type ListLocationsProps = TypeShowModalAddLocation & {
 
 let timeOut: NodeJS.Timeout;
 
-const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
+const ListLocations = ({onSelect, onDelete, type}: ListLocationsProps) => {
   const {bottom} = useSafeArea();
   const {t} = useTranslation();
   const theme = useTheme();
+
   const {
     data: savedData,
     mutate,
@@ -58,6 +62,8 @@ const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
       type,
     },
   });
+  const [{schedules}] = useContextCreateTour();
+
   const savedUpperCaseName = useRef<string[]>([]);
   const emptyText = useRef('');
   const [data, setData] = useState<TypeGetProfileResponse[]>([]);
@@ -104,7 +110,7 @@ const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
     if (type === 'my-location') {
       return (
         <StyleTouchable
-          customStyle={[$empty, {marginLeft: scale(8), marginTop: 0}]}
+          customStyle={[$empty, {marginLeft: scale(8)}]}
           onPress={() =>
             navigate(ROOT_SCREEN.createLocation, {
               itemNew: {
@@ -155,23 +161,44 @@ const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
       <StyleList
         data={data}
         renderItem={({item}) => {
-          if (!listCurrentIds?.includes(item?.id)) {
-            return (
-              <ItemModalProfile
-                profile={item}
-                onSelect={() => {
-                  onSave(item);
-                  setData(pre => pre.filter(__item => __item?.id !== item?.id));
+          let isChosen = false;
+          schedules.every(day => {
+            isChosen = !!day?.find(location => location.id === item?.id);
+            return !isChosen;
+          });
+
+          return (
+            <ItemModalProfile
+              profile={item}
+              onSelect={() => {
+                const agree = () => {
+                  onSelect(item);
                   Toast.show({
                     title: 'common.add',
                     content: item.name,
                   });
-                }}
-                containerStyle={$item}
-              />
-            );
-          }
-          return null;
+                };
+                if (isChosen) {
+                  ModalAlert.options({
+                    content: t('alert.locationHadBeenAdded', {
+                      value: item.name,
+                    }),
+                    onContinue: agree,
+                  });
+                } else {
+                  agree();
+                }
+              }}
+              onDelete={() => {
+                onDelete(item);
+                Toast.show({
+                  title: 'common.deleted',
+                  content: item.name,
+                });
+              }}
+              isChosen={isChosen}
+            />
+          );
         }}
         contentContainerStyle={[$content, {paddingBottom: bottom}]}
         initLoading={loading}
@@ -180,6 +207,7 @@ const ListLocations = ({onSave, listCurrentIds, type}: ListLocationsProps) => {
         keyboardDismissMode="on-drag"
         ListEmptyComponent={renderEmpty()}
         ListFooterComponent={renderFooter()}
+        ItemSeparatorComponent={Separator}
       />
     </>
   );
@@ -193,8 +221,8 @@ const ModalAddLocation = (
   const theme = useTheme();
 
   const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
-  const onSaveRef = useRef<TypeShowModalAddLocation['onSave']>();
-  const listCurrentIds = useRef<number[]>();
+  const onSelectRef = useRef<TypeShowModalAddLocation['onSelect']>();
+  const onDeleteRef = useRef<TypeShowModalAddLocation['onDelete']>();
   const saveIndexTab = useRef(0);
 
   const [{data: myLocations, loading}] = useMyLocations();
@@ -203,8 +231,8 @@ const ModalAddLocation = (
     ref,
     () => ({
       show: value => {
-        onSaveRef.current = value?.onSave;
-        listCurrentIds.current = value?.listCurrentIds;
+        onSelectRef.current = value?.onSelect;
+        onDeleteRef.current = value?.onDelete;
         update();
         modalRef.current?.show();
       },
@@ -214,11 +242,11 @@ const ModalAddLocation = (
   );
 
   const renderLocations = () => {
-    if (onSaveRef.current && listCurrentIds.current) {
+    if (onSelectRef.current && onDeleteRef.current) {
       return (
         <ListLocations
-          onSave={onSaveRef.current}
-          listCurrentIds={listCurrentIds.current}
+          onSelect={onSelectRef.current}
+          onDelete={onDeleteRef.current}
           type={ACCOUNT.location}
         />
       );
@@ -227,11 +255,11 @@ const ModalAddLocation = (
   };
 
   const renderShops = () => {
-    if (onSaveRef.current && listCurrentIds.current) {
+    if (onSelectRef.current && onDeleteRef.current) {
       return (
         <ListLocations
-          onSave={onSaveRef.current}
-          listCurrentIds={listCurrentIds.current}
+          onSelect={onSelectRef.current}
+          onDelete={onDeleteRef.current}
           type={ACCOUNT.shop}
         />
       );
@@ -240,11 +268,11 @@ const ModalAddLocation = (
   };
 
   const renderMyLocations = () => {
-    if (onSaveRef.current && listCurrentIds.current) {
+    if (onSelectRef.current && onDeleteRef.current) {
       return (
         <ListLocations
-          onSave={onSaveRef.current}
-          listCurrentIds={listCurrentIds.current}
+          onSelect={onSelectRef.current}
+          onDelete={onDeleteRef.current}
           type="my-location"
         />
       );
@@ -317,8 +345,8 @@ const ModalAddLocation = (
       adjustToContentHeight={false}
       containerStyle={$container}
       onClose={() => {
-        onSaveRef.current = undefined;
-        listCurrentIds.current = undefined;
+        onSelectRef.current = undefined;
+        onDeleteRef.current = undefined;
       }}>
       {content()}
     </AppModalize>
@@ -349,9 +377,6 @@ const $tabBar: ViewStyle = {
 };
 const $title: TextStyle = {
   fontSize: FONT_SIZE.f2,
-};
-const $item: ViewStyle = {
-  marginBottom: verticalScale(16),
 };
 const $empty: ViewStyle = {
   marginTop: verticalScale(12),

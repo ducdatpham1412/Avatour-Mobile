@@ -207,7 +207,7 @@ const ItemLocation = ({
             />
             <View style={$content}>
               <StyleText
-                originValue={`${(getIndex() ?? 0) + 1}. ${item.name}`}
+                originValue={`(${(getIndex() ?? 0) + 1}) ${item.name}`}
                 numberOfLines={1}
                 customStyle={$textName}
               />
@@ -264,7 +264,6 @@ const ItemLocation = ({
 const $container: ViewStyle = {
   width: '100%',
   padding: scale(12),
-  marginBottom: verticalScale(12),
   borderRadius: BORDER_RADIUS.f3,
 };
 const $body: ViewStyle = {

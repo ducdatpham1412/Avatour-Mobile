@@ -140,7 +140,7 @@ const CreateSale = ({route}: Props) => {
       return (
         <View style={$header}>
           <StyleButton
-            title="common.edit"
+            title="common.update"
             containerStyle={$postBox}
             onPress={onEditPost}
             disable={disableButtonEdit}
@@ -154,7 +154,7 @@ const CreateSale = ({route}: Props) => {
       return (
         <View style={$header}>
           <StyleButton
-            title="profile.post.post"
+            title="common.create"
             containerStyle={$postBox}
             onPress={onConfirmPost}
             disable={!prices.length || !name}

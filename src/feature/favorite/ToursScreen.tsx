@@ -3,7 +3,7 @@ import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
-import {ItemTour, TabView} from 'components';
+import {ItemTour, Separator, TabView} from 'components';
 import {StyleContainer, StyleIcon, StyleText} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import {IconTabBar} from 'components/common';
@@ -28,7 +28,7 @@ const MyTour = () => {
   });
 
   const renderItem = useCallback((item: Tour) => {
-    return <ItemTour item={item} containerStyle={{marginBottom: 10}} />;
+    return <ItemTour item={item} />;
   }, []);
 
   return (
@@ -41,6 +41,7 @@ const MyTour = () => {
       onLoadMore={onLoadMore}
       contentContainerStyle={styles.content}
       initLoading={initLoading}
+      ItemSeparatorComponent={Separator}
     />
   );
 };

@@ -1,5 +1,6 @@
 import {STATUS} from 'asset/enum';
-import {horizontalPadding} from 'asset/metrics';
+import {newHorizontalPadding} from 'asset/metrics';
+import {Separator} from 'components';
 import {SquareButton} from 'components/base';
 import {ItemLocation} from 'feature/discovery/components';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
@@ -101,9 +102,9 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
         }
         onDragEnd={({data}) => {
           setSchedules(pre => {
-            return pre.map((item, __index) => {
+            return pre.map((day, __index) => {
               if (__index !== dayIndex) {
-                return item;
+                return day;
               }
               return data;
             });
@@ -126,23 +127,34 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
             title="discovery.addLocation"
             onPress={() =>
               onShowModalAddLocation({
-                onSave: newLocation => {
+                onSelect: location => {
                   impactLight();
                   setSchedules(pre => {
-                    return pre.map((item, __index) => {
+                    return pre.map((day, __index) => {
                       if (__index !== dayIndex) {
-                        return item;
+                        return day;
                       }
-                      return [newLocation].concat(item);
+                      return [location].concat(day);
                     });
                   });
                 },
-                listCurrentIds: listLocations.map(item => item?.id),
+                onDelete: location => {
+                  impactLight();
+                  setSchedules(pre => {
+                    return pre.map((day, __index) => {
+                      if (__index !== dayIndex) {
+                        return day;
+                      }
+                      return day.filter(p => p.id !== location.id);
+                    });
+                  });
+                },
               })
             }
             containerStyle={[$buttonAddLocation, {borderColor: theme.black}]}
           />
         )}
+        ItemSeparatorComponent={Separator}
       />
     </View>
   );
@@ -152,7 +164,8 @@ const $container: ViewStyle = {
   flex: 1,
 };
 const $contentContainer: ViewStyle = {
-  paddingHorizontal: horizontalPadding,
+  flexGrow: 1,
+  paddingHorizontal: newHorizontalPadding,
 };
 const $iconAdd: TextStyle = {
   fontSize: moderateScale(15),

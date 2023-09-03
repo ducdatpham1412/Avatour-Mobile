@@ -31,6 +31,7 @@ enum ROOT_SCREEN {
   listJoining = '@ROOT_SCREEN/listJoining',
   editSalePrice = '@ROOT_SCREEN/editSalePrice',
   createLocation = '@ROOT_SCREEN/createLocation',
+  svgIcons = '@ROOT_SCREEN/svgIcon',
 }
 /**
  * ||

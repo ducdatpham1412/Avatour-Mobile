@@ -1,3 +1,4 @@
+export {default as ListSvgIcon} from './ListSvgIcons';
 export {default as SettingScreen} from './SettingScreen';
 export {default as AboutUs} from './aboutUs/AboutUs';
 export {default as ExtendSetting} from './extend/ExtendSetting';

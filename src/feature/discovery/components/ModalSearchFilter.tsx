@@ -12,7 +12,6 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {InputSearch} from 'components/common';
 import {useTheme} from 'hook';
 import {ModalDateRangePicker} from 'navigation/screen/modals';
 import React, {
@@ -45,21 +44,14 @@ import {
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useFilterSearch} from '../hooks';
 import TickBox from './TickBox';
-
 interface Props {
   onChangeSearch: (value: TypeSearchParams) => void;
   initSearchParams: TypeSearchParams;
   titleButton?: I18Normalize;
   notIncludes?: Array<
-    | 'location'
-    | 'transport'
-    | 'number_people'
-    | 'date_time'
-    | 'services'
-    | 'price'
+    'transport' | 'number_people' | 'date_time' | 'services' | 'price'
   >;
   isGetFromAsync: boolean;
-  searchPlaceHolder?: I18Normalize;
   editable?: boolean;
 }
 
@@ -98,7 +90,6 @@ const ModalSearchFilter = (
     titleButton,
     notIncludes = [],
     isGetFromAsync,
-    searchPlaceHolder,
     editable = true,
   }: Props,
   ref: ForwardedRef<TypeShowModalize>,
@@ -111,9 +102,9 @@ const ModalSearchFilter = (
   const startPriceRef = useRef<TextInput>(null);
   const endPriceRef = useRef<TextInput>(null);
 
-  const [closeOnOverlayEnable, setCloseOnOverlayEnable] = useState(true);
-
-  const [location, setLocation] = useState(initSearchParams?.location ?? '');
+  //   const [startLocation, setStartLocation] = useState(
+  //     initSearchParams?.start_location ?? '',
+  //   );
   const [startPrice, setStartPrice] = useState('');
   const [endPrice, setEndPrice] = useState('');
 
@@ -123,16 +114,12 @@ const ModalSearchFilter = (
   ] = useFilterSearch({onChangeSearch, initSearchParams, isGetFromAsync});
 
   const onSave = async () => {
-    const newValue: TypeSearchParams = {
-      ...searchParams,
-      start_location: location,
-    };
-    onChangeSearch(newValue);
+    onChangeSearch(searchParams);
     const temp: any = ref;
     temp?.current?.hide();
     await AsyncStorage.setItem(
       ASYNC_TYPE.searchParams,
-      JSON.stringify(newValue),
+      JSON.stringify(searchParams),
     );
   };
 
@@ -140,14 +127,15 @@ const ModalSearchFilter = (
     <>
       <AppModalize
         ref={ref}
-        panGestureEnabled={closeOnOverlayEnable}
+        panGestureEnabled
         onOpen={() => Keyboard.dismiss()}
         containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
-        <InputSearch
+        {/*
+        TODO: When develop search suggest vehicle for "start-location"
+        */}
+        {/* <InputSearch
           placeholder={
-            searchPlaceHolder
-              ? t(searchPlaceHolder)
-              : t('discovery.startLocation')
+            searchPlaceHolder ? t(searchPlaceHolder) : t('profile.location')
           }
           onFocus={() => setCloseOnOverlayEnable(false)}
           onBlur={() => setCloseOnOverlayEnable(true)}
@@ -158,16 +146,15 @@ const ModalSearchFilter = (
               customStyle={{tintColor: theme.black}}
             />
           }
-          value={location}
-          onChangeText={text => setLocation(text)}
+          value={startLocation}
+          onChangeText={text => setStartLocation(text)}
           editable={editable}
-        />
+        /> */}
 
         {!notIncludes?.includes('transport') && (
           <>
             <TickBox
               title="discovery.vehicle"
-              containerStyle={$contentBox}
               listOptions={LIST_TRANSPORTS.map(item => ({
                 id: item.id,
                 text: item.text,
@@ -183,8 +170,19 @@ const ModalSearchFilter = (
           </>
         )}
 
-        <View style={$numberPeopleView}>
-          <StyleText i18Text="discovery.people" customStyle={$textTitle} />
+        <View
+          style={[
+            $numberPeopleView,
+            {
+              marginTop: !notIncludes?.includes('transport')
+                ? verticalScale(12)
+                : 0,
+            },
+          ]}>
+          <StyleText
+            i18Text="discovery.numberPeople"
+            customStyle={$textTitle}
+          />
           <View style={$pressPeopleBox}>
             <StyleTouchable
               customStyle={[$btnPeople, {backgroundColor: theme.p_100}]}

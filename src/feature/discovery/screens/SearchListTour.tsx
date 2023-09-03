@@ -1,17 +1,14 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
-import {POST_SEARCH} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
+import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemTour, Separator} from 'components';
 import {StyleList} from 'components/base';
-import {usePaging} from 'hook';
+import {usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
 import {View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {scale} from 'utility/scale';
 
 const SearchListTour = () => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const {searchParams} = useAppSelector(state => state.logicSlice);
   const {
     list,
@@ -25,7 +22,7 @@ const SearchListTour = () => {
     request: apiSearch,
     params: {
       ...searchParams,
-      post_search: POST_SEARCH.tour,
+      post_search: 'tour',
     },
     isInitNotRunRequest: true,
   });
@@ -33,7 +30,7 @@ const SearchListTour = () => {
   useEffect(() => {
     setParams({
       ...searchParams,
-      post_search: POST_SEARCH.tour,
+      post_search: 'tour',
     });
   }, [searchParams]);
 
@@ -49,7 +46,7 @@ const SearchListTour = () => {
         loadingMore={loadingMore}
         initLoading={initLoading}
         contentContainerStyle={{
-          paddingBottom: bottom || safePaddingNotZero,
+          paddingBottom: bottom,
           paddingTop: safePaddingNotZero,
         }}
         ListEmptyComponent={null}
@@ -61,7 +58,7 @@ const SearchListTour = () => {
 
 const $container: ViewStyle = {
   flex: 1,
-  paddingHorizontal: scale(12),
+  paddingHorizontal: newHorizontalPadding,
 };
 
 export default SearchListTour;

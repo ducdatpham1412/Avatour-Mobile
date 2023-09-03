@@ -36,7 +36,10 @@ const common = {
   select: 'Chọn',
   edit: 'Chỉnh sửa',
   delete: 'Xoá',
+  deleted: 'Đã xoá',
   suggest: 'Đề xuất',
+  create: 'Tạo',
+  update: 'Cập nhật',
 };
 
 const login = {
@@ -213,10 +216,11 @@ const discovery = {
   viewReply: 'Phản hồi ({{value}})',
   hide: 'Ẩn',
   favoriteTour: '🚌 Tour được yêu thích',
-  pricePeople: 'vnd/người | {{value}} người',
   startLocation: 'Điểm xuất phát',
   vehicle: 'Phương tiện',
-  people: 'Số người',
+  people: 'Người',
+  person: 'Người',
+  numberPeople: 'Số người',
   motorbike: 'Xe máy',
   car: 'Ô tô',
   timeTravel: 'Ngày đi - Ngày về',
@@ -333,24 +337,12 @@ const profile = {
     searchAndSetting: 'Tìm những người khác',
   },
   edit: {
-    confirmButton: 'Cập nhật',
     name: 'Tên hiển thị',
     anonymousName: 'Tên ẩn danh',
-  },
-  screen: {
-    sendMessage: 'Gửi tin nhắn',
-    follow: 'Theo dõi',
-    unFollow: 'Huỷ theo dõi',
-    goToChatTag: 'Đi tới cuộc trò chuyện',
-  },
-  modalize: {
-    setting: 'Cài đặt',
-    myInfo: 'Thông tin của tôi',
   },
   post: {
     title: 'Đăng ảnh',
     caption: 'Cảm nghĩ',
-    post: 'Tải lên',
     draft: 'Lưu nháp',
     archive: 'Tạm ẩn',
     unArchive: 'Hiện lại bảng tin',
@@ -443,6 +435,7 @@ const profile = {
   noFoundLocation:
     'Không tìm thấy địa điểm được tìm kiếm. Bạn có muốn thêm địa điểm mới không?',
   personal: 'Cá nhân',
+  tourName: 'Tên lịch trình',
 };
 
 const mess = {
@@ -610,6 +603,8 @@ const alert = {
   createLocationSuccess: 'Thêm địa điểm thành công',
   timeBuyNotToday:
     'Thời gian check-in không phải hôm nay\nBạn vui lòng quét mã tại cửa hàng vào <b>{{time}}</b> nha',
+  locationHadBeenAdded:
+    '<b>{{value}}</b> đã có trong lịch trình\nBạn vẫn muốn thêm nữa chứ?',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

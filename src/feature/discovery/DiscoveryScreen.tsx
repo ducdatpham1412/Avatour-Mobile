@@ -1,15 +1,9 @@
 import {useIsFocused} from '@react-navigation/native';
 import {setScrollMainAndChatEnable} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
-import {
-  BORDER_RADIUS,
-  FONT_SIZE,
-  FONT_WEIGHT_MEDIUM,
-  LIST_TOPICS,
-  ratioImageTour,
-} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM, LIST_TOPICS} from 'asset';
 import Images from 'asset/img/images';
-import {safePaddingNotZero} from 'asset/metrics';
+import {horizontalMargin, safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
 import {SafeView, StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {CardInformation} from 'components/common';
@@ -110,6 +104,8 @@ const DiscoveryScreen = () => {
                 key={tour.id}
                 item={tour}
                 containerStyle={$itemTourBox}
+                width={scale(270)}
+                fontSize={FONT_SIZE.f3}
               />
             ))}
           </ScrollView>
@@ -191,9 +187,7 @@ const $locationView: ViewStyle = {
   marginTop: verticalScale(12),
 };
 const $itemTourBox: ViewStyle = {
-  width: scale(200),
-  height: scale(200) * ratioImageTour * 1.25,
-  marginRight: scale(8),
+  marginRight: horizontalMargin,
 };
 
 export default DiscoveryScreen;

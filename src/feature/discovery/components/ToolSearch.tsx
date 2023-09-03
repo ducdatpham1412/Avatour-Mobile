@@ -1,5 +1,6 @@
 import {FONT_SIZE} from 'asset';
 import Images from 'asset/img/images';
+import {newHorizontalPadding} from 'asset/metrics';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
@@ -9,7 +10,6 @@ import {formatLocaleNumber} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface Props {
-  location: string;
   numberPeople?: number;
   startPrice?: number;
   endPrice?: number;
@@ -21,7 +21,6 @@ interface Props {
 }
 
 const ToolSearch = ({
-  location,
   numberPeople,
   startPrice,
   endPrice,
@@ -71,31 +70,6 @@ const ToolSearch = ({
             />
           </StyleTouchable>
         )}
-        {!!location && (
-          <StyleTouchable
-            customStyle={[
-              $toolBox,
-              {
-                borderColor: theme.gray_600,
-                borderWidth,
-                paddingLeft,
-                paddingRight,
-              },
-            ]}
-            onPress={onPress}>
-            <StyleIcon
-              source={Images.icons.location}
-              size={11}
-              customStyle={{tintColor: theme.gray_600}}
-            />
-            <StyleText
-              originValue={location}
-              customStyle={[$textTool, {color: theme.gray_600}]}
-            />
-          </StyleTouchable>
-        )}
-
-        {renderIndicator()}
 
         {!!numberPeople && (
           <StyleTouchable
@@ -191,7 +165,7 @@ const $container: ViewStyle = {
   width: '100%',
 };
 const $contentToolView: ViewStyle = {
-  paddingHorizontal: scale(12),
+  paddingHorizontal: newHorizontalPadding,
 };
 const $toolBox: ViewStyle = {
   flexDirection: 'row',

@@ -110,14 +110,14 @@ const $input: TextStyle = {
   width: '80%',
   borderRadius: 100,
   paddingTop: Platform.select({
-    ios: verticalScale(14),
+    ios: verticalScale(12),
     android: verticalScale(8),
   }),
   paddingBottom: Platform.select({
-    ios: verticalScale(14),
+    ios: verticalScale(12),
     android: verticalScale(8),
   }),
-  paddingHorizontal: scale(15),
+  paddingHorizontal: scale(12),
 };
 const $textError: TextStyle = {
   fontSize: FONT_SIZE.f4,

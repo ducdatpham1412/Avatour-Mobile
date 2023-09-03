@@ -39,6 +39,7 @@ import {
   ConfirmLockAccount,
   EnterPassword,
   ExtendSetting,
+  ListSvgIcon,
   PersonalInformation,
   SecurityAndLogin,
   SettingScreen,
@@ -213,6 +214,10 @@ const AppStack = () => {
         name={ROOT_SCREEN.editSalePrice}
         component={EditSalePrice}
       />
+
+      {__DEV__ && (
+        <Stack.Screen name={ROOT_SCREEN.svgIcons} component={ListSvgIcon} />
+      )}
     </Stack.Navigator>
   );
 };

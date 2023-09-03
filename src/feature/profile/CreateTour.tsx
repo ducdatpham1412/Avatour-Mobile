@@ -1,8 +1,8 @@
 import {FONT_WEIGHT_MEDIUM} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
+import {safePaddingNotZero, verticalMargin} from 'asset/metrics';
 import {AppModalize, MapTour, TabView} from 'components';
 import {StyleButton, StyleText, StyleTouchable} from 'components/base';
-import {ButtonX, IndicatorModal} from 'components/common';
+import {ButtonX, IndicatorModal, InputBox} from 'components/common';
 import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
@@ -41,15 +41,17 @@ import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
-import {impactMedium} from 'utility/haptic';
+import {impactLight, impactMedium} from 'utility/haptic';
 
 type TypeContext = [
   {
     schedules: TourDetail['schedule'];
+    name: string;
     searchParams: TypeSearchParams;
   },
   {
     setSchedules: Dispatch<SetStateAction<TourDetail['schedule']>>;
+    setName: (text: string) => void;
     setSearchParams: Dispatch<SetStateAction<TypeSearchParams>>;
     onSave: () => void;
     onReset: () => void;
@@ -63,10 +65,12 @@ interface CreateTourInstanceProps {
 const CreateTourContext = createContext<TypeContext>([
   {
     schedules: [],
+    name: '',
     searchParams: defaultSearchParams,
   },
   {
     setSchedules: () => [],
+    setName: () => null,
     setSearchParams: () => defaultSearchParams,
     onSave: () => null,
     onReset: () => null,
@@ -92,8 +96,8 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const theme = useTheme();
 
   const [
-    {loadingCreateTour, loadingEditTour, searchParams, schedules},
-    {createTour, editTour, setSearchParams, setSchedules, onReset},
+    {loadingCreateTour, name, loadingEditTour, searchParams, schedules},
+    {createTour, editTour, setSearchParams, setSchedules, setName, onReset},
   ] = useCreateTour(tourId);
 
   const searchRef = useRef<ElementRef<typeof AppModalize>>(null);
@@ -102,6 +106,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const timeOutRef = useRef<NodeJS.Timeout>();
   const saveLength = useRef(0);
   const numberOfDays = schedules.length;
+  const isCreateNew = useRef(tourId === 'create-new');
 
   const aim = useSharedValue(levelModalScheduleHeight.medium);
 
@@ -195,7 +200,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
    * Functions
    */
   const onSave = async () => {
-    if (tourId === 'create-new') {
+    if (isCreateNew.current) {
       try {
         const res = await createTour();
         if (res) {
@@ -303,7 +308,9 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
               <ActivityIndicator size="small" color={theme.white} />
             ) : (
               <StyleText
-                i18Text="common.save"
+                i18Text={
+                  isCreateNew.current ? 'common.create' : 'common.update'
+                }
                 customStyle={[$textSave, {color: theme.white}]}
               />
             )}
@@ -317,14 +324,30 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
           <Animated.View style={[$gesture, {backgroundColor: theme.white}]}>
             <IndicatorModal />
 
+            <InputBox
+              style={[
+                $inputTour,
+                {
+                  borderColor: theme.gray_500,
+                },
+              ]}
+              i18Placeholder="profile.tourName"
+              maxLength={70}
+              defaultValue={name}
+              onChangeText={text => setName(text)}
+              onFocus={() => onChangeModalHeight(levelModalScheduleHeight.high)}
+            />
+
             <ToolSearch
-              location={searchParams?.location || ''}
               numberPeople={searchParams?.number_people}
               startPrice={searchParams?.start_price}
               endPrice={searchParams?.end_price}
               services={searchParams?.services}
               isEditMode
-              onPress={() => searchRef.current?.show()}
+              onPress={() => {
+                searchRef.current?.show();
+                impactLight();
+              }}
               containerStyle={$tool}
               haveBorder={false}
             />
@@ -375,7 +398,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
             shadowColor: theme.black,
           },
         ]}>
-        {tourId !== 'create-new' && (
+        {!isCreateNew.current && (
           <>
             <StyleButton
               title="common.resetChanges"
@@ -393,7 +416,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
           </>
         )}
         <StyleButton
-          title="common.save"
+          title={isCreateNew.current ? 'common.create' : 'common.update'}
           containerStyle={$buttonSave}
           onPress={onSave}
           isLoading={isLoading}
@@ -404,12 +427,11 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
         ref={searchRef}
         initSearchParams={searchParams}
         onChangeSearch={value => {
-          setSearchParams({...value, location: value?.start_location});
+          setSearchParams(value);
         }}
         titleButton="common.save"
         notIncludes={['transport', 'date_time']}
         isGetFromAsync={false}
-        searchPlaceHolder="profile.createNameForYourTour"
       />
 
       <ModalAddLocation ref={modalAddLocationRef} />
@@ -425,7 +447,7 @@ const CreateTour = ({
   const savedSearchParams = useRef<TypeSearchParams>(
     itemTour
       ? {
-          location: itemTour.location,
+          text_search: '',
           start_location: itemTour.start_location,
           number_people: itemTour.number_people,
           services: itemTour.services,
@@ -438,10 +460,12 @@ const CreateTour = ({
   const savedSchedule = useRef<TourDetail['schedule']>(
     itemTour?.schedule ?? [[]],
   );
+  const savedName = useRef(itemTour?.name ?? '');
 
   const [schedules, setSchedules] = useState<TourDetail['schedule']>(
     savedSchedule.current,
   );
+  const [name, setName] = useState(savedName.current);
   const [searchParams, setSearchParams] = useState<TypeSearchParams>(
     savedSearchParams.current,
   );
@@ -453,6 +477,7 @@ const CreateTour = ({
 
   const onReset = () => {
     setSchedules(savedSchedule.current);
+    setName(savedName.current);
     setSearchParams(savedSearchParams.current);
   };
 
@@ -461,10 +486,12 @@ const CreateTour = ({
       value={[
         {
           schedules,
+          name,
           searchParams,
         },
         {
           setSchedules,
+          setName,
           setSearchParams,
           onSave,
           onReset,
@@ -490,7 +517,7 @@ const $body: AnimatedStyle<ViewStyle> = {
   overflow: 'hidden',
 };
 const $tool: ViewStyle = {
-  marginTop: verticalScale(16),
+  marginTop: verticalScale(12),
 };
 const $listView: ViewStyle = {
   flex: 1,
@@ -553,7 +580,13 @@ const $buttonXDay: ViewStyle = {
 };
 const $gesture: AnimatedStyle<ViewStyle> = {
   width: '100%',
+  paddingTop: verticalMargin,
   paddingBottom: verticalScale(12),
+};
+const $inputTour: TextStyle = {
+  width: scale(343),
+  alignSelf: 'center',
+  borderWidth: borderWidthTiny,
 };
 const $buttonSaveSmall: AnimatedStyle<ViewStyle> = {
   position: 'absolute',

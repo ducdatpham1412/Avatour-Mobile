@@ -36,7 +36,10 @@ const common = {
   select: 'Select',
   edit: 'Edit',
   delete: 'Delete',
+  deleted: 'Deleted',
   suggest: 'Suggest',
+  create: 'Create',
+  update: 'Update',
 };
 
 const login = {
@@ -210,10 +213,11 @@ const discovery = {
   viewReply: 'View replies ({{value}})',
   hide: 'Hide',
   favoriteTour: '🚌 Favorite tours',
-  pricePeople: 'vnd/person | {{value}} people',
   startLocation: 'Start location',
   vehicle: 'Vehicle',
-  people: 'Number people',
+  people: 'People',
+  person: 'Person',
+  numberPeople: 'Number people',
   motorbike: 'Motorbike',
   car: 'Car',
   timeTravel: 'Go - Comeback day',
@@ -355,22 +359,12 @@ const profile = {
     searchAndSetting: 'Finding others',
   },
   edit: {
-    confirmButton: 'Update',
     name: 'Your name',
     anonymousName: 'Anonymous name',
-  },
-  screen: {
-    sendMessage: 'Send message',
-    goToChatTag: 'Go to conversation',
-  },
-  modalize: {
-    setting: 'Setting',
-    myInfo: 'My information',
   },
   post: {
     title: 'Post your image',
     caption: 'Write caption',
-    post: 'Post',
     draft: 'Draft',
     archive: 'Archive',
     unArchive: 'Show on profile',
@@ -464,6 +458,7 @@ const profile = {
   noFoundLocation:
     'The searched location could not be found. Do you want to add a new location?',
   personal: 'Personal',
+  tourName: "Tour's name",
 };
 
 const setting = {
@@ -600,6 +595,8 @@ To be able to delete, please follow these two steps:
   createLocationSuccess: 'Create location successfully',
   timeBuyNotToday:
     'Check-in time is not today\nPlease scan the code at the store on <b>{{time}}</b>',
+  locationHadBeenAdded:
+    '<b>{{value}}</b> is already in the schedule\nDo you want to add more?',
 
   // PERMISSION
   permissionCamera: 'Access camera',

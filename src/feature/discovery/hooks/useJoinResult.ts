@@ -17,6 +17,9 @@ const useJoinResult = (shopId: number, params?: Params) => {
       const res = await apiScanJoinResult(shopId);
       return res.data;
     },
+    /**
+     * TODO: Check revalidateOnMount -> because on Android it's not called
+     */
     params?.revalidateAll ? {revalidateOnMount: true} : {},
   );
   const {mutate: mutateEstimatesAndJoining} = useEstimatesAndJoinings();
