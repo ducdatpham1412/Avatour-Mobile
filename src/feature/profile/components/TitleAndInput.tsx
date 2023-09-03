@@ -1,7 +1,7 @@
 import {BORDER_RADIUS, FONT_SIZE} from 'asset';
 import {AppInput, StyleText} from 'components/base';
 import {useTheme} from 'hook';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {
   StyleProp,
   TextInputProps,
@@ -17,6 +17,7 @@ interface Props {
   textInputProps?: TextInputProps;
   containerStyle?: StyleProp<ViewStyle>;
   mandatory?: boolean;
+  children?: ReactNode;
 }
 
 type TitleProps = Pick<Props, 'title' | 'mandatory'> & {
@@ -43,16 +44,19 @@ const TitleAndInput = ({
   textInputProps,
   containerStyle,
   mandatory = true,
+  children,
 }: Props) => {
   const theme = useTheme();
 
   return (
     <View style={[$container, containerStyle]}>
       <Title title={title} mandatory={mandatory} />
-      <AppInput
-        {...textInputProps}
-        style={[$input, {borderColor: theme.gray_300}, textInputProps?.style]}
-      />
+      {children ?? (
+        <AppInput
+          {...textInputProps}
+          style={[$input, {borderColor: theme.gray_300}, textInputProps?.style]}
+        />
+      )}
     </View>
   );
 };
@@ -67,7 +71,7 @@ const $title: TextStyle = {
 const $input: TextStyle = {
   width: '100%',
   marginTop: verticalScale(8),
-  paddingHorizontal: scale(16),
+  paddingHorizontal: scale(12),
   paddingTop: verticalScale(12),
   paddingBottom: verticalScale(12),
   borderWidth: moderateScale(1),

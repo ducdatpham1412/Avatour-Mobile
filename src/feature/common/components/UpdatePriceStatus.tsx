@@ -38,7 +38,7 @@ export const BoxUpdatePrice = ({
       {prices.map(p => (
         <View key={p.price} style={$updatePriceBox}>
           <StyleText
-            i18Text="discovery.numberPeople"
+            i18Text="discovery.numberServings"
             i18Params={{
               value: p.number_people,
             }}
@@ -72,7 +72,6 @@ export const BoxUpdatePrice = ({
 
 const UpdatePriceStatus = ({saleId}: Props) => {
   const theme = useTheme();
-  const {t} = useTranslation();
 
   const [{data, initLoading, isCanceling}, {onDeleteRequest}] = useMyRequests();
   const [{data: saleData}] = useDetailSale(saleId);

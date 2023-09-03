@@ -66,15 +66,17 @@ const ModalAddPrice = (
   if (indexEdit.current === undefined) {
     const lastPrice = prices[prices.length - 1];
     if (lastPrice) {
-      if (numberPeople < lastPrice.number_people) {
+      if (numberPeople <= lastPrice.number_people) {
         isValidNumberPeople = false;
         textAlertNumberPeople = 'alert.numberPeopleMoreThan';
         paramsNumberPeople.value = lastPrice.number_people;
       }
 
-      isValidPriceValue = price < lastPrice.price && !!price;
-      textAlertPrice = 'alert.priceLessThan';
-      paramsPrice.value = formatLocaleNumber(lastPrice.price);
+      if (price >= lastPrice.price || !price) {
+        isValidPriceValue = false;
+        textAlertPrice = 'alert.priceLessThan';
+        paramsPrice.value = formatLocaleNumber(lastPrice.price);
+      }
     } else if (numberPeople !== 1) {
       isValidNumberPeople = false;
       textAlertNumberPeople = 'alert.firstNumberPeopleByOne';
@@ -86,25 +88,35 @@ const ModalAddPrice = (
     const start = prices[indexEdit.current - 1];
     const end = prices[indexEdit.current + 1];
     if (start && end) {
-      isValidNumberPeople =
-        numberPeople > start.number_people && numberPeople < end.number_people;
-      textAlertNumberPeople = 'alert.numberPeopleMoreAndLess';
-      paramsNumberPeople.start = start.number_people;
-      paramsNumberPeople.end = end.number_people;
+      if (
+        numberPeople <= start.number_people ||
+        numberPeople >= end.number_people
+      ) {
+        isValidNumberPeople = false;
+        textAlertNumberPeople = 'alert.numberPeopleMoreAndLess';
+        paramsNumberPeople.start = start.number_people;
+        paramsNumberPeople.end = end.number_people;
+      }
 
-      isValidPriceValue = price < start.price && price > end.price;
-      textAlertPrice = 'alert.priceMoreLessThan';
-      paramsPrice.start = formatLocaleNumber(start.price);
-      paramsPrice.end = formatLocaleNumber(end.price);
+      if (price >= start.price || price <= end.price) {
+        isValidPriceValue = false;
+        textAlertPrice = 'alert.priceMoreLessThan';
+        paramsPrice.start = formatLocaleNumber(end.price);
+        paramsPrice.end = formatLocaleNumber(start.price);
+      }
     } else if (start) {
       // Editing the last
-      isValidNumberPeople = numberPeople > start.number_people;
-      textAlertNumberPeople = 'alert.numberPeopleMoreThan';
-      paramsNumberPeople.value = start.number_people;
+      if (numberPeople <= start.number_people) {
+        isValidNumberPeople = false;
+        textAlertNumberPeople = 'alert.numberPeopleMoreThan';
+        paramsNumberPeople.value = start.number_people;
+      }
 
-      isValidPriceValue = price < start.price;
-      textAlertPrice = 'alert.priceLessThan';
-      paramsPrice.value = formatLocaleNumber(start.price);
+      if (price >= start.price || !price) {
+        isValidPriceValue = false;
+        textAlertPrice = 'alert.priceLessThan';
+        paramsPrice.value = formatLocaleNumber(start.price);
+      }
     } else if (end) {
       // Editing the first
       isValidNumberPeople = numberPeople === 1;
@@ -112,9 +124,11 @@ const ModalAddPrice = (
         textAlertNumberPeople = 'alert.firstNumberPeopleByOne';
       }
 
-      isValidPriceValue = price > end.price;
-      textAlertPrice = 'alert.priceMoreThan';
-      paramsPrice.value = formatLocaleNumber(end.price);
+      if (price <= end.price || !price) {
+        isValidPriceValue = false;
+        textAlertPrice = 'alert.priceMoreThan';
+        paramsPrice.value = formatLocaleNumber(end.price);
+      }
     } else if (numberPeople !== 1) {
       isValidNumberPeople = false;
       textAlertNumberPeople = 'alert.firstNumberPeopleByOne';

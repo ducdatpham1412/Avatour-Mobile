@@ -1,14 +1,14 @@
-import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {IconClose, IconEdit} from 'asset/icons';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React, {ElementRef, useRef} from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
-import {borderWidthTiny} from 'utility/assistant';
-import {formatLocaleNumber} from 'utility/format';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalAddPrice, TypeChangePrice} from '../post';
-import ButtonIconTitle from './ButtonIconTitle';
 
 interface Props {
   prices: TypePrice[];
@@ -28,6 +28,7 @@ const PricesEdit = ({
   onEditPrice,
 }: Props) => {
   const theme = useTheme();
+  const {t} = useTranslation();
   const modalPriceRef = useRef<ElementRef<typeof ModalAddPrice>>(null);
 
   return (
@@ -35,24 +36,18 @@ const PricesEdit = ({
       <View style={[$container, containerStyle]}>
         {prices.map((price, index) => {
           return (
-            <View key={price.number_people} style={$priceBox}>
-              <View style={[$numberPeopleBox, {borderColor: theme.gray_500}]}>
+            <View
+              key={price.number_people}
+              style={[$priceBox, {backgroundColor: theme.p_100}]}>
+              <View style={$infoPrice}>
                 <StyleText
-                  originValue={price.number_people}
-                  customStyle={[$textNumberPeople, {color: theme.black}]}
+                  originValue={`${t('discovery.amount')}: ${
+                    price.number_people
+                  }`}
                 />
-              </View>
-              <StyleText
-                originValue="-"
-                customStyle={[$textMiddle, {color: theme.black}]}
-              />
-              <View style={[$priceValue, {borderColor: theme.p_800}]}>
                 <StyleText
-                  originValue={`${formatLocaleNumber(price.price)} vnd`}
-                  customStyle={{
-                    fontWeight: FONT_WEIGHT_MEDIUM,
-                    color: theme.p_800,
-                  }}
+                  originValue={formatMoney(price.price)}
+                  customStyle={$textPrice}
                 />
               </View>
               {enableEdit && (
@@ -66,10 +61,7 @@ const PricesEdit = ({
                         indexEdit: index,
                       });
                     }}>
-                    <Feather
-                      name="edit-2"
-                      style={[$iconEdit, {color: theme.gray_500}]}
-                    />
+                    <IconEdit tintColor={theme.gray_600} />
                   </StyleTouchable>
                   {price.number_people === 1 ? (
                     <View style={$deleteBox} />
@@ -77,10 +69,7 @@ const PricesEdit = ({
                     <StyleTouchable
                       customStyle={$deleteBox}
                       onPress={() => onDeletePrice?.(price)}>
-                      <Feather
-                        name="x"
-                        style={[$iconDelete, {color: theme.gray_500}]}
-                      />
+                      <IconClose tintColor={theme.gray_600} />
                     </StyleTouchable>
                   )}
                 </>
@@ -89,13 +78,12 @@ const PricesEdit = ({
           );
         })}
         {enableEdit && (
-          <ButtonIconTitle
-            title="profile.addPrice"
-            onPress={() => modalPriceRef.current?.show()}
-            containerStyle={$buttonInfo}
-            titleFontWeight="bold"
-            buttonStyle={{borderColor: theme.black}}
-          />
+          <StyleTouchable
+            customStyle={[$buttonAdd, {borderColor: theme.p_600}]}
+            onPress={() => modalPriceRef.current?.show()}>
+            <AntDesign name="plus" style={[$icon, {color: theme.black}]} />
+            <StyleText i18Text="profile.addPrice" customStyle={$textAddPrice} />
+          </StyleTouchable>
         )}
       </View>
 
@@ -113,49 +101,50 @@ const $container: ViewStyle = {
   width: '100%',
 };
 const $priceBox: ViewStyle = {
-  width: '90%',
+  width: '100%',
   flexDirection: 'row',
   alignItems: 'center',
   marginTop: verticalScale(8),
-  alignSelf: 'center',
-};
-const $numberPeopleBox: ViewStyle = {
-  flex: 1,
-  paddingVertical: verticalScale(4),
-  borderWidth: borderWidthTiny,
+  paddingHorizontal: scale(16),
+  paddingVertical: verticalScale(8),
   borderRadius: BORDER_RADIUS.f4,
-  alignItems: 'center',
 };
-const $textNumberPeople: TextStyle = {
-  fontSize: FONT_SIZE.f2,
+const $infoPrice: ViewStyle = {
+  flex: 1,
+  justifyContent: 'center',
 };
-const $textMiddle: TextStyle = {
-  marginHorizontal: scale(12),
+const $textPrice: TextStyle = {
+  marginTop: verticalScale(2),
   fontWeight: 'bold',
 };
-const $priceValue: ViewStyle = {
-  flex: 2,
-  paddingVertical: verticalScale(4),
-  borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f4,
-  paddingHorizontal: scale(20),
-};
 const $editBox: ViewStyle = {
-  marginLeft: scale(13),
-};
-const $iconEdit: TextStyle = {
-  fontSize: moderateScale(20),
+  width: moderateScale(40),
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 const $deleteBox: ViewStyle = {
-  marginLeft: scale(20),
-  width: moderateScale(15),
+  width: moderateScale(40),
+  alignItems: 'center',
+  justifyContent: 'center',
 };
-const $iconDelete: TextStyle = {
-  fontSize: moderateScale(15),
-};
-const $buttonInfo: ViewStyle = {
+const $buttonAdd: ViewStyle = {
+  width: '100%',
+  height: moderateScale(40),
   marginTop: verticalScale(12),
-  marginLeft: '5%',
+  borderWidth: moderateScale(1),
+  borderRadius: BORDER_RADIUS.f4,
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderStyle: 'dashed',
+  flexDirection: 'row',
+};
+const $icon: TextStyle = {
+  fontSize: moderateScale(18),
+};
+const $textAddPrice: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  fontWeight: 'bold',
+  marginLeft: scale(4),
 };
 
 export default PricesEdit;
