@@ -431,7 +431,6 @@ export const removeVietnameseTones = (str: string) => {
 };
 
 /**
- *
  * @param sample: Must be list string had been remove Vietnamese tone and upperCase
  */
 export const search = (sample: string[], text: string) => {

@@ -331,11 +331,6 @@ export enum ERROR_MESSAGE_ENUM {
   conversation_not_existed = 'conversation_not_existed',
 }
 
-export enum POST_SEARCH {
-  tour = 0,
-  group_buying = 1,
-}
-
 export enum TYPE_SALE_SEARCH {
   joining = 'joining',
   joined = 'joined',

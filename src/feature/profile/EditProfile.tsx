@@ -148,7 +148,7 @@ const EditProfile = () => {
         headerProps={{title: 'profile.editProfile'}}
         BottomComponent={
           <StyleButton
-            title="profile.edit.confirmButton"
+            title="common.update"
             containerStyle={{
               marginBottom: bottom || safePaddingNotZero,
               width: '80%',

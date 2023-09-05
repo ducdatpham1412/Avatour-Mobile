@@ -10,8 +10,8 @@ export type ParamsCreateTour = 'create-new' | number;
 
 const useCreateTour = (tourId: ParamsCreateTour) => {
   const [
-    {schedules, searchParams},
-    {setSchedules, setSearchParams, onSave, onReset},
+    {schedules, name, searchParams},
+    {setSchedules, setName, setSearchParams, onSave, onReset},
   ] = useContextCreateTour();
   const [{data}, {mutate}] = useDetailTour(
     tourId === 'create-new' ? null : tourId,
@@ -26,8 +26,8 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
       const res = await apiCreateTour({
         schedule: scheduleNumber,
         input_tour: {
-          location: searchParams?.location || '',
-          start_location: searchParams?.start_location || '',
+          name,
+          start_location: '',
           number_people: searchParams?.number_people || 0,
           services: searchParams?.services || [],
           start_price: searchParams.start_price || 0,
@@ -48,9 +48,8 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
         const value: Omit<TypeEditTour, 'schedule'> & {
           schedule: TourDetail['schedule'];
         } = {
+          name,
           services: searchParams.services,
-          location: searchParams.location,
-          start_location: searchParams.start_location,
           number_people: searchParams.number_people,
           start_price: searchParams.start_price,
           end_price: searchParams.end_price,
@@ -63,7 +62,10 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
           const newValue = (value as any)?.[key];
           const currentValue = (data as any)?.[key];
 
-          if (!isEqual(newValue, currentValue) && newValue && currentValue) {
+          if (
+            !isEqual(newValue, currentValue)
+            //    && newValue && currentValue
+          ) {
             if (key === 'schedule') {
               update.schedule = value?.schedule?.map(day =>
                 day.map(location => location?.id),
@@ -82,9 +84,7 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
               if (pre) {
                 return {
                   ...pre,
-                  location: searchParams.location ?? pre.location,
-                  start_location:
-                    searchParams.start_location ?? pre.start_location,
+                  name,
                   number_people:
                     searchParams.number_people ?? pre.number_people,
                   start_price: searchParams.start_price ?? pre.start_price,
@@ -102,9 +102,10 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
   );
 
   return [
-    {loadingCreateTour, loadingEditTour, schedules, searchParams},
+    {loadingCreateTour, loadingEditTour, schedules, name, searchParams},
     {
       createTour,
+      setName,
       setSchedules,
       setSearchParams,
       onReset,

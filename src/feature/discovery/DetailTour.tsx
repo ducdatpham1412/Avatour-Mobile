@@ -1,7 +1,8 @@
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, LoadingScreen, MapTour, TabView} from 'components';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {Avatar, IndicatorModal} from 'components/common';
@@ -30,13 +31,14 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import {useDetailTour} from './hooks';
 import {DayScheduleDetailTour} from './screens';
+import {impactLight} from 'utility/haptic';
 
 export const levelModalScheduleHeight = {
-  low: verticalScale(150),
-  middleLow: verticalScale(275),
+  low: verticalScale(180),
+  middleLow: verticalScale(290),
   medium: verticalScale(400),
-  middleMedium: verticalScale(540),
-  high: verticalScale(680),
+  middleMedium: verticalScale(560),
+  high: verticalScale(720),
 };
 
 export type CTX = {
@@ -151,7 +153,7 @@ const DetailTour = ({
         aim.value = newHeight;
       }
     },
-    onEnd: (event, ctx) => {
+    onEnd: (event, _) => {
       checkOnEnd(aim, event);
     },
   });
@@ -213,14 +215,7 @@ const DetailTour = ({
           style={[$body, {backgroundColor: theme.background}, modalStyle]}>
           <PanGestureHandler onGestureEvent={gestureHandler}>
             <Animated.View style={[$gesture, {backgroundColor: theme.white}]}>
-              <View
-                style={[
-                  $avatar,
-                  {
-                    paddingTop: verticalScale(8),
-                    paddingHorizontal: horizontalPadding,
-                  },
-                ]}>
+              <View style={$avatar}>
                 <StyleTouchable
                   customStyle={$nameAvatar}
                   onPress={() => {
@@ -228,7 +223,7 @@ const DetailTour = ({
                       onGoToProfile(data?.creator);
                     }
                   }}>
-                  <Avatar source={{uri: data?.creator_avatar}} size={36} />
+                  <Avatar source={{uri: data?.creator_avatar}} size={25} />
                   <StyleText
                     originValue={data?.creator_name}
                     customStyle={$name}
@@ -241,14 +236,21 @@ const DetailTour = ({
                     });
                   }}>
                   <StyleText
-                    i18Text="common.edit"
+                    i18Text={isMyTour ? 'common.edit' : 'profile.createTour'}
                     customStyle={[$textEdit, {color: theme.blue}]}
                   />
                 </StyleTouchable>
               </View>
 
+              <View style={$tourName}>
+                <IconTour size={20} tintColor={theme.black} />
+                <StyleText
+                  originValue={data?.name}
+                  customStyle={$tourNameText}
+                />
+              </View>
+
               <ToolSearch
-                location={data.location}
                 numberPeople={data.number_people}
                 startPrice={data.start_price}
                 endPrice={data.end_price}
@@ -257,6 +259,7 @@ const DetailTour = ({
                 isEditMode={false}
                 onPress={() => {
                   searchRef.current?.show();
+                  impactLight();
                 }}
                 haveBorder={false}
               />
@@ -293,8 +296,7 @@ const DetailTour = ({
         <ModalSearchFilter
           ref={searchRef}
           initSearchParams={{
-            location: data.location,
-            start_location: data.start_location,
+            text_search: data.name,
             number_people: data.number_people,
             services: data.services,
             transports: data.transports,
@@ -307,7 +309,6 @@ const DetailTour = ({
           titleButton="common.save"
           notIncludes={['transport', 'date_time']}
           isGetFromAsync={false}
-          searchPlaceHolder="profile.createNameForYourTour"
           editable={false}
         />
       </>
@@ -358,12 +359,13 @@ const $body: AnimatedStyle<ViewStyle> = {
 };
 const $gesture: AnimatedStyle<ViewStyle> = {
   width: '100%',
-  paddingBottom: verticalScale(12),
+  paddingVertical: verticalScale(12),
 };
 const $avatar: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
+  paddingHorizontal: newHorizontalPadding,
 };
 const $nameAvatar: ViewStyle = {
   flexDirection: 'row',
@@ -371,9 +373,20 @@ const $nameAvatar: ViewStyle = {
   maxWidth: '60%',
 };
 const $name: TextStyle = {
-  fontSize: FONT_SIZE.f1,
   marginLeft: scale(8),
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $tourName: ViewStyle = {
+  width: '100%',
+  marginTop: verticalScale(12),
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: newHorizontalPadding,
+};
+const $tourNameText: TextStyle = {
+  fontSize: FONT_SIZE.f1,
   fontWeight: 'bold',
+  marginLeft: scale(8),
 };
 const $tool: ViewStyle = {
   marginTop: verticalScale(4),

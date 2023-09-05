@@ -190,7 +190,7 @@ const CreateLocation = ({
           ]}>
           <StyleButton
             containerStyle={$button}
-            title="common.save"
+            title="common.suggest"
             isLoading={loadingSave}
             disable={disable}
             onPress={() => onSave(save)}
@@ -415,7 +415,7 @@ const $description: ViewStyle = {
 };
 const $inputDescription: TextStyle = {
   width: '100%',
-  paddingHorizontal: scale(16),
+  paddingHorizontal: scale(12),
   paddingTop: verticalScale(12),
   paddingBottom: verticalScale(12),
 };

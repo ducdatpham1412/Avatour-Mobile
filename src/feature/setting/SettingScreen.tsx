@@ -3,7 +3,7 @@ import Images from 'asset/img/images';
 import {StyleContainer} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
-import {SETTING_ROUTE} from 'navigation/config/routes';
+import ROOT_SCREEN, {SETTING_ROUTE} from 'navigation/config/routes';
 import React, {useState} from 'react';
 import {ActivityIndicator, ViewStyle} from 'react-native';
 import {renderIconGender} from 'utility/assistant';
@@ -11,6 +11,7 @@ import {logOut} from 'utility/authentication';
 import {scale} from 'utility/scale';
 import TypeMainSetting from './components/TypeMainSetting';
 import {useSWRConfig} from 'swr';
+import {I18Normalize} from 'utility/I18Next';
 
 const SettingScreen = () => {
   const theme = useTheme();
@@ -68,6 +69,12 @@ const SettingScreen = () => {
         }
         title="setting.logOut"
         onPress={onLogOut}
+      />
+
+      <TypeMainSetting
+        icon={Images.icons.apple}
+        title={'(DEV) Svg Icons' as I18Normalize}
+        onPress={() => navigate(ROOT_SCREEN.svgIcons)}
       />
     </StyleContainer>
   );

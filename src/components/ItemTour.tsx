@@ -1,189 +1,107 @@
 import {BORDER_RADIUS, FONT_SIZE, ratioImageTour} from 'asset';
-import Images from 'asset/img/images';
-import Theme from 'asset/theme/Theme';
 import {useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
-import {
-  ImageBackground,
-  ImageStyle,
-  StyleProp,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import {useTranslation} from 'react-i18next';
+import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {formatLocaleNumber} from 'utility/format';
-import {moderateScale, scale} from 'utility/scale';
-import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
+import {scale, verticalScale} from 'utility/scale';
+import {StyleImage, StyleText, StyleTouchable} from './base';
 import {Avatar} from './common';
 
 interface Props {
   item: Tour;
   containerStyle?: StyleProp<ViewStyle>;
+  width?: number;
+  fontSize?: number;
 }
 
-const ItemTour = ({item, containerStyle}: Props) => {
+const ItemTour = ({
+  item,
+  containerStyle,
+  width = scale(343),
+  fontSize = FONT_SIZE.f2,
+}: Props) => {
   const theme = useTheme();
-  const listImages: Array<string> = [];
-  item?.schedule?.forEach(item => listImages.push(...item));
-  const addOn = listImages.length - 4;
+  const {t} = useTranslation();
+  const listImages: string[] = item.schedule?.reduce((pre, current) => {
+    return pre.concat(...current);
+  }, []);
+  const textPeople = (
+    item.number_people > 1 ? t('discovery.people') : t('discovery.person')
+  ).toLocaleLowerCase();
 
   return (
-    <ImageBackground
-      style={[$container, containerStyle]}
-      source={{uri: listImages?.[0]}}>
-      <LinearGradient
-        colors={[Theme.newTheme.black, 'transparent']}
-        style={$gradient}
-        angle={180}
-        start={{x: 0.5, y: 1}}
-        end={{x: 0.5, y: 0}}
+    <StyleTouchable
+      customStyle={[$container, containerStyle, {width}]}
+      onPress={() => {
+        push(ROOT_SCREEN.detailTour, {
+          tourId: item.id,
+        });
+      }}>
+      <StyleImage
+        source={{uri: listImages?.[0]}}
+        customStyle={[$image, {width, height: width * ratioImageTour}]}
+        defaultImageSource="image"
       />
-
-      <StyleTouchable
-        customStyle={$body}
-        onPress={() =>
-          push(ROOT_SCREEN.detailTour, {
-            tourId: item.id,
-          })
-        }>
-        <View style={$scheduleView}>
-          <View
-            style={[$scheduleBox, {backgroundColor: theme.white_opacity(0.2)}]}>
-            {listImages.slice(0, 5).map((image, index) => (
-              <View style={$itemLocationView} key={index}>
-                <StyleImage
-                  source={{uri: image}}
-                  defaultSource={Images.images.defaultImage}
-                  style={$imageLocation}
-                />
-                {index === 4 && addOn > 0 && (
-                  <View
-                    style={[
-                      $addOnBox,
-                      {backgroundColor: theme.black_opacity(0.5)},
-                    ]}>
-                    <StyleText
-                      originValue={`+${addOn}`}
-                      customStyle={{color: theme.white}}
-                    />
-                  </View>
-                )}
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <View style={$infoView}>
-          <StyleText
-            originValue={formatLocaleNumber(
-              String(Math.floor(item?.start_price / item?.number_people)),
-            )}
-            customStyle={[$textInfo, {color: theme.white, fontWeight: 'bold'}]}
-            numberOfLines={1}>
-            <StyleText
-              i18Text="discovery.pricePeople"
-              i18Params={{
-                value: item?.number_people,
-              }}
-              customStyle={[
-                $textInfo,
-                {color: theme.white, fontWeight: 'normal'},
-              ]}
-            />
-          </StyleText>
-        </View>
-
-        <View style={$infoView}>
-          <StyleIcon
-            source={Images.icons.location}
-            size={10}
-            customStyle={$iconLocation}
-          />
-          <StyleText
-            originValue={item?.location}
-            customStyle={[$textInfo, {color: theme.white}]}
-            numberOfLines={1}
-          />
-        </View>
-
-        <View style={$infoView}>
-          <Avatar
-            source={{uri: item?.creator_avatar}}
-            size={20}
-            style={$iconAvatar}
-          />
-          <StyleText
-            originValue={item?.creator_name}
-            customStyle={[$textInfo, {color: theme.white}]}
-            numberOfLines={1}
-          />
-        </View>
-      </StyleTouchable>
-    </ImageBackground>
+      {!!item.name && (
+        <StyleText
+          originValue={item?.name}
+          customStyle={[$name, {fontSize}]}
+          numberOfLines={2}
+        />
+      )}
+      <StyleText
+        originValue={`<b>${formatLocaleNumber(
+          item.start_price,
+        )} - ${formatLocaleNumber(item.end_price)} vnd</b> | ${
+          item.number_people
+        } ${textPeople}`}
+        mode="html"
+        htmlTextBoldColor={theme.p_800}
+        customStyle={[$price, {fontSize}]}
+      />
+      <View style={$creator}>
+        <Avatar
+          source={{uri: item.creator_avatar}}
+          size={(20 / 16) * fontSize}
+        />
+        <StyleText
+          originValue={item.creator_name}
+          customStyle={[$nameCreator, {fontSize}]}
+          numberOfLines={1}
+        />
+      </View>
+    </StyleTouchable>
   );
 };
 
 const $container: ViewStyle = {
-  width: scale(351),
-  height: scale(351) * ratioImageTour,
-  borderRadius: BORDER_RADIUS.f2,
+  width: scale(343),
   overflow: 'hidden',
 };
-const $gradient: ViewStyle = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
+const $image: ImageStyle = {
+  borderRadius: BORDER_RADIUS.f2,
 };
-const $body: ViewStyle = {
-  flex: 1,
-  padding: scale(8),
-  flexDirection: 'column-reverse',
+const $name: TextStyle = {
+  marginTop: verticalScale(4),
+  fontWeight: 'bold',
+  paddingHorizontal: scale(2),
 };
-const $scheduleView: ViewStyle = {
-  width: '100%',
-  flexDirection: 'row',
+const $price: TextStyle = {
+  marginTop: verticalScale(4),
+  paddingHorizontal: scale(2),
 };
-const $scheduleBox: ViewStyle = {
-  flexDirection: 'row',
-  paddingLeft: scale(5),
-  paddingVertical: scale(5),
-  borderRadius: moderateScale(10),
-};
-const $itemLocationView: ViewStyle = {
-  width: scale(30),
-  height: scale(30),
-  marginRight: scale(5),
-};
-const $imageLocation: ImageStyle = {
-  width: '100%',
-  height: '100%',
-  borderRadius: moderateScale(10),
-};
-const $addOnBox: ViewStyle = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
-  borderRadius: moderateScale(10),
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-const $infoView: ViewStyle = {
+const $creator: ViewStyle = {
+  marginTop: verticalScale(4),
+  paddingHorizontal: scale(2),
   flexDirection: 'row',
   alignItems: 'center',
-  marginBottom: scale(5),
 };
-const $textInfo: TextStyle = {
-  fontSize: FONT_SIZE.f3,
-};
-const $iconLocation: ImageStyle = {
-  marginRight: scale(4),
-};
-const $iconAvatar: ImageStyle = {
-  marginRight: scale(4),
+const $nameCreator: TextStyle = {
+  marginLeft: scale(4),
 };
 
 export default memo(ItemTour, (pre: Props, next: Props) => {

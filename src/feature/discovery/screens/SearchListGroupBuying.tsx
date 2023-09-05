@@ -1,19 +1,18 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
-import {APP_EVENT, POST_SEARCH, STATUS} from 'asset/enum';
+import {APP_EVENT, STATUS} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
-import {useAppEvent, usePaging} from 'hook';
+import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
 import isEqual from 'react-fast-compare';
 import {View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {onReactSale} from 'utility/assistant';
 import {scale} from 'utility/scale';
 
 const SearchListGroupBuying = () => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const {searchParams} = useAppSelector(state => state.logicSlice);
 
   const {
@@ -29,7 +28,7 @@ const SearchListGroupBuying = () => {
     request: apiSearch,
     params: {
       ...searchParams,
-      post_search: POST_SEARCH.group_buying,
+      post_search: 'sale',
     },
     isInitNotRunRequest: true,
   });
@@ -71,7 +70,7 @@ const SearchListGroupBuying = () => {
     if (!isEqual(searchParams, {})) {
       setParams({
         ...searchParams,
-        post_search: POST_SEARCH.group_buying,
+        post_search: 'sale',
       });
     }
   }, [searchParams]);

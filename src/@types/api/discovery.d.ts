@@ -106,8 +106,9 @@ interface TypeGetTopReviewerResponse {
 }
 
 interface TypeSearchRequest {
-  post_search: number;
-  location?: string;
+  post_search: 'tour' | 'sale' | 'shop';
+  text_search: string;
+  //   location?: string;
   start_location?: string;
   number_people?: number;
   services?: Array<number>;
@@ -125,7 +126,7 @@ interface TourDetail {
   services: number[];
   transports: Array<number>;
   hotel: null;
-  location: string;
+  name: string;
   start_location: string;
   number_people: number;
   start_time: string;
@@ -143,7 +144,7 @@ interface TourDetail {
 type Tour = Pick<
   TourDetail,
   | 'id'
-  | 'location'
+  | 'name'
   | 'number_people'
   | 'start_price'
   | 'end_price'
@@ -159,7 +160,7 @@ type TypeCreateTour = {
   schedule: number[][];
   input_tour: Pick<
     TourDetail,
-    | 'location'
+    | 'name'
     | 'start_location'
     | 'number_people'
     | 'start_price'
@@ -178,7 +179,7 @@ type TypeCreateTourResponse = {
 type TypeEditTour = Partial<
   Pick<
     TourDetail,
-    | 'location'
+    | 'name'
     | 'start_location'
     | 'number_people'
     | 'start_price'

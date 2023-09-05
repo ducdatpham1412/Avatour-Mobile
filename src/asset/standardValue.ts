@@ -198,7 +198,7 @@ export const FONT_WEIGHT_MEDIUM = '500';
 /**
  * ratio = height / width
  */
-export const ratioImageTour = 144 / 200;
+export const ratioImageTour = 130 / 200;
 export const ratioImageSale = 232 / 319;
 export const ratioAvatarLocation = 153 / 341;
 

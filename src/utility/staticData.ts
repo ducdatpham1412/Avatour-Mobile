@@ -1,7 +1,7 @@
 import {TOPIC} from 'asset/enum';
 
 export const defaultSearchParams: TypeSearchParams = {
-  location: 'Ha Noi',
+  text_search: '',
   start_location: 'Ha Noi',
   number_people: 4,
   services: [TOPIC.food, TOPIC.backpacking],
