@@ -109,7 +109,7 @@ const CreatePostPickImage = ({route}: Props) => {
         maxHeight: width * ratioImageSale,
       });
       const newListImages = images.concat({
-        url: image.sourceURL ?? image.path,
+        url: image.path ?? image.sourceURL,
         width: image.width,
         height: image.height,
       });

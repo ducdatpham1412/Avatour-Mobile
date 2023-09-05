@@ -35,7 +35,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
           try {
             setTimeout(async () => {
               const res = await ImageUploader.pickCamera();
-              setAvatar(res?.sourceURL ?? res?.path);
+              setAvatar(res?.path ?? res?.sourceURL);
             }, 200);
           } catch (err) {
             logger(err);
@@ -48,7 +48,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
           try {
             setTimeout(async () => {
               const res = await ImageUploader.pickLibrary();
-              setAvatar(res?.sourceURL ?? res?.path);
+              setAvatar(res?.path ?? res?.sourceURL);
             }, 200);
           } catch (err) {
             logger(err);

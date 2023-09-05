@@ -33,6 +33,7 @@ import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Title, TitleAndInput} from './components';
 import {ParamsCreateLocation, useCreateLocation} from './hooks';
+import {LoadingScreen} from './screens';
 
 const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
   ModalActionSheet.show({
@@ -46,7 +47,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
                 maxWidth: imageWidth,
                 maxHeight: imageWidth * ratioAvatarLocation,
               });
-              setAvatar(res?.sourceURL ?? res?.path);
+              setAvatar(res?.path ?? res?.sourceURL);
             }, 200);
           } catch (err) {
             logger(err);
@@ -62,7 +63,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
                 maxWidth: imageWidth,
                 maxHeight: imageWidth * ratioAvatarLocation,
               });
-              setAvatar(res?.sourceURL ?? res?.path);
+              setAvatar(res?.path ?? res?.sourceURL);
             }, 200);
           } catch (err) {
             logger(err);
@@ -165,198 +166,201 @@ const CreateLocation = ({
     );
 
   return (
-    <StyleContainer
-      headerProps={{
-        title: 'discovery.addLocation',
-        onGoBack: () => {
-          ModalAlert.options({
-            i18Content: 'common.wantToDiscard',
-            onContinue: goBack,
-          });
-        },
-      }}
-      backgroundColor={theme.white}
-      customStyle={[$container, {paddingBottom: bottom}]}
-      scrollEnabled
-      BottomComponent={
-        <View
-          style={[
-            $bottom,
-            {
-              shadowColor: theme.gray_500,
-              paddingBottom: bottom,
-              backgroundColor: theme.white,
-            },
-          ]}>
-          <StyleButton
-            containerStyle={$button}
-            title="common.suggest"
-            isLoading={loadingSave}
-            disable={disable}
-            onPress={() => onSave(save)}
-          />
-        </View>
-      }>
-      <View style={$imageView}>
-        <StyleTouchable
-          customStyle={$image}
-          onPress={() => {
-            if (avatar) {
-              seeDetailImage({
-                images: [avatar],
-              });
-            }
-          }}>
-          <StyleImage
-            source={{
-              uri: avatar,
-            }}
-            customStyle={[$image, {backgroundColor: theme.gray_100}]}
-            defaultImageSource="image"
-          />
-        </StyleTouchable>
-        <StyleTouchable
-          customStyle={[$buttonCamera, {backgroundColor: theme.gray_200}]}
-          onPress={() => onShowOptionAvatar(setAvatar)}>
-          <StyleIcon
-            source={Images.icons.camera}
-            size={24}
-            tintColor={theme.black}
-          />
-        </StyleTouchable>
-      </View>
-
-      <TitleAndInput
-        title="discovery.name"
-        textInputProps={{
-          defaultValue: name,
-          placeholder: t('discovery.name'),
-          onChangeText: text => setName(text),
-        }}
-      />
-
-      <TitleAndInput
-        title="profile.address"
-        containerStyle={$element}
-        textInputProps={{
-          placeholder: t('discovery.homeAddress'),
-          onChangeText: text => setAddress(text),
-        }}
-      />
-
-      <TitleAndInput
-        title={
-          `${t('discovery.durationHere')} (${t(
-            'discovery.hour',
-          )})` as I18Normalize
-        }
-        containerStyle={$element}
-        textInputProps={{
-          placeholder: '2h',
-          keyboardType: 'numeric',
-          value: formatLocaleNumber(duration),
-          onChangeText: text => {
-            const temp = formatInputNumber(text, {isDecimal: true});
-            if (temp !== null) {
-              setDuration(temp);
-            }
+    <>
+      <StyleContainer
+        headerProps={{
+          title: 'discovery.addLocation',
+          onGoBack: () => {
+            ModalAlert.options({
+              i18Content: 'common.wantToDiscard',
+              onContinue: goBack,
+            });
           },
         }}
-      />
-
-      <TickBox
-        title="profile.price"
-        listOptions={listOptions}
-        listChosen={[{id: typePrice, text: 'common.null'}]}
-        onPressOption={option => {
-          if (option.id !== typePrice) {
-            impactLight();
-            setTypePrice(option.id as TypeLocationPrice);
-          }
-        }}
-        containerStyle={$element}
-        layOut="grid"
-        mandatory
-      />
-      {typePrice === 'paid' && (
-        <View style={$inputPrice}>
-          <View style={$inputBox}>
-            <TitleAndInput
-              title="discovery.minCost"
-              textInputProps={{
-                placeholder: '50,000 vnd',
-                value: formatLocaleNumber(minCost),
-                onChangeText: text => {
-                  const temp = formatInputNumber(text);
-                  if (temp !== null) {
-                    setMinCost(temp);
-                  }
-                },
-                keyboardType: 'numeric',
-              }}
+        backgroundColor={theme.white}
+        customStyle={[$container, {paddingBottom: bottom}]}
+        scrollEnabled
+        BottomComponent={
+          <View
+            style={[
+              $bottom,
+              {
+                shadowColor: theme.gray_500,
+                paddingBottom: bottom,
+                backgroundColor: theme.white,
+              },
+            ]}>
+            <StyleButton
+              containerStyle={$button}
+              title="common.suggest"
+              disable={disable}
+              onPress={() => onSave(save)}
             />
           </View>
-          <View style={{width: scale(16)}} />
-          <View style={$inputBox}>
-            <TitleAndInput
-              title="discovery.maxCost"
-              textInputProps={{
-                placeholder: '200,000 vnd',
-                value: formatLocaleNumber(maxCost),
-                onChangeText: text => {
-                  const temp = formatInputNumber(text);
-                  if (temp !== null) {
-                    setMaxCost(temp);
-                  }
-                },
-                keyboardType: 'numeric',
+        }>
+        <View style={$imageView}>
+          <StyleTouchable
+            customStyle={$image}
+            onPress={() => {
+              if (avatar) {
+                seeDetailImage({
+                  images: [avatar],
+                });
+              }
+            }}>
+            <StyleImage
+              source={{
+                uri: avatar,
               }}
+              customStyle={[$image, {backgroundColor: theme.gray_100}]}
+              defaultImageSource="image"
             />
-          </View>
+          </StyleTouchable>
+          <StyleTouchable
+            customStyle={[$buttonCamera, {backgroundColor: theme.gray_200}]}
+            onPress={() => onShowOptionAvatar(setAvatar)}>
+            <StyleIcon
+              source={Images.icons.camera}
+              size={24}
+              tintColor={theme.black}
+            />
+          </StyleTouchable>
         </View>
-      )}
 
-      <TickBox
-        title="discovery.chooseTopic"
-        listOptions={LIST_TOPICS.map(item => ({
-          id: item.id,
-          text: item.text,
-        }))}
-        listChosen={LIST_TOPICS.filter(item => {
-          return services.includes(item.id);
-        })}
-        onPressOption={option => {
-          if (services.includes(option.id as number)) {
-            if (services.length === 1) {
-              return;
-            }
-            impactLight();
-            setServices(pre => pre.filter(id => id !== option.id));
-          } else {
-            impactLight();
-            setServices(pre => pre.concat([option.id as number]));
-          }
-        }}
-        containerStyle={$element}
-        layOut="grid"
-        mandatory
-        pick="check-box"
-      />
-
-      <Title title="profile.description" mandatory={false} style={$element} />
-      <StyleTouchable
-        customStyle={[$description, {borderColor: theme.gray_300}]}
-        activeOpacity={1}
-        onPress={() => inputDescriptionRef.current?.focus()}>
-        <AppInput
-          ref={inputDescriptionRef}
-          style={$inputDescription}
-          multiline
-          placeholder={t('profile.locationDescription')}
-          onChangeText={text => setDescription(text)}
+        <TitleAndInput
+          title="discovery.name"
+          textInputProps={{
+            defaultValue: name,
+            placeholder: t('discovery.name'),
+            onChangeText: text => setName(text),
+          }}
         />
-      </StyleTouchable>
-    </StyleContainer>
+
+        <TitleAndInput
+          title="profile.address"
+          containerStyle={$element}
+          textInputProps={{
+            placeholder: t('discovery.homeAddress'),
+            onChangeText: text => setAddress(text),
+          }}
+        />
+
+        <TitleAndInput
+          title={
+            `${t('discovery.durationHere')} (${t(
+              'discovery.hour',
+            )})` as I18Normalize
+          }
+          containerStyle={$element}
+          textInputProps={{
+            placeholder: '2h',
+            keyboardType: 'numeric',
+            value: formatLocaleNumber(duration),
+            onChangeText: text => {
+              const temp = formatInputNumber(text, {isDecimal: true});
+              if (temp !== null) {
+                setDuration(temp);
+              }
+            },
+          }}
+        />
+
+        <TickBox
+          title="profile.price"
+          listOptions={listOptions}
+          listChosen={[{id: typePrice, text: 'common.null'}]}
+          onPressOption={option => {
+            if (option.id !== typePrice) {
+              impactLight();
+              setTypePrice(option.id as TypeLocationPrice);
+            }
+          }}
+          containerStyle={$element}
+          layOut="grid"
+          mandatory
+        />
+        {typePrice === 'paid' && (
+          <View style={$inputPrice}>
+            <View style={$inputBox}>
+              <TitleAndInput
+                title="discovery.minCost"
+                textInputProps={{
+                  placeholder: '50,000 vnd',
+                  value: formatLocaleNumber(minCost),
+                  onChangeText: text => {
+                    const temp = formatInputNumber(text);
+                    if (temp !== null) {
+                      setMinCost(temp);
+                    }
+                  },
+                  keyboardType: 'numeric',
+                }}
+              />
+            </View>
+            <View style={{width: scale(16)}} />
+            <View style={$inputBox}>
+              <TitleAndInput
+                title="discovery.maxCost"
+                textInputProps={{
+                  placeholder: '200,000 vnd',
+                  value: formatLocaleNumber(maxCost),
+                  onChangeText: text => {
+                    const temp = formatInputNumber(text);
+                    if (temp !== null) {
+                      setMaxCost(temp);
+                    }
+                  },
+                  keyboardType: 'numeric',
+                }}
+              />
+            </View>
+          </View>
+        )}
+
+        <TickBox
+          title="discovery.chooseTopic"
+          listOptions={LIST_TOPICS.map(item => ({
+            id: item.id,
+            text: item.text,
+          }))}
+          listChosen={LIST_TOPICS.filter(item => {
+            return services.includes(item.id);
+          })}
+          onPressOption={option => {
+            if (services.includes(option.id as number)) {
+              if (services.length === 1) {
+                return;
+              }
+              impactLight();
+              setServices(pre => pre.filter(id => id !== option.id));
+            } else {
+              impactLight();
+              setServices(pre => pre.concat([option.id as number]));
+            }
+          }}
+          containerStyle={$element}
+          layOut="grid"
+          mandatory
+          pick="check-box"
+        />
+
+        <Title title="profile.description" mandatory={false} style={$element} />
+        <StyleTouchable
+          customStyle={[$description, {borderColor: theme.gray_300}]}
+          activeOpacity={1}
+          onPress={() => inputDescriptionRef.current?.focus()}>
+          <AppInput
+            ref={inputDescriptionRef}
+            style={$inputDescription}
+            multiline
+            placeholder={t('profile.locationDescription')}
+            onChangeText={text => setDescription(text)}
+          />
+        </StyleTouchable>
+      </StyleContainer>
+
+      {loadingSave && <LoadingScreen />}
+    </>
   );
 };
 
