@@ -45,10 +45,12 @@ const $textName: TextStyle = {
   fontSize: FONT_SIZE.f1,
   marginTop: verticalScale(4),
   fontWeight: FONT_WEIGHT_MEDIUM,
+  paddingHorizontal: scale(2),
 };
 const $textDescription: TextStyle = {
   marginTop: 0,
   fontSize: FONT_SIZE.f3,
+  paddingHorizontal: scale(2),
 };
 
 export default ItemHotLocation;

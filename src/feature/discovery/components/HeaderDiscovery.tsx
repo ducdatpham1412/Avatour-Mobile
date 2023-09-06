@@ -7,10 +7,7 @@ import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {Avatar} from 'components/common';
 import {useEstimatesAndJoinings, useTheme} from 'hook';
-import ROOT_SCREEN, {
-  MAIN_SCREEN,
-  PROFILE_ROUTE,
-} from 'navigation/config/routes';
+import ROOT_SCREEN, {MAIN_SCREEN} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import React, {useEffect, useRef} from 'react';
 import {
@@ -82,14 +79,7 @@ const IconHavingEstimate = ({estimates}: IconEstimateProps) => {
   return (
     <StyleTouchable
       customStyle={[$newEstimateBox, {backgroundColor: theme.white}]}
-      onPress={() =>
-        navigate(MAIN_SCREEN.profileRoute, {
-          screen: PROFILE_ROUTE.myProfile,
-          params: {
-            initIndex: 'order',
-          },
-        })
-      }>
+      onPress={() => navigate(MAIN_SCREEN.orderRoute)}>
       <Animated.View
         style={[$newEstimateBox, {transform: [{scale}, {translateX}]}]}>
         <StyleIcon
@@ -131,7 +121,7 @@ const HeaderDiscovery = () => {
   return (
     <View style={$container}>
       <View style={$leftView}>
-        {!!estimates?.length ? (
+        {estimates?.length ? (
           <IconHavingEstimate estimates={estimates} />
         ) : (
           <Avatar source={{uri: profile.avatar}} style={$avatar} size={48} />

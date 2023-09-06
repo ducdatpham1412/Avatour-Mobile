@@ -11,7 +11,6 @@ export enum RELATIONSHIP {
   notFollowing = 1,
   following = 2,
   block = 3,
-  notKnow = 10,
 }
 
 export enum RELATIONSHIP_GROUP {
@@ -346,6 +345,7 @@ export enum APP_EVENT {
   createNewSale = 'create-new-sale',
   editSale = 'edit-sale',
   confirmArrived = 'confirm-arrived',
+  followUser = 'follow-user',
 }
 
 export enum TYPE_AUTH_REQUEST {

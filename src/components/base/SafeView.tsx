@@ -1,6 +1,6 @@
 import {useTheme} from 'hook';
 import React from 'react';
-import {Text, View, ViewProps, ViewStyle} from 'react-native';
+import {View, ViewProps, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type Props = ViewProps & {

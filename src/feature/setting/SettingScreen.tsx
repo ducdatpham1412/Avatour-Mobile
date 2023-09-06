@@ -71,11 +71,13 @@ const SettingScreen = () => {
         onPress={onLogOut}
       />
 
-      <TypeMainSetting
-        icon={Images.icons.apple}
-        title={'(DEV) Svg Icons' as I18Normalize}
-        onPress={() => navigate(ROOT_SCREEN.svgIcons)}
-      />
+      {__DEV__ && (
+        <TypeMainSetting
+          icon={Images.icons.apple}
+          title={'(DEV) Svg Icons' as I18Normalize}
+          onPress={() => navigate(ROOT_SCREEN.svgIcons)}
+        />
+      )}
     </StyleContainer>
   );
 };

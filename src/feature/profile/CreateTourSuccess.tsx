@@ -37,7 +37,7 @@ const CreateTourSuccess = ({
         i18Content: 'discovery.suggestHaveBeenAcknowledged',
         icon: <StyleIcon source={Images.icons.nice} size={80} />,
         onClose: () => {
-          navigate(MAIN_SCREEN.favorite);
+          navigate(MAIN_SCREEN.orderRoute);
         },
       });
     } catch (err) {
@@ -77,7 +77,7 @@ const CreateTourSuccess = ({
           ]}
           titleStyle={{color: theme.black}}
           title="tour.myTours"
-          onPress={() => navigate(MAIN_SCREEN.favorite)}
+          onPress={() => navigate(MAIN_SCREEN.orderRoute)}
         />
         {isTourActive && (
           <>

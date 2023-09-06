@@ -795,9 +795,9 @@ const DetailMeJoin = ({
       return (
         <>
           <StyleText
-            originValue={`${t('discovery.appliedPrice')} ${t(
+            originValue={`${t('discovery.appliedPrice')} (${t(
               'discovery.estimate',
-            )}`}
+            )})`}
             customStyle={$textApplied}
           />
           <StyleText
@@ -893,14 +893,10 @@ const DetailMeJoin = ({
 
     return (
       <>
-        <StyleText i18Text="discovery.appliedPrice" customStyle={$textApplied}>
-          {isEstimate && (
-            <StyleText
-              originValue={` (${t('discovery.estimate')})`}
-              customStyle={$textApplied}
-            />
-          )}
-        </StyleText>
+        <StyleText
+          i18Text="discovery.appliedPrice"
+          customStyle={$textApplied}
+        />
         <StyleText
           i18Text={
             isEstimate ? 'discovery.beInGroupEstimate' : 'discovery.beInGroup'

@@ -10,8 +10,8 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {StyleText, StyleTouchable} from './base';
 import {verticalScale} from 'utility/scale';
+import {StyleText, StyleTouchable} from './base';
 
 interface Props {
   value: any;
@@ -33,9 +33,7 @@ const StyleMoreText = (props: Props) => {
   } = props;
 
   const [saveNumber, setSaveNumber] = useState(0);
-  const [numberOfLines, setNumberOfLines] = useState<number | undefined>(
-    undefined,
-  );
+  const [numberOfLines, setNumberOfLines] = useState<number>();
   const displayButton = !!saveNumber && saveNumber > maxRows;
   const isShowMore = displayButton && numberOfLines === maxRows;
 
@@ -48,14 +46,14 @@ const StyleMoreText = (props: Props) => {
         }
       }
     },
-    [numberOfLines],
+    [numberOfLines, maxRows],
   );
 
   useEffect(() => {
     setNumberOfLines(undefined);
   }, [value]);
 
-  const RenderButtonShowMoreOrLess = () => {
+  const renderButtonShowMoreOrLess = () => {
     const text = isShowMore ? 'common.seeMore' : 'common.seeLess';
 
     const onPressText = () => {
@@ -97,7 +95,7 @@ const StyleMoreText = (props: Props) => {
         />
       </ScrollView>
 
-      {displayButton && RenderButtonShowMoreOrLess()}
+      {displayButton && renderButtonShowMoreOrLess()}
     </View>
   );
 };
@@ -107,9 +105,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   textSeeMoreOrLess: {
-    fontSize: 12,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginTop: verticalScale(12),
     fontStyle: 'italic',
   },
 });

@@ -1,4 +1,4 @@
-import {apiGetListToursFavorite} from 'api/discovery';
+import {apiGetListTours} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour, Separator} from 'components';
@@ -7,14 +7,14 @@ import {usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {ViewStyle} from 'react-native';
 
-const FavoriteTours = () => {
+const MyTours = () => {
   const {bottom} = useSafeArea();
   const {id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
 
   const {list, refreshing, onRefresh, onLoadMore, initLoading} = usePaging({
-    request: apiGetListToursFavorite,
+    request: apiGetListTours,
     params: {
       user_id: myId,
     },
@@ -45,4 +45,4 @@ const $content: ViewStyle = {
   flexGrow: 1,
 };
 
-export default FavoriteTours;
+export default MyTours;

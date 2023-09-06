@@ -1,13 +1,12 @@
 import {apiGetListGroupBuying} from 'api/profile';
 import {ACCOUNT, APP_EVENT, STATUS} from 'asset/enum';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
-import {ItemSale} from 'components';
+import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {ItemSale, Separator} from 'components';
 import {StyleList} from 'components/base';
-import {useAppEvent, usePaging} from 'hook';
+import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {View, ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
-import {scale} from 'utility/scale';
 
 interface Props {
   userId: number;
@@ -15,6 +14,8 @@ interface Props {
 }
 
 const ListSalesSupplier = ({userId}: Props) => {
+  const {bottom} = useSafeArea();
+
   const {
     list,
     setList,
@@ -67,7 +68,7 @@ const ListSalesSupplier = ({userId}: Props) => {
     });
   });
 
-  const renderItemSale = useCallback((item: TypeGroupBuying, index: number) => {
+  const renderItemSale = useCallback((item: TypeGroupBuying) => {
     return (
       <ItemSale
         item={item}
@@ -77,7 +78,6 @@ const ListSalesSupplier = ({userId}: Props) => {
             setList,
           })
         }
-        containerStyle={{marginLeft: index % 2 !== 0 ? scale(7) : 0}}
         hidingElements={['location']}
       />
     );
@@ -86,9 +86,9 @@ const ListSalesSupplier = ({userId}: Props) => {
   return (
     <StyleList
       data={list}
-      contentContainerStyle={$contentContainer}
+      contentContainerStyle={[$contentContainer, {paddingBottom: bottom}]}
       keyExtractor={item => String(item?.id)}
-      renderItem={({item, index}) => renderItemSale(item, index)}
+      renderItem={({item}) => renderItemSale(item)}
       refreshing={refreshing}
       loadingMore={loadingMore}
       onRefresh={onRefresh}
@@ -96,6 +96,8 @@ const ListSalesSupplier = ({userId}: Props) => {
       numColumns={2}
       initialNumToRender={6}
       initLoading={initLoading}
+      columnWrapperStyle={{justifyContent: 'space-between'}}
+      ItemSeparatorComponent={Separator}
     />
   );
 };
@@ -118,8 +120,8 @@ const $container: ViewStyle = {
 };
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
-  paddingBottom: safePaddingNotZero,
-  paddingHorizontal: horizontalPadding,
+  paddingHorizontal: newHorizontalPadding,
+  paddingTop: safePaddingNotZero,
 };
 
 export default ListSales;

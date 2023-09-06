@@ -1,67 +1,133 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset/standardValue';
+import {IconClock, IconLocation, IconPrice} from 'asset/icons';
+import {Metrics, newHorizontalPadding, verticalMargin} from 'asset/metrics';
 import {
-  SquareButton,
-  StyleImage,
-  StyleText,
-  StyleTouchable,
-} from 'components/base';
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+  ratioAvatarLocation,
+} from 'asset/standardValue';
+import {SquareButton, StyleText, StyleTouchable} from 'components/base';
+import dayjs from 'dayjs';
 import {useTheme} from 'hook';
 import {navigate, push} from 'navigation/NavigationService';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import React from 'react';
-import {
-  ImageStyle,
-  LayoutChangeEvent,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {LayoutChangeEvent, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {seeDetailImage} from 'utility/assistant';
+import {formatLocaleNumber, formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useOtherProfile} from '../hooks';
+import ScrollCropImages from './ScrollCropImages';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 
 interface Props {
-  profile?: TypeGetProfileResponse;
+  profile: TypeGetProfileResponse;
   onLayOut?: (e: LayoutChangeEvent) => void;
 }
 
-interface ButtonOtherProfileProps {
-  id: number;
+interface ComponentProps {
+  profile: TypeGetProfileResponse;
 }
 
-const avatarSize = Metrics.width / 3.5;
+const {width} = Metrics;
 
-const ButtonOtherProfile = ({id}: ButtonOtherProfileProps) => {
+const onNavigateFollow = (
+  type: 'follower' | 'following',
+  profile: TypeGetProfileResponse,
+) => {
+  push(ROOT_SCREEN.listFollows, {
+    initTab: type,
+    profile,
+  });
+};
+
+const formatTime = (time: number) => {
+  return String(time).replace('.', ':');
+};
+
+const ButtonOtherProfile = ({profile}: ComponentProps) => {
   const theme = useTheme();
-  const [{isFollowing, loadingFollow, data}, {follow}] = useOtherProfile(id);
-  const isShopAccount = data?.account_type === ACCOUNT.shop;
+  const [
+    {isFollowing, isBlocked, loadingFollow, data},
+    {follow, block, report},
+  ] = useOtherProfile(profile.id, {
+    initValue: profile,
+  });
+  const haveCheckIn =
+    data?.account_type === ACCOUNT.shop ||
+    data?.account_type === ACCOUNT.location;
+
+  const onShowModalOptions = async () => {
+    if (isFollowing) {
+      if (!isBlocked) {
+        ModalActionSheet.show({
+          options: [
+            {
+              title: isFollowing ? 'profile.unFollow' : 'profile.follow',
+              onPress: () => {
+                try {
+                  follow();
+                } catch (err) {
+                  ModalAlert.error({
+                    content: err,
+                  });
+                }
+              },
+            },
+            {
+              title: isBlocked ? 'profile.unBlock' : 'profile.block',
+              onPress: () => {
+                try {
+                  block();
+                } catch (err) {
+                  ModalAlert.error({
+                    content: err,
+                  });
+                }
+              },
+            },
+            {
+              title: 'profile.report',
+              onPress: report,
+            },
+          ],
+        });
+      }
+      return;
+    }
+
+    try {
+      await follow();
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
+  };
 
   return (
     <View style={$buttonView}>
       <SquareButton
         containerStyle={$buttonTouch}
         titleStyle={$textButton}
-        title={isFollowing ? 'profile.unFollow' : 'profile.follow'}
+        title={isFollowing ? 'profile.following' : 'profile.follow'}
         loading={loadingFollow}
-        onPress={follow}
+        onPress={onShowModalOptions}
       />
-      {isShopAccount && (
+      {haveCheckIn && (
         <SquareButton
           containerStyle={[
             $buttonTouch,
             {
               backgroundColor: theme.p_600,
-              marginLeft: 5,
+              marginLeft: scale(8),
             },
           ]}
-          titleStyle={[$textButton, {color: theme.white}]}
-          title="profile.reviewProvider"
+          titleStyle={[$textButton, {color: theme.white, fontWeight: 'bold'}]}
+          title="profile.checkIn"
           icon={
             <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
           }
@@ -71,45 +137,109 @@ const ButtonOtherProfile = ({id}: ButtonOtherProfileProps) => {
   );
 };
 
-const InformationProfile = ({profile, onLayOut}: Props) => {
+const Button = ({profile}: ComponentProps) => {
   const theme = useTheme();
-  const myId = useAppSelector(state => state.accountSlice.passport.profile.id);
-
-  if (!profile) {
-    return <View style={[$container, {backgroundColor: theme.gray_200}]} />;
-  }
-
-  const {
-    name,
-    description,
-    followers,
-    followings,
-    avatar,
-    account_type,
-    average_stars,
-    id,
-  } = profile;
-
+  const {id: myId} = useAppSelector(
+    state => state.accountSlice.passport.profile,
+  );
+  const {account_type, id} = profile;
   const isShopAccount = account_type === ACCOUNT.shop;
   const isMyProfile = myId === id;
 
-  const onNavigateFollow = (type: 'follower' | 'following') => {
-    push(ROOT_SCREEN.listFollows, {
-      userId: id,
-      name,
-      initTab: type,
-    });
-  };
-
-  const renderStars = () => {
-    if (average_stars <= 0 || average_stars > 5 || !isShopAccount) {
-      return null;
-    }
-    const arrayStars = Array(Math.floor(5)).fill(0);
+  if (isMyProfile) {
     return (
+      <View style={$buttonView}>
+        <SquareButton
+          containerStyle={$buttonTouch}
+          titleStyle={$textButton}
+          title="common.edit"
+          onPress={() => {
+            navigate(ROOT_SCREEN.editProfile);
+          }}
+        />
+
+        <SquareButton
+          containerStyle={[
+            $buttonTouch,
+            {
+              backgroundColor: isShopAccount ? theme.gray_100 : theme.p_600,
+              marginLeft: scale(8),
+            },
+          ]}
+          titleStyle={[
+            $textButton,
+            {
+              color: isShopAccount ? theme.black : theme.white,
+              fontWeight: isShopAccount ? FONT_WEIGHT_MEDIUM : 'bold',
+            },
+          ]}
+          title="profile.createTour"
+          onPress={() => {
+            navigate(PROFILE_ROUTE.createTour);
+          }}
+          icon={
+            <Entypo
+              name="plus"
+              style={[
+                $iconPlus,
+                {color: isShopAccount ? theme.black : theme.white},
+              ]}
+            />
+          }
+        />
+
+        {isShopAccount && (
+          <SquareButton
+            containerStyle={[
+              $buttonTouch,
+              {
+                backgroundColor: theme.p_600,
+                marginLeft: scale(8),
+              },
+            ]}
+            titleStyle={[$textButton, {color: theme.white, fontWeight: 'bold'}]}
+            onPress={() => {
+              navigate(PROFILE_ROUTE.createPostPickImg, {
+                mode: 'sale',
+              });
+            }}
+            title="profile.postGroupBuying"
+            icon={
+              <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+            }
+          />
+        )}
+      </View>
+    );
+  }
+
+  return <ButtonOtherProfile profile={profile} />;
+};
+
+const InformationSupplier = ({profile}: ComponentProps) => {
+  const theme = useTheme();
+  const arrayStars = Array(Math.floor(5)).fill(0);
+  const now = dayjs();
+  const hourNow = Number(`${now.hour()}.${now.minute()}`);
+  const isOpening = hourNow > profile.start_time && hourNow < profile.end_time;
+
+  return (
+    <View style={$introduceView}>
+      {!!profile.name && (
+        <StyleText customStyle={$textName} originValue={profile?.name} />
+      )}
+
+      <View style={$locationBox}>
+        <IconLocation tintColor={theme.gray_500} />
+        <StyleText
+          originValue={profile?.location}
+          customStyle={[$textLocation, {color: theme.gray_500}]}
+        />
+      </View>
+
       <View style={$starBox}>
         {arrayStars.map((_, index) => {
-          const isStar = index + 1 <= average_stars;
+          const isStar = index + 1 <= profile?.average_stars;
           return (
             <AntDesign
               key={index}
@@ -118,200 +248,218 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
             />
           );
         })}
-        <StyleText
-          originValue={`${average_stars} / 5`}
-          customStyle={[$textNumberStar, {color: theme.gray_500}]}
-        />
+        {profile?.average_stars ? (
+          <StyleText
+            originValue={`${profile.average_stars} / 5`}
+            customStyle={[$textNumberStar, {color: theme.gray_500}]}
+          />
+        ) : (
+          <StyleText
+            i18Text="profile.noReviewYet"
+            customStyle={[$textNumberStar, {color: theme.gray_500}]}
+          />
+        )}
       </View>
-    );
-  };
 
-  const renderButton = () => {
-    if (isMyProfile) {
-      return (
-        <View style={$buttonView}>
-          <SquareButton
-            containerStyle={$buttonTouch}
-            titleStyle={$textButton}
-            title="common.edit"
-            onPress={() => {
-              navigate(ROOT_SCREEN.editProfile);
-            }}
+      <View style={$followBox}>
+        <StyleTouchable
+          customStyle={$elementFollow}
+          onPress={() => onNavigateFollow('follower', profile)}>
+          <StyleText
+            i18Text="profile.follower"
+            customStyle={[$textFollow, {color: theme.gray_500}]}
           />
-
-          <SquareButton
-            containerStyle={[
-              $buttonTouch,
-              {
-                backgroundColor: isShopAccount ? theme.gray_300 : theme.p_600,
-                marginLeft: 5,
-              },
-            ]}
-            titleStyle={[
-              $textButton,
-              {
-                color: isShopAccount ? theme.black : theme.white,
-                fontWeight: isShopAccount ? FONT_WEIGHT_MEDIUM : 'bold',
-              },
-            ]}
-            title="profile.createTour"
-            onPress={() => {
-              navigate(PROFILE_ROUTE.createTour);
-            }}
-            icon={
-              <Entypo
-                name="plus"
-                style={[
-                  $iconPlus,
-                  {color: isShopAccount ? theme.black : theme.white},
-                ]}
-              />
-            }
+          <StyleText
+            originValue={profile.followers}
+            customStyle={$numberFollow}
           />
+        </StyleTouchable>
 
-          {isShopAccount && (
-            <SquareButton
-              containerStyle={[
-                $buttonTouch,
-                {
-                  backgroundColor: theme.p_600,
-                  marginLeft: 5,
-                },
-              ]}
-              titleStyle={[
-                $textButton,
-                {color: theme.white, fontWeight: 'bold'},
-              ]}
-              onPress={() => {
-                navigate(PROFILE_ROUTE.createPostPickImg, {
-                  mode: 'sale',
-                });
-              }}
-              title="profile.postGroupBuying"
-              icon={
-                <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
-              }
-            />
-          )}
+        <StyleTouchable
+          customStyle={[$elementFollow, {marginLeft: scale(20)}]}
+          onPress={() => onNavigateFollow('following', profile)}>
+          <StyleText
+            i18Text="profile.following"
+            customStyle={[$textFollow, {color: theme.gray_500}]}
+          />
+          <StyleText
+            originValue={profile.followings}
+            customStyle={$numberFollow}
+          />
+        </StyleTouchable>
+      </View>
+
+      <Button profile={profile} />
+
+      <StyleText
+        i18Text={isOpening ? 'profile.opening' : 'profile.closing'}
+        customStyle={[$openClose, {color: isOpening ? theme.green : theme.red}]}
+      />
+      <StyleText
+        originValue={`${formatTime(profile.start_time)} - ${profile.end_time}`}
+      />
+      <View style={$moreInfoBox}>
+        <IconClock size={18} tintColor={theme.black} />
+        <StyleText
+          customStyle={[$textMoreInfo, {marginLeft: scale(4)}]}
+          i18Text="profile.enjoyTime">
+          <StyleText
+            originValue={`: ${profile.duration}h`}
+            customStyle={[$textMoreInfo, {fontWeight: FONT_WEIGHT_MEDIUM}]}
+          />
+        </StyleText>
+      </View>
+      {profile.account_type === ACCOUNT.shop && (
+        <View style={$moreInfoBox}>
+          <IconPrice size={18} tintColor={theme.black} />
+          <StyleText
+            customStyle={[
+              $textMoreInfo,
+              {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
+            ]}
+            originValue={`${formatLocaleNumber(
+              profile.min_cost,
+            )} - ${formatMoney(profile.max_cost)}`}
+          />
         </View>
-      );
-    }
+      )}
 
-    return <ButtonOtherProfile id={id} />;
+      {/* TODO: Check see more text here */}
+      {!!profile.description && (
+        <StyleText
+          originValue={profile.description}
+          customStyle={$textDescription}
+          numberOfLines={3}
+        />
+      )}
+    </View>
+  );
+};
+
+const InformationUser = ({profile}: ComponentProps) => {
+  const theme = useTheme();
+
+  return (
+    <View style={$introduceView}>
+      {!!profile.name && (
+        <StyleText customStyle={$textName} originValue={profile?.name} />
+      )}
+      <View style={$followBox}>
+        <StyleTouchable
+          customStyle={$elementFollow}
+          onPress={() => onNavigateFollow('follower', profile)}>
+          <StyleText
+            i18Text="profile.follower"
+            customStyle={[$textFollow, {color: theme.gray_500}]}
+          />
+          <StyleText
+            originValue={profile.followers}
+            customStyle={$numberFollow}
+          />
+        </StyleTouchable>
+
+        <StyleTouchable
+          customStyle={[$elementFollow, {marginLeft: scale(20)}]}
+          onPress={() => onNavigateFollow('following', profile)}>
+          <StyleText
+            i18Text="profile.following"
+            customStyle={[$textFollow, {color: theme.gray_500}]}
+          />
+          <StyleText
+            originValue={profile.followings}
+            customStyle={$numberFollow}
+          />
+        </StyleTouchable>
+      </View>
+
+      <Button profile={profile} />
+
+      {!!profile.description && (
+        <StyleText
+          originValue={profile.description}
+          customStyle={$textDescription}
+          numberOfLines={3}
+        />
+      )}
+    </View>
+  );
+};
+
+const InformationProfile = ({profile, onLayOut}: Props) => {
+  const {avatar, account_type} = profile;
+
+  const isShopAccount = account_type === ACCOUNT.shop;
+
+  const renderContent = () => {
+    if (isShopAccount || account_type === ACCOUNT.location) {
+      return <InformationSupplier profile={profile} />;
+    }
+    return <InformationUser profile={profile} />;
   };
 
   return (
     <View style={$container} onLayout={onLayOut}>
-      <View style={$introduceView}>
-        <StyleTouchable
-          onPress={() =>
-            seeDetailImage({
-              images: [avatar],
-            })
-          }>
-          <StyleImage source={{uri: avatar}} customStyle={$avatarHeader} />
-        </StyleTouchable>
-        <View style={$boxNameAndDescription}>
-          <StyleText customStyle={$textName} originValue={name} />
-          {!!profile.location && isShopAccount && (
-            <View style={$locationBox}>
-              <Ionicons
-                name="location"
-                style={[$iconLocation, {color: theme.blue}]}
-              />
-              <StyleText
-                originValue={profile.location}
-                customStyle={[$textLocation, {color: theme.gray_700}]}
-              />
-            </View>
-          )}
-          <View style={$followBox}>
-            <StyleTouchable
-              customStyle={$elementFollow}
-              onPress={() => onNavigateFollow('follower')}>
-              <StyleText
-                i18Text="profile.follower"
-                customStyle={[$textFollow, {color: theme.gray_500}]}
-              />
-              <StyleText
-                originValue={String(followers)}
-                customStyle={$numberFollow}
-              />
-            </StyleTouchable>
-
-            <StyleTouchable
-              customStyle={$elementFollow}
-              onPress={() => onNavigateFollow('following')}>
-              <StyleText
-                i18Text="profile.following"
-                customStyle={[$textFollow, {color: theme.gray_500}]}
-              />
-              <StyleText
-                originValue={String(followings)}
-                customStyle={$numberFollow}
-              />
-            </StyleTouchable>
-          </View>
-        </View>
-      </View>
-
-      {renderStars()}
-
-      {!!description && (
-        <StyleText originValue={description} customStyle={$textDescription} />
-      )}
-
-      {renderButton()}
+      <StyleTouchable
+        onPress={() =>
+          seeDetailImage({
+            images: [avatar],
+          })
+        }>
+        <ScrollCropImages
+          images={[profile.avatar]}
+          width={width}
+          height={width * ratioAvatarLocation}
+          enableRemoveImage={false}
+        />
+      </StyleTouchable>
+      {renderContent()}
     </View>
   );
 };
 
 const $container: ViewStyle = {
   width: '100%',
-  paddingHorizontal: scale(16),
-  minHeight: avatarSize,
-  marginTop: safePaddingNotZero,
 };
 const $introduceView: ViewStyle = {
   width: '100%',
-  flexDirection: 'row',
-};
-const $avatarHeader: ImageStyle = {
-  width: avatarSize,
-  height: avatarSize,
-  borderRadius: moderateScale(20),
-};
-const $boxNameAndDescription: ViewStyle = {
-  flex: 1,
-  paddingLeft: scale(16),
-  justifyContent: 'center',
+  paddingHorizontal: newHorizontalPadding,
+  marginTop: verticalMargin,
 };
 const $textName: TextStyle = {
   fontSize: FONT_SIZE.h2,
   fontWeight: 'bold',
 };
 const $textDescription: TextStyle = {
-  marginTop: verticalScale(8),
-  fontSize: FONT_SIZE.f3,
+  marginTop: verticalMargin,
 };
 const $followBox: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
-  marginTop: verticalScale(7),
+  marginTop: verticalScale(4),
+};
+const $elementFollow: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+const $numberFollow: TextStyle = {
+  fontWeight: 'bold',
+  marginLeft: scale(4),
+};
+const $textFollow: TextStyle = {
+  fontSize: FONT_SIZE.f2,
 };
 const $textNumberStar: TextStyle = {
   fontSize: FONT_SIZE.f4,
 };
 const $buttonView: ViewStyle = {
-  marginTop: verticalScale(12),
+  marginTop: verticalMargin,
   flexDirection: 'row',
 };
 const $buttonTouch: ViewStyle = {
   flex: 1,
 };
 const $textButton: TextStyle = {
-  fontSize: FONT_SIZE.f4,
-  fontWeight: '500',
+  fontSize: FONT_SIZE.f3,
 };
 const $iconPlus: TextStyle = {
   fontSize: moderateScale(16),
@@ -322,31 +470,32 @@ const $locationBox: ViewStyle = {
   alignItems: 'center',
   marginTop: verticalScale(4),
 };
-const $iconLocation: TextStyle = {
-  fontSize: moderateScale(14),
-};
 const $textLocation: TextStyle = {
   marginLeft: scale(4),
-};
-const $elementFollow: ViewStyle = {
-  flex: 1,
-  alignItems: 'center',
-};
-const $numberFollow: TextStyle = {
-  fontWeight: 'bold',
-};
-const $textFollow: TextStyle = {
   fontSize: FONT_SIZE.f3,
 };
 const $starBox: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   alignItems: 'flex-end',
-  marginTop: verticalScale(12),
+  marginTop: verticalMargin,
 };
 const $iconStar: TextStyle = {
   fontSize: moderateScale(17),
   marginRight: scale(4),
+};
+const $openClose: TextStyle = {
+  marginTop: verticalMargin,
+  fontWeight: 'bold',
+};
+const $moreInfoBox: ViewStyle = {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: verticalScale(4),
+};
+const $textMoreInfo: TextStyle = {
+  fontSize: FONT_SIZE.f2,
 };
 
 export default InformationProfile;

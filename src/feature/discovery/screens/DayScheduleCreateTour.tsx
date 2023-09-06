@@ -95,6 +95,7 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
                     return temp;
                   });
                 });
+                impactLight();
               }
             },
             onSuggestLocation,

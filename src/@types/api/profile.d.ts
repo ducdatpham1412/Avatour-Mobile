@@ -13,6 +13,8 @@ interface TypeGetProfileResponse {
   min_cost: number;
   max_cost: number;
   duration: number;
+  start_time: number;
+  end_time: number;
   total_ratings: number;
   average_stars: number;
   services: Array<number>;
@@ -74,4 +76,12 @@ interface TypeRequestBought {
 interface TypeGetEstimatesAndJoinings {
   estimates: TypeJoinEstimate[];
   joinings: TypeJoinEstimate[];
+}
+
+interface TypeFollow {
+  id: number;
+  name: string;
+  avatar: string;
+  description: string;
+  relationship: number;
 }

@@ -103,8 +103,6 @@ const MyListJoins = ({
           onRefresh={mutate}
           style={$list}
           ItemSeparatorComponent={Separator}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
         />
       </StyleContainer>
 

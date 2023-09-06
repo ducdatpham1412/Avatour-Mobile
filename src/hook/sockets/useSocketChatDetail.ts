@@ -69,7 +69,7 @@ const useSocketChatDetail = () => {
   //             const temp: TypeChatMessageResponse = {
   //               ...data,
   //               tag: undefined,
-  //               relationship: RELATIONSHIP.notKnow,
+  //               relationship: RELATIONSHIP.1,
   //             };
   //             return [temp].concat(previousMessages);
   //           });

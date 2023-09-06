@@ -1,9 +1,4 @@
-import {
-  BORDER_RADIUS,
-  FONT_SIZE,
-  FONT_WEIGHT_MEDIUM,
-  ratioImageSale,
-} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {useTheme} from 'hook';
@@ -13,8 +8,8 @@ import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {$styleDropShadow, borderWidthTiny} from 'utility/assistant';
-import {formatLocaleNumber} from 'utility/format';
+import {$styleDropShadow} from 'utility/assistant';
+import {formatLocaleNumber, formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
 import {Avatar, IconLiked, IconNotLiked} from './common';
@@ -56,9 +51,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
 
   let textPrice = '';
   if (startPrice && endPrice) {
-    textPrice = `${formatLocaleNumber(startPrice)} - ${formatLocaleNumber(
-      endPrice,
-    )}vnd`;
+    textPrice = `${startPrice} - ${formatMoney(endPrice)}`;
   } else {
     const temp = startPrice ?? endPrice ?? '0';
     textPrice = `${formatLocaleNumber(temp)}vnd`;
@@ -67,13 +60,10 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
   const renderJoins = () => {
     if (!item.total_members) {
       return (
-        <>
-          <Avatar source={Images.images.defaultAvatar} size={15} />
-          <StyleText
-            i18Text="discovery.beTheFirstJoin"
-            customStyle={[$textInfo, {color: theme.gray_500}]}
-          />
-        </>
+        <StyleText
+          i18Text="discovery.beTheFirstJoin"
+          customStyle={[$textInfo, {color: theme.gray_500, marginLeft: 0}]}
+        />
       );
     }
     return (
@@ -132,9 +122,8 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         </View>
       </View>
 
-      {!hidingElements?.includes('name') && (
+      {!hidingElements?.includes('name') && !!item.name && (
         <View style={$informationView}>
-          <Avatar source={{uri: item?.creator_avatar}} size={20} />
           <StyleText
             originValue={item?.name}
             customStyle={$textName}
@@ -143,7 +132,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
         </View>
       )}
 
-      {!hidingElements?.includes('location') && (
+      {!hidingElements?.includes('location') && !!item.creator_location && (
         <View style={$informationView}>
           <StyleIcon
             source={Images.icons.location}
@@ -163,27 +152,28 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
       <View style={$informationView}>
         <StyleText
           originValue={textPrice}
-          customStyle={[$textPrice, {color: theme.orange}]}
+          customStyle={[$textPrice, {color: theme.p_800}]}
         />
       </View>
 
-      {!hidingElements?.includes('status') && <Status status={item.status} />}
+      {!hidingElements?.includes('status') &&
+        item.status === STATUS.temporarilyClose && (
+          <Status status={item.status} />
+        )}
     </StyleTouchable>
   );
 };
 
-const defaultWidth = scale(172);
+const defaultWidth = scale(163.5);
 const $container: ViewStyle = {
   width: defaultWidth,
   paddingBottom: scale(8),
-  borderRadius: BORDER_RADIUS.f4,
-  marginTop: scale(7),
-  borderWidth: borderWidthTiny,
 };
 const $imageView: ViewStyle = {
   width: defaultWidth,
-  height: defaultWidth * ratioImageSale,
+  height: defaultWidth,
   overflow: 'hidden',
+  borderRadius: BORDER_RADIUS.f3,
 };
 const $image: ImageStyle = {
   width: '100%',
@@ -208,10 +198,9 @@ const $informationView: ViewStyle = {
   alignItems: 'center',
   marginTop: verticalScale(4),
   overflow: 'hidden',
-  paddingHorizontal: scale(4),
+  paddingHorizontal: scale(2),
 };
 const $textName: TextStyle = {
-  marginLeft: scale(8),
   fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $textInfo: TextStyle = {
@@ -219,8 +208,8 @@ const $textInfo: TextStyle = {
   fontSize: FONT_SIZE.f4,
 };
 const $textPrice: TextStyle = {
-  fontWeight: FONT_WEIGHT_MEDIUM,
-  fontSize: FONT_SIZE.f4,
+  fontWeight: 'bold',
+  fontSize: FONT_SIZE.f3,
 };
 
 export default memo(ItemSale, (pre: Props, next: Props) => {

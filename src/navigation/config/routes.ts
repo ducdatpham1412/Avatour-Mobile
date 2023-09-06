@@ -56,7 +56,7 @@ enum LOGIN_ROUTE {
 }
 enum MAIN_SCREEN {
   discoveryRoute = '@MAIN_SCREEN/discoveryRoute',
-  favorite = '@MAIN_SCREEN/favorite',
+  orderRoute = '@MAIN_SCREEN/orderRoute',
   reputation = '@MAIN_SCREEN/reputation',
   profileRoute = '@MAIN_SCREEN/profileRoute',
   settingRoute = '@MAIN_SCREEN/settingRoute',
@@ -105,9 +105,8 @@ enum REPUTATION_ROUTE {
   topReviewers = '@REPUTATION_ROUTE/topReviewers',
 }
 
-enum TOUR_ROUTE {
-  favoriteScreen = '@TOUR_ROUTE/favoriteScreen',
-  detailGroupBuying = '@TOUR_ROUTE/detailGroupBuying',
+enum ORDER_ROUTE {
+  orderScreen = '@ORDER_ROUTE/orderScreen',
 }
 
 export {
@@ -117,6 +116,6 @@ export {
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
-  TOUR_ROUTE,
+  ORDER_ROUTE,
 };
 export default ROOT_SCREEN;

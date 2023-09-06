@@ -1,23 +1,30 @@
 import {apiGetListGBJoined} from 'api/profile';
+import {FONT_SIZE} from 'asset';
+import {APP_EVENT} from 'asset/enum';
 import {
   Metrics,
   horizontalMargin,
-  horizontalPadding,
-  safePaddingNotZero,
+  newHorizontalPadding,
   verticalMargin,
 } from 'asset/metrics';
 import {Separator} from 'components';
-import {StyleList, StyleText} from 'components/base';
+import {StyleContainer, StyleList, StyleText} from 'components/base';
 import {ItemJoin, ItemJoinWithBanner} from 'feature/discovery/components';
-import {useAppEvent, useEstimatesAndJoinings, usePaging} from 'hook';
+import {
+  useAppEvent,
+  useEstimatesAndJoinings,
+  usePaging,
+  useSafeArea,
+  useTheme,
+} from 'hook';
 import React, {useCallback} from 'react';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
-import {ItemEstimate} from '../components';
-import {FONT_SIZE} from 'asset';
-import {APP_EVENT} from 'asset/enum';
+import {ItemEstimate} from './components';
 
-const ListJoiningAndJoined = () => {
+const OrderScreen = () => {
+  const theme = useTheme();
+  const {bottom} = useSafeArea();
   const {
     data: {estimates, joinings},
     loading,
@@ -43,7 +50,7 @@ const ListJoiningAndJoined = () => {
     return (
       <ItemJoin
         item={item}
-        containerStyle={$itemJoinSuccess}
+        containerStyle={[$itemJoinSuccess, {backgroundColor: theme.gray_100}]}
         onPressMode="see-detail"
         showDeposited={false}
       />
@@ -113,44 +120,54 @@ const ListJoiningAndJoined = () => {
   };
 
   return (
-    <StyleList
-      data={list}
-      renderItem={({item}) => renderItemJoin(item)}
-      keyExtractor={item => String(item?.id)}
-      initLoading={initLoading || loading}
-      refreshing={refreshing}
-      onRefresh={() => {
-        onRefresh();
-        mutate();
+    <StyleContainer
+      layOut="view"
+      headerProps={{
+        title: 'order.orderManagement',
+        LeftComponent: null,
       }}
-      loadingMore={loadingMore}
-      onLoadMore={onLoadMore}
-      contentContainerStyle={$contentContainer}
-      ListHeaderComponent={renderHeaderComponent()}
-      ItemSeparatorComponent={Separator}
-    />
+      backgroundColor={theme.white}
+      customStyle={$container}>
+      <StyleList
+        data={list}
+        renderItem={({item}) => renderItemJoin(item)}
+        keyExtractor={item => String(item?.id)}
+        initLoading={initLoading || loading}
+        refreshing={refreshing}
+        onRefresh={() => {
+          onRefresh();
+          mutate();
+        }}
+        loadingMore={loadingMore}
+        onLoadMore={onLoadMore}
+        contentContainerStyle={[$contentContainer, {paddingBottom: bottom}]}
+        ListHeaderComponent={renderHeaderComponent()}
+        ItemSeparatorComponent={Separator}
+      />
+    </StyleContainer>
   );
 };
 
+const $container: ViewStyle = {
+  paddingHorizontal: 0,
+};
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
-  paddingBottom: safePaddingNotZero,
-  paddingHorizontal: horizontalPadding,
+  alignItems: 'center',
 };
 const $header: ViewStyle = {
   width: Metrics.width,
-  left: -scale(12),
   marginTop: verticalScale(8),
 };
 const $containerHeader: ViewStyle = {
   marginTop: verticalMargin,
 };
 const $contentHeader: ViewStyle = {
-  paddingLeft: scale(12),
-  paddingRight: scale(12),
+  paddingLeft: newHorizontalPadding,
+  paddingRight: newHorizontalPadding,
 };
 const $textJoining: TextStyle = {
-  marginLeft: scale(12),
+  marginLeft: newHorizontalPadding,
   fontWeight: 'bold',
   fontSize: FONT_SIZE.f1,
 };
@@ -164,7 +181,7 @@ const $itemJoining: ViewStyle = {
   marginRight: horizontalMargin,
 };
 const $itemJoinSuccess: ViewStyle = {
-  width: scale(351),
+  width: scale(343),
 };
 
-export default ListJoiningAndJoined;
+export default OrderScreen;

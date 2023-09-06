@@ -8,8 +8,10 @@ export interface IconSvgProps {
 }
 
 export {default as ErrorIcon} from './ErrorIcon';
+export {default as IconClock} from './IconClock';
 export {default as IconClose} from './IconClose';
 export {default as IconEdit} from './IconEdit';
+export {default as IconLocation} from './IconLocation';
 export {default as IconPaddingField} from './IconPaddingField';
 export {default as IconPrice} from './IconPrice';
 export {default as IconTagStars} from './IconTagStars';

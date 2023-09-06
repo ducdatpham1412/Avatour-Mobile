@@ -2,7 +2,6 @@ import {apiUpdateBankAccount} from 'api/authentication';
 import {TypeGetRequestResponse} from 'api/interface';
 import {useAppSelector} from 'app-redux/store';
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import {
   StyleButton,
@@ -12,12 +11,11 @@ import {
   StyleTouchable,
 } from 'components/base';
 import {useMyRequests} from 'feature/profile/hooks';
-import {useLoading, useTheme} from 'hook';
+import {useLoading, useSafeArea, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {scale} from 'react-native-size-matters';
 import {borderWidthTiny, logger} from 'utility/assistant';
 import {moderateScale, verticalScale} from 'utility/scale';
@@ -39,7 +37,7 @@ type TypeChosenBank = {
 };
 
 const UpdateBankAccount = () => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const theme = useTheme();
   const {
     profile: {information},
@@ -153,7 +151,7 @@ const UpdateBankAccount = () => {
         BottomComponent={
           <StyleButton
             title="common.save"
-            containerStyle={{marginBottom: bottom || safePaddingNotZero}}
+            containerStyle={[$button, {marginBottom: bottom}]}
             disable={disableButton}
             isLoading={loading}
             onPress={onSave}
@@ -277,6 +275,9 @@ const $textBankCode: TextStyle = {
 const $titleAccountNumber: TextStyle = {
   fontWeight: 'bold',
   marginTop: verticalScale(20),
+};
+const $button: ViewStyle = {
+  width: '90%',
 };
 
 export default UpdateBankAccount;

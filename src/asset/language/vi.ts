@@ -232,6 +232,7 @@ const discovery = {
   moreThan: 'Hơn {{value}}',
   valuePeople: '{{value}} người',
   tour: 'Tour',
+  myTour: 'Tour của tôi',
   groupBuying: 'Đơn mua chung',
   groupDay: 'Nhóm {{value}}',
   confirmArrived: 'Xác nhận đã đến cửa hàng',
@@ -312,8 +313,6 @@ const tour = {
   tours: 'Tour',
   myTours: 'Tour của tôi',
   favoriteTour: 'Tour yêu thích',
-  viewTourOnMapDeveloping:
-    'Xem lịch trình của bạn trên map sẽ sớm đưa đến tay bạn 😁',
 };
 
 const profile = {
@@ -371,7 +370,6 @@ const profile = {
   draftPost: 'Bài nháp',
   thisPostInDraft: 'Bạn đang lưu nháp bài này',
   goToPost: 'Đi tới đăng bài',
-  reviewProvider: 'Viết review',
   gotToCreateGb: 'Tạo chiến dịch mua chung đầu tiên',
   createReviewPost: 'Bài review',
   createGroupBuying: 'Chiến dịch mua chung',
@@ -417,7 +415,7 @@ const profile = {
   myRequests: 'Yêu cầu của tôi',
   upgradeToShop: 'Chuyển sang tài khoản cửa hàng',
   created: 'Ngày tạo',
-  createTour: 'Tạo tour mới',
+  createTour: 'Tạo tour',
   createTourSuccess: 'Chúc mừng bạn tạo tour thành công!',
   createSaleSuccess: 'Tạo đơn mua chung thành công',
   wantToShareTour: 'Bạn muốn chia sẻ tour mình vừa tạo với cộng đồng chứ?',
@@ -436,6 +434,11 @@ const profile = {
     'Không tìm thấy địa điểm được tìm kiếm. Bạn có muốn thêm địa điểm mới không?',
   personal: 'Cá nhân',
   tourName: 'Tên lịch trình',
+  opening: 'Đang mở cửa',
+  closing: 'Đang đóng cửa',
+  enjoyTime: 'Thời gian trải nghiệm',
+  noReviewYet: 'Chưa có đánh giá nào',
+  checkIn: 'Check-in',
 };
 
 const mess = {
@@ -615,6 +618,11 @@ const alert = {
   openSetting: 'Mở cài đặt',
 };
 
+const order = {
+  orderManagement: 'Quản lý đơn hàng',
+  order: 'Đơn hàng',
+};
+
 const vi = {
   common,
   login,
@@ -626,5 +634,6 @@ const vi = {
   notification,
   reputation,
   tour,
+  order,
 };
 export default vi;

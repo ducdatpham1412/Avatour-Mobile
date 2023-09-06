@@ -1,20 +1,19 @@
-import ToursScreen from 'feature/favorite/ToursScreen';
+import {OrderScreen} from 'feature/order';
 import {AppParamsList} from 'navigation/config';
-import {TOUR_ROUTE} from 'navigation/config/routes';
+import {ORDER_ROUTE} from 'navigation/config/routes';
 import React from 'react';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
-
 const Stack = createSharedElementStackNavigator<AppParamsList>();
 
-const ToursRoute = () => {
+const OrderRoute = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name={TOUR_ROUTE.favoriteScreen} component={ToursScreen} />
+      <Stack.Screen name={ORDER_ROUTE.orderScreen} component={OrderScreen} />
     </Stack.Navigator>
   );
 };
 
-export default ToursRoute;
+export default OrderRoute;

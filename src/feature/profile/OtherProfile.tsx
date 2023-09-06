@@ -1,26 +1,38 @@
 import Images from 'asset/img/images';
 import {TabView} from 'components';
-import {StyleContainer, StyleIcon, StyleTouchable} from 'components/base';
+import {
+  RefreshControl,
+  StyleContainer,
+  StyleIcon,
+  StyleTouchable,
+} from 'components/base';
 import {useTheme} from 'hook';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet} from 'navigation/screen/modals';
 import React, {useState} from 'react';
 import {ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {scale} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 import {IconTabBarProfile, InformationProfile} from './components';
 import {useOtherProfile} from './hooks';
 import {ListReviews, ListSales, ListTours} from './screens';
 import {ACCOUNT} from 'asset/enum';
+import {IconTour} from 'asset/icons';
 
 const OtherProfile = ({
   route: {
-    params: {id, showHeader = true},
+    params: {id, initValue},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>) => {
   const theme = useTheme();
-  const [{data, isFollowing, isBlocked, loading}, {follow, block, report}] =
-    useOtherProfile(id);
+  const [
+    {data, isFollowing, isBlocked, loading, validating},
+    {follow, block, report, mutate},
+  ] = useOtherProfile(id, {
+    initValue,
+    // TODO: Only = true when routeParam having revalidateAll = True => Add revalidateAll in routeParams
+    revalidateAll: true,
+  });
 
   const [tabViewHeight, setTabViewHeight] = useState(0);
 
@@ -73,29 +85,32 @@ const OtherProfile = ({
 
   return (
     <StyleContainer
-      headerProps={
-        showHeader
-          ? {
-              title: data?.name as I18Normalize,
-              RightComponent: !isBlocked && (
-                <StyleTouchable onPress={onShowModalOptions}>
-                  <StyleIcon
-                    source={Images.icons.more}
-                    size={20}
-                    customStyle={{tintColor: theme.black}}
-                  />
-                </StyleTouchable>
-              ),
-            }
-          : undefined
-      }
+      headerProps={{
+        title: data?.name as I18Normalize,
+        RightComponent: !isBlocked && (
+          <StyleTouchable onPress={onShowModalOptions}>
+            <StyleIcon
+              source={Images.icons.more}
+              size={20}
+              customStyle={{tintColor: theme.black}}
+            />
+          </StyleTouchable>
+        ),
+      }}
       customStyle={$content}
+      backgroundColor={theme.white}
       onLayout={e => {
         setTabViewHeight(e.nativeEvent.layout.height);
       }}
       scrollEnabled
       stickyHeaderIndices={[1]}
-      initLoading={loading || !data}>
+      initLoading={loading || !data}
+      refreshControl={
+        <RefreshControl
+          refreshing={validating && !loading}
+          onRefresh={mutate}
+        />
+      }>
       {!isBlocked && data && (
         <>
           <InformationProfile profile={data} />
@@ -110,14 +125,14 @@ const OtherProfile = ({
               />,
               <IconTabBarProfile
                 title="discovery.tour"
-                icon={Images.icons.tour}
+                icon={<IconTour size={22} />}
               />,
               <IconTabBarProfile
-                title="profile.review"
+                title="profile.checkIn"
                 icon={Images.icons.review}
               />,
             ]}
-            initialIndex={isShopAccount ? 0 : isLocationAccount ? 2 : 0}
+            initialIndex={isShopAccount ? 0 : isLocationAccount ? 2 : 1}
           />
         </>
       )}
@@ -127,6 +142,7 @@ const OtherProfile = ({
 
 const $body: ViewStyle = {
   width: '100%',
+  marginTop: verticalScale(8),
 };
 const $tabBar: ViewStyle = {
   paddingHorizontal: scale(16),

@@ -32,7 +32,7 @@ const SquareButton = ({
     <StyleTouchable
       customStyle={[
         $container,
-        {backgroundColor: theme.gray_300},
+        {backgroundColor: theme.gray_100},
         containerStyle,
       ]}
       onPress={onPress}
@@ -55,7 +55,7 @@ const SquareButton = ({
 
 const $container: ViewStyle = {
   paddingHorizontal: scale(12),
-  height: verticalScale(30),
+  height: verticalScale(36),
   borderRadius: 100,
   alignItems: 'center',
   justifyContent: 'center',

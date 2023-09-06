@@ -8,6 +8,7 @@ import {scale, verticalScale} from 'utility/scale';
 import {StyleWebView} from './base';
 import ButtonBack from './common/ButtonBack';
 import {useTheme} from 'hook';
+import {$styleDropShadow} from 'utility/assistant';
 
 interface Props {
   children?: ReactNode;
@@ -55,9 +56,11 @@ const MapTour = ({
       <ButtonBack
         containerStyle={[
           $iconX,
+          $styleDropShadow,
           {
             top: top || verticalScale(3),
-            backgroundColor: theme.white_opacity(0.8),
+            backgroundColor: theme.white,
+            shadowColor: theme.black,
           },
         ]}
         onPress={onGoBack ?? goBack}

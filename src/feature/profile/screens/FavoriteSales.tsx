@@ -1,15 +1,15 @@
 import {apiGetListSalesLiked} from 'api/profile';
 import {APP_EVENT, STATUS} from 'asset/enum';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
-import {ItemSale} from 'components';
+import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {ItemSale, Separator} from 'components';
 import {StyleList} from 'components/base';
-import {useAppEvent, usePaging} from 'hook';
+import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
-import {scale} from 'utility/scale';
 
 const FavoriteSales = () => {
+  const {bottom} = useSafeArea();
   const {
     list,
     setList,
@@ -55,7 +55,7 @@ const FavoriteSales = () => {
     });
   });
 
-  const renderItemSale = useCallback((item: TypeGroupBuying, index: number) => {
+  const renderItemSale = useCallback((item: TypeGroupBuying) => {
     return (
       <ItemSale
         item={item}
@@ -65,7 +65,6 @@ const FavoriteSales = () => {
             setList,
           })
         }
-        containerStyle={{marginLeft: index % 2 !== 0 ? scale(7) : 0}}
       />
     );
   }, []);
@@ -73,9 +72,9 @@ const FavoriteSales = () => {
   return (
     <StyleList
       data={list}
-      contentContainerStyle={$contentContainer}
+      contentContainerStyle={[$contentContainer, {paddingBottom: bottom}]}
       keyExtractor={item => String(item?.id)}
-      renderItem={({item, index}) => renderItemSale(item, index)}
+      renderItem={({item}) => renderItemSale(item)}
       refreshing={refreshing}
       loadingMore={loadingMore}
       onRefresh={onRefresh}
@@ -83,14 +82,16 @@ const FavoriteSales = () => {
       numColumns={2}
       initialNumToRender={6}
       initLoading={initLoading}
+      columnWrapperStyle={{justifyContent: 'space-between'}}
+      ItemSeparatorComponent={Separator}
     />
   );
 };
 
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
-  paddingBottom: safePaddingNotZero,
-  paddingHorizontal: horizontalPadding,
+  paddingTop: safePaddingNotZero,
+  paddingHorizontal: newHorizontalPadding,
 };
 
 export default FavoriteSales;

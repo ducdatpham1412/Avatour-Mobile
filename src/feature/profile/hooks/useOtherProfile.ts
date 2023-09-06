@@ -1,7 +1,7 @@
 import {apiFollowUser, apiUnFollowUser} from 'api/profile';
 import {apiBlockUser, apiUnBlockUser} from 'api/setting';
-import {RELATIONSHIP} from 'asset/enum';
-import {useApi} from 'hook';
+import {APP_EVENT, RELATIONSHIP} from 'asset/enum';
+import {emitAppEvent, useApi} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -9,16 +9,19 @@ import useSWRMutation from 'swr/mutation';
 import {impactLight} from 'utility/haptic';
 
 interface Params {
+  initValue?: TypeGetProfileResponse;
   revalidateAll?: boolean;
 }
 
 const useOtherProfile = (id: number, params?: Params) => {
-  const {data, mutate, loading, error} = useApi<TypeGetProfileResponse>({
-    path: `/profile/${id}`,
-    config: {
-      revalidateAll: params?.revalidateAll ?? true,
-    },
-  });
+  const {data, mutate, loading, validating, error} =
+    useApi<TypeGetProfileResponse>({
+      path: `/profile/${id}`,
+      config: {
+        fallbackData: params?.initValue,
+        revalidateAll: params?.revalidateAll,
+      },
+    });
 
   const isFollowing = data?.relationship === RELATIONSHIP.following;
   const isBlocked = data?.relationship === RELATIONSHIP.block;
@@ -42,6 +45,10 @@ const useOtherProfile = (id: number, params?: Params) => {
             },
             {revalidate: false},
           );
+          emitAppEvent(APP_EVENT.followUser, {
+            event: 'follow',
+            userId: data.id,
+          });
         } else {
           await apiUnFollowUser(data.id);
           await mutate(
@@ -56,6 +63,10 @@ const useOtherProfile = (id: number, params?: Params) => {
             },
             {revalidate: false},
           );
+          emitAppEvent(APP_EVENT.followUser, {
+            event: 'un-follow',
+            userId: data.id,
+          });
         }
       }
     },
@@ -105,7 +116,7 @@ const useOtherProfile = (id: number, params?: Params) => {
   };
 
   return [
-    {data, isFollowing, isBlocked, loading, error, loadingFollow},
+    {data, isFollowing, isBlocked, loading, validating, error, loadingFollow},
     {follow, block, report, mutate},
   ] as const;
 };
