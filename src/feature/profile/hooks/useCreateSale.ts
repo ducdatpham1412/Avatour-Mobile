@@ -67,7 +67,6 @@ const useCreateSale = (initValue: UseCreateSaleParams) => {
           total_likes: 0,
           total_comments: 0,
           total_members: 0,
-          groups: [],
           creator: profile.id,
           creator_name: profile.name,
           creator_avatar: profile.avatar,

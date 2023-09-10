@@ -4,12 +4,17 @@ import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, LoadingScreen, MapTour, TabView} from 'components';
-import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {
+  StyleButton,
+  StyleIcon,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
 import {Avatar, IndicatorModal} from 'components/common';
-import {useTheme} from 'hook';
+import {emitAppEvent, useSafeArea, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet} from 'navigation/screen/modals';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useRef} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {
@@ -19,7 +24,9 @@ import {
 } from 'react-native-gesture-handler';
 import Animated, {
   AnimatedStyle,
+  Extrapolation,
   SharedValue,
+  interpolate,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -32,6 +39,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import {useDetailTour} from './hooks';
 import {DayScheduleDetailTour} from './screens';
+import {APP_EVENT, ERROR_MESSAGE, STATUS} from 'asset/enum';
 
 export const levelModalScheduleHeight = {
   low: verticalScale(180),
@@ -48,6 +56,11 @@ export type CTX = {
 type Move = {
   duration: number;
 };
+
+interface ButtonPublicTourProps {
+  aim: SharedValue<number>;
+  tourId: number;
+}
 
 const move = (value: number, params?: Move) => {
   'worklet';
@@ -113,6 +126,77 @@ export const checkOnEnd = (
 
 const renderDaySchedule = (tourId: number, dayIndex: number) => {
   return () => <DayScheduleDetailTour tourId={tourId} dayIndex={dayIndex} />;
+};
+
+const ButtonPublicTour = ({aim, tourId}: ButtonPublicTourProps) => {
+  const {bottom} = useSafeArea();
+  const theme = useTheme();
+  const [{loadingPublicTour}, {publicTour}] = useDetailTour(tourId);
+
+  const buttonStyle = useAnimatedStyle(() => {
+    const translateYButton = interpolate(
+      aim.value,
+      [
+        levelModalScheduleHeight.low,
+        levelModalScheduleHeight.medium,
+        levelModalScheduleHeight.high,
+      ],
+      [bottom + 100, 0, 0],
+      {
+        extrapolateRight: Extrapolation.CLAMP,
+      },
+    );
+
+    return {
+      transform: [
+        {
+          translateY: translateYButton,
+        },
+      ] as never,
+    };
+  }, [bottom]);
+
+  const onPublicTour = async () => {
+    try {
+      await publicTour();
+      emitAppEvent(APP_EVENT.editTour);
+      ModalAlert.success({
+        title: 'discovery.thankyou',
+        i18Content: 'discovery.suggestHaveBeenAcknowledged',
+        icon: <StyleIcon source={Images.icons.nice} size={80} />,
+      });
+    } catch (err) {
+      if (err === ERROR_MESSAGE.still_having_location_draft) {
+        ModalAlert.error({
+          i18Content: 'discovery.tourStillHaveDraftLocation',
+        });
+      } else {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    }
+  };
+
+  return (
+    <Animated.View
+      style={[
+        $button,
+        buttonStyle,
+        {
+          paddingBottom: bottom,
+          backgroundColor: theme.white,
+          shadowColor: theme.black,
+        },
+      ]}>
+      <StyleButton
+        title="discovery.shareToCommunity"
+        containerStyle={$buttonSave}
+        onPress={onPublicTour}
+        isLoading={loadingPublicTour}
+      />
+    </Animated.View>
+  );
 };
 
 const DetailTour = ({
@@ -293,6 +377,10 @@ const DetailTour = ({
           </View>
         </Animated.View>
 
+        {data?.status === STATUS.draft && (
+          <ButtonPublicTour aim={aim} tourId={tourId} />
+        )}
+
         <ModalSearchFilter
           ref={searchRef}
           initSearchParams={{
@@ -418,4 +506,22 @@ const $tabBox: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
 };
+const $button: AnimatedStyle<ViewStyle> = {
+  position: 'absolute',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingHorizontal: scale(12),
+  paddingTop: verticalScale(16),
+  bottom: 0,
+  shadowOpacity: 0.1,
+  shadowOffset: {
+    width: 0,
+    height: -4,
+  },
+};
+const $buttonSave: ViewStyle = {
+  flex: 1,
+  width: undefined,
+};
+
 export default DetailTour;

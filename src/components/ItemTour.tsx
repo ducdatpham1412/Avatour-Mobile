@@ -6,11 +6,14 @@ import React, {memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {formatLocaleNumber} from 'utility/format';
+import {formatLocaleNumber, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import {StyleImage, StyleText, StyleTouchable} from './base';
 import {Avatar} from './common';
 import BoxReact from './BoxReact';
+import {IconTagStars} from 'asset/icons';
+import {STATUS} from 'asset/enum';
+import {ToolTip} from 'navigation/screen/modals';
 
 interface Props {
   item: Tour;
@@ -52,33 +55,57 @@ const ItemTour = ({
         />
         <BoxReact isReacted={item.is_liked} onPress={onReact} />
       </View>
-      {!!item.name && (
-        <StyleText
-          originValue={item?.name}
-          customStyle={[$name, {fontSize}]}
-          numberOfLines={2}
-        />
-      )}
-      <StyleText
-        originValue={`<b>${formatLocaleNumber(
-          item.start_price,
-        )} - ${formatLocaleNumber(item.end_price)} vnd</b> | ${
-          item.number_people
-        } ${textPeople}`}
-        mode="html"
-        htmlTextBoldColor={theme.p_800}
-        customStyle={[$price, {fontSize}]}
-      />
-      <View style={$creator}>
-        <Avatar
-          source={{uri: item.creator_avatar}}
-          size={(20 / 16) * fontSize}
-        />
-        <StyleText
-          originValue={item.creator_name}
-          customStyle={[$nameCreator, {fontSize}]}
-          numberOfLines={1}
-        />
+      <View style={$body}>
+        <View style={$content}>
+          {!!item.name && (
+            <StyleText
+              originValue={item?.name}
+              customStyle={[$name, {fontSize}]}
+              numberOfLines={2}
+            />
+          )}
+          <StyleText
+            originValue={`<b>${formatLocaleNumber(
+              item.start_price,
+            )} - ${formatMoney(item.end_price)}</b> | ${
+              item.number_people
+            } ${textPeople}`}
+            mode="html"
+            htmlTextBoldColor={theme.p_800}
+            customStyle={[$price, {fontSize}]}
+          />
+          <View style={$creator}>
+            <Avatar
+              source={{uri: item.creator_avatar}}
+              size={(20 / 16) * fontSize}
+            />
+            <StyleText
+              originValue={item.creator_name}
+              customStyle={[$nameCreator, {fontSize}]}
+              numberOfLines={1}
+            />
+          </View>
+        </View>
+
+        {item?.status === STATUS.draft && (
+          <StyleTouchable
+            customStyle={$buttonTag}
+            onPress={() => {
+              ToolTip.show({
+                content: t('discovery.tourIsPrivate'),
+                button: {
+                  title: 'discovery.shareToCommunity',
+                  onPress: () => {
+                    push(ROOT_SCREEN.detailTour, {
+                      tourId: item.id,
+                    });
+                  },
+                },
+              });
+            }}>
+            <IconTagStars tintColor={theme.blue} />
+          </StyleTouchable>
+        )}
       </View>
     </StyleTouchable>
   );
@@ -88,6 +115,15 @@ const $container: ViewStyle = {
   width: scale(343),
   overflow: 'hidden',
 };
+const $body: ViewStyle = {
+  width: '100%',
+  paddingHorizontal: scale(2),
+  flexDirection: 'row',
+};
+const $content: ViewStyle = {
+  flex: 1,
+  paddingRight: scale(8),
+};
 const $image: ImageStyle = {
   width: '100%',
   height: '100%',
@@ -96,20 +132,20 @@ const $image: ImageStyle = {
 const $name: TextStyle = {
   marginTop: verticalScale(4),
   fontWeight: 'bold',
-  paddingHorizontal: scale(2),
 };
 const $price: TextStyle = {
   marginTop: verticalScale(4),
-  paddingHorizontal: scale(2),
 };
 const $creator: ViewStyle = {
   marginTop: verticalScale(4),
-  paddingHorizontal: scale(2),
   flexDirection: 'row',
   alignItems: 'center',
 };
 const $nameCreator: TextStyle = {
   marginLeft: scale(4),
+};
+const $buttonTag: ViewStyle = {
+  marginTop: verticalScale(4),
 };
 
 export default memo(ItemTour, (pre: Props, next: Props) => {

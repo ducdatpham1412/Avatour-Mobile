@@ -152,7 +152,6 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
 const defaultWidth = scale(163.5);
 const $container: ViewStyle = {
   width: defaultWidth,
-  paddingBottom: scale(8),
 };
 const $imageView: ViewStyle = {
   width: defaultWidth,

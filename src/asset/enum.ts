@@ -346,6 +346,8 @@ export enum APP_EVENT {
   editSale = 'edit-sale',
   confirmArrived = 'confirm-arrived',
   followUser = 'follow-user',
+  createNewTour = 'create-new-tour',
+  editTour = 'edit-tour',
 }
 
 export enum TYPE_AUTH_REQUEST {
@@ -372,4 +374,5 @@ export enum STATUS_JOIN_ESTIMATE {
 
 export enum ERROR_MESSAGE {
   still_having_people_join = 'still_having_people_join',
+  still_having_location_draft = 'still_having_location_draft',
 }

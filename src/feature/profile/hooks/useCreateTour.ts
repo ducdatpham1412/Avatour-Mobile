@@ -102,7 +102,7 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
   );
 
   return [
-    {loadingCreateTour, loadingEditTour, schedules, name, searchParams},
+    {data, loadingCreateTour, loadingEditTour, schedules, name, searchParams},
     {
       createTour,
       setName,
