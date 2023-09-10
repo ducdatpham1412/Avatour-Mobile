@@ -353,6 +353,7 @@ const profile = {
     checkIn: 'Check in',
     topic: 'Chủ đề',
     rating: 'Đánh giá',
+    seeRating: 'Xem đánh giá',
     pasteLink: 'Dán đường dẫn URL',
     whereAreYouNow: 'Bạn đang ở đâu?',
     willDebutSearchOnGoogleMap:

@@ -1,7 +1,9 @@
 import {useIsFocused} from '@react-navigation/native';
-import {setScrollMainAndChatEnable} from 'app-redux';
+import {apiLikePost, apiUnLikePost} from 'api/profile';
+import {setScrollMainAndChatEnable, updateResource} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM, LIST_TOPICS} from 'asset';
+import {REACT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {horizontalMargin, safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
@@ -14,9 +16,10 @@ import React from 'react';
 import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
-import {$styleDropShadow} from 'utility/assistant';
+import {$styleDropShadow, copyObject} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
+import {impactLight} from 'utility/haptic';
 
 const DiscoveryScreen = () => {
   const isFocused = useIsFocused();
@@ -32,6 +35,42 @@ const DiscoveryScreen = () => {
       setScrollMainAndChatEnable(false);
     }
   }, [isFocused]);
+
+  const onReactTour = async (tour: Tour) => {
+    const currentTours = copyObject(favorite_tours);
+    const currentLiked = tour.is_liked;
+
+    try {
+      updateResource({
+        favorite_tours: currentTours.map(item => {
+          if (item.id !== tour.id) {
+            return item;
+          }
+          return {
+            ...item,
+            is_liked: !currentLiked,
+            total_likes: item.total_likes + (currentLiked ? -1 : 1),
+          };
+        }),
+      });
+      if (currentLiked) {
+        await apiUnLikePost({
+          type: REACT.tour,
+          reactedId: tour.id,
+        });
+      } else {
+        await apiLikePost({
+          type: REACT.tour,
+          reactedId: tour.id,
+        });
+        impactLight();
+      }
+    } catch (err) {
+      updateResource({
+        favorite_tours: currentTours,
+      });
+    }
+  };
 
   return (
     <SafeView style={$container}>
@@ -106,6 +145,7 @@ const DiscoveryScreen = () => {
                 containerStyle={$itemTourBox}
                 width={scale(270)}
                 fontSize={FONT_SIZE.f3}
+                onReact={() => onReactTour(tour)}
               />
             ))}
           </ScrollView>

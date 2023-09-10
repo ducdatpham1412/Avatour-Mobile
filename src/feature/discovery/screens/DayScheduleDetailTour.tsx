@@ -1,5 +1,5 @@
 import {STATUS} from 'asset/enum';
-import {newHorizontalPadding} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {RefreshControl} from 'components/base';
 import {useMyRequests} from 'feature/profile/hooks';
 import {useSafeArea} from 'hook';
@@ -79,7 +79,7 @@ const $container: ViewStyle = {
   flex: 1,
 };
 const $contentContainer: ViewStyle = {
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default DayScheduleDetailTour;

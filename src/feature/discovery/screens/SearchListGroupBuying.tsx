@@ -1,7 +1,7 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
-import {APP_EVENT, STATUS} from 'asset/enum';
-import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {APP_EVENT, REACT, STATUS} from 'asset/enum';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale, Separator} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
@@ -81,9 +81,9 @@ const SearchListGroupBuying = () => {
         renderItem={({item}) => (
           <ItemSale
             item={item}
-            onReact={value =>
-              onReactSale(value.postId as number, {
-                isLiked: value.isLiked,
+            onReact={() =>
+              onReactSale(item.id, {
+                type: REACT.sale,
                 setList,
               })
             }
@@ -110,7 +110,7 @@ const SearchListGroupBuying = () => {
 
 const $container: ViewStyle = {
   flex: 1,
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $content: ViewStyle = {
   paddingTop: safePaddingNotZero,

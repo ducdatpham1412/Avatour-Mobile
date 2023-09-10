@@ -4,7 +4,7 @@ import {IconPrice} from 'asset/icons';
 import Images from 'asset/img/images';
 import {
   Metrics,
-  newHorizontalPadding,
+  horizontalPadding,
   safePaddingNotZero,
   verticalMargin,
 } from 'asset/metrics';
@@ -328,7 +328,7 @@ const $container: ViewStyle = {
   paddingHorizontal: 0,
 };
 const $body: ViewStyle = {
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
   shadowColor: Theme.newTheme.black,
   shadowOffset: {
     width: 0,

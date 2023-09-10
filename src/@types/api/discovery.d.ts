@@ -137,6 +137,7 @@ interface TourDetail {
   creator_name: string;
   creator_avatar: string;
   is_liked: boolean;
+  total_likes: number;
   schedule: Array<Array<TypeGetProfileResponse>>;
   status: number;
 }
@@ -152,6 +153,7 @@ type Tour = Pick<
   | 'creator_name'
   | 'creator_avatar'
   | 'is_liked'
+  | 'total_likes'
 > & {
   schedule: string[][];
 };

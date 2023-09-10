@@ -4,7 +4,7 @@ import {APP_EVENT} from 'asset/enum';
 import {
   Metrics,
   horizontalMargin,
-  newHorizontalPadding,
+  horizontalPadding,
   verticalMargin,
 } from 'asset/metrics';
 import {Separator} from 'components';
@@ -163,11 +163,11 @@ const $containerHeader: ViewStyle = {
   marginTop: verticalMargin,
 };
 const $contentHeader: ViewStyle = {
-  paddingLeft: newHorizontalPadding,
-  paddingRight: newHorizontalPadding,
+  paddingLeft: horizontalPadding,
+  paddingRight: horizontalPadding,
 };
 const $textJoining: TextStyle = {
-  marginLeft: newHorizontalPadding,
+  marginLeft: horizontalPadding,
   fontWeight: 'bold',
   fontSize: FONT_SIZE.f1,
 };

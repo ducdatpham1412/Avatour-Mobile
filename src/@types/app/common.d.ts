@@ -9,11 +9,6 @@ type TypeShowModalize<TShow = undefined, THide = undefined, Res = void> = {
   hide: (value?: THide) => void;
 };
 
-type TypeParamsLikePost = {
-  postId: number | string;
-  isLiked: boolean;
-};
-
 type TypeObjectAny = {
   [key: string]: any;
 };

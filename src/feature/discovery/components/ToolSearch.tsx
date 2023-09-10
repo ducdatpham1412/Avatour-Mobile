@@ -1,6 +1,6 @@
 import {FONT_SIZE} from 'asset';
 import Images from 'asset/img/images';
-import {newHorizontalPadding} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
@@ -165,7 +165,7 @@ const $container: ViewStyle = {
   width: '100%',
 };
 const $contentToolView: ViewStyle = {
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $toolBox: ViewStyle = {
   flexDirection: 'row',

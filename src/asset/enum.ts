@@ -357,11 +357,6 @@ export enum TYPE_AUTH_REQUEST {
   suggest_location = 6,
 }
 
-export enum TYPE_GET_TOUR {
-  list = 'list',
-  favorite = 'favorite',
-}
-
 export enum TYPE_CHANGE {
   password = 'password',
   theme = 'theme',

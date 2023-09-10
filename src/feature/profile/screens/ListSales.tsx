@@ -1,6 +1,6 @@
 import {apiGetListGroupBuying} from 'api/profile';
-import {ACCOUNT, APP_EVENT, STATUS} from 'asset/enum';
-import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {ACCOUNT, APP_EVENT, STATUS, REACT} from 'asset/enum';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale, Separator} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
@@ -72,9 +72,9 @@ const ListSalesSupplier = ({userId}: Props) => {
     return (
       <ItemSale
         item={item}
-        onReact={value =>
-          onReactSale(value.postId as number, {
-            isLiked: value.isLiked,
+        onReact={() =>
+          onReactSale(item.id, {
+            type: REACT.sale,
             setList,
           })
         }
@@ -120,7 +120,7 @@ const $container: ViewStyle = {
 };
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
   paddingTop: safePaddingNotZero,
 };
 

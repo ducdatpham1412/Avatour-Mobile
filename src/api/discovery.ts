@@ -1,4 +1,3 @@
-import {TYPE_GET_TOUR} from 'asset/enum';
 import request from './request';
 
 export const apiJoinSale = (
@@ -102,7 +101,7 @@ export const apiGetListTours = ({
       page_index: params.pageIndex,
       take: params.take,
       user_id: params.user_id,
-      type: TYPE_GET_TOUR.list,
+      type: 'list',
     },
   });
 };
@@ -112,7 +111,7 @@ export const apiGetListToursFavorite = ({params}: TypeParamsPaging<{}>) => {
     params: {
       page_index: params.pageIndex,
       take: params.take,
-      type: TYPE_GET_TOUR.favorite,
+      type: 'favorite',
     },
   });
 };

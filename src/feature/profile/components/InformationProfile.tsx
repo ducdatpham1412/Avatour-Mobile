@@ -1,7 +1,7 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
 import {IconClock, IconLocation, IconPrice} from 'asset/icons';
-import {Metrics, newHorizontalPadding, verticalMargin} from 'asset/metrics';
+import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
 import {
   FONT_SIZE,
   FONT_WEIGHT_MEDIUM,
@@ -422,7 +422,7 @@ const $container: ViewStyle = {
 };
 const $introduceView: ViewStyle = {
   width: '100%',
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
   marginTop: verticalMargin,
 };
 const $textName: TextStyle = {
