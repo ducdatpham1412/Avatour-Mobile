@@ -26,7 +26,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {onGoToProfile} from 'utility/assistant';
+import {$styleDropShadow, onGoToProfile} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import {useDetailTour} from './hooks';
@@ -327,8 +327,10 @@ const DetailTour = ({
         <StyleTouchable
           customStyle={[
             $iconMore,
+            $styleDropShadow,
             {
-              backgroundColor: theme.white_opacity(0.8),
+              backgroundColor: theme.white,
+              shadowColor: theme.black,
               top: top || safePaddingNotZero,
             },
           ]}

@@ -1,9 +1,9 @@
-import {horizontalPadding} from 'asset/metrics';
+import {newHorizontalPadding} from 'asset/metrics';
 import {ErrorScreen} from 'feature/common';
 import {LoadingScreen} from 'feature/profile/screens';
 import {useTheme} from 'hook';
 import StyleHeader, {StyleHeaderProps} from 'navigation/components/StyleHeader';
-import React, {forwardRef, ReactNode} from 'react';
+import React, {ReactNode, forwardRef} from 'react';
 import {StyleProp, View, ViewStyle} from 'react-native';
 import {
   KeyboardAwareScrollView,
@@ -111,11 +111,11 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   width: '100%',
-  paddingHorizontal: horizontalPadding,
+  paddingHorizontal: newHorizontalPadding,
 };
 const $body: ViewStyle = {
   flex: 1,
-  paddingHorizontal: horizontalPadding,
+  paddingHorizontal: newHorizontalPadding,
 };
 
 export default forwardRef(StyleContainer);

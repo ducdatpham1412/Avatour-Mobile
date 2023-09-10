@@ -679,7 +679,7 @@ const $pricePart: ViewStyle = {
 };
 const $textNumberPeople: TextStyle = {
   marginTop: verticalScale(4),
-  fontWeight: 'bold',
+  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $divider: ViewStyle = {
   marginTop: verticalScale(20),

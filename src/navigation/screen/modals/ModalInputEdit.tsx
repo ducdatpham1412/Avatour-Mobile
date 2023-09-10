@@ -1,4 +1,3 @@
-import {BORDER_RADIUS} from 'asset';
 import {AppInput, ModalEdit} from 'components/base';
 import {useLoading, useTheme} from 'hook';
 import React, {
@@ -123,10 +122,10 @@ const $inputContainer: TextStyle = {
   width: '100%',
   borderWidth: moderateScale(0.5),
   marginTop: verticalScale(10),
-  borderRadius: BORDER_RADIUS.f2,
-  paddingHorizontal: scale(8),
-  paddingTop: moderateScale(5),
-  paddingBottom: moderateScale(5),
+  borderRadius: 100,
+  paddingHorizontal: scale(12),
+  paddingTop: moderateScale(12),
+  paddingBottom: moderateScale(12),
 };
 
 export default Object.assign(ModalInputEdit, {

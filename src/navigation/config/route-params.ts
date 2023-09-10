@@ -8,7 +8,7 @@ import ROOT_SCREEN, {
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
-  TOUR_ROUTE,
+  ORDER_ROUTE,
 } from './routes';
 
 export type AllRoutes =
@@ -19,18 +19,16 @@ export type AllRoutes =
   | PROFILE_ROUTE
   | SETTING_ROUTE
   | REPUTATION_ROUTE
-  | TOUR_ROUTE;
+  | ORDER_ROUTE;
 
 export type AppParamsList = {
   [key: string]: any;
   [ROOT_SCREEN.otherProfile]: {
     id: number;
-    showHeader?: boolean;
-    initTabIndex?: number;
+    initValue?: TypeGetProfileResponse;
   };
   [ROOT_SCREEN.listFollows]: {
-    userId: number;
-    name: string;
+    profile: TypeGetProfileResponse;
     initTab?: 'follower' | 'following';
   };
   [ROOT_SCREEN.detailGroupBuying]: {
@@ -174,6 +172,10 @@ export type AppEventList = {
   [APP_EVENT.editSale]: {
     post_id: number;
     data: Partial<TypeGroupBuying>;
+  };
+  [APP_EVENT.followUser]: {
+    event: 'follow' | 'un-follow';
+    userId: number;
   };
 };
 

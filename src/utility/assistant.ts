@@ -197,7 +197,10 @@ export const chooseIconPostType = (postType: number) => {
   return LIST_POST_TYPES.find(item => item.id === postType)?.icon || null;
 };
 
-export const onGoToProfile = (userId: number, params = {}) => {
+type GoToProfileParams = {
+  initValue: TypeGetProfileResponse;
+};
+export const onGoToProfile = (userId: number, params?: GoToProfileParams) => {
   const isModeExp = Store.getState().accountSlice.modeExp;
   if (isModeExp) {
     return;
@@ -211,7 +214,7 @@ export const onGoToProfile = (userId: number, params = {}) => {
   } else {
     push(ROOT_SCREEN.otherProfile, {
       id: userId,
-      ...params,
+      initValue: params?.initValue,
     });
   }
 };
@@ -472,4 +475,9 @@ export const calculatePriceDeposit = (joinEstimate: TypeJoinEstimate) => {
     },
   );
   return res;
+};
+
+export const copyObject = <T extends object>(origin: T) => {
+  const temp: T = JSON.parse(JSON.stringify(origin));
+  return temp;
 };

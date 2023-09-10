@@ -1,13 +1,14 @@
 import {useAppSelector} from 'app-redux/store';
+import {newHorizontalPadding} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
-import {ScrollView} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ScrollView, TextStyle, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {borderWidthTiny} from 'utility/assistant';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface Props {
   onTouchBackground(): void;
@@ -22,35 +23,29 @@ const SearchSuggestions = (props: Props) => {
   return (
     <StyleTouchable
       style={[
-        styles.container,
+        $container,
         {
-          backgroundColor: theme.background,
+          backgroundColor: theme.white,
           borderTopColor: theme.gray_200,
         },
       ]}
       activeOpacity={1}
       onPress={() => onTouchBackground()}>
       <ScrollView keyboardShouldPersistTaps="always">
-        <StyleText
-          i18Text="discovery.hotLocation"
-          customStyle={[styles.textTitle, {color: theme.black}]}
-        />
+        <StyleText i18Text="discovery.hotLocation" customStyle={$textTitle} />
         {hot_locations.map(item => (
           <StyleTouchable
             key={item?.id}
-            customStyle={styles.itemSearchBox}
+            customStyle={$itemSearchBox}
             onPress={() => onSearch(item?.name)}>
             <Ionicons
               name="ios-location-outline"
-              style={[styles.iconSearch, {color: theme.gray_500}]}
+              style={[$iconLocation, {color: theme.gray_500}]}
             />
-            <StyleText
-              originValue={item?.name}
-              customStyle={[styles.textSearch, {color: theme.black}]}
-            />
+            <StyleText originValue={item?.name} customStyle={$textSearch} />
             <AntDesign
               name="search1"
-              style={[styles.iconGo, {color: theme.gray_500}]}
+              style={[$iconGo, {color: theme.gray_500}]}
             />
           </StyleTouchable>
         ))}
@@ -59,39 +54,35 @@ const SearchSuggestions = (props: Props) => {
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    top: 0,
-    borderTopWidth: borderWidthTiny,
-    paddingHorizontal: '20@s',
-  },
-  textTitle: {
-    fontSize: FONT_SIZE.f1,
-    fontWeight: 'bold',
-    marginTop: '5@vs',
-  },
-  itemSearchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: '15@vs',
-    paddingHorizontal: '15@s',
-    paddingBottom: '5@vs',
-  },
-  iconSearch: {
-    fontSize: '17@ms',
-  },
-  textSearch: {
-    fontSize: FONT_SIZE.f2,
-    marginLeft: '8@s',
-  },
-  iconGo: {
-    fontSize: '13@ms',
-    position: 'absolute',
-    right: '15@s',
-  },
-});
+const $container: ViewStyle = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  top: 0,
+  borderTopWidth: borderWidthTiny,
+  paddingHorizontal: scale(20),
+};
+const $textTitle: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  fontWeight: 'bold',
+  marginVertical: verticalScale(8),
+};
+const $itemSearchBox: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: verticalScale(20),
+  paddingHorizontal: newHorizontalPadding,
+};
+const $iconLocation: TextStyle = {
+  fontSize: moderateScale(18),
+};
+const $textSearch: TextStyle = {
+  marginLeft: scale(8),
+};
+const $iconGo: TextStyle = {
+  fontSize: moderateScale(16),
+  position: 'absolute',
+  right: scale(16),
+};
 
 export default SearchSuggestions;

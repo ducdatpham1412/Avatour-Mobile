@@ -1,15 +1,14 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import {APP_EVENT, STATUS} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
-import {ItemSale} from 'components';
+import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {ItemSale, Separator} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
 import isEqual from 'react-fast-compare';
 import {View, ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
-import {scale} from 'utility/scale';
 
 const SearchListGroupBuying = () => {
   const {bottom} = useSafeArea();
@@ -79,7 +78,7 @@ const SearchListGroupBuying = () => {
     <View style={$container}>
       <StyleList
         data={list}
-        renderItem={({item, index}) => (
+        renderItem={({item}) => (
           <ItemSale
             item={item}
             onReact={value =>
@@ -88,7 +87,6 @@ const SearchListGroupBuying = () => {
                 setList,
               })
             }
-            containerStyle={{marginLeft: index % 2 !== 0 ? scale(7) : 0}}
           />
         )}
         keyExtractor={item => String(item.id)}
@@ -97,9 +95,14 @@ const SearchListGroupBuying = () => {
         onLoadMore={onLoadMore}
         initLoading={initLoading}
         loadingMore={loadingMore}
-        contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
+        contentContainerStyle={[
+          $content,
+          {paddingBottom: bottom || safePaddingNotZero},
+        ]}
         ListEmptyComponent={null}
         numColumns={2}
+        ItemSeparatorComponent={Separator}
+        columnWrapperStyle={$columnWrap}
       />
     </View>
   );
@@ -107,7 +110,13 @@ const SearchListGroupBuying = () => {
 
 const $container: ViewStyle = {
   flex: 1,
-  paddingHorizontal: scale(12),
+  paddingHorizontal: newHorizontalPadding,
+};
+const $content: ViewStyle = {
+  paddingTop: safePaddingNotZero,
+};
+const $columnWrap: ViewStyle = {
+  justifyContent: 'space-between',
 };
 
 export default SearchListGroupBuying;

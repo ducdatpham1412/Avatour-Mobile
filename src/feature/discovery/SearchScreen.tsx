@@ -142,7 +142,7 @@ const SearchScreen = ({
 
   return (
     <>
-      <SafeView style={{backgroundColor: theme.background}}>
+      <SafeView style={{backgroundColor: theme.white}}>
         {SearchBox}
         {renderToolBox()}
         <View style={$resultView}>
@@ -206,7 +206,7 @@ const $iconBack: TextStyle = {
 };
 const $input: TextStyle = {
   flex: 1,
-  fontSize: FONT_SIZE.f1,
+  fontSize: FONT_SIZE.f2,
 };
 const $iconClear: TextStyle = {
   fontSize: moderateScale(20),

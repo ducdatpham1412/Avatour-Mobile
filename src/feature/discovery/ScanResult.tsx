@@ -35,9 +35,7 @@ interface Props {
 const JoinResult = ({shop_id}: Props) => {
   const theme = useTheme();
   const {bottom} = useSafeArea();
-  const [{data: shopData}] = useOtherProfile(shop_id, {
-    revalidateAll: false,
-  });
+  const [{data: shopData}] = useOtherProfile(shop_id);
   const [{data, loadingRequestBought, loading, error}, {mutate}] =
     useJoinResult(shop_id, {
       revalidateAll: true,
@@ -186,9 +184,7 @@ const ScanResult = ({
     params: {mode, shop_id},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.scanResult]>) => {
-  const [{data, error, loading}, {mutate}] = useOtherProfile(shop_id, {
-    revalidateAll: false,
-  });
+  const [{data, error, loading}, {mutate}] = useOtherProfile(shop_id);
 
   return (
     <StyleContainer

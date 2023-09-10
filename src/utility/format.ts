@@ -200,9 +200,9 @@ type FormatMoneyOptions = {
 };
 export const formatMoney = (value: number, options?: FormatMoneyOptions) => {
   if (options?.unit === 'vnd') {
-    return `${formatLocaleNumber(String(value || '0'))} (vnd)`;
+    return `${formatLocaleNumber(String(value || '0'))}d`;
   }
-  return `${formatLocaleNumber(String(value || '0'))} (vnd)`;
+  return `${formatLocaleNumber(String(value || '0'))}d`;
 };
 export const formatPhone = (phone: string) => `(+84) ${phone}`;
 

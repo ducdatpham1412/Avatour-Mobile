@@ -229,6 +229,7 @@ const discovery = {
   moreThan: 'More than {{value}}',
   valuePeople: '{{value}} people',
   tour: 'Tour',
+  myTour: 'My tour',
   groupBuying: 'Group buying',
   groupDay: 'Group {{value}}',
   confirmArrived: 'Confirm arrived store',
@@ -309,7 +310,6 @@ const tour = {
   tours: 'Tours',
   myTours: 'My tours',
   favoriteTour: 'Favorite tours',
-  viewTourOnMapDeveloping: 'View the tour schedule on map will come soon 😁',
 };
 
 const mess = {
@@ -393,7 +393,6 @@ const profile = {
   draftPost: 'Draft',
   thisPostInDraft: 'This post is in draft',
   goToPost: 'Go to post',
-  reviewProvider: 'Write review',
   gotToCreateGb: 'Create first group buying campaign',
   createReviewPost: 'Review post',
   createGroupBuying: 'Group booking campaign',
@@ -439,7 +438,7 @@ const profile = {
   myRequests: 'My requests',
   upgradeToShop: 'Upgrade to shop',
   created: 'Date created',
-  createTour: 'Create new tour',
+  createTour: 'Create tour',
   createTourSuccess: 'Congratulations on creating a successful tour!',
   wantToShareTour:
     'Want to share the tour you just created with the community?',
@@ -459,6 +458,11 @@ const profile = {
     'The searched location could not be found. Do you want to add a new location?',
   personal: 'Personal',
   tourName: "Tour's name",
+  opening: 'Opening',
+  closing: 'Closing',
+  enjoyTime: 'Experience lasts',
+  noReviewYet: 'No reviews yet',
+  checkIn: 'Check-in',
 };
 
 const setting = {
@@ -607,6 +611,11 @@ To be able to delete, please follow these two steps:
   openSetting: 'Open setting',
 };
 
+const order = {
+  orderManagement: 'Order management',
+  order: 'Order',
+};
+
 const en = {
   common,
   alert,
@@ -618,6 +627,7 @@ const en = {
   notification,
   reputation,
   tour,
+  order,
 };
 
 export default en;

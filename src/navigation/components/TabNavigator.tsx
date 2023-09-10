@@ -13,11 +13,10 @@ import ROOT_SCREEN, {
 import {navigate} from 'navigation/NavigationService';
 import {ModalScanQr} from 'navigation/screen/modals';
 import React, {useMemo, useRef} from 'react';
-import {Animated, TextStyle, View, ViewStyle} from 'react-native';
+import {Animated, TextStyle, Vibration, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'react-native-size-matters';
 import {borderWidthTiny, logger} from 'utility/assistant';
-import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale} from 'utility/scale';
 
 const iconSize = 27;
@@ -28,7 +27,7 @@ const showModalQr = async () => {
     if (res) {
       const dataQR: QrData = JSON.parse(res.data);
       ModalScanQr.hide();
-      impactMedium();
+      Vibration.vibrate();
       navigate(ROOT_SCREEN.scanResult, {
         shop_id: dataQR.user_id,
         mode: 'join-result',
@@ -82,7 +81,7 @@ const TabNavigator = (props: any) => {
     return (
       <StyleTouchable
         customStyle={$button}
-        onPress={() => navigate(MAIN_SCREEN.favorite)}>
+        onPress={() => navigate(MAIN_SCREEN.orderRoute)}>
         <StyleIcon
           source={
             isFocusHeart
@@ -93,7 +92,7 @@ const TabNavigator = (props: any) => {
           customStyle={{tintColor}}
         />
         <StyleText
-          i18Text="discovery.tour"
+          i18Text="order.order"
           customStyle={[$textTitle, {color: tintColor}]}
         />
       </StyleTouchable>

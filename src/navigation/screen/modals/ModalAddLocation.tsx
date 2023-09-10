@@ -204,7 +204,6 @@ const ListLocations = ({onSelect, onDelete, type}: ListLocationsProps) => {
         initLoading={loading}
         refreshing={validating}
         onRefresh={mutate}
-        keyboardDismissMode="on-drag"
         ListEmptyComponent={renderEmpty()}
         ListFooterComponent={renderFooter()}
         ItemSeparatorComponent={Separator}

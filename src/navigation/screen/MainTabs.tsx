@@ -7,7 +7,7 @@ import TabNavigator from 'navigation/components/TabNavigator';
 import {MAIN_SCREEN} from 'navigation/config/routes';
 import React from 'react';
 import DiscoveryRoute from './tabs/DiscoveryRoute';
-import ToursRoute from './tabs/ToursRoute';
+import OrdersRoute from './tabs/OrdersRoute';
 import ProfileRoute from './tabs/ProfileRoute';
 
 const BottomTab = createBottomTabNavigator();
@@ -31,7 +31,7 @@ const MainTabs = () => {
         }}
       />
 
-      <BottomTab.Screen name={MAIN_SCREEN.favorite} component={ToursRoute} />
+      <BottomTab.Screen name={MAIN_SCREEN.orderRoute} component={OrdersRoute} />
 
       <BottomTab.Screen
         name={MAIN_SCREEN.notificationRoute}

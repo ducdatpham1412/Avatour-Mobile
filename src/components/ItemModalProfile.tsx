@@ -29,7 +29,11 @@ const ItemModalProfile = ({
   return (
     <StyleTouchable
       customStyle={[$container, containerStyle]}
-      onPress={() => onGoToProfile(profile?.id)}>
+      onPress={() =>
+        onGoToProfile(profile?.id, {
+          initValue: profile,
+        })
+      }>
       <Avatar source={{uri: profile?.avatar}} size={48} />
 
       <View style={$body}>

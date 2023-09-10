@@ -196,7 +196,11 @@ const ItemLocation = ({
       <ScaleDecorator>
         <StyleTouchable
           style={[$container, {backgroundColor: theme.white}]}
-          onPress={() => onGoToProfile(item?.id)}
+          onPress={() =>
+            onGoToProfile(item?.id, {
+              initValue: item,
+            })
+          }
           disable={isActive}
           disableOpacity={1}>
           <View style={$body}>

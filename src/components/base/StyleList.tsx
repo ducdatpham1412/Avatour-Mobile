@@ -89,6 +89,7 @@ const StyleList = (props: StyleListProps, ref: any) => {
       ref={ref || listRef}
       initialNumToRender={20}
       keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl

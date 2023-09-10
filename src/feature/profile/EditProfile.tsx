@@ -2,7 +2,7 @@ import {apiEditProfile} from 'api/profile';
 import {updatePassport} from 'app-redux';
 import Store, {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
+import {safePaddingNotZero, verticalMargin} from 'asset/metrics';
 import {
   AppInput,
   StyleButton,
@@ -25,6 +25,7 @@ import ImageUploader from 'utility/ImageUploader';
 import {logger, seeDetailImage} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import BtnPenEdit from './components/BtnPenEdit';
+import {BORDER_RADIUS} from 'asset';
 
 const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
   ModalActionSheet.show({
@@ -291,37 +292,37 @@ const $nameBox: ViewStyle = {
   alignSelf: 'center',
   flexDirection: 'row',
   alignItems: 'center',
-  paddingHorizontal: scale(5),
-  borderRadius: moderateScale(5),
-  marginTop: verticalScale(10),
+  paddingHorizontal: scale(8),
+  borderRadius: BORDER_RADIUS.f3,
+  marginTop: verticalMargin,
+  paddingVertical: verticalScale(12),
 };
 const $inputName: TextStyle = {
   flex: 1,
-  paddingTop: verticalScale(10),
-  paddingBottom: verticalScale(10),
-  marginLeft: scale(5),
+  marginLeft: scale(8),
 };
 const $iconLocation: TextStyle = {
   fontSize: moderateScale(20),
 };
 const $descriptionBox: ViewStyle = {
   width: '90%',
-  borderRadius: moderateScale(5),
-  marginTop: verticalScale(10),
-  paddingVertical: verticalScale(10),
+  borderRadius: BORDER_RADIUS.f3,
+  marginTop: verticalMargin,
 };
 const $inputDescription: ViewStyle = {
   width: '100%',
-  padding: scale(10),
+  paddingTop: verticalScale(8),
+  paddingBottom: verticalScale(8),
+  paddingHorizontal: scale(12),
   minHeight: verticalScale(100),
   maxHeight: verticalScale(200),
 };
 const $bankBox: ViewStyle = {
   width: '90%',
-  paddingVertical: verticalScale(5),
-  marginTop: verticalScale(10),
-  borderRadius: moderateScale(5),
-  paddingHorizontal: scale(10),
+  paddingVertical: verticalScale(12),
+  paddingHorizontal: scale(12),
+  marginTop: verticalMargin,
+  borderRadius: BORDER_RADIUS.f3,
 };
 const $textBank: TextStyle = {
   fontWeight: 'bold',
