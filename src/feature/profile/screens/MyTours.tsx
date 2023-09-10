@@ -1,10 +1,10 @@
 import {apiGetListTours} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
-import {REACT} from 'asset/enum';
+import {APP_EVENT, REACT} from 'asset/enum';
 import {safePaddingNotZero} from 'asset/metrics';
 import {ItemTour, Separator} from 'components';
 import {StyleList} from 'components/base';
-import {usePaging, useSafeArea} from 'hook';
+import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
@@ -22,6 +22,12 @@ const MyTours = () => {
         user_id: myId,
       },
     });
+
+  useAppEvent(APP_EVENT.createNewTour, e => {
+    setList(pre => [e.newTour].concat(pre));
+  });
+
+  useAppEvent(APP_EVENT.editTour, onRefresh);
 
   const renderItem = useCallback(({item}: {item: Tour}) => {
     return (

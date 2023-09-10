@@ -119,10 +119,10 @@ export type AppParamsList = {
     itemTour?: TourDetail;
   };
   [PROFILE_ROUTE.myProfile]: {
-    initIndex?: 'shop' | 'order' | 'favorite' | 'review';
+    initIndex?: 'shop' | 'tour' | 'favorite' | 'review';
   };
   [ROOT_SCREEN.myProfile]: {
-    initIndex?: 'shop' | 'order' | 'favorite' | 'review';
+    initIndex?: 'shop' | 'tour' | 'favorite' | 'review';
   };
   [ROOT_SCREEN.goToDeposit]: {
     joinEstimate: TypeJoinEstimate;
@@ -177,6 +177,9 @@ export type AppEventList = {
   [APP_EVENT.followUser]: {
     event: 'follow' | 'un-follow';
     userId: number;
+  };
+  [APP_EVENT.createNewTour]: {
+    newTour: Tour;
   };
 };
 

@@ -295,7 +295,11 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
     'Avatour is reviewing your suggestion to add new location <b>{{value}}</b>',
   seeSuggest: 'View suggestion',
   suggestNewLocation: 'Suggest new location',
+  tourStillHaveDraftLocation:
+    'The tour currently still has some uncensored locations so they cannot be shared on the community\nPlease suggest locations to Avatour and we will respond soon',
   searchNameOrTransactionHash: 'Search name or order number',
+  shareToCommunity: 'Share to community',
+  tourIsPrivate: 'Tour is in private mode\nShare widely with the community?',
 };
 
 const reputation = {

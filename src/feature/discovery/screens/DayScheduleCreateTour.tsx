@@ -116,7 +116,7 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
         contentContainerStyle={[
           $contentContainer,
           {
-            paddingBottom: bottom + verticalScale(70),
+            paddingBottom: bottom + verticalScale(80),
           },
         ]}
         showsVerticalScrollIndicator={false}

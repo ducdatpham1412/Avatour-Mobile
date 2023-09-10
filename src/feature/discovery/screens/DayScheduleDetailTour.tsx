@@ -9,6 +9,7 @@ import DraggableFlatList from 'react-native-draggable-flatlist';
 import {useDetailTour} from '../hooks';
 import {renderItemLocation} from './DayScheduleCreateTour';
 import {Separator} from 'components';
+import {verticalScale} from 'utility/scale';
 
 interface Props {
   tourId: number;
@@ -62,7 +63,8 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
       contentContainerStyle={[
         $contentContainer,
         {
-          paddingBottom: bottom,
+          paddingBottom:
+            bottom + (data?.status === STATUS.draft ? verticalScale(80) : 0),
         },
       ]}
       showsVerticalScrollIndicator={false}

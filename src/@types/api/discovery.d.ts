@@ -154,6 +154,7 @@ type Tour = Pick<
   | 'creator_avatar'
   | 'is_liked'
   | 'total_likes'
+  | 'status'
 > & {
   schedule: string[][];
 };

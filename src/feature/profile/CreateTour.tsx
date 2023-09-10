@@ -1,4 +1,6 @@
+import {useAppSelector} from 'app-redux/store';
 import {FONT_WEIGHT_MEDIUM} from 'asset';
+import {APP_EVENT, STATUS} from 'asset/enum';
 import {
   horizontalPadding,
   safePaddingNotZero,
@@ -10,7 +12,7 @@ import {ButtonX, IndicatorModal, InputBox} from 'components/common';
 import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
-import {useSafeArea, useTheme} from 'hook';
+import {emitAppEvent, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE} from 'navigation/config';
 import {
@@ -98,6 +100,7 @@ const renderDaySchedule = (
 const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const {bottom, top} = useSafeArea();
   const theme = useTheme();
+  const {profile} = useAppSelector(state => state.accountSlice.passport);
 
   const [
     {loadingCreateTour, name, loadingEditTour, searchParams, schedules},
@@ -212,6 +215,24 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
           navigate(PROFILE_ROUTE.createTourSuccess, {
             data: res,
           });
+          emitAppEvent(APP_EVENT.createNewTour, {
+            newTour: {
+              id: res?.tour_id,
+              name,
+              number_people: searchParams.number_people ?? 0,
+              start_price: searchParams.start_price ?? 0,
+              end_price: searchParams.end_price ?? 0,
+              creator: profile.id,
+              creator_name: profile.name,
+              creator_avatar: profile.avatar,
+              is_liked: false,
+              total_likes: 0,
+              schedule: schedules.map(day => {
+                return day.map(location => location.avatar);
+              }),
+              status: STATUS.draft,
+            },
+          });
         }
       } catch (err) {
         ModalAlert.error({
@@ -223,6 +244,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
 
     try {
       await editTour();
+      emitAppEvent(APP_EVENT.editTour);
       ModalAlert.success({
         i18Content: 'alert.successChange',
         onClose: goBack,

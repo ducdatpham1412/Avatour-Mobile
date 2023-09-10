@@ -43,7 +43,7 @@ const MyProfile = ({
   const [tabViewHeight, setTabViewHeight] = useState(0);
 
   useEffect(() => {
-    if (route.params?.initIndex === 'order') {
+    if (route.params?.initIndex === 'tour') {
       tabViewRef.current?.navigateToIndex(1);
     }
   }, [route?.params]);

@@ -8,12 +8,16 @@ import React, {
 } from 'react';
 import {StyleSheet, View, ViewStyle} from 'react-native';
 
+interface Props {
+  onFinish?: () => void;
+}
+
 type TypeShow = {
   loop?: boolean;
 };
 
 const ModalCongratulation = (
-  _: any,
+  {onFinish}: Props,
   ref: ForwardedRef<TypeShowModalize<TypeShow>>,
 ) => {
   const [show, setShow] = useState(false);
@@ -42,7 +46,10 @@ const ModalCongratulation = (
         style={$lottie}
         autoPlay
         loop={false}
-        onAnimationFinish={() => setShow(false)}
+        onAnimationFinish={() => {
+          onFinish?.();
+          setShow(false);
+        }}
       />
     </View>
   );
