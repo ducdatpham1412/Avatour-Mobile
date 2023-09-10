@@ -10,12 +10,14 @@ import {formatLocaleNumber} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import {StyleImage, StyleText, StyleTouchable} from './base';
 import {Avatar} from './common';
+import BoxReact from './BoxReact';
 
 interface Props {
   item: Tour;
   containerStyle?: StyleProp<ViewStyle>;
   width?: number;
   fontSize?: number;
+  onReact?: () => void;
 }
 
 const ItemTour = ({
@@ -23,6 +25,7 @@ const ItemTour = ({
   containerStyle,
   width = scale(343),
   fontSize = FONT_SIZE.f2,
+  onReact,
 }: Props) => {
   const theme = useTheme();
   const {t} = useTranslation();
@@ -41,11 +44,14 @@ const ItemTour = ({
           tourId: item.id,
         });
       }}>
-      <StyleImage
-        source={{uri: listImages?.[0]}}
-        customStyle={[$image, {width, height: width * ratioImageTour}]}
-        defaultImageSource="image"
-      />
+      <View style={{width, height: width * ratioImageTour}}>
+        <StyleImage
+          source={{uri: listImages?.[0]}}
+          customStyle={$image}
+          defaultImageSource="image"
+        />
+        <BoxReact isReacted={item.is_liked} onPress={onReact} />
+      </View>
       {!!item.name && (
         <StyleText
           originValue={item?.name}
@@ -83,6 +89,8 @@ const $container: ViewStyle = {
   overflow: 'hidden',
 };
 const $image: ImageStyle = {
+  width: '100%',
+  height: '100%',
   borderRadius: BORDER_RADIUS.f2,
 };
 const $name: TextStyle = {

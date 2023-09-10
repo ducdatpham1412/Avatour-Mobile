@@ -1,4 +1,4 @@
-import {newHorizontalPadding} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {ErrorScreen} from 'feature/common';
 import {LoadingScreen} from 'feature/profile/screens';
 import {useTheme} from 'hook';
@@ -111,11 +111,11 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   width: '100%',
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $body: ViewStyle = {
   flex: 1,
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default forwardRef(StyleContainer);

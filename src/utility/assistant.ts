@@ -6,7 +6,6 @@ import {
   GENDER_TYPE,
   JOIN_STATUS,
   LANGUAGE_TYPE,
-  REACT,
   SIGN_UP_TYPE,
   TYPE_COLOR,
 } from 'asset/enum';
@@ -249,37 +248,53 @@ export const calculateTotalJoins = (group: TypeGroupJoin) => {
   return res;
 };
 
-type TypeReactPost = {
-  isLiked: boolean;
-  setList: Dispatch<SetStateAction<TypeGroupBuying[]>>;
+type TypeReactPost<T> = {
+  type: number;
+  setList: Dispatch<SetStateAction<T[]>>;
 };
-export const onReactSale = async (
+
+export const onReactSale = async <
+  T extends TypeGroupBuying | Tour | TourDetail,
+>(
   postId: number,
-  {isLiked, setList}: TypeReactPost,
+  {type, setList}: TypeReactPost<T>,
 ) => {
-  let currentTotalLikes = 0;
+  let currentData: T[] = [];
+  let currentIsLiked: boolean | undefined;
+
+  let resolve: any;
+  const promise = new Promise(rel => {
+    resolve = rel;
+  });
+
   try {
     setList(pre => {
+      currentData = copyObject(pre);
       return pre.map(item => {
         if (item?.id !== postId) {
           return item;
         }
-        currentTotalLikes = item?.total_likes;
+        currentIsLiked = item?.is_liked;
+        resolve?.('');
         return {
           ...item,
-          is_liked: !isLiked,
-          total_likes: currentTotalLikes + (isLiked ? -1 : 1),
+          is_liked: !currentIsLiked,
+          total_likes: item.total_likes + (currentIsLiked ? -1 : 1),
         };
       });
     });
-    if (!isLiked) {
+
+    await promise;
+
+    if (!currentIsLiked) {
       await apiLikePost({
-        type: REACT.sale,
+        type,
         reactedId: postId,
       });
+      impactLight();
     } else {
       await apiUnLikePost({
-        type: REACT.sale,
+        type,
         reactedId: postId,
       });
     }
@@ -287,18 +302,7 @@ export const onReactSale = async (
     ModalAlert.error({
       content: err,
     });
-    setList(pre => {
-      return pre.map(item => {
-        if (item?.id !== postId) {
-          return item;
-        }
-        return {
-          ...item,
-          is_liked: isLiked,
-          total_likes: currentTotalLikes,
-        };
-      });
-    });
+    setList(currentData);
   }
 };
 

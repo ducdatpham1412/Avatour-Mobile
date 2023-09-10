@@ -1,6 +1,6 @@
 import {apiGetListSalesLiked} from 'api/profile';
-import {APP_EVENT, STATUS} from 'asset/enum';
-import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {APP_EVENT, STATUS, REACT} from 'asset/enum';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ItemSale, Separator} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
@@ -59,9 +59,9 @@ const FavoriteSales = () => {
     return (
       <ItemSale
         item={item}
-        onReact={value =>
-          onReactSale(value.postId as number, {
-            isLiked: value.isLiked,
+        onReact={() =>
+          onReactSale(item.id, {
+            type: REACT.sale,
             setList,
           })
         }
@@ -91,7 +91,7 @@ const FavoriteSales = () => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingTop: safePaddingNotZero,
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default FavoriteSales;

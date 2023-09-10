@@ -1,5 +1,5 @@
 import {STATUS} from 'asset/enum';
-import {newHorizontalPadding} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {Separator} from 'components';
 import {SquareButton} from 'components/base';
 import {ItemLocation} from 'feature/discovery/components';
@@ -166,7 +166,7 @@ const $container: ViewStyle = {
 };
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $iconAdd: TextStyle = {
   fontSize: moderateScale(15),

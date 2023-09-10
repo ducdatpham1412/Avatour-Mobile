@@ -19,11 +19,39 @@ import {ListReviews, ListSales, ListTours} from './screens';
 import {ACCOUNT} from 'asset/enum';
 import {IconTour} from 'asset/icons';
 
+type Props = RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>;
+
+const renderTabIndex = (
+  profile: TypeGetProfileResponse,
+  tab: Props['route']['params']['tab'],
+) => {
+  if (tab) {
+    switch (tab) {
+      case 'shop':
+        return 0;
+      case 'tour':
+        return 1;
+      case 'check-in':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
+  if (profile.account_type === ACCOUNT.shop) {
+    return 0;
+  }
+  if (profile.account_type === ACCOUNT.location) {
+    return 2;
+  }
+  return 1;
+};
+
 const OtherProfile = ({
   route: {
-    params: {id, initValue},
+    params: {id, initValue, tab},
   },
-}: RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>) => {
+}: Props) => {
   const theme = useTheme();
   const [
     {data, isFollowing, isBlocked, loading, validating},
@@ -35,9 +63,6 @@ const OtherProfile = ({
   });
 
   const [tabViewHeight, setTabViewHeight] = useState(0);
-
-  const isShopAccount = data?.account_type === ACCOUNT.shop;
-  const isLocationAccount = data?.account_type === ACCOUNT.location;
 
   const onShowModalOptions = () => {
     if (!isBlocked) {
@@ -132,7 +157,7 @@ const OtherProfile = ({
                 icon={Images.icons.review}
               />,
             ]}
-            initialIndex={isShopAccount ? 0 : isLocationAccount ? 2 : 1}
+            initialIndex={renderTabIndex(data, tab)}
           />
         </>
       )}

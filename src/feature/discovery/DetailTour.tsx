@@ -2,7 +2,7 @@ import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
-import {newHorizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {AppModalize, LoadingScreen, MapTour, TabView} from 'components';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {Avatar, IndicatorModal} from 'components/common';
@@ -27,11 +27,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {$styleDropShadow, onGoToProfile} from 'utility/assistant';
+import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import {useDetailTour} from './hooks';
 import {DayScheduleDetailTour} from './screens';
-import {impactLight} from 'utility/haptic';
 
 export const levelModalScheduleHeight = {
   low: verticalScale(180),
@@ -337,7 +337,7 @@ const DetailTour = ({
           onPress={onPressMore}>
           <StyleIcon
             source={Images.icons.more}
-            size={20}
+            size={23}
             customStyle={{tintColor: theme.black}}
           />
         </StyleTouchable>
@@ -367,7 +367,7 @@ const $avatar: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $nameAvatar: ViewStyle = {
   flexDirection: 'row',
@@ -383,7 +383,7 @@ const $tourName: ViewStyle = {
   marginTop: verticalScale(12),
   flexDirection: 'row',
   alignItems: 'center',
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $tourNameText: TextStyle = {
   fontSize: FONT_SIZE.f1,
@@ -404,7 +404,7 @@ const $textIndex: TextStyle = {
 };
 const $iconMore: ViewStyle = {
   position: 'absolute',
-  right: scale(12),
+  right: horizontalPadding,
   padding: moderateScale(5),
   borderRadius: 50,
 };

@@ -1,6 +1,6 @@
 import {FONT_SIZE} from 'asset';
 import * as icons from 'asset/icons';
-import {newHorizontalPadding} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {StyleContainer, StyleList, StyleText} from 'components/base';
 import {useSafeArea} from 'hook';
 import React, {FunctionComponent, useCallback} from 'react';
@@ -33,7 +33,7 @@ const ListSvgIcons = () => {
     <StyleContainer
       layOut="view"
       customStyle={{
-        paddingHorizontal: newHorizontalPadding,
+        paddingHorizontal: horizontalPadding,
         paddingBottom: bottom,
       }}
       headerProps={{

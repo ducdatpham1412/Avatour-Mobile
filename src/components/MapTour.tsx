@@ -1,14 +1,14 @@
+import {horizontalPadding} from 'asset/metrics';
 import {levelModalScheduleHeight} from 'feature/discovery/DetailTour';
 import {LoadingScreen} from 'feature/profile/screens';
+import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import React, {ReactNode} from 'react';
 import {View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {scale, verticalScale} from 'utility/scale';
+import {verticalScale} from 'utility/scale';
 import {StyleWebView} from './base';
 import ButtonBack from './common/ButtonBack';
-import {useTheme} from 'hook';
-import {$styleDropShadow} from 'utility/assistant';
 
 interface Props {
   children?: ReactNode;
@@ -56,7 +56,6 @@ const MapTour = ({
       <ButtonBack
         containerStyle={[
           $iconX,
-          $styleDropShadow,
           {
             top: top || verticalScale(3),
             backgroundColor: theme.white,
@@ -74,7 +73,7 @@ const $container: ViewStyle = {
   flex: 1,
 };
 const $iconX: ViewStyle = {
-  left: scale(12),
+  left: horizontalPadding,
   right: undefined,
 };
 

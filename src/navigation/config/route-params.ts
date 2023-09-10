@@ -26,6 +26,7 @@ export type AppParamsList = {
   [ROOT_SCREEN.otherProfile]: {
     id: number;
     initValue?: TypeGetProfileResponse;
+    tab?: 'shop' | 'tour' | 'check-in';
   };
   [ROOT_SCREEN.listFollows]: {
     profile: TypeGetProfileResponse;

@@ -1,5 +1,9 @@
 import {FONT_WEIGHT_MEDIUM} from 'asset';
-import {safePaddingNotZero, verticalMargin} from 'asset/metrics';
+import {
+  horizontalPadding,
+  safePaddingNotZero,
+  verticalMargin,
+} from 'asset/metrics';
 import {AppModalize, MapTour, TabView} from 'components';
 import {StyleButton, StyleText, StyleTouchable} from 'components/base';
 import {ButtonX, IndicatorModal, InputBox} from 'components/common';
@@ -38,10 +42,10 @@ import Animated, {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
+import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
-import {impactLight, impactMedium} from 'utility/haptic';
 
 type TypeContext = [
   {
@@ -590,7 +594,7 @@ const $inputTour: TextStyle = {
 };
 const $buttonSaveSmall: AnimatedStyle<ViewStyle> = {
   position: 'absolute',
-  right: scale(12),
+  right: horizontalPadding,
 };
 const $buttonSaveSmallBox: ViewStyle = {
   paddingVertical: moderateScale(5),

@@ -2,9 +2,9 @@ import {horizontalPadding} from 'asset/metrics';
 import {useTheme} from 'hook';
 import React, {
   ForwardedRef,
-  forwardRef,
   FunctionComponent,
   ReactNode,
+  forwardRef,
   useEffect,
   useImperativeHandle,
   useMemo,

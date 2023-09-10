@@ -8,7 +8,12 @@ import {
 import {ERROR_MESSAGE, STATUS} from 'asset/enum';
 import {IconPrice} from 'asset/icons';
 import Images from 'asset/img/images';
-import {Metrics, newHorizontalPadding, verticalMargin} from 'asset/metrics';
+import {
+  Metrics,
+  horizontalMargin,
+  horizontalPadding,
+  verticalMargin,
+} from 'asset/metrics';
 import {AppModalize, LoadingScreen, TextCountDown} from 'components';
 import {
   RefreshControl,
@@ -48,6 +53,7 @@ import {
   ModalStillHavePeopleJoin,
 } from './components';
 import {useDetailSale} from './hooks';
+import Share from 'react-native-share';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -121,17 +127,16 @@ const DetailSale = ({
   const {data: estimateAndJoinings, mutate: mutateEstimateAndJoinings} =
     useEstimatesAndJoinings();
 
+  const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const modalStillHavePeopleJoin = useRef<ElementRef<typeof AppModalize>>(null);
+
   const estimating = estimateAndJoinings.estimates.find(
     item => item.sale.id === data?.id,
   );
   const joinings = estimateAndJoinings.joinings.filter(
     item => item.sale.id === data?.id,
   );
-
   const isMySale = data?.creator === myId;
-
-  const modalConfirmJoinRef = useRef<ElementRef<typeof AppModalize>>(null);
-  const modalStillHavePeopleJoin = useRef<ElementRef<typeof AppModalize>>(null);
 
   /**
    * Function
@@ -303,7 +308,7 @@ const DetailSale = ({
                     $pricePart,
                     {
                       backgroundColor: theme.p_100,
-                      marginRight: isLast ? 0 : scale(8),
+                      marginRight: isLast ? 0 : horizontalMargin,
                     },
                   ]}
                   key={item?.number_people}>
@@ -347,7 +352,7 @@ const DetailSale = ({
             )}
           </ButtonReaction>
 
-          <ButtonReaction
+          {/* <ButtonReaction
             icon={Images.icons.comment}
             onPress={() => console.log('show modal comment')}
             title={
@@ -358,18 +363,30 @@ const DetailSale = ({
             titleParams={{
               value: data?.total_comments,
             }}
+          /> */}
+
+          <ButtonReaction
+            icon={Images.icons.reputation}
+            onPress={() => {
+              if (data) {
+                push(ROOT_SCREEN.otherProfile, {
+                  id: data.creator,
+                  tab: 'check-in',
+                });
+              }
+            }}
+            title="profile.post.seeRating"
           />
 
           <ButtonReaction
             icon={Images.icons.share}
-            onPress={() => console.log('Share')}
+            onPress={() =>
+              Share.open({
+                title: 'Avatour',
+                message: 'Avatour',
+              })
+            }
             title="discovery.share"
-          />
-
-          <ButtonReaction
-            icon={Images.icons.reputation}
-            onPress={() => console.log('Go to review')}
-            title="profile.rating"
           />
         </View>
       </>
@@ -490,7 +507,7 @@ const DetailSale = ({
                         });
                       }
                     }}
-                    containerStyle={{marginRight: newHorizontalPadding}}
+                    containerStyle={{marginRight: horizontalMargin}}
                   />
                 );
               })}
@@ -626,7 +643,7 @@ const $iconOptionView: ViewStyle = {
   justifyContent: 'center',
 };
 const $informationView: ViewStyle = {
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
   marginTop: verticalMargin,
 };
 const $joinView: ViewStyle = {
@@ -666,15 +683,16 @@ const $textTitlePrice: TextStyle = {
 };
 const $listPrices: ViewStyle = {
   width: Metrics.width,
-  left: -newHorizontalPadding,
+  left: -horizontalPadding,
   marginTop: verticalScale(8),
 };
 const $scrollPrice: ViewStyle = {
-  paddingLeft: newHorizontalPadding,
-  paddingRight: newHorizontalPadding,
+  paddingLeft: horizontalPadding,
+  paddingRight: horizontalPadding,
 };
 const $pricePart: ViewStyle = {
-  padding: moderateScale(8),
+  paddingVertical: moderateScale(8),
+  paddingHorizontal: horizontalPadding,
   borderRadius: BORDER_RADIUS.f4,
 };
 const $textNumberPeople: TextStyle = {
@@ -694,8 +712,7 @@ const $reactionView: ViewStyle = {
   marginTop: verticalScale(16),
 };
 const $reactionBox: ViewStyle = {
-  width: moderateScale(65),
-  marginHorizontal: scale(8),
+  marginHorizontal: horizontalMargin,
   alignItems: 'center',
 };
 const $reaction: ViewStyle = {
@@ -764,7 +781,7 @@ const $meJoinView: ViewStyle = {
   marginBottom: verticalMargin,
 };
 const $contentMeJoin: ViewStyle = {
-  paddingLeft: newHorizontalPadding,
+  paddingLeft: horizontalPadding,
 };
 const $titleEstimate: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,

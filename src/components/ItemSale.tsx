@@ -10,13 +10,14 @@ import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {$styleDropShadow} from 'utility/assistant';
 import {formatLocaleNumber, formatMoney} from 'utility/format';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
+import BoxReact from './BoxReact';
 import {StyleIcon, StyleImage, StyleText, StyleTouchable} from './base';
-import {Avatar, IconLiked, IconNotLiked} from './common';
+import {Avatar} from './common';
 
 interface Props {
   item: TypeGroupBuying;
-  onReact: (params: TypeParamsLikePost) => Promise<void>;
+  onReact: () => void;
   containerStyle?: StyleProp<ViewStyle>;
   hidingElements?: Array<'name' | 'location' | 'status'>;
 }
@@ -103,23 +104,7 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
           defaultImageSource="image"
           customStyle={$image}
         />
-        <View style={[$heartBox, {backgroundColor: theme.white_opacity(0.8)}]}>
-          {item?.is_liked ? (
-            <IconLiked
-              customStyle={$iconLike}
-              onPress={() =>
-                onReact({postId: item?.id, isLiked: item?.is_liked})
-              }
-            />
-          ) : (
-            <IconNotLiked
-              customStyle={$iconLike}
-              onPress={() =>
-                onReact({postId: item?.id, isLiked: item?.is_liked})
-              }
-            />
-          )}
-        </View>
+        <BoxReact isReacted={item?.is_liked} onPress={onReact} />
       </View>
 
       {!hidingElements?.includes('name') && !!item.name && (
@@ -173,24 +158,11 @@ const $imageView: ViewStyle = {
   width: defaultWidth,
   height: defaultWidth,
   overflow: 'hidden',
-  borderRadius: BORDER_RADIUS.f3,
+  borderRadius: BORDER_RADIUS.f2,
 };
 const $image: ImageStyle = {
   width: '100%',
   height: '100%',
-};
-const $heartBox: ViewStyle = {
-  position: 'absolute',
-  width: moderateScale(30),
-  height: moderateScale(30),
-  alignItems: 'center',
-  justifyContent: 'center',
-  right: scale(8),
-  top: scale(8),
-  borderRadius: 100,
-};
-const $iconLike: TextStyle = {
-  fontSize: moderateScale(20),
 };
 const $informationView: ViewStyle = {
   width: defaultWidth - scale(8),

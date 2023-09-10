@@ -1,5 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
-import {newHorizontalPadding} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
@@ -71,7 +71,7 @@ const $itemSearchBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   marginBottom: verticalScale(20),
-  paddingHorizontal: newHorizontalPadding,
+  paddingHorizontal: horizontalPadding,
 };
 const $iconLocation: TextStyle = {
   fontSize: moderateScale(18),

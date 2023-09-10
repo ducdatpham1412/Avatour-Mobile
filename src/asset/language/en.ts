@@ -376,6 +376,7 @@ const profile = {
     checkIn: 'Check in',
     topic: 'Topic',
     rating: 'Rating',
+    seeRating: 'View ratings',
     pasteLink: 'Paste link here',
     whereAreYouNow: "Where're you now?",
     willDebutSearchOnGoogleMap:
