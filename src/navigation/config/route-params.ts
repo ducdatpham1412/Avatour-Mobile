@@ -181,6 +181,9 @@ export type AppEventList = {
   [APP_EVENT.createNewTour]: {
     newTour: Tour;
   };
+  [APP_EVENT.deleteTour]: {
+    tourId: number;
+  };
 };
 
 export type SocketOnList = {

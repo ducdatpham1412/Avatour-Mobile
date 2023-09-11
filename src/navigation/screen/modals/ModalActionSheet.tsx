@@ -18,17 +18,14 @@ import {I18Normalize} from 'utility/I18Next';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, verticalScale} from 'utility/scale';
 
-type TypeShow = {
-  options: {
-    title: I18Normalize;
-    onPress: () => void;
-  }[];
-  fontSize?: number;
-};
-
 type TypeActionSheetElement = {
   title: Element;
   onPress: () => void;
+};
+
+type TypeShow = {
+  options: Array<{title: I18Normalize; onPress: () => void} | null>;
+  fontSize?: number;
 };
 
 const modalRef = createRef<ElementRef<typeof ModalActionSheet>>();
@@ -47,22 +44,29 @@ const ModalActionSheet = forwardRef(
         show: value => {
           if (value) {
             impactLight();
-            listOptions.current = value.options.map(option => {
-              return {
-                title: (
-                  <View>
-                    <StyleText
-                      i18Text={option.title}
-                      customStyle={[
-                        $title,
-                        {fontSize: value.fontSize ?? FONT_SIZE.f1},
-                      ]}
-                    />
-                  </View>
-                ),
-                onPress: option.onPress,
-              };
+
+            value.options.forEach(option => {
+              if (option !== null) {
+                listOptions.current.push({
+                  title: (
+                    <View>
+                      <StyleText
+                        i18Text={option.title}
+                        customStyle={[
+                          $title,
+                          {fontSize: value.fontSize ?? FONT_SIZE.f1},
+                        ]}
+                      />
+                    </View>
+                  ),
+                  onPress: () => {
+                    option.onPress?.();
+                    listOptions.current = [];
+                  },
+                });
+              }
             });
+
             listOptions.current.push({
               title: (
                 <View>
@@ -72,7 +76,10 @@ const ModalActionSheet = forwardRef(
                   />
                 </View>
               ),
-              onPress: () => actionSheetRef.current?.hide(),
+              onPress: () => {
+                actionSheetRef.current?.hide();
+                listOptions.current = [];
+              },
             });
             update();
             actionSheetRef.current?.show();

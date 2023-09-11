@@ -29,6 +29,10 @@ const MyTours = () => {
 
   useAppEvent(APP_EVENT.editTour, onRefresh);
 
+  useAppEvent(APP_EVENT.deleteTour, e => {
+    setList(pre => pre.filter(item => item.id !== e.tourId));
+  });
+
   const renderItem = useCallback(({item}: {item: Tour}) => {
     return (
       <ItemTour

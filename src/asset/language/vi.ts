@@ -298,11 +298,8 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
     'Avatour đang xét duyệt đề xuất thêm địa điểm <b>{{value}}</b> của bạn',
   seeSuggest: 'Xem đề xuất',
   suggestNewLocation: 'Đề xuất địa điểm mới',
-  tourStillHaveDraftLocation:
-    'Tour hiện vẫn đang có một số địa điểm chưa được kiểm duyệt nên chưa thể chia sẻ trên cộng đồng\nBạn vui lòng đề xuất địa điểm với Avatour và chúng tôi sẽ sớm phản hồi lại bạn',
   searchNameOrTransactionHash: 'Tìm kiếm tên hoặc mã đơn hàng',
   shareToCommunity: 'Chia sẻ với cộng đồng',
-  tourIsPrivate: 'Tour đang ở chế độ riêng tư\nChia sẻ rộng rãi với cộng đồng?',
 };
 
 const reputation = {
@@ -317,6 +314,12 @@ const tour = {
   tours: 'Tour',
   myTours: 'Tour của tôi',
   favoriteTour: 'Tour yêu thích',
+  switchToPrivateMode: 'Chuyển về chế độ riêng tư',
+  afterToPrivate:
+    'Sau khi chuyển về chế độ riêng tư, mọi người sẽ không thể tìm kiếm và xem thông tin lịch trình này trên trang cá nhân của bạn nữa',
+  tourIsPrivate: 'Tour đang ở chế độ riêng tư\nChia sẻ rộng rãi với cộng đồng?',
+  tourStillHaveDraftLocation:
+    'Tour hiện vẫn đang có một số địa điểm chưa được kiểm duyệt nên chưa thể chia sẻ trên cộng đồng\nBạn vui lòng đề xuất địa điểm với Avatour và chúng tôi sẽ sớm phản hồi lại bạn',
 };
 
 const profile = {

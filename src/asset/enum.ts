@@ -347,6 +347,7 @@ export enum APP_EVENT {
   confirmArrived = 'confirm-arrived',
   followUser = 'follow-user',
   createNewTour = 'create-new-tour',
+  deleteTour = 'delete-tour',
   editTour = 'edit-tour',
 }
 
