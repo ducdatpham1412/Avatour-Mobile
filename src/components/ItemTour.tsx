@@ -92,7 +92,7 @@ const ItemTour = ({
             customStyle={$buttonTag}
             onPress={() => {
               ToolTip.show({
-                content: t('discovery.tourIsPrivate'),
+                content: t('tour.tourIsPrivate'),
                 button: {
                   title: 'discovery.shareToCommunity',
                   onPress: () => {

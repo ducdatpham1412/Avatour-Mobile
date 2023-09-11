@@ -295,11 +295,8 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
     'Avatour is reviewing your suggestion to add new location <b>{{value}}</b>',
   seeSuggest: 'View suggestion',
   suggestNewLocation: 'Suggest new location',
-  tourStillHaveDraftLocation:
-    'The tour currently still has some uncensored locations so they cannot be shared on the community\nPlease suggest locations to Avatour and we will respond soon',
   searchNameOrTransactionHash: 'Search name or order number',
   shareToCommunity: 'Share to community',
-  tourIsPrivate: 'Tour is in private mode\nShare widely with the community?',
 };
 
 const reputation = {
@@ -314,6 +311,12 @@ const tour = {
   tours: 'Tours',
   myTours: 'My tours',
   favoriteTour: 'Favorite tours',
+  switchToPrivateMode: 'Switch to private mode',
+  afterToPrivate:
+    'After switching back to private mode, people will no longer be able to search and view this schedule information on your profile',
+  tourIsPrivate: 'Tour is in private mode\nShare widely with the community?',
+  tourStillHaveDraftLocation:
+    'The tour currently still has some uncensored locations so they cannot be shared on the community\nPlease suggest locations to Avatour and we will respond soon',
 };
 
 const mess = {

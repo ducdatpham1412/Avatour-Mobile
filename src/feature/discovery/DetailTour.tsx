@@ -12,7 +12,7 @@ import {
 } from 'components/base';
 import {Avatar, IndicatorModal} from 'components/common';
 import {emitAppEvent, useSafeArea, useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useRef} from 'react';
@@ -168,7 +168,7 @@ const ButtonPublicTour = ({aim, tourId}: ButtonPublicTourProps) => {
     } catch (err) {
       if (err === ERROR_MESSAGE.still_having_location_draft) {
         ModalAlert.error({
-          i18Content: 'discovery.tourStillHaveDraftLocation',
+          i18Content: 'tour.tourStillHaveDraftLocation',
         });
       } else {
         ModalAlert.error({
@@ -212,7 +212,10 @@ const DetailTour = ({
 
   const searchRef = useRef<ElementRef<typeof AppModalize>>(null);
 
-  const [{data, loading}] = useDetailTour(tourId, {
+  const [
+    {data, loading, loadingDeleteTour, loadingPrivateTour},
+    {deleteTour, privateTour},
+  ] = useDetailTour(tourId, {
     revalidateAll: true,
   });
   const isMyTour = data?.creator === myId;
@@ -261,6 +264,47 @@ const DetailTour = ({
                 itemTour: data,
               }),
           },
+          {
+            title: 'common.delete',
+            onPress: () => {
+              ModalAlert.options({
+                i18Content: 'profile.post.sureDeletePost',
+                onContinue: async () => {
+                  try {
+                    await deleteTour();
+                    emitAppEvent(APP_EVENT.deleteTour, {
+                      tourId,
+                    });
+                    goBack();
+                  } catch (err) {
+                    ModalAlert.error({
+                      content: err,
+                    });
+                  }
+                },
+                icon: <StyleIcon source={Images.icons.cute} size={80} />,
+              });
+            },
+          },
+          data?.status === STATUS.active
+            ? {
+                title: 'tour.switchToPrivateMode',
+                onPress: () => {
+                  ModalAlert.options({
+                    i18Content: 'tour.afterToPrivate',
+                    onContinue: async () => {
+                      try {
+                        await privateTour();
+                      } catch (err) {
+                        ModalAlert.error({
+                          content: err,
+                        });
+                      }
+                    },
+                  });
+                },
+              }
+            : null,
         ],
       });
     } else if (data) {
@@ -404,35 +448,39 @@ const DetailTour = ({
   };
 
   return (
-    <View style={[$container, {backgroundColor: theme.background}]}>
-      <MapTour
-        onChangeModalHeight={onChangeModalHeight}
-        onTouchEnd={() => {
-          if (aim.value === levelModalScheduleHeight.high) {
-            onChangeModalHeight(levelModalScheduleHeight.medium);
-          }
-        }}>
-        <StyleTouchable
-          customStyle={[
-            $iconMore,
-            $styleDropShadow,
-            {
-              backgroundColor: theme.white,
-              shadowColor: theme.black,
-              top: top || safePaddingNotZero,
-            },
-          ]}
-          onPress={onPressMore}>
-          <StyleIcon
-            source={Images.icons.more}
-            size={23}
-            customStyle={{tintColor: theme.black}}
-          />
-        </StyleTouchable>
-      </MapTour>
+    <>
+      <View style={[$container, {backgroundColor: theme.background}]}>
+        <MapTour
+          onChangeModalHeight={onChangeModalHeight}
+          onTouchEnd={() => {
+            if (aim.value === levelModalScheduleHeight.high) {
+              onChangeModalHeight(levelModalScheduleHeight.medium);
+            }
+          }}>
+          <StyleTouchable
+            customStyle={[
+              $iconMore,
+              $styleDropShadow,
+              {
+                backgroundColor: theme.white,
+                shadowColor: theme.black,
+                top: top || safePaddingNotZero,
+              },
+            ]}
+            onPress={onPressMore}>
+            <StyleIcon
+              source={Images.icons.more}
+              size={23}
+              customStyle={{tintColor: theme.black}}
+            />
+          </StyleTouchable>
+        </MapTour>
 
-      {renderContent()}
-    </View>
+        {renderContent()}
+      </View>
+
+      {(loadingDeleteTour || loadingPrivateTour) && <LoadingScreen />}
+    </>
   );
 };
 
