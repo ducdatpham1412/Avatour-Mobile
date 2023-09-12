@@ -1,11 +1,11 @@
-import {STATUS} from 'asset/enum';
+import {APP_EVENT} from 'asset/enum';
 import {horizontalPadding} from 'asset/metrics';
 import {Separator} from 'components';
 import {SquareButton} from 'components/base';
 import {ItemLocation} from 'feature/discovery/components';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
 import {useMyRequests} from 'feature/profile/hooks';
-import {useSafeArea, useTheme} from 'hook';
+import {emitAppEvent, useSafeArea, useTheme} from 'hook';
 import {TypeShowModalAddLocation} from 'navigation/screen/modals';
 import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
@@ -54,21 +54,9 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
 
   const onSuggestLocation = async (value: TypeGetProfileResponse) => {
     await suggestLocation(value.id);
-    setSchedules(pre => {
-      return pre.map((day, index) => {
-        if (index !== dayIndex) {
-          return day;
-        }
-        return day.map(location => {
-          if (location.id !== value.id) {
-            return location;
-          }
-          return {
-            ...location,
-            status: STATUS.suggesting,
-          };
-        });
-      });
+    emitAppEvent(APP_EVENT.suggestLocation, {
+      locationId: value.id,
+      event: 'suggest',
     });
   };
 

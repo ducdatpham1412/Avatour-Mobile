@@ -1,25 +1,39 @@
+import {ACCOUNT, APP_EVENT, STATUS} from 'asset/enum';
+import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
+import {
+  horizontalMargin,
+  horizontalPadding,
+  verticalMargin,
+} from 'asset/metrics';
 import {TabView} from 'components';
 import {
   RefreshControl,
+  StyleButton,
   StyleContainer,
   StyleIcon,
   StyleTouchable,
 } from 'components/base';
-import {useTheme} from 'hook';
+import {emitAppEvent, useSafeArea, useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet} from 'navigation/screen/modals';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
-import {ViewStyle} from 'react-native';
+import {useTranslation} from 'react-i18next';
+import {View, ViewStyle} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import {I18Normalize} from 'utility/I18Next';
+import {$styleTopShadow, borderWidthTiny} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import {IconTabBarProfile, InformationProfile} from './components';
-import {useOtherProfile} from './hooks';
+import {useMyRequests, useOtherProfile} from './hooks';
 import {ListReviews, ListSales, ListTours} from './screens';
-import {ACCOUNT} from 'asset/enum';
-import {IconTour} from 'asset/icons';
 
 type Props = RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>;
+
+interface ButtonSuggestProps {
+  userId: number;
+}
 
 const renderTabIndex = (
   profile: TypeGetProfileResponse,
@@ -47,12 +61,146 @@ const renderTabIndex = (
   return 1;
 };
 
+const ButtonSuggest = ({userId}: ButtonSuggestProps) => {
+  const theme = useTheme();
+  const {t} = useTranslation();
+  const {bottom} = useSafeArea();
+  const [{data}, {mutate}] = useOtherProfile(userId);
+  const [
+    {loadingDeleteSuggestLocation, loadingSuggestLocation},
+    {suggestLocation, deleteSuggestLocation},
+  ] = useMyRequests();
+
+  const isDraft = data?.status === STATUS.draft;
+  const isSuggesting = data?.status === STATUS.suggesting;
+
+  if (isDraft || isSuggesting) {
+    const onEdit = () => {
+      if (data) {
+        navigate(ROOT_SCREEN.createLocation, {
+          itemEdit: data,
+        });
+      }
+    };
+
+    const onSuggest = () => {
+      if (isDraft) {
+        ModalAlert.options({
+          content: t('discovery.newLocation', {
+            value: data?.name,
+          }),
+          titleButton: 'common.suggest',
+          icon: <StyleIcon source={Images.icons.nice} size={70} />,
+          onContinue: async () => {
+            try {
+              await suggestLocation(userId);
+              ModalAlert.success({
+                title: 'discovery.thankyou',
+                i18Content: 'discovery.suggestHaveBeenAcknowledged',
+                icon: <StyleIcon source={Images.icons.nice} size={70} />,
+              });
+              await mutate(
+                pre => {
+                  if (pre) {
+                    return {
+                      ...pre,
+                      status: STATUS.suggesting,
+                    };
+                  }
+                },
+                {revalidate: false},
+              );
+              emitAppEvent(APP_EVENT.suggestLocation, {
+                locationId: userId,
+                event: 'suggest',
+              });
+            } catch (err) {
+              ModalAlert.error({
+                content: err,
+              });
+            }
+          },
+        });
+      } else {
+        ModalActionSheet.show({
+          options: [
+            {
+              title: 'common.cancelSuggest',
+              onPress: async () => {
+                const agree = async () => {
+                  try {
+                    await deleteSuggestLocation(userId);
+                    await mutate(
+                      pre => {
+                        if (pre) {
+                          return {
+                            ...pre,
+                            status: STATUS.draft,
+                          };
+                        }
+                      },
+                      {revalidate: false},
+                    );
+                    emitAppEvent(APP_EVENT.suggestLocation, {
+                      locationId: userId,
+                      event: 'delete-suggest',
+                    });
+                  } catch (err) {
+                    ModalAlert.error({
+                      content: err,
+                    });
+                  }
+                };
+
+                ModalAlert.options({
+                  i18Content: 'profile.post.sureDeletePost',
+                  titleButton: 'common.cancelSuggest',
+                  onContinue: agree,
+                  icon: <StyleIcon source={Images.icons.cute} size={70} />,
+                });
+              },
+            },
+          ],
+        });
+      }
+    };
+
+    return (
+      <View
+        style={[
+          $button,
+          $styleTopShadow,
+          {
+            paddingBottom: bottom,
+            backgroundColor: theme.white,
+          },
+        ]}>
+        <StyleButton
+          containerStyle={[$buttonEdit, {borderColor: theme.black}]}
+          titleStyle={{color: theme.black}}
+          title="common.edit"
+          onPress={onEdit}
+        />
+        <StyleButton
+          containerStyle={$buttonSuggest}
+          title={isDraft ? 'common.suggest' : 'common.suggesting'}
+          onPress={onSuggest}
+          isLoading={loadingDeleteSuggestLocation || loadingSuggestLocation}
+        />
+      </View>
+    );
+  }
+
+  return null;
+};
+
 const OtherProfile = ({
   route: {
     params: {id, initValue, tab},
   },
 }: Props) => {
   const theme = useTheme();
+
   const [
     {data, isFollowing, isBlocked, loading, validating},
     {follow, block, report, mutate},
@@ -64,27 +212,34 @@ const OtherProfile = ({
 
   const [tabViewHeight, setTabViewHeight] = useState(0);
 
+  const isPrivate =
+    data?.status && [STATUS.draft, STATUS.suggesting].includes(data?.status);
+
+  /**
+   * Functions
+   */
   const onShowModalOptions = () => {
-    if (!isBlocked) {
-      ModalActionSheet.show({
-        options: [
-          {
-            title: isFollowing ? 'profile.unFollow' : 'profile.follow',
-            onPress: follow,
-          },
-          {
-            title: isBlocked ? 'profile.unBlock' : 'profile.block',
-            onPress: block,
-          },
-          {
-            title: 'profile.report',
-            onPress: report,
-          },
-        ],
-      });
-    }
+    ModalActionSheet.show({
+      options: [
+        {
+          title: isFollowing ? 'profile.unFollow' : 'profile.follow',
+          onPress: follow,
+        },
+        {
+          title: isBlocked ? 'profile.unBlock' : 'profile.block',
+          onPress: block,
+        },
+        {
+          title: 'profile.report',
+          onPress: report,
+        },
+      ],
+    });
   };
 
+  /**
+   * Render
+   */
   const renderShop = () => {
     if (data) {
       return <ListSales userId={data?.id} account_type={data?.account_type} />;
@@ -112,59 +267,67 @@ const OtherProfile = ({
     <StyleContainer
       headerProps={{
         title: data?.name as I18Normalize,
-        RightComponent: !isBlocked && (
-          <StyleTouchable onPress={onShowModalOptions}>
-            <StyleIcon
-              source={Images.icons.more}
-              size={20}
-              customStyle={{tintColor: theme.black}}
-            />
-          </StyleTouchable>
-        ),
+        RightComponent:
+          isBlocked || isPrivate ? null : (
+            <StyleTouchable onPress={onShowModalOptions}>
+              <StyleIcon
+                source={Images.icons.more}
+                size={20}
+                customStyle={{tintColor: theme.black}}
+              />
+            </StyleTouchable>
+          ),
       }}
       customStyle={$content}
       backgroundColor={theme.white}
-      onLayout={e => {
-        setTabViewHeight(e.nativeEvent.layout.height);
-      }}
-      scrollEnabled
-      stickyHeaderIndices={[1]}
       initLoading={loading || !data}
-      refreshControl={
-        <RefreshControl
-          refreshing={validating && !loading}
-          onRefresh={mutate}
-        />
-      }>
+      layOut="view"
+      BottomComponent={<ButtonSuggest userId={id} />}>
       {!isBlocked && data && (
-        <>
-          <InformationProfile profile={data} />
-          <TabView
-            style={[$body, {height: tabViewHeight}]}
-            tabBarStyle={$tabBar}
-            listElements={[renderShop, renderTour, renderListReviews]}
-            listIconTabBar={[
-              <IconTabBarProfile
-                title="profile.shop"
-                icon={Images.icons.shop}
-              />,
-              <IconTabBarProfile
-                title="discovery.tour"
-                icon={<IconTour size={22} />}
-              />,
-              <IconTabBarProfile
-                title="profile.checkIn"
-                icon={Images.icons.review}
-              />,
-            ]}
-            initialIndex={renderTabIndex(data, tab)}
-          />
-        </>
+        <View style={$container}>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={validating && !loading}
+                onRefresh={mutate}
+              />
+            }
+            stickyHeaderIndices={[1]}
+            onLayout={e => {
+              setTabViewHeight(e.nativeEvent.layout.height);
+            }}
+            showsVerticalScrollIndicator={false}>
+            <InformationProfile profile={data} />
+            <TabView
+              style={[$body, {height: tabViewHeight}]}
+              tabBarStyle={$tabBar}
+              listElements={[renderShop, renderTour, renderListReviews]}
+              listIconTabBar={[
+                <IconTabBarProfile
+                  title="profile.shop"
+                  icon={Images.icons.shop}
+                />,
+                <IconTabBarProfile
+                  title="discovery.tour"
+                  icon={<IconTour size={22} />}
+                />,
+                <IconTabBarProfile
+                  title="profile.checkIn"
+                  icon={Images.icons.review}
+                />,
+              ]}
+              initialIndex={renderTabIndex(data, tab)}
+            />
+          </ScrollView>
+        </View>
       )}
     </StyleContainer>
   );
 };
 
+const $container: ViewStyle = {
+  flex: 1,
+};
 const $body: ViewStyle = {
   width: '100%',
   marginTop: verticalScale(8),
@@ -174,6 +337,24 @@ const $tabBar: ViewStyle = {
 };
 const $content: ViewStyle = {
   paddingHorizontal: 0,
+};
+const $button: ViewStyle = {
+  width: '100%',
+  paddingTop: verticalMargin,
+  paddingHorizontal: horizontalPadding,
+  alignItems: 'center',
+  flexDirection: 'row',
+};
+const $buttonEdit: ViewStyle = {
+  width: undefined,
+  flex: 1,
+  backgroundColor: 'transparent',
+  borderWidth: borderWidthTiny,
+};
+const $buttonSuggest: ViewStyle = {
+  width: undefined,
+  flex: 1,
+  marginLeft: horizontalMargin,
 };
 
 export default OtherProfile;

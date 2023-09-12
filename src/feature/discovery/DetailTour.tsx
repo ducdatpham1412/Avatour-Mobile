@@ -1,5 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {APP_EVENT, ERROR_MESSAGE, STATUS} from 'asset/enum';
 import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
@@ -11,7 +12,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import {Avatar, IndicatorModal} from 'components/common';
-import {emitAppEvent, useSafeArea, useTheme} from 'hook';
+import {emitAppEvent, useAppEvent, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
@@ -33,13 +34,16 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {$styleDropShadow, onGoToProfile} from 'utility/assistant';
+import {
+  $styleDropShadow,
+  onGoToProfile,
+  updateStatusLocationInSchedule,
+} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import {useDetailTour} from './hooks';
 import {DayScheduleDetailTour} from './screens';
-import {APP_EVENT, ERROR_MESSAGE, STATUS} from 'asset/enum';
 
 export const levelModalScheduleHeight = {
   low: verticalScale(180),
@@ -214,10 +218,30 @@ const DetailTour = ({
 
   const [
     {data, loading, loadingDeleteTour, loadingPrivateTour},
-    {deleteTour, privateTour},
+    {deleteTour, privateTour, mutate},
   ] = useDetailTour(tourId, {
     revalidateAll: true,
   });
+
+  useAppEvent(APP_EVENT.suggestLocation, e => {
+    mutate(
+      pre => {
+        if (pre) {
+          const newSchedules = updateStatusLocationInSchedule(pre.schedule, {
+            locationId: e.locationId,
+            status: e.event === 'suggest' ? STATUS.suggesting : STATUS.draft,
+          });
+
+          return {
+            ...pre,
+            schedule: newSchedules,
+          };
+        }
+      },
+      {revalidate: false},
+    );
+  });
+
   const isMyTour = data?.creator === myId;
 
   const aim = useSharedValue(levelModalScheduleHeight.high);

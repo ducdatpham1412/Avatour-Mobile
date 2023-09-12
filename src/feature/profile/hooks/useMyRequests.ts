@@ -41,9 +41,8 @@ const useMyRequests = () => {
     },
   );
 
-  const {trigger: suggestLocation} = useSWRMutation(
-    'api.suggestLocation',
-    async (_, {arg: locationId}) => {
+  const {trigger: suggestLocation, isMutating: loadingSuggestLocation} =
+    useSWRMutation('api.suggestLocation', async (_, {arg: locationId}) => {
       await request.put(
         'auth/request',
         {
@@ -55,7 +54,23 @@ const useMyRequests = () => {
           },
         },
       );
-      await mutate();
+      mutate();
+    });
+
+  const {
+    trigger: deleteSuggestLocation,
+    isMutating: loadingDeleteSuggestLocation,
+  } = useSWRMutation(
+    'api.deleteSuggestLocation',
+    async (_, {arg: locationId}: {arg: number}) => {
+      const findingRequest = data?.find(
+        (i: TypeGetRequestResponse<'suggest_location'>) =>
+          i.data.id === locationId,
+      );
+      if (!findingRequest) {
+        throw new Error('can_not_find_request');
+      }
+      await onDeleteRequest(findingRequest.id);
     },
   );
 
@@ -66,8 +81,16 @@ const useMyRequests = () => {
       validating,
       isCanceling,
       loadingSendRequest,
+      loadingDeleteSuggestLocation,
+      loadingSuggestLocation,
     },
-    {mutate, onDeleteRequest, sendRequest, suggestLocation},
+    {
+      mutate,
+      onDeleteRequest,
+      sendRequest,
+      suggestLocation,
+      deleteSuggestLocation,
+    },
   ] as const;
 };
 

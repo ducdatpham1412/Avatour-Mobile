@@ -33,6 +33,8 @@ type TypeShowParams = {
   i18Content?: I18Normalize;
   content?: any;
   onClose?: () => void;
+  titleButton?: I18Normalize;
+  leftTitleButton?: I18Normalize;
 };
 
 type TypeShowOptions = TypeShowParams & {
@@ -71,6 +73,9 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
     'common.null',
   );
   const [content, setContent] = useState<I18Normalize>('common.null');
+  const [titleButton, setTitleButton] = useState<I18Normalize>('common.ok');
+  const [leftTitleButton, setLeftTitleButton] =
+    useState<I18Normalize>('common.cancel');
 
   let tintColor = theme.white;
   if (status === 'notification') {
@@ -97,6 +102,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             (value?.content as I18Normalize) ??
             'common.null',
         );
+        setTitleButton(value?.titleButton ?? 'common.ok');
         onCloseFunction.current = value?.onClose;
         setVisible(true);
       },
@@ -111,6 +117,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             (value?.content as I18Normalize) ??
             'common.null',
         );
+        setTitleButton(value?.titleButton ?? 'common.ok');
         onCloseFunction.current = value?.onClose;
         setVisible(true);
       },
@@ -125,6 +132,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             (value?.content as I18Normalize) ??
             'common.null',
         );
+        setTitleButton(value?.titleButton ?? 'common.ok');
         onCloseFunction.current = value?.onClose;
         setVisible(true);
       },
@@ -139,6 +147,8 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
             (value?.content as I18Normalize) ??
             'common.null',
         );
+        setTitleButton(value?.titleButton ?? 'common.continue');
+        setLeftTitleButton(value?.leftTitleButton ?? 'common.cancel');
         onCloseFunction.current = value?.onClose;
         onContinueFunction.current = value?.onContinue;
         onCancelFunction.current = value?.onCancel;
@@ -181,7 +191,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
     ) {
       return (
         <StyleButton
-          title="common.ok"
+          title={titleButton}
           containerStyle={[$button, {backgroundColor: tintColor}]}
           onPress={() => {
             handle.current = () => {
@@ -197,7 +207,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       return (
         <View style={$buttonOption}>
           <StyleButton
-            title="common.cancel"
+            title={leftTitleButton}
             containerStyle={[$buttonCancel, {borderColor: theme.black}]}
             titleStyle={{color: theme.black}}
             onPress={() => {
@@ -210,7 +220,7 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
           />
           <View style={{width: scale(10)}} />
           <StyleButton
-            title="common.continue"
+            title={titleButton}
             containerStyle={[$buttonContinue, {backgroundColor: tintColor}]}
             onPress={() => {
               handle.current = () => {

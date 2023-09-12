@@ -485,3 +485,28 @@ export const copyObject = <T extends object>(origin: T) => {
   const temp: T = JSON.parse(JSON.stringify(origin));
   return temp;
 };
+
+type UpdateStatusLocation = {
+  locationId: number;
+  status: number;
+};
+export const updateStatusLocationInSchedule = (
+  schedule: TourDetail['schedule'],
+  {locationId, status}: UpdateStatusLocation,
+) => {
+  return schedule.map(day => {
+    const findLocation = day.find(location => location.id === locationId);
+    if (!findLocation) {
+      return day;
+    }
+    return day.map(location => {
+      if (location.id !== locationId) {
+        return location;
+      }
+      return {
+        ...location,
+        status: status,
+      };
+    });
+  });
+};

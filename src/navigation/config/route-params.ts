@@ -184,6 +184,10 @@ export type AppEventList = {
   [APP_EVENT.deleteTour]: {
     tourId: number;
   };
+  [APP_EVENT.suggestLocation]: {
+    event: 'suggest' | 'delete-suggest';
+    locationId: number;
+  };
 };
 
 export type SocketOnList = {

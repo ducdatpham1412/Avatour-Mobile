@@ -13,10 +13,10 @@ interface Params {
   revalidateAll?: boolean;
 }
 
-const useOtherProfile = (id: number, params?: Params) => {
+const useOtherProfile = (id: number | null, params?: Params) => {
   const {data, mutate, loading, validating, error} =
     useApi<TypeGetProfileResponse>({
-      path: `/profile/${id}`,
+      path: id ? `/profile/${id}` : null,
       config: {
         fallbackData: params?.initValue,
         revalidateAll: params?.revalidateAll,

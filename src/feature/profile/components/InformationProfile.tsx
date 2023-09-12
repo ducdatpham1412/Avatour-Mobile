@@ -1,5 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
-import {ACCOUNT} from 'asset/enum';
+import {ACCOUNT, STATUS} from 'asset/enum';
 import {IconClock, IconLocation, IconPrice} from 'asset/icons';
 import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
 import {
@@ -213,6 +213,10 @@ const Button = ({profile}: ComponentProps) => {
     );
   }
 
+  if ([STATUS.draft, STATUS.suggesting].includes(profile.status)) {
+    return null;
+  }
+
   return <ButtonOtherProfile profile={profile} />;
 };
 
@@ -265,10 +269,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
         <StyleTouchable
           customStyle={$elementFollow}
           onPress={() => onNavigateFollow('follower', profile)}>
-          <StyleText
-            i18Text="profile.follower"
-            customStyle={[$textFollow, {color: theme.gray_500}]}
-          />
+          <StyleText i18Text="profile.follower" customStyle={$textFollow} />
           <StyleText
             originValue={profile.followers}
             customStyle={$numberFollow}
@@ -278,10 +279,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
         <StyleTouchable
           customStyle={[$elementFollow, {marginLeft: scale(20)}]}
           onPress={() => onNavigateFollow('following', profile)}>
-          <StyleText
-            i18Text="profile.following"
-            customStyle={[$textFollow, {color: theme.gray_500}]}
-          />
+          <StyleText i18Text="profile.following" customStyle={$textFollow} />
           <StyleText
             originValue={profile.followings}
             customStyle={$numberFollow}
@@ -309,7 +307,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
           />
         </StyleText>
       </View>
-      {profile.account_type === ACCOUNT.shop && (
+      {!!profile.min_cost && !!profile.max_cost && (
         <View style={$moreInfoBox}>
           <IconPrice size={18} tintColor={theme.black} />
           <StyleText
@@ -337,8 +335,6 @@ const InformationSupplier = ({profile}: ComponentProps) => {
 };
 
 const InformationUser = ({profile}: ComponentProps) => {
-  const theme = useTheme();
-
   return (
     <View style={$introduceView}>
       {!!profile.name && (
@@ -348,10 +344,7 @@ const InformationUser = ({profile}: ComponentProps) => {
         <StyleTouchable
           customStyle={$elementFollow}
           onPress={() => onNavigateFollow('follower', profile)}>
-          <StyleText
-            i18Text="profile.follower"
-            customStyle={[$textFollow, {color: theme.gray_500}]}
-          />
+          <StyleText i18Text="profile.follower" customStyle={$textFollow} />
           <StyleText
             originValue={profile.followers}
             customStyle={$numberFollow}
@@ -361,10 +354,7 @@ const InformationUser = ({profile}: ComponentProps) => {
         <StyleTouchable
           customStyle={[$elementFollow, {marginLeft: scale(20)}]}
           onPress={() => onNavigateFollow('following', profile)}>
-          <StyleText
-            i18Text="profile.following"
-            customStyle={[$textFollow, {color: theme.gray_500}]}
-          />
+          <StyleText i18Text="profile.following" customStyle={$textFollow} />
           <StyleText
             originValue={profile.followings}
             customStyle={$numberFollow}

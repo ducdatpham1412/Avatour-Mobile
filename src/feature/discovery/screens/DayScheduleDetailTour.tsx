@@ -1,8 +1,8 @@
-import {STATUS} from 'asset/enum';
+import {APP_EVENT, STATUS} from 'asset/enum';
 import {horizontalPadding} from 'asset/metrics';
 import {RefreshControl} from 'components/base';
 import {useMyRequests} from 'feature/profile/hooks';
-import {useSafeArea} from 'hook';
+import {emitAppEvent, useSafeArea} from 'hook';
 import React from 'react';
 import {ViewStyle} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
@@ -24,25 +24,9 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
 
   const onSuggestLocation = async (value: TypeGetProfileResponse) => {
     await suggestLocation(value.id);
-    await mutate(pre => {
-      if (pre) {
-        const newSchedule = pre.schedule.map((day, index) => {
-          if (index !== dayIndex) {
-            return day;
-          }
-          return day.map(location => {
-            if (location.id !== value.id) {
-              return location;
-            }
-            return {
-              ...location,
-              status: STATUS.suggesting,
-            };
-          });
-        });
-        pre.schedule = newSchedule;
-        return pre;
-      }
+    emitAppEvent(APP_EVENT.suggestLocation, {
+      locationId: value.id,
+      event: 'suggest',
     });
   };
 

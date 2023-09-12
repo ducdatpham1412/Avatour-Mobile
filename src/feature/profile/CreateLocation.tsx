@@ -90,20 +90,6 @@ const listOptions: Array<{id: TypeLocationPrice; text: I18Normalize}> = [
   },
 ];
 
-const onSave = async (save: any) => {
-  try {
-    await save();
-    ModalAlert.success({
-      i18Content: 'alert.createLocationSuccess',
-      onClose: goBack,
-    });
-  } catch (err) {
-    ModalAlert.error({
-      content: err,
-    });
-  }
-};
-
 const CreateLocation = ({
   route: {
     params: {itemNew, itemEdit},
@@ -165,6 +151,23 @@ const CreateLocation = ({
       (typePrice === 'paid' && Number(minCost) > 0 && Number(maxCost) > 0)
     );
 
+  const onSave = async () => {
+    try {
+      const res = await save();
+      ModalAlert.success({
+        i18Content:
+          res === 'new-location'
+            ? 'alert.createLocationSuccess'
+            : 'alert.editLocationSuccess',
+        onClose: goBack,
+      });
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    }
+  };
+
   return (
     <>
       <StyleContainer
@@ -192,9 +195,9 @@ const CreateLocation = ({
             ]}>
             <StyleButton
               containerStyle={$button}
-              title="common.suggest"
+              title={itemNew ? 'common.suggest' : 'common.edit'}
               disable={disable}
-              onPress={() => onSave(save)}
+              onPress={onSave}
             />
           </View>
         }>
@@ -230,7 +233,7 @@ const CreateLocation = ({
         <TitleAndInput
           title="discovery.name"
           textInputProps={{
-            defaultValue: name,
+            defaultValue: initValue.current.name,
             placeholder: t('discovery.name'),
             onChangeText: text => setName(text),
           }}
@@ -242,6 +245,7 @@ const CreateLocation = ({
           textInputProps={{
             placeholder: t('discovery.homeAddress'),
             onChangeText: text => setAddress(text),
+            defaultValue: initValue.current.address,
           }}
         />
 
@@ -355,6 +359,7 @@ const CreateLocation = ({
             multiline
             placeholder={t('profile.locationDescription')}
             onChangeText={text => setDescription(text)}
+            defaultValue={initValue.current.description}
           />
         </StyleTouchable>
       </StyleContainer>
