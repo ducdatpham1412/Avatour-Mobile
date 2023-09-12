@@ -349,6 +349,7 @@ export enum APP_EVENT {
   createNewTour = 'create-new-tour',
   deleteTour = 'delete-tour',
   editTour = 'edit-tour',
+  suggestLocation = 'suggest-location',
 }
 
 export enum TYPE_AUTH_REQUEST {

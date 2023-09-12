@@ -1,6 +1,6 @@
 import {TypeGetRequestResponse} from 'api/interface';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {TYPE_AUTH_REQUEST} from 'asset/enum';
+import {APP_EVENT, TYPE_AUTH_REQUEST} from 'asset/enum';
 import Images from 'asset/img/images';
 import {BoxInformation} from 'components';
 import {
@@ -11,7 +11,7 @@ import {
 } from 'components/base';
 import {Avatar} from 'components/common';
 import {BoxUpdatePrice} from 'feature/common/components';
-import {useTheme} from 'hook';
+import {emitAppEvent, useTheme} from 'hook';
 import {push} from 'navigation/NavigationService';
 import {ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -155,6 +155,13 @@ const ItemRequest = ({item}: Props) => {
     const agree = async () => {
       try {
         await onDeleteRequest(item.id);
+        if (item.type === TYPE_AUTH_REQUEST.suggest_location) {
+          const temp: TypeGetRequestResponse<'suggest_location'> = item;
+          emitAppEvent(APP_EVENT.suggestLocation, {
+            locationId: temp?.data?.id,
+            event: 'delete-suggest',
+          });
+        }
       } catch (err) {
         ModalAlert.error({
           content: err,

@@ -38,6 +38,8 @@ const common = {
   delete: 'Delete',
   deleted: 'Deleted',
   suggest: 'Suggest',
+  suggesting: 'Suggesting',
+  cancelSuggest: 'Cancel suggestion',
   create: 'Create',
   update: 'Update',
 };
@@ -605,6 +607,7 @@ To be able to delete, please follow these two steps:
   1. Press <b>Temporarily closed</b> to temporarily not accept new orders.
   2. After all current people come to check-in at the store, you can proceed to delete the order again.`,
   createLocationSuccess: 'Create location successfully',
+  editLocationSuccess: 'Edit location successfully',
   timeBuyNotToday:
     'Check-in time is not today\nPlease scan the code at the store on <b>{{time}}</b>',
   locationHadBeenAdded:

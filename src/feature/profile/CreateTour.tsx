@@ -12,7 +12,7 @@ import {ButtonX, IndicatorModal, InputBox} from 'components/common';
 import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
-import {emitAppEvent, useSafeArea, useTheme} from 'hook';
+import {emitAppEvent, useAppEvent, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE} from 'navigation/config';
 import {
@@ -43,7 +43,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
-import {borderWidthTiny} from 'utility/assistant';
+import {
+  borderWidthTiny,
+  updateStatusLocationInSchedule,
+} from 'utility/assistant';
 import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
@@ -202,6 +205,15 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
       clearTimeout(timeOutRef.current);
     };
   }, [numberOfDays]);
+
+  useAppEvent(APP_EVENT.suggestLocation, e => {
+    setSchedules(pre =>
+      updateStatusLocationInSchedule(pre, {
+        locationId: e.locationId,
+        status: e.event === 'suggest' ? STATUS.suggesting : STATUS.draft,
+      }),
+    );
+  });
 
   /**
    * Functions

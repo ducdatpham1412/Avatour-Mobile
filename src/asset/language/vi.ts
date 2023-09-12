@@ -38,6 +38,8 @@ const common = {
   delete: 'Xoá',
   deleted: 'Đã xoá',
   suggest: 'Đề xuất',
+  suggesting: 'Đang đề xuất',
+  cancelSuggest: 'Huỷ đề xuất',
   create: 'Tạo',
   update: 'Cập nhật',
 };
@@ -612,6 +614,7 @@ const alert = {
   1. Ấn <b>Tạm dừng nhận đơn</b> để tạm thời không nhận thêm đơn hàng mới.
   2. Sau khi tất cả người hiện tại đến check-in tại cửa hàng, bạn có thể thực hiện xoá đơn hàng trở lại.`,
   createLocationSuccess: 'Thêm địa điểm thành công',
+  editLocationSuccess: 'Chỉnh sửa địa điểm thành công',
   timeBuyNotToday:
     'Thời gian check-in không phải hôm nay\nBạn vui lòng quét mã tại cửa hàng vào <b>{{time}}</b> nha',
   locationHadBeenAdded:
