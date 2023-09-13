@@ -2,11 +2,7 @@ import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT, STATUS} from 'asset/enum';
 import {IconClock, IconLocation, IconPrice} from 'asset/icons';
 import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
-import {
-  FONT_SIZE,
-  FONT_WEIGHT_MEDIUM,
-  ratioAvatarLocation,
-} from 'asset/standardValue';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM, ratioAvatar} from 'asset/standardValue';
 import {SquareButton, StyleText, StyleTouchable} from 'components/base';
 import dayjs from 'dayjs';
 import {useTheme} from 'hook';
@@ -17,11 +13,12 @@ import {LayoutChangeEvent, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {seeDetailImage} from 'utility/assistant';
-import {formatLocaleNumber, formatMoney} from 'utility/format';
+import {formatHours, formatLocaleNumber, formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useOtherProfile} from '../hooks';
 import ScrollCropImages from './ScrollCropImages';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
+import {useTranslation} from 'react-i18next';
 
 interface Props {
   profile: TypeGetProfileResponse;
@@ -42,10 +39,6 @@ const onNavigateFollow = (
     initTab: type,
     profile,
   });
-};
-
-const formatTime = (time: number) => {
-  return String(time).replace('.', ':');
 };
 
 const ButtonOtherProfile = ({profile}: ComponentProps) => {
@@ -220,12 +213,42 @@ const Button = ({profile}: ComponentProps) => {
   return <ButtonOtherProfile profile={profile} />;
 };
 
-const InformationSupplier = ({profile}: ComponentProps) => {
+const OpenStatus = ({profile}: ComponentProps) => {
   const theme = useTheme();
-  const arrayStars = Array(Math.floor(5)).fill(0);
+  const {t} = useTranslation();
+
+  if (profile.start_time === 0 && profile.end_time === 0) {
+    return (
+      <StyleText
+        i18Text="profile.openAllDay"
+        customStyle={[$openClose, {color: theme.green}]}
+      />
+    );
+  }
+
   const now = dayjs();
   const hourNow = Number(`${now.hour()}.${now.minute()}`);
   const isOpening = hourNow > profile.start_time && hourNow < profile.end_time;
+
+  return (
+    <>
+      <StyleText
+        i18Text={isOpening ? 'profile.opening' : 'profile.closing'}
+        customStyle={[$openClose, {color: isOpening ? theme.green : theme.red}]}
+      />
+      <StyleText
+        originValue={`${t('profile.businessHours')}: ${
+          formatHours(profile.start_time).text
+        } - ${formatHours(profile.end_time).text}`}
+        customStyle={{marginTop: verticalScale(4)}}
+      />
+    </>
+  );
+};
+
+const InformationSupplier = ({profile}: ComponentProps) => {
+  const theme = useTheme();
+  const arrayStars = Array(Math.floor(5)).fill(0);
 
   return (
     <View style={$introduceView}>
@@ -289,27 +312,30 @@ const InformationSupplier = ({profile}: ComponentProps) => {
 
       <Button profile={profile} />
 
-      <StyleText
-        i18Text={isOpening ? 'profile.opening' : 'profile.closing'}
-        customStyle={[$openClose, {color: isOpening ? theme.green : theme.red}]}
-      />
-      <StyleText
-        originValue={`${formatTime(profile.start_time)} - ${profile.end_time}`}
-      />
+      <OpenStatus profile={profile} />
+
       <View style={$moreInfoBox}>
         <IconClock size={18} tintColor={theme.black} />
         <StyleText
           customStyle={[$textMoreInfo, {marginLeft: scale(4)}]}
-          i18Text="profile.enjoyTime">
+          i18Text="discovery.durationHere">
           <StyleText
             originValue={`: ${profile.duration}h`}
             customStyle={[$textMoreInfo, {fontWeight: FONT_WEIGHT_MEDIUM}]}
           />
         </StyleText>
       </View>
-      {!!profile.min_cost && !!profile.max_cost && (
-        <View style={$moreInfoBox}>
-          <IconPrice size={18} tintColor={theme.black} />
+      <View style={$moreInfoBox}>
+        <IconPrice size={18} tintColor={theme.black} />
+        {!profile.min_cost && !profile.max_cost ? (
+          <StyleText
+            customStyle={[
+              $textMoreInfo,
+              {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
+            ]}
+            i18Text="discovery.free"
+          />
+        ) : (
           <StyleText
             customStyle={[
               $textMoreInfo,
@@ -319,8 +345,8 @@ const InformationSupplier = ({profile}: ComponentProps) => {
               profile.min_cost,
             )} - ${formatMoney(profile.max_cost)}`}
           />
-        </View>
-      )}
+        )}
+      </View>
 
       {/* TODO: Check see more text here */}
       {!!profile.description && (
@@ -398,7 +424,7 @@ const InformationProfile = ({profile, onLayOut}: Props) => {
         <ScrollCropImages
           images={[profile.avatar]}
           width={width}
-          height={width * ratioAvatarLocation}
+          height={width * ratioAvatar}
           enableRemoveImage={false}
         />
       </StyleTouchable>

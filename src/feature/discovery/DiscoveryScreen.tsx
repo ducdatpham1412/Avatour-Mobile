@@ -7,9 +7,9 @@ import {REACT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {horizontalMargin, safePaddingNotZero} from 'asset/metrics';
 import {ItemTour} from 'components';
-import {SafeView, StyleIcon, StyleText, StyleTouchable} from 'components/base';
+import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {CardInformation} from 'components/common';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {DISCOVERY_ROUTE} from 'navigation/config';
 import React from 'react';
@@ -17,13 +17,14 @@ import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useUpdateEffect} from 'react-use';
 import {$styleDropShadow, copyObject} from 'utility/assistant';
+import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
-import {impactLight} from 'utility/haptic';
 
 const DiscoveryScreen = () => {
   const isFocused = useIsFocused();
   const theme = useTheme();
+  const {top} = useSafeArea();
   const {banners, hot_locations, favorite_tours} = useAppSelector(
     state => state.logicSlice.resource,
   );
@@ -73,11 +74,16 @@ const DiscoveryScreen = () => {
   };
 
   return (
-    <SafeView style={$container}>
-      <HeaderDiscovery />
+    <View
+      style={[
+        $container,
+        {paddingTop: top, backgroundColor: theme.background},
+      ]}>
       <ScrollView
         contentContainerStyle={$contentContainer}
         showsVerticalScrollIndicator={false}>
+        <HeaderDiscovery />
+
         <StyleTouchable
           customStyle={[$buttonSearch, {backgroundColor: theme.white}]}
           onPress={() => {
@@ -166,12 +172,13 @@ const DiscoveryScreen = () => {
           </View>
         </CardInformation>
       </ScrollView>
-    </SafeView>
+    </View>
   );
 };
 
 const $container: ViewStyle = {
-  alignItems: 'center',
+  flex: 1,
+  marginTop: verticalScale(4),
 };
 const $contentContainer: ViewStyle = {
   alignItems: 'center',

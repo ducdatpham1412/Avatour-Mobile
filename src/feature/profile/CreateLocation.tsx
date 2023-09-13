@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, LIST_TOPICS, ratioAvatarLocation} from 'asset';
+import {BORDER_RADIUS, LIST_TOPICS, ratioAvatar} from 'asset';
 import {TOPIC} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
@@ -34,6 +34,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Title, TitleAndInput} from './components';
 import {ParamsCreateLocation, useCreateLocation} from './hooks';
 import {LoadingScreen} from './screens';
+import {TypeLocationPrice, listOptionsPrice} from 'utility/staticData';
 
 const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
   ModalActionSheet.show({
@@ -45,7 +46,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
             setTimeout(async () => {
               const res = await ImageUploader.pickCamera({
                 maxWidth: imageWidth,
-                maxHeight: imageWidth * ratioAvatarLocation,
+                maxHeight: imageWidth * ratioAvatar,
               });
               setAvatar(res?.path ?? res?.sourceURL);
             }, 200);
@@ -61,7 +62,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
             setTimeout(async () => {
               const res = await ImageUploader.pickLibrary({
                 maxWidth: imageWidth,
-                maxHeight: imageWidth * ratioAvatarLocation,
+                maxHeight: imageWidth * ratioAvatar,
               });
               setAvatar(res?.path ?? res?.sourceURL);
             }, 200);
@@ -77,18 +78,6 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
     ],
   });
 };
-
-type TypeLocationPrice = ParamsCreateLocation['typePrice'];
-const listOptions: Array<{id: TypeLocationPrice; text: I18Normalize}> = [
-  {
-    id: 'free',
-    text: 'discovery.free',
-  },
-  {
-    id: 'paid',
-    text: 'discovery.paid',
-  },
-];
 
 const CreateLocation = ({
   route: {
@@ -109,6 +98,9 @@ const CreateLocation = ({
       itemEdit?.min_cost !== 0 || itemEdit.max_cost !== 0 ? 'paid' : 'free',
     minCost: String(itemEdit?.min_cost ?? ''),
     maxCost: String(itemEdit?.max_cost ?? ''),
+    typeBusinessTime: 'all-day',
+    startTime: 0,
+    endTime: 0,
     services: itemEdit?.services ?? [TOPIC.food, TOPIC.backpacking],
     description: itemEdit?.description ?? '',
   });
@@ -271,7 +263,7 @@ const CreateLocation = ({
 
         <TickBox
           title="profile.price"
-          listOptions={listOptions}
+          listOptions={listOptionsPrice}
           listChosen={[{id: typePrice, text: 'common.null'}]}
           onPressOption={option => {
             if (option.id !== typePrice) {
@@ -375,7 +367,7 @@ const $container: ViewStyle = {
 };
 const $imageView: ViewStyle = {
   width: imageWidth,
-  height: imageWidth * ratioAvatarLocation + verticalScale(16),
+  height: imageWidth * ratioAvatar + verticalScale(16),
   marginTop: verticalScale(16),
   paddingBottom: verticalScale(16),
   borderRadius: BORDER_RADIUS.f2,

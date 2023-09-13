@@ -2,6 +2,7 @@ import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS} from 'asset';
 import {SESSION} from 'asset/enum';
 import Images from 'asset/img/images';
+import {horizontalMargin} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
@@ -162,12 +163,11 @@ const HeaderDiscovery = () => {
 };
 
 const $container: ViewStyle = {
-  width: scale(307),
+  width: scale(320),
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
   alignSelf: 'center',
-  paddingBottom: verticalScale(8),
 };
 const $leftView: ViewStyle = {
   flex: 1,
@@ -185,7 +185,8 @@ const $newEstimateBox: ViewStyle = {
   justifyContent: 'center',
 };
 const $sessionBox: ViewStyle = {
-  marginLeft: scale(14),
+  flex: 1,
+  paddingHorizontal: horizontalMargin,
 };
 const $textHello: TextStyle = {
   fontSize: FONT_SIZE.f1,
