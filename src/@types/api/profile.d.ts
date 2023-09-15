@@ -22,14 +22,26 @@ interface TypeGetProfileResponse {
   relationship: number;
 }
 
-interface TypeEditProfileRequest {
-  name?: string;
-  description?: string;
-  avatar?: string;
-  location?: string;
-  bank_code?: string;
-  bank_account?: string;
-}
+type TypeEditProfileRequest = Partial<
+  Pick<
+    TypeGetProfileResponse,
+    | 'name'
+    | 'description'
+    | 'avatar'
+    | 'location'
+    | 'lat'
+    | 'lng'
+    | 'min_cost'
+    | 'max_cost'
+    | 'duration'
+    | 'start_time'
+    | 'end_time'
+  > & {
+    bank_code: string;
+    bank_account: string;
+    services: string; // JSON.stringify
+  }
+>;
 
 interface TypeEditProfileResponse {
   success: boolean;

@@ -12,9 +12,15 @@ export interface ParamsCreateLocation {
   name: string;
   address: string;
   duration: string;
+  // price
   typePrice: 'free' | 'paid';
   minCost: string;
   maxCost: string;
+  // business time
+  typeBusinessTime: 'all-day' | 'limit';
+  startTime: number;
+  endTime: number;
+  // other
   services: number[];
   description: string;
 }

@@ -207,7 +207,7 @@ const $container: ViewStyle = {
   paddingHorizontal: 0,
 };
 const $tabBar: ViewStyle = {
-  paddingHorizontal: scale(70),
+  paddingHorizontal: scale(40),
 };
 const $titleTabBar: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,

@@ -72,7 +72,7 @@ export const apiEditProfile = (
   const payload = new FormData();
 
   Object.entries(body).forEach(([key, value]) => {
-    if (value) {
+    if (value !== undefined) {
       if (key !== 'avatar') {
         payload.append(key, value);
       } else {

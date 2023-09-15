@@ -233,3 +233,20 @@ export const formatInputNumber = (
 
   return formatNormalNumberFromLocale(value);
 };
+
+export const formatHours = (value: number) => {
+  const hours = Math.trunc(value);
+  const minutes = Math.round((value - hours) * 100);
+
+  let text = value.toFixed(2);
+  if (hours < 10) {
+    text = `0${text}`;
+  }
+  text = text.replace('.', ':');
+
+  return {
+    hours,
+    minutes,
+    text,
+  };
+};

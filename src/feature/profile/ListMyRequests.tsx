@@ -1,12 +1,13 @@
-import {safePaddingNotZero} from 'asset/metrics';
+import {verticalMargin} from 'asset/metrics';
+import {Separator} from 'components';
 import {StyleContainer, StyleList} from 'components/base';
+import {useSafeArea} from 'hook';
 import React from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ItemRequest} from './components';
 import {useMyRequests} from './hooks';
 
 const ListMyRequests = () => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const [{data, initLoading, validating}, {mutate}] = useMyRequests();
 
   return (
@@ -22,7 +23,11 @@ const ListMyRequests = () => {
         initLoading={initLoading}
         refreshing={validating}
         onRefresh={mutate}
-        contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
+        contentContainerStyle={{
+          paddingBottom: bottom,
+          paddingTop: verticalMargin,
+        }}
+        ItemSeparatorComponent={Separator}
       />
     </StyleContainer>
   );

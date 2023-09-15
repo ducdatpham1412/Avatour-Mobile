@@ -325,6 +325,7 @@ const DetailTour = ({
                         });
                       }
                     },
+                    icon: <StyleIcon source={Images.icons.cute} size={70} />,
                   });
                 },
               }

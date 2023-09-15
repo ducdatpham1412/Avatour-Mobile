@@ -1,7 +1,6 @@
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import React from 'react';
 import {View, ViewProps, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type Props = ViewProps & {
   safeTop?: boolean;
@@ -11,7 +10,7 @@ type Props = ViewProps & {
 
 const SafeView = (props: Props) => {
   const {style, safeTop = true, safeBottom = false, center, children} = props;
-  const {top, bottom} = useSafeAreaInsets();
+  const {top, bottom} = useSafeArea();
   const theme = useTheme();
 
   return (

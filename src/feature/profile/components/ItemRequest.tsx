@@ -185,6 +185,7 @@ const ItemRequest = ({item}: Props) => {
         {
           title: 'profile.created',
           content: formatddddDDMMYYYY(item?.created),
+          contentStyle: {fontWeight: 'normal'},
         },
         renderData(),
         <View style={$cancel}>
@@ -197,15 +198,11 @@ const ItemRequest = ({item}: Props) => {
           />
         </View>,
       ]}
-      containerStyle={$container}
       titleBoxFlex={0.3}
     />
   );
 };
 
-const $container: ViewStyle = {
-  marginTop: verticalScale(12),
-};
 const $cancel: ViewStyle = {
   width: '100%',
   alignItems: 'center',

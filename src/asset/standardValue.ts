@@ -200,6 +200,6 @@ export const FONT_WEIGHT_MEDIUM = '500';
  */
 export const ratioImageTour = 130 / 200;
 export const ratioImageSale = 232 / 319;
-export const ratioAvatarLocation = 200 / 341;
+export const ratioAvatar = 200 / 341;
 
 export const scrollItemHeight = verticalScale(250);
