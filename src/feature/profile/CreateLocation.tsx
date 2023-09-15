@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, LIST_TOPICS, ratioAvatar} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS, ratioAvatar} from 'asset';
 import {TOPIC} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
@@ -8,13 +8,19 @@ import {
   StyleContainer,
   StyleIcon,
   StyleImage,
+  StyleText,
   StyleTouchable,
 } from 'components/base';
 import {TickBox} from 'feature/discovery/components';
 import {useSafeArea, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
+import {
+  ModalActionSheet,
+  ModalAlert,
+  ModalTimePicker,
+  TimeValue,
+} from 'navigation/screen/modals';
 import React, {Dispatch, SetStateAction, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -28,13 +34,23 @@ import {
 import {I18Normalize} from 'utility/I18Next';
 import ImageUploader from 'utility/ImageUploader';
 import {$styleTopShadow, logger, seeDetailImage} from 'utility/assistant';
-import {formatInputNumber, formatLocaleNumber} from 'utility/format';
+import {
+  formatHours,
+  formatInputNumber,
+  formatLocaleNumber,
+} from 'utility/format';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Title, TitleAndInput} from './components';
 import {ParamsCreateLocation, useCreateLocation} from './hooks';
 import {LoadingScreen} from './screens';
-import {TypeLocationPrice, listOptionsPrice} from 'utility/staticData';
+import {
+  TypeBusinessTime,
+  TypeLocationPrice,
+  listOptionsBusinessTime,
+  listOptionsPrice,
+} from 'utility/staticData';
+import isEqual from 'react-fast-compare';
 
 const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
   ModalActionSheet.show({
@@ -98,9 +114,12 @@ const CreateLocation = ({
       itemEdit?.min_cost !== 0 || itemEdit.max_cost !== 0 ? 'paid' : 'free',
     minCost: String(itemEdit?.min_cost ?? ''),
     maxCost: String(itemEdit?.max_cost ?? ''),
-    typeBusinessTime: 'all-day',
-    startTime: 0,
-    endTime: 0,
+    typeBusinessTime:
+      itemEdit?.start_time === 0 && itemEdit?.end_time === 0
+        ? 'all-day'
+        : 'limit',
+    startTime: itemEdit?.start_time ?? 0,
+    endTime: itemEdit?.end_time ?? 0,
     services: itemEdit?.services ?? [TOPIC.food, TOPIC.backpacking],
     description: itemEdit?.description ?? '',
   });
@@ -117,6 +136,10 @@ const CreateLocation = ({
       loadingSave,
       minCost,
       maxCost,
+      typeTime,
+      startTime,
+      endTime,
+      description,
     },
     {
       setAvatar,
@@ -128,20 +151,47 @@ const CreateLocation = ({
       setServices,
       setMinCost,
       setMaxCost,
+      setTypeTime,
+      setStartTime,
+      setEndTime,
       save,
     },
   ] = useCreateLocation(initValue.current);
 
-  const disable =
-    !avatar ||
-    !name ||
-    !services.length ||
-    !address ||
-    !(Number(duration) > 0) ||
-    !(
-      typePrice === 'free' ||
-      (typePrice === 'paid' && Number(minCost) > 0 && Number(maxCost) > 0)
-    );
+  let disableButton = false;
+
+  if (itemEdit) {
+    disableButton =
+      !avatar ||
+      !name ||
+      !address ||
+      !(Number(duration) > 0) ||
+      !services.length ||
+      (avatar === initValue.current.avatar &&
+        name === initValue.current.name &&
+        address === initValue.current.address &&
+        duration === initValue.current.duration &&
+        isEqual(services, initValue.current.services) &&
+        description === initValue.current.description);
+
+    if (disableButton) {
+      disableButton =
+        typePrice === 'free'
+          ? Number(initValue.current.minCost) === 0 &&
+            Number(initValue.current.maxCost) === 0
+          : Number(minCost) === Number(initValue.current.minCost) &&
+            Number(maxCost) === Number(initValue.current.maxCost);
+    }
+
+    if (disableButton) {
+      disableButton =
+        typeTime === 'all-day'
+          ? Number(initValue.current.startTime) === 0 &&
+            Number(initValue.current?.endTime) === 0
+          : startTime === Number(initValue.current.startTime) &&
+            endTime === Number(initValue.current.endTime);
+    }
+  }
 
   const onSave = async () => {
     try {
@@ -166,10 +216,14 @@ const CreateLocation = ({
         headerProps={{
           title: 'discovery.addLocation',
           onGoBack: () => {
-            ModalAlert.options({
-              i18Content: 'common.wantToDiscard',
-              onContinue: goBack,
-            });
+            if (itemNew || !disableButton) {
+              ModalAlert.options({
+                i18Content: 'common.wantToDiscard',
+                onContinue: goBack,
+              });
+            } else {
+              goBack();
+            }
           },
         }}
         backgroundColor={theme.white}
@@ -188,7 +242,7 @@ const CreateLocation = ({
             <StyleButton
               containerStyle={$button}
               title={itemNew ? 'common.suggest' : 'common.edit'}
-              disable={disable}
+              disable={disableButton}
               onPress={onSave}
             />
           </View>
@@ -260,6 +314,113 @@ const CreateLocation = ({
             },
           }}
         />
+
+        <TickBox
+          title="profile.businessHours"
+          listOptions={listOptionsBusinessTime}
+          listChosen={[{id: typeTime, text: 'common.null'}]}
+          onPressOption={option => {
+            if (option.id !== typeTime) {
+              impactLight();
+              setTypeTime(option.id as TypeBusinessTime);
+            }
+          }}
+          containerStyle={$element}
+          layOut="grid"
+          mandatory
+        />
+        {typeTime === 'limit' && (
+          <View style={$businessTime}>
+            <StyleTouchable
+              customStyle={[$businessTimeBox, {borderColor: theme.gray_300}]}
+              onPress={() => {
+                let initTime: TimeValue | undefined;
+                if (startTime) {
+                  const format = formatHours(startTime);
+                  initTime = {
+                    hours: format.hours,
+                    minutes: format.minutes,
+                  };
+                } else {
+                  initTime = {
+                    hours: 6,
+                    minutes: 0,
+                  };
+                }
+                ModalTimePicker.show({
+                  title: 'profile.selectOpenHour',
+                  initTime,
+                  onChange: v => {
+                    const temp = v.hours + v.minutes / 100;
+                    setStartTime(temp);
+                    if (!endTime) {
+                      ModalTimePicker.show({
+                        title: 'profile.selectCloseHour',
+                        initTime: {
+                          hours: 22,
+                          minutes: 0,
+                        },
+                        onChange: vEnd => {
+                          const tempEnd = vEnd.hours + vEnd.minutes / 100;
+                          setEndTime(tempEnd);
+                        },
+                      });
+                    }
+                  },
+                });
+              }}>
+              {startTime ? (
+                <StyleText originValue={formatHours(startTime).text} />
+              ) : (
+                <StyleText
+                  originValue={`${t('profile.ex')}: 6:00`}
+                  customStyle={{
+                    color: theme.gray_400,
+                  }}
+                />
+              )}
+            </StyleTouchable>
+
+            <StyleText originValue="~" customStyle={$divider} />
+
+            <StyleTouchable
+              customStyle={[$businessTimeBox, {borderColor: theme.gray_300}]}
+              onPress={() => {
+                let initTime: TimeValue | undefined;
+                if (endTime) {
+                  const format = formatHours(endTime);
+                  initTime = {
+                    hours: format.hours,
+                    minutes: format.minutes,
+                  };
+                } else {
+                  initTime = {
+                    hours: 22,
+                    minutes: 0,
+                  };
+                }
+                ModalTimePicker.show({
+                  title: 'profile.selectCloseHour',
+                  initTime,
+                  onChange: v => {
+                    const temp = v.hours + v.minutes / 100;
+                    setEndTime(temp);
+                  },
+                });
+              }}>
+              {endTime ? (
+                <StyleText originValue={formatHours(endTime).text} />
+              ) : (
+                <StyleText
+                  originValue={`${t('profile.ex')}: 22:00`}
+                  customStyle={{
+                    color: theme.gray_400,
+                  }}
+                />
+              )}
+            </StyleTouchable>
+          </View>
+        )}
 
         <TickBox
           title="profile.price"
@@ -419,6 +580,24 @@ const $inputDescription: TextStyle = {
   paddingHorizontal: scale(12),
   paddingTop: verticalScale(12),
   paddingBottom: verticalScale(12),
+};
+const $businessTime: ViewStyle = {
+  width: '100%',
+  height: moderateScale(45),
+  flexDirection: 'row',
+  marginTop: verticalScale(8),
+};
+const $businessTimeBox: ViewStyle = {
+  flex: 1,
+  borderWidth: moderateScale(1),
+  borderRadius: BORDER_RADIUS.f3,
+  justifyContent: 'center',
+  paddingHorizontal: scale(12),
+};
+const $divider: TextStyle = {
+  fontSize: FONT_SIZE.f1,
+  marginHorizontal: scale(8),
+  alignSelf: 'center',
 };
 
 export default CreateLocation;

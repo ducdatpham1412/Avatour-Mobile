@@ -107,7 +107,7 @@ const ModalActionSheet = forwardRef(
           buttonBox: {
             height: moderateScale(60),
             backgroundColor: theme.white,
-            marginBottom: verticalScale(5),
+            marginBottom: verticalScale(8),
           },
           body: {
             backgroundColor: theme.background,

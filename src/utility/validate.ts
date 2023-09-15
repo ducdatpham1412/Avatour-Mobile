@@ -2,7 +2,7 @@ import {standValue} from 'asset/standardValue';
 import * as yup from 'yup';
 import {requireField, requireLength} from './format';
 import I18Next from './I18Next';
-import {JOIN_STATUS} from 'asset/enum';
+import {JOIN_STATUS, STATUS} from 'asset/enum';
 
 // const REGEX_EMAIL =
 //   /^(([^<>()[\]\\x.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -162,4 +162,27 @@ export const isAsync = (func: any) => {
 
 export const canSupplierConfirmBought = (status: number) => {
   return [JOIN_STATUS.overtime, JOIN_STATUS.consumerConfirmed].includes(status);
+};
+
+export const checkStatusSchedule = (schedules: TourDetail['schedule']) => {
+  let checkHaveLocationDraft = false;
+
+  schedules.every(day => {
+    day.every(location => {
+      if (
+        location.status === STATUS.draft ||
+        location.status === STATUS.suggesting
+      ) {
+        checkHaveLocationDraft = true;
+      }
+      return !checkHaveLocationDraft;
+    });
+    return !checkHaveLocationDraft;
+  });
+
+  if (checkHaveLocationDraft) {
+    return 'draft';
+  }
+
+  return 'active';
 };

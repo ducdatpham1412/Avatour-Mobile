@@ -26,7 +26,7 @@ import {
 import {Avatar} from 'components/common';
 import {UpdatePriceStatus} from 'feature/common/components';
 import {useDetailSale} from 'feature/common/hooks';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import HeaderLeftIcon from 'navigation/components/HeaderLeftIcon';
 import {AppParamsList} from 'navigation/config';
@@ -36,7 +36,6 @@ import React, {useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, TextInput, TextStyle, View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {PricesEdit, ScrollCropImages, TitleAndInput} from './components';
@@ -53,7 +52,7 @@ const {width} = Metrics;
 
 const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const {itemNew, itemEdit, itemError} = route.params ?? {};
 
   const theme = useTheme();

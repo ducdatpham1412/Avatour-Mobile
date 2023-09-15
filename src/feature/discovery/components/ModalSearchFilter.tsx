@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BORDER_RADIUS, LIST_TOPICS, LIST_TRANSPORTS} from 'asset';
 import {ASYNC_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
-import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {
   AppInput,
@@ -12,7 +11,7 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {ModalDateRangePicker} from 'navigation/screen/modals';
 import React, {
   ElementRef,
@@ -30,7 +29,6 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny} from 'utility/assistant';
@@ -95,7 +93,7 @@ const ModalSearchFilter = (
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const {t} = useTranslation();
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const theme = useTheme();
 
   const modalEditPriceRef = useRef<ElementRef<typeof ModalEdit>>(null);
@@ -129,7 +127,7 @@ const ModalSearchFilter = (
         ref={ref}
         panGestureEnabled
         onOpen={() => Keyboard.dismiss()}
-        containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
+        containerStyle={{paddingBottom: bottom}}>
         {/*
         TODO: When develop search suggest vehicle for "start-location"
         */}

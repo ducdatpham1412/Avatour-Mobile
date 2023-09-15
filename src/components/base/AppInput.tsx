@@ -12,6 +12,7 @@ const AppInput = (props: TextInputProps, ref: ForwardedRef<TextInput>) => {
       ref={ref}
       selectionColor={p_800}
       placeholderTextColor={gray_500}
+      returnKeyType={props?.keyboardType === 'numeric' ? 'done' : undefined}
       {...props}
       style={[styles.text, {color: black}, props.style]}
     />

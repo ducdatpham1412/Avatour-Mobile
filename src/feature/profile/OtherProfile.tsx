@@ -266,7 +266,7 @@ const OtherProfile = ({
   return (
     <StyleContainer
       headerProps={{
-        title: data?.name as I18Normalize,
+        title: 'common.null',
         RightComponent:
           isBlocked || isPrivate ? null : (
             <StyleTouchable onPress={onShowModalOptions}>

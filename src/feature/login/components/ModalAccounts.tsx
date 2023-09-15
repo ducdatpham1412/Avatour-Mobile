@@ -1,11 +1,9 @@
 import {BORDER_RADIUS} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleText, StyleTouchable} from 'components/base';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import React, {ForwardedRef, forwardRef} from 'react';
 import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
@@ -19,7 +17,7 @@ const ModalAccounts = (
   {listAccounts, onSelect, onDelete}: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom} = useSafeArea();
   const theme = useTheme();
   const isOverFlow8Items = listAccounts.length > 8;
 
@@ -79,7 +77,7 @@ const ModalAccounts = (
     <AppModalize
       ref={ref}
       containerStyle={{
-        paddingBottom: bottom || safePaddingNotZero,
+        paddingBottom: bottom,
         backgroundColor: theme.background,
       }}>
       {renderContent()}
