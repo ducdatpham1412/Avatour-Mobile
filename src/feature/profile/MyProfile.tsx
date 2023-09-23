@@ -75,7 +75,7 @@ const MyProfile = ({
      */
     <StyleContainer
       headerProps={{
-        title: profile?.name as I18Normalize,
+        title: 'common.null',
         LeftComponent: renderIconLeft(),
         RightComponent: (
           <StyleTouchable onPress={() => navigate(SETTING_ROUTE.settingScreen)}>

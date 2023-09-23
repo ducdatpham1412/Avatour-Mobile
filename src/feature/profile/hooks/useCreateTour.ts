@@ -79,6 +79,7 @@ const useCreateTour = (tourId: ParamsCreateTour) => {
         // If update have value => call api update tour
         if (!isEqual(update, {})) {
           await apiEditTour(data.id, update);
+
           await mutate(
             pre => {
               if (pre) {

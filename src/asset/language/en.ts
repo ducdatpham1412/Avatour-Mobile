@@ -317,7 +317,9 @@ const tour = {
     'After switching back to private mode, people will no longer be able to search and view this schedule information on your profile',
   tourIsPrivate: 'Tour is in private mode\nShare widely with the community?',
   tourStillHaveDraftLocation:
-    'The tour currently still has some uncensored locations so they cannot be shared on the community\nPlease suggest locations to Avatour and we will respond soon',
+    'The tour currently still has some unverified locations so they cannot be shared on the community\nPlease suggest locations to Avatour and we will respond soon',
+  tourEditHaveDraftLocation:
+    'The updated schedule has unverified locations, everyone <b>will not see</b> it until it is verified\nDo you still want to continue?',
 };
 
 const mess = {

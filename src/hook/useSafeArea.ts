@@ -7,7 +7,9 @@ const useSafeArea = () => {
 
   return {
     top,
-    bottom: isIOS ? bottom || safePaddingNotZero : bottom + safePaddingNotZero,
+    bottom: isIOS
+      ? bottom + safePaddingNotZero
+      : bottom + 2 * safePaddingNotZero,
     right,
     left,
   };

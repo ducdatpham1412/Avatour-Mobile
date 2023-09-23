@@ -32,10 +32,16 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
   const [avatar, setAvatar] = useState(params.avatar);
   const [name, setName] = useState(params.name);
   const [address, setAddress] = useState(params.address);
-  const [typePrice, setTypePrice] = useState(params.typePrice);
   const [duration, setDuration] = useState(params.duration);
+
+  const [typePrice, setTypePrice] = useState(params.typePrice);
   const [minCost, setMinCost] = useState(params.minCost);
   const [maxCost, setMaxCost] = useState(params.maxCost);
+
+  const [typeTime, setTypeTime] = useState(params.typeBusinessTime);
+  const [startTime, setStartTime] = useState(params.startTime);
+  const [endTime, setEndTime] = useState(params.endTime);
+
   const [services, setServices] = useState(params.services);
   const [description, setDescription] = useState(params.description);
 
@@ -69,6 +75,13 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
           form.append('min_cost', minCost);
           form.append('max_cost', maxCost);
         }
+        if (typeTime === 'all-day') {
+          form.append('start_time', 0);
+          form.append('end_time', 0);
+        } else {
+          form.append('start_time', startTime);
+          form.append('end_time', endTime);
+        }
         form.append('duration', duration);
 
         await request.post('/admin/suppliers', form);
@@ -97,22 +110,27 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
       if (address !== params.address) {
         form.append('location', address);
       }
+
       if (!isEqual(services, params.services)) {
         form.append('services', JSON.stringify(services));
       }
-      if (
-        typePrice !== params.typePrice ||
-        minCost !== params.minCost ||
-        maxCost !== params.maxCost
-      ) {
-        if (typePrice === 'free') {
-          form.append('min_cost', 0);
-          form.append('max_cost', 0);
-        } else {
-          form.append('min_cost', minCost);
-          form.append('max_cost', maxCost);
-        }
+
+      if (typePrice === 'free') {
+        form.append('min_cost', 0);
+        form.append('max_cost', 0);
+      } else {
+        form.append('min_cost', minCost);
+        form.append('max_cost', maxCost);
       }
+
+      if (typeTime === 'all-day') {
+        form.append('start_time', 0);
+        form.append('end_time', 0);
+      } else {
+        form.append('start_time', startTime);
+        form.append('end_time', endTime);
+      }
+
       if (duration !== params.duration) {
         form.append('duration', duration);
       }
@@ -131,6 +149,8 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
               duration: Number(duration),
               min_cost: typePrice === 'free' ? 0 : Number(minCost),
               max_cost: typePrice === 'free' ? 0 : Number(maxCost),
+              start_time: typeTime === 'all-day' ? 0 : Number(startTime),
+              end_time: typeTime === 'all-day' ? 0 : Number(endTime),
               services,
             };
           }
@@ -151,6 +171,9 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
       typePrice,
       minCost,
       maxCost,
+      typeTime,
+      startTime,
+      endTime,
       services,
       description,
       loadingSave,
@@ -163,6 +186,9 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
       setTypePrice,
       setMinCost,
       setMaxCost,
+      setTypeTime,
+      setStartTime,
+      setEndTime,
       setServices,
       setDescription,
       save,

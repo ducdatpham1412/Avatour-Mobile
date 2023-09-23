@@ -589,7 +589,7 @@ const DetailSale = ({
       <StyleContainer
         initLoading={initLoading}
         headerProps={{
-          title: data?.creator_name as I18Normalize,
+          title: 'common.null',
           RightComponent: (
             <StyleTouchable
               customStyle={$iconOptionView}

@@ -51,6 +51,8 @@ import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
+import {checkStatusSchedule} from 'utility/validate';
+import isEqual from 'react-fast-compare';
 
 type TypeContext = [
   {
@@ -106,7 +108,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const {profile} = useAppSelector(state => state.accountSlice.passport);
 
   const [
-    {loadingCreateTour, name, loadingEditTour, searchParams, schedules},
+    {data, loadingCreateTour, name, loadingEditTour, searchParams, schedules},
     {createTour, editTour, setSearchParams, setSchedules, setName, onReset},
   ] = useCreateTour(tourId);
 
@@ -254,17 +256,37 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
       return;
     }
 
-    try {
-      await editTour();
-      emitAppEvent(APP_EVENT.editTour);
-      ModalAlert.success({
-        i18Content: 'alert.successChange',
-        onClose: goBack,
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
+    /**
+     * Edit tour
+     */
+    const agree = async () => {
+      try {
+        await editTour();
+        emitAppEvent(APP_EVENT.editTour);
+        ModalAlert.success({
+          i18Content: 'alert.successChange',
+          onClose: goBack,
+        });
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    };
+
+    if (data?.status === STATUS.active && !isEqual(schedules, data?.schedule)) {
+      const scheduleStatus = checkStatusSchedule(schedules);
+
+      if (scheduleStatus === 'draft') {
+        ModalAlert.options({
+          i18Content: 'tour.tourEditHaveDraftLocation',
+          onContinue: agree,
+        });
+      } else {
+        agree();
+      }
+    } else {
+      agree();
     }
   };
 
@@ -374,6 +396,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
               defaultValue={name}
               onChangeText={text => setName(text)}
               onFocus={() => onChangeModalHeight(levelModalScheduleHeight.high)}
+              returnKeyType="done"
             />
 
             <ToolSearch
