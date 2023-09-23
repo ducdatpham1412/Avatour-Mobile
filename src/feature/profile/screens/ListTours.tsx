@@ -13,7 +13,7 @@ interface Props {
 }
 
 const ListTours = ({userId}: Props) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {
     list,
     setList,
@@ -50,7 +50,7 @@ const ListTours = ({userId}: Props) => {
       keyExtractor={item => String(item?.id)}
       contentContainerStyle={[
         $contentContainer,
-        {paddingBottom: bottom, paddingTop: safePaddingNotZero},
+        {paddingBottom, paddingTop: safePaddingNotZero},
       ]}
       refreshing={refreshing}
       onRefresh={onRefresh}

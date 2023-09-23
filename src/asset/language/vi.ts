@@ -323,6 +323,8 @@ const tour = {
     'Tour hiện vẫn đang có một số địa điểm chưa được kiểm duyệt nên chưa thể chia sẻ trên cộng đồng\nBạn vui lòng đề xuất địa điểm với Avatour và chúng tôi sẽ sớm phản hồi lại bạn',
   tourEditHaveDraftLocation:
     'Lịch trình cập nhật có địa điểm chưa được kiểm duyệt, mọi người sẽ <b>không thấy được</b> địa điểm này cho đến khi được duyệt\nBạn vẫn muốn tiếp tục chứ?',
+  tourTravel: 'Tour khám phá',
+  restaurantHotel: 'Nhà hàng, Khách sạn',
 };
 
 const profile = {

@@ -1,13 +1,14 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import {REACT} from 'asset/enum';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {ItemTour, Separator} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
 import {View, ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
+import SearchListShops from './SearchListShops';
 
 const SearchListTour = () => {
   const {bottom} = useSafeArea();
@@ -60,10 +61,11 @@ const SearchListTour = () => {
         initLoading={initLoading}
         contentContainerStyle={{
           paddingBottom: bottom,
-          paddingTop: safePaddingNotZero,
+          paddingHorizontal: horizontalPadding,
         }}
         ListEmptyComponent={null}
         ItemSeparatorComponent={Separator}
+        ListHeaderComponent={SearchListShops}
       />
     </View>
   );
@@ -71,7 +73,6 @@ const SearchListTour = () => {
 
 const $container: ViewStyle = {
   flex: 1,
-  paddingHorizontal: horizontalPadding,
 };
 
 export default SearchListTour;
