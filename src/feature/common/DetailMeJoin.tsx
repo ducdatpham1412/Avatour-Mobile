@@ -2,7 +2,7 @@ import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {JOIN_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
-import {verticalMargin} from 'asset/metrics';
+import {safePaddingNotZero, verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
   StyleButton,
@@ -1065,7 +1065,7 @@ const DetailMeJoin = ({
           title: data?.sale?.name as I18Normalize,
         }}
         scrollEnabled
-        customStyle={{paddingBottom: bottom}}
+        customStyle={{paddingBottom: safePaddingNotZero}}
         initLoading={loading}
         refreshControl={
           <RefreshControl
