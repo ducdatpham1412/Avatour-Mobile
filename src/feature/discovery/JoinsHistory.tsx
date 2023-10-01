@@ -1,6 +1,5 @@
 import {safePaddingNotZero} from 'asset/metrics';
 import {StyleContainer, StyleList} from 'components/base';
-import {useDetailSale} from 'feature/common/hooks';
 import {useApi} from 'hook';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
@@ -16,7 +15,7 @@ const JoinsHistory = ({
 }: RouteParams<AppParamsList[ROOT_SCREEN.joinsHistory]>) => {
   const {bottom} = useSafeAreaInsets();
 
-  const {data, loading, validating, mutate} = useApi<TypeJoinPersonal[]>({
+  const {data, loading, validating, mutate} = useApi<TypeJoinEstimate[]>({
     path: `/profile/sales/join/${saleId}`,
     params: {
       type: 'join_history',
@@ -25,7 +24,6 @@ const JoinsHistory = ({
       revalidateAll: mode === 'go-from-notification',
     },
   });
-  const [{data: dataSale}] = useDetailSale(saleId);
 
   return (
     <StyleContainer
@@ -36,18 +34,9 @@ const JoinsHistory = ({
       <StyleList
         data={data ?? []}
         keyExtractor={item => String(item?.id)}
-        renderItem={({item}) => (
+        renderItem={({item}: {item: TypeJoinEstimate}) => (
           <ItemJoin
-            item={{
-              ...item,
-              sale: {
-                images: dataSale?.images,
-                name: dataSale?.name,
-                creator: dataSale?.creator,
-                creator_name: dataSale?.creator_name,
-                creator_avatar: dataSale?.creator_avatar,
-              },
-            }}
+            item={item}
             containerStyle={$itemContainer}
             onPressMode="see-detail"
           />

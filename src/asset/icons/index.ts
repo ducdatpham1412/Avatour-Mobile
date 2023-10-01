@@ -14,6 +14,7 @@ export {default as IconEdit} from './IconEdit';
 export {default as IconLocation} from './IconLocation';
 export {default as IconPaddingField} from './IconPaddingField';
 export {default as IconPrice} from './IconPrice';
+export {default as IconShop} from './IconShop';
 export {default as IconTagStars} from './IconTagStars';
 export {default as IconTour} from './IconTour';
 export {default as NotificationIcon} from './NotificationIcon';

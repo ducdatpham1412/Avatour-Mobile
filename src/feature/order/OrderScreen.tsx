@@ -5,18 +5,13 @@ import {
   Metrics,
   horizontalMargin,
   horizontalPadding,
+  safePaddingNotZero,
   verticalMargin,
 } from 'asset/metrics';
 import {Separator} from 'components';
 import {StyleContainer, StyleList, StyleText} from 'components/base';
 import {ItemJoin, ItemJoinWithBanner} from 'feature/discovery/components';
-import {
-  useAppEvent,
-  useEstimatesAndJoinings,
-  usePaging,
-  useSafeArea,
-  useTheme,
-} from 'hook';
+import {useAppEvent, useEstimatesAndJoinings, usePaging, useTheme} from 'hook';
 import React, {useCallback} from 'react';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
@@ -24,7 +19,6 @@ import {ItemEstimate} from './components';
 
 const OrderScreen = () => {
   const theme = useTheme();
-  const {bottom} = useSafeArea();
   const {
     data: {estimates, joinings},
     loading,
@@ -140,7 +134,7 @@ const OrderScreen = () => {
         }}
         loadingMore={loadingMore}
         onLoadMore={onLoadMore}
-        contentContainerStyle={[$contentContainer, {paddingBottom: bottom}]}
+        contentContainerStyle={$contentContainer}
         ListHeaderComponent={renderHeaderComponent()}
         ItemSeparatorComponent={Separator}
       />
@@ -154,6 +148,7 @@ const $container: ViewStyle = {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   alignItems: 'center',
+  paddingBottom: safePaddingNotZero,
 };
 const $header: ViewStyle = {
   width: Metrics.width,

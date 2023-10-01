@@ -34,7 +34,7 @@ export interface TabViewProps {
   initialIndex?: number;
   onChangeIndex?: (value: number) => void;
   indicatorWidthRatio?: number;
-  tabBarType?: 'fix-width' | 'scroll';
+  tabBarType?: 'fix-width' | 'scroll' | 'none';
   lazy?: boolean;
   onLayOut?: (e: LayoutChangeEvent) => void;
 }

@@ -5,7 +5,6 @@ import {FONT_SIZE} from 'asset/standardValue';
 import {TabView} from 'components';
 import {SafeView, StyleIcon, StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
-import {IconTabBar} from 'components/common';
 import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
@@ -18,11 +17,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useUpdateEffect} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
+import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
-import {SearchListGroupBuying, SearchListTour} from './screens';
-import {impactLight} from 'utility/haptic';
+import {SearchListTour} from './screens';
 
 const SearchScreen = ({
   route,
@@ -148,17 +147,18 @@ const SearchScreen = ({
         <View style={$resultView}>
           {showResult && (
             <TabView
-              listElements={[SearchListTour, SearchListGroupBuying]}
+              //   listElements={[SearchListTour, SearchListGroupBuying]}
+              listElements={[SearchListTour]}
               tabBarStyle={$tabBarResult}
-              listIconTabBar={[
-                <IconTabBar icon={Images.icons.tour} title="discovery.tour" />,
-                <IconTabBar
-                  icon={Images.icons.shop}
-                  title="discovery.groupBuying"
-                />,
-              ]}
+              //   listIconTabBar={[
+              //     <IconTabBar icon={Images.icons.tour} title="discovery.tour" />,
+              //     <IconTabBar
+              //       icon={Images.icons.shop}
+              //       title="discovery.groupBuying"
+              //     />,
+              //   ]}
               style={$resultView}
-              tabBarType="fix-width"
+              tabBarType="none"
             />
           )}
 

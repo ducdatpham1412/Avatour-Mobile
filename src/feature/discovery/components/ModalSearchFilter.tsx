@@ -126,8 +126,7 @@ const ModalSearchFilter = (
       <AppModalize
         ref={ref}
         panGestureEnabled
-        onOpen={() => Keyboard.dismiss()}
-        containerStyle={{paddingBottom: bottom}}>
+        onOpen={() => Keyboard.dismiss()}>
         {/*
         TODO: When develop search suggest vehicle for "start-location"
         */}
@@ -325,7 +324,7 @@ const ModalSearchFilter = (
         {editable && (
           <StyleButton
             title={titleButton ?? 'common.search'}
-            containerStyle={$buttonView}
+            containerStyle={[$buttonView, {marginBottom: bottom}]}
             onPress={onSave}
           />
         )}
@@ -456,7 +455,7 @@ const $dividerPrice: TextStyle = {
 };
 const $buttonView: ViewStyle = {
   marginTop: verticalScale(16),
-  width: '80%',
+  width: '90%',
 };
 
 export default forwardRef(ModalSearchFilter);

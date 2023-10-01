@@ -27,7 +27,7 @@ interface Props {
 }
 
 const FollowerScreen = ({profile, type}: Props) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
@@ -152,7 +152,7 @@ const FollowerScreen = ({profile, type}: Props) => {
       onLoadMore={onLoadMore}
       initLoading={initLoading}
       loadingMore={loadingMore}
-      contentContainerStyle={[$contentContainer, {paddingBottom: bottom}]}
+      contentContainerStyle={[$contentContainer, {paddingBottom}]}
       ItemSeparatorComponent={Separator}
     />
   );
