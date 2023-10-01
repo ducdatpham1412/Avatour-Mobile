@@ -19,7 +19,6 @@ import {TextInput, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ScaledSheet} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import ImageUploader from 'utility/ImageUploader';
 import {scale} from 'utility/scale';
 
 interface Props {
@@ -28,6 +27,7 @@ interface Props {
   };
 }
 
+// TODO: Fix this screen: 1. Fix ts error | 2. Fix api upload images
 const ReportUser = ({
   route: {
     params: {idUser, nameUser},
@@ -45,16 +45,12 @@ const ReportUser = ({
   const onSubmitReport = async () => {
     if (reasonReport) {
       try {
-        let nameImages: Array<string> = [];
-        if (images.length) {
-          nameImages = await ImageUploader.upLoadManyImg(images);
-        }
         await apiReportUser({
           userId: idUser,
           body: {
             reason: reasonReport.id,
             description,
-            listImages: nameImages,
+            listImages: [],
           },
         });
 
@@ -85,7 +81,10 @@ const ReportUser = ({
           title="discovery.report.sendReport"
           disable={!reasonReport}
           onPress={onSubmitReport}
-          containerStyle={{marginBottom: bottom || safePaddingNotZero}}
+          containerStyle={{
+            marginBottom: bottom || safePaddingNotZero,
+            width: '90%',
+          }}
         />
       }>
       <StyleText

@@ -11,7 +11,7 @@ import {onReactSale} from 'utility/assistant';
 import SearchListShops from './SearchListShops';
 
 const SearchListTour = () => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {searchParams} = useAppSelector(state => state.logicSlice);
   const {
     list,
@@ -60,7 +60,7 @@ const SearchListTour = () => {
         loadingMore={loadingMore}
         initLoading={initLoading}
         contentContainerStyle={{
-          paddingBottom: bottom,
+          paddingBottom,
           paddingHorizontal: horizontalPadding,
         }}
         ListEmptyComponent={null}
