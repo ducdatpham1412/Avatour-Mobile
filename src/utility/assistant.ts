@@ -450,10 +450,12 @@ export const search = (sample: string[], text: string) => {
 
   sample.forEach((name, index) => {
     for (let i = 0; i < words.length; i++) {
-      const check = name.includes(removeVietnameseTones(words[i]));
-      if (check) {
-        resIndex.push(index);
+      const checkNotIncluded = !name.includes(removeVietnameseTones(words[i]));
+      if (checkNotIncluded) {
         break;
+      }
+      if (i === words.length - 1) {
+        resIndex.push(index);
       }
     }
   });
