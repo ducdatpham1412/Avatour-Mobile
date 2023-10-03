@@ -11,7 +11,7 @@ import {View, ViewStyle} from 'react-native';
 import {onReactSale} from 'utility/assistant';
 
 const SearchListGroupBuying = () => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {searchParams} = useAppSelector(state => state.logicSlice);
 
   const {
@@ -95,10 +95,7 @@ const SearchListGroupBuying = () => {
         onLoadMore={onLoadMore}
         initLoading={initLoading}
         loadingMore={loadingMore}
-        contentContainerStyle={[
-          $content,
-          {paddingBottom: bottom || safePaddingNotZero},
-        ]}
+        contentContainerStyle={[$content, {paddingBottom}]}
         ListEmptyComponent={null}
         numColumns={2}
         ItemSeparatorComponent={Separator}

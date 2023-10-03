@@ -54,6 +54,7 @@ import {
 } from './components';
 import {useDetailSale} from './hooks';
 import Share from 'react-native-share';
+import {useTranslation} from 'react-i18next';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -117,6 +118,7 @@ const DetailSale = ({
     state => state.accountSlice.passport.profile,
   );
   const {bottom} = useSafeArea();
+  const {t} = useTranslation();
 
   const [
     {data, initLoading, loadingJoin, refreshing, loadingDelete},
@@ -297,6 +299,10 @@ const DetailSale = ({
             customStyle={$textTitlePrice}
           />
         </View>
+        <StyleText
+          i18Text="discovery.buyMorePriceLess"
+          customStyle={[$textBuyMore, {color: theme.gray_500}]}
+        />
 
         <View style={$listPrices}>
           <ScrollView horizontal contentContainerStyle={$scrollPrice}>
@@ -313,8 +319,9 @@ const DetailSale = ({
                   ]}
                   key={item?.number_people}>
                   <StyleText
-                    i18Text="discovery.numberServings"
-                    i18Params={{value: item?.number_people}}
+                    originValue={`${item.number_people} ${t(
+                      'discovery.servings',
+                    )}`}
                   />
                   <StyleText
                     originValue={formatMoney(item.price)}
@@ -681,10 +688,14 @@ const $textTitlePrice: TextStyle = {
   fontWeight: 'bold',
   marginLeft: scale(2),
 };
+const $textBuyMore: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  marginTop: verticalScale(2),
+};
 const $listPrices: ViewStyle = {
   width: Metrics.width,
   left: -horizontalPadding,
-  marginTop: verticalScale(8),
+  marginTop: verticalScale(12),
 };
 const $scrollPrice: ViewStyle = {
   paddingLeft: horizontalPadding,

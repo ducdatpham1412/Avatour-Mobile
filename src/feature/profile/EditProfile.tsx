@@ -113,9 +113,9 @@ const EditProfileUser = () => {
 
       if (!modeExp && token) {
         const newAvatar = avatar === profile.avatar ? undefined : avatar;
-        const newName = name === profile.name ? undefined : name;
+        const newName = name === profile.name ? undefined : name.trim();
         const newDescription =
-          description === profile.description ? undefined : description;
+          description === profile.description ? undefined : description.trim();
 
         await apiEditProfile({
           avatar: newAvatar,
@@ -127,8 +127,8 @@ const EditProfileUser = () => {
       updatePassport({
         profile: {
           avatar: avatar,
-          name,
-          description,
+          name: name.trim(),
+          description: description.trim(),
         },
       });
 
@@ -295,7 +295,7 @@ const EditProfileSupplier = () => {
       const {modeExp} = Store.getState().accountSlice;
 
       const newAvatar = avatar === profile.avatar ? undefined : avatar;
-      const newName = name === profile.name ? undefined : name;
+      const newName = name === profile.name ? undefined : name.trim();
       const newAddress = address === profile.location ? undefined : address;
       const newDuration =
         Number(duration) === profile.duration ? undefined : Number(duration);
@@ -329,7 +329,7 @@ const EditProfileSupplier = () => {
         : JSON.stringify(services);
 
       const newDescription =
-        description === profile.description ? undefined : description;
+        description === profile.description ? undefined : description.trim();
 
       if (!modeExp) {
         await apiEditProfile({
@@ -349,8 +349,8 @@ const EditProfileSupplier = () => {
       updatePassport({
         profile: {
           avatar: avatar,
-          name,
-          description,
+          name: name.trim(),
+          description: description.trim(),
           location: address,
           min_cost:
             newMinCost !== undefined ? Number(newMinCost) : profile.min_cost,

@@ -42,16 +42,14 @@ const onNavigateFollow = (
 };
 
 const ButtonOtherProfile = ({profile}: ComponentProps) => {
-  const theme = useTheme();
-  const [
-    {isFollowing, isBlocked, loadingFollow, data},
-    {follow, block, report},
-  ] = useOtherProfile(profile.id, {
-    initValue: profile,
-  });
-  const haveCheckIn =
-    data?.account_type === ACCOUNT.shop ||
-    data?.account_type === ACCOUNT.location;
+  //   const theme = useTheme();
+  const [{isFollowing, isBlocked, loadingFollow}, {follow, block, report}] =
+    useOtherProfile(profile.id, {
+      initValue: profile,
+    });
+  //   const haveCheckIn =
+  //     data?.account_type === ACCOUNT.shop ||
+  //     data?.account_type === ACCOUNT.location;
 
   const onShowModalOptions = async () => {
     if (isFollowing) {
@@ -110,7 +108,8 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
         loading={loadingFollow}
         onPress={onShowModalOptions}
       />
-      {haveCheckIn && (
+      {/* TODO: Check to display button Check-in */}
+      {/* {haveCheckIn && (
         <SquareButton
           containerStyle={[
             $buttonTouch,
@@ -125,7 +124,7 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
             <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
           }
         />
-      )}
+      )} */}
     </View>
   );
 };
@@ -260,9 +259,17 @@ const InformationSupplier = ({profile}: ComponentProps) => {
         <IconLocation tintColor={theme.gray_500} />
         <StyleText
           originValue={profile?.location}
-          customStyle={[$textLocation, {color: theme.gray_500}]}
+          customStyle={$textLocation}
         />
       </View>
+
+      {/* TODO: Check see more text here */}
+      {!!profile.description && (
+        <StyleText
+          originValue={profile.description}
+          customStyle={[$textDescription, {color: theme.gray_500}]}
+        />
+      )}
 
       <View style={$starBox}>
         {arrayStars.map((_, index) => {
@@ -299,15 +306,17 @@ const InformationSupplier = ({profile}: ComponentProps) => {
           />
         </StyleTouchable>
 
-        <StyleTouchable
-          customStyle={[$elementFollow, {marginLeft: scale(20)}]}
-          onPress={() => onNavigateFollow('following', profile)}>
-          <StyleText i18Text="profile.following" customStyle={$textFollow} />
-          <StyleText
-            originValue={profile.followings}
-            customStyle={$numberFollow}
-          />
-        </StyleTouchable>
+        {profile.account_type !== ACCOUNT.location && (
+          <StyleTouchable
+            customStyle={[$elementFollow, {marginLeft: scale(20)}]}
+            onPress={() => onNavigateFollow('following', profile)}>
+            <StyleText i18Text="profile.following" customStyle={$textFollow} />
+            <StyleText
+              originValue={profile.followings}
+              customStyle={$numberFollow}
+            />
+          </StyleTouchable>
+        )}
       </View>
 
       <Button profile={profile} />
@@ -347,24 +356,23 @@ const InformationSupplier = ({profile}: ComponentProps) => {
           />
         )}
       </View>
-
-      {/* TODO: Check see more text here */}
-      {!!profile.description && (
-        <StyleText
-          originValue={profile.description}
-          customStyle={$textDescription}
-          numberOfLines={3}
-        />
-      )}
     </View>
   );
 };
 
 const InformationUser = ({profile}: ComponentProps) => {
+  const theme = useTheme();
+
   return (
     <View style={$introduceView}>
       {!!profile.name && (
         <StyleText customStyle={$textName} originValue={profile?.name} />
+      )}
+      {!!profile.description && (
+        <StyleText
+          originValue={profile.description}
+          customStyle={[$textDescription, {color: theme.gray_500}]}
+        />
       )}
       <View style={$followBox}>
         <StyleTouchable
@@ -389,14 +397,6 @@ const InformationUser = ({profile}: ComponentProps) => {
       </View>
 
       <Button profile={profile} />
-
-      {!!profile.description && (
-        <StyleText
-          originValue={profile.description}
-          customStyle={$textDescription}
-          numberOfLines={3}
-        />
-      )}
     </View>
   );
 };
@@ -446,7 +446,8 @@ const $textName: TextStyle = {
   fontWeight: 'bold',
 };
 const $textDescription: TextStyle = {
-  marginTop: verticalMargin,
+  marginTop: verticalScale(4),
+  fontSize: FONT_SIZE.f3,
 };
 const $followBox: ViewStyle = {
   width: '100%',

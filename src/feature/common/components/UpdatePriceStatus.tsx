@@ -38,10 +38,7 @@ export const BoxUpdatePrice = ({
       {prices.map(p => (
         <View key={p.price} style={$updatePriceBox}>
           <StyleText
-            i18Text="discovery.numberServings"
-            i18Params={{
-              value: p.number_people,
-            }}
+            originValue={`${p.number_people} ${t('discovery.servings')}`}
             customStyle={[
               $textPrice,
               {

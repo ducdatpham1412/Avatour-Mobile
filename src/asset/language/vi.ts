@@ -135,7 +135,12 @@ const discovery = {
   retailPrice: 'Giá mua riêng',
   groupBuyingPrice: 'Bảng giá mua chung',
   salePriceAndExplain: 'Bảng giá mua chung (số suất - giá)',
-  numberServings: '{{value}} suất',
+  servings: 'suất',
+  notHaveAnyOrder: 'Bạn chưa có đơn hàng nào',
+  goToExploreTour:
+    'Đi tới <b>Khám phá các tour</b> để tham gia mua chung và tận hưởng nhiều ưu đãi nhé',
+  exploreTour: 'Khám phá các tour',
+  buyMorePriceLess: 'Mua càng nhiều, đơn giá trên một suất càng giảm',
   joinNow: 'Tham gia ngay',
   joinGroupBuying: 'Tham gia mua chung',
   buySeparately: 'Mua riêng',
@@ -303,14 +308,6 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
   shareToCommunity: 'Chia sẻ với cộng đồng',
 };
 
-const reputation = {
-  community: 'Cộng đồng',
-  topReviewer: 'Top reviewers',
-  yourRank: 'Thứ hạng của bạn: {{value}}',
-  reviewCommunity: 'Cộng đồng review',
-  experience: 'Trải nghiệm',
-};
-
 const tour = {
   tours: 'Tour',
   myTours: 'Tour của tôi',
@@ -422,7 +419,7 @@ const profile = {
   rating: 'Đánh giá',
   joining: 'Đang tham gia',
   waitingConfirm: 'Chờ cửa hàng xác nhận',
-  joinedSuccess: 'Tham gia thành công',
+  joinedSuccess: 'Tham gia thành công 🏖',
   goToSeeJoins: 'Đi tới xem đơn mua chung của bạn',
   gbOrder: 'Đơn hàng',
   maxGroups: 'Số lượng nhóm tối đa',
@@ -551,6 +548,7 @@ const notification = {
   likePost: ' thích bài đăng của bạn',
   friendPostNew: ' vừa đăng một bài mới',
   likeGroupBuying: '  thích chiến dịch mua chung của bạn',
+  notHaveNotifications: 'Bạn chưa có thông báo nào',
 };
 
 const alert = {
@@ -652,7 +650,6 @@ const vi = {
   profile,
   setting,
   notification,
-  reputation,
   tour,
   order,
 };

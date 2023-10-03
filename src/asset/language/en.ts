@@ -133,7 +133,12 @@ const discovery = {
   retailPrice: 'Retail price',
   groupBuyingPrice: 'Group buying prices',
   salePriceAndExplain: 'Group buying prices (servings - price)',
-  numberServings: '{{value}} servings',
+  servings: 'servings',
+  notHaveAnyOrder: "You don't have any orders yet",
+  goToExploreTour:
+    'Go to <b>Exploring tours</b> to join group buying and enjoy many incentives',
+  exploreTour: 'Exploring tours',
+  buyMorePriceLess: 'The more you buy, the lower the unit price per servings',
   joinNow: 'Join now',
   joinGroupBuying: 'Join group buying',
   buySeparately: 'Buy separately',
@@ -300,14 +305,6 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
   shareToCommunity: 'Share to community',
 };
 
-const reputation = {
-  community: 'Community',
-  topReviewer: 'Top reviewers',
-  yourRank: 'Your rank: {{value}}',
-  reviewCommunity: 'Review community',
-  experience: 'Experience',
-};
-
 const tour = {
   tours: 'Tours',
   myTours: 'My tours',
@@ -445,7 +442,7 @@ const profile = {
   rating: 'Rating',
   joining: 'Joining',
   waitingConfirm: "Waiting for supplier's confirmation",
-  joinedSuccess: 'Joined successfully',
+  joinedSuccess: 'Joined successfully 🏖',
   goToSeeJoins: 'Go to see your group buying',
   gbOrder: 'Orders',
   maxGroups: 'Maximum number of groups',
@@ -548,6 +545,7 @@ const notification = {
   likePost: ' liked your post',
   friendPostNew: ' post new post',
   likeGroupBuying: '  like your group buying campaign',
+  notHaveNotifications: "You don't have any notifications",
 };
 
 const alert = {
@@ -645,7 +643,6 @@ const en = {
   profile,
   setting,
   notification,
-  reputation,
   tour,
   order,
 };
