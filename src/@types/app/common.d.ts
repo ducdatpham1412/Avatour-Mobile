@@ -12,3 +12,7 @@ type TypeShowModalize<TShow = undefined, THide = undefined, Res = void> = {
 type TypeObjectAny = {
   [key: string]: any;
 };
+
+type TypeNotificationData = {
+  link: string;
+};

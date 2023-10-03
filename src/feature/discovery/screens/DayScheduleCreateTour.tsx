@@ -47,7 +47,7 @@ export const renderItemLocation = (
 
 const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
   const theme = useTheme();
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const [, {suggestLocation}] = useMyRequests();
   const [{schedules}, {setSchedules}] = useContextCreateTour();
   const listLocations = schedules[dayIndex];
@@ -104,7 +104,7 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
         contentContainerStyle={[
           $contentContainer,
           {
-            paddingBottom: bottom + verticalScale(80),
+            paddingBottom: paddingBottom + verticalScale(80),
           },
         ]}
         showsVerticalScrollIndicator={false}

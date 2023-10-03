@@ -122,16 +122,15 @@ export enum TYPE_COLOR {
   other = 8,
 }
 
-export enum TYPE_NOTIFICATION {
-  message = 0,
-  comment = 1,
-  follow = 2,
-  likePost = 3,
-  friendPostNew = 4,
-  likeGroupBuying = 5,
-  commentGroupBuying = 6,
-  joinSuccess = 7,
-}
+export const TYPE_EVENT_DL = {
+  message: 'message',
+  comment: 'comment',
+  follow: 'follow',
+  like_post: 'like-post',
+  friend_post_new: 'friend-post-new',
+  like_sale: 'like-sale',
+  join_success: 'join-success',
+};
 
 export enum TYPE_BUBBLE_PALACE_ACTION {
   null = -1,
@@ -155,12 +154,6 @@ export enum TYPE_SOCIAL_LOGIN {
 export enum TYPE_OS_LOGIN_SOCIAL {
   android = 0,
   ios = 1,
-}
-
-export enum TYPE_DYNAMIC_LINK {
-  post = 0,
-  profile = 1,
-  groupBuying = 2,
 }
 
 export enum CONVERSATION_STATUS {

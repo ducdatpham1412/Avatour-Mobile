@@ -18,7 +18,8 @@ export const initialAccountState = {
       id: 0,
       account_type: 0,
       name: '',
-      avatar: '',
+      avatar:
+        'https://img.freepik.com/free-photo/top-view-traveling-items-wooden-background_23-2148971050.jpg',
       description: '',
       followers: 0,
       followings: 0,
@@ -50,7 +51,7 @@ export const initialAccountState = {
     numberNewNotifications: 0,
   },
   // modeExp
-  modeExp: false,
+  modeExp: true,
 };
 
 const accountSlice = createSlice({

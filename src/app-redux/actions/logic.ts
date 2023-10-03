@@ -7,10 +7,6 @@ export const setPostCreatedHandling = (value: ReduxPostCreatedHandle) => {
   Store.dispatch(logicSliceAction.setPostCreatedHandling(value));
 };
 
-export const setIsLogOut = (value: boolean) => {
-  Store.dispatch(logicSliceAction.setIsLogOut(value));
-};
-
 export const setNumberNewNotifications = (value: number) => {
   Store.dispatch(logicSliceAction.setNumberNewNotification(value));
 };

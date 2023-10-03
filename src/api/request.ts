@@ -5,7 +5,7 @@ import Config from 'asset/env';
 import axios, {InternalAxiosRequestConfig} from 'axios';
 import {logger} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
-import {logOut} from 'utility/authentication';
+import Authentication from 'utility/authentication';
 
 const baseURL = Config.API_URL;
 
@@ -110,7 +110,9 @@ request.interceptors.response.use(
         const temp: any = err;
         const _error = temp.response.data;
         if (_error.errorKey === ERROR_KEY_ENUM.token_blacklisted) {
-          logOut();
+          Authentication.logOut({
+            callApiLogOut: false,
+          });
         }
         return Promise.reject(_error.errorMessage);
       } finally {

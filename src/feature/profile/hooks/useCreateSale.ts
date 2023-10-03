@@ -9,7 +9,6 @@ import {ModalAlert} from 'navigation/screen/modals';
 import {useState} from 'react';
 import isEqual from 'react-fast-compare';
 import useSWRMutation from 'swr/mutation';
-import {onGoToSignUp} from 'utility/assistant';
 import {getDateTimeNow} from 'utility/format';
 
 export interface UseCreateSaleParams {
@@ -22,7 +21,6 @@ export interface UseCreateSaleParams {
 
 const useCreateSale = (initValue: UseCreateSaleParams) => {
   const {
-    modeExp,
     passport: {profile},
   } = useAppSelector(state => state.accountSlice);
   const [, {mutate}] = useDetailSale(initValue.postId, {
@@ -41,59 +39,52 @@ const useCreateSale = (initValue: UseCreateSaleParams) => {
       return;
     }
 
-    if (!modeExp) {
-      setLoadingCreate(true);
-      //   const saleImages = await Promise.all(
-      //     images.map(async url => {
-      //       const base64 = await ImageUploader.convertUrlToBase64(url);
-      //       return base64;
-      //     }),
-      //   );
-      const body: TypeCreateSale = {
+    setLoadingCreate(true);
+    //   const saleImages = await Promise.all(
+    //     images.map(async url => {
+    //       const base64 = await ImageUploader.convertUrlToBase64(url);
+    //       return base64;
+    //     }),
+    //   );
+    const body: TypeCreateSale = {
+      name,
+      content,
+      images,
+      prices,
+    };
+    try {
+      const res = await apiCreateSale(body);
+      const newSale: TypeGroupBuying = {
+        id: res?.data?.id,
+        post_type: POST_TYPE.groupBuying,
         name,
         content,
         images,
         prices,
+        total_likes: 0,
+        total_comments: 0,
+        total_members: 0,
+        creator: profile.id,
+        creator_name: profile.name,
+        creator_avatar: profile.avatar,
+        creator_location: profile.location,
+        created: getDateTimeNow(),
+        is_liked: false,
+        status: STATUS.active,
       };
-      try {
-        const res = await apiCreateSale(body);
-        const newSale: TypeGroupBuying = {
-          id: res?.data?.id,
-          post_type: POST_TYPE.groupBuying,
-          name,
-          content,
-          images,
-          prices,
-          total_likes: 0,
-          total_comments: 0,
-          total_members: 0,
-          creator: profile.id,
-          creator_name: profile.name,
-          creator_avatar: profile.avatar,
-          creator_location: profile.location,
-          created: getDateTimeNow(),
-          is_liked: false,
-          status: STATUS.active,
-        };
-        emitAppEvent(APP_EVENT.createNewSale, {
-          newSale,
-        });
-        ModalAlert.success({
-          i18Content: 'profile.createSaleSuccess',
-          onClose: () => navigate(PROFILE_ROUTE.myProfile),
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      } finally {
-        setLoadingCreate(false);
-      }
-    } else {
-      ModalAlert.options({
-        i18Content: 'discovery.bubble.goToSignUp',
-        onContinue: onGoToSignUp,
+      emitAppEvent(APP_EVENT.createNewSale, {
+        newSale,
       });
+      ModalAlert.success({
+        i18Content: 'profile.createSaleSuccess',
+        onClose: () => navigate(PROFILE_ROUTE.myProfile),
+      });
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
+      });
+    } finally {
+      setLoadingCreate(false);
     }
   };
 

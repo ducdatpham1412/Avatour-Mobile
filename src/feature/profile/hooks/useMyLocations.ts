@@ -6,6 +6,9 @@ const useMyLocations = () => {
     params: {
       type: 'my-location',
     },
+    config: {
+      revalidateModeExpChange: true,
+    },
   });
 
   return [{data, loading, validating}, {mutate}] as const;

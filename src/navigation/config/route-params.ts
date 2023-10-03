@@ -150,7 +150,9 @@ export type AppParamsList = {
     prices: TypePrice[];
   };
   [ROOT_SCREEN.createLocation]: {
-    itemNew?: Pick<ParamsCreateLocation, 'name'>;
+    itemNew?: {
+      name: string;
+    };
     itemEdit?: TypeGetProfileResponse;
   };
   [ROOT_SCREEN.myListJoins]: {

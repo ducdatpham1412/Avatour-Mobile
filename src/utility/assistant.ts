@@ -6,21 +6,20 @@ import {
   GENDER_TYPE,
   JOIN_STATUS,
   LANGUAGE_TYPE,
-  SIGN_UP_TYPE,
   TYPE_COLOR,
 } from 'asset/enum';
 import Images from 'asset/img/images';
 import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
-import {navigate, push, showSwipeImages} from 'navigation/NavigationService';
-import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
+import {push, showSwipeImages} from 'navigation/NavigationService';
+import ROOT_SCREEN from 'navigation/config/routes';
 import {ModalAlert, Toast} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction} from 'react';
 import {Platform, ViewStyle} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
-import {logOut} from './authentication';
 import {impactLight} from './haptic';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 export const isIOS = Platform.OS === 'ios';
 
@@ -82,17 +81,6 @@ export const renderIconGender = (_gender?: number) => {
     return Images.icons.lgbt;
   }
   return null;
-};
-
-export const onGoToSignUp = () => {
-  logOut({
-    callApiLogOut: false,
-    callBack: () => {
-      navigate(LOGIN_ROUTE.signUpForm, {
-        typeSignUp: SIGN_UP_TYPE.email,
-      });
-    },
-  });
 };
 
 /**
@@ -200,10 +188,6 @@ type GoToProfileParams = {
   initValue: TypeGetProfileResponse;
 };
 export const onGoToProfile = (userId: number, params?: GoToProfileParams) => {
-  const isModeExp = Store.getState().accountSlice.modeExp;
-  if (isModeExp) {
-    return;
-  }
   const myId = Store.getState().accountSlice.passport.profile.id;
   if (userId === myId) {
     push(ROOT_SCREEN.myProfile);
@@ -253,57 +237,61 @@ type TypeReactPost<T> = {
   setList: Dispatch<SetStateAction<T[]>>;
 };
 
-export const onReactSale = async <
-  T extends TypeGroupBuying | Tour | TourDetail,
->(
+export const onReactPost = <T extends TypeGroupBuying | Tour | TourDetail>(
   postId: number,
   {type, setList}: TypeReactPost<T>,
 ) => {
-  let currentData: T[] = [];
-  let currentIsLiked: boolean | undefined;
+  const onAuthenticated = async () => {
+    let currentData: T[] = [];
+    let currentIsLiked: boolean | undefined;
 
-  let resolve: any;
-  const promise = new Promise(rel => {
-    resolve = rel;
-  });
-
-  try {
-    setList(pre => {
-      currentData = copyObject(pre);
-      return pre.map(item => {
-        if (item?.id !== postId) {
-          return item;
-        }
-        currentIsLiked = item?.is_liked;
-        resolve?.('');
-        return {
-          ...item,
-          is_liked: !currentIsLiked,
-          total_likes: item.total_likes + (currentIsLiked ? -1 : 1),
-        };
-      });
+    let resolve: any;
+    const promise = new Promise(rel => {
+      resolve = rel;
     });
 
-    await promise;
+    try {
+      setList(pre => {
+        currentData = copyObject(pre);
+        return pre.map(item => {
+          if (item?.id !== postId) {
+            return item;
+          }
+          currentIsLiked = item?.is_liked;
+          resolve?.('');
+          return {
+            ...item,
+            is_liked: !currentIsLiked,
+            total_likes: item.total_likes + (currentIsLiked ? -1 : 1),
+          };
+        });
+      });
 
-    if (!currentIsLiked) {
-      await apiLikePost({
-        type,
-        reactedId: postId,
+      await promise;
+
+      if (!currentIsLiked) {
+        await apiLikePost({
+          type,
+          reactedId: postId,
+        });
+        impactLight();
+      } else {
+        await apiUnLikePost({
+          type,
+          reactedId: postId,
+        });
+      }
+    } catch (err) {
+      ModalAlert.error({
+        content: err,
       });
-      impactLight();
-    } else {
-      await apiUnLikePost({
-        type,
-        reactedId: postId,
-      });
+      setList(currentData);
     }
-  } catch (err) {
-    ModalAlert.error({
-      content: err,
-    });
-    setList(currentData);
-  }
+  };
+
+  checkAuthenticated({
+    onAuthenticated,
+  });
 };
 
 export const isDict = (v: any) =>
@@ -511,4 +499,57 @@ export const updateStatusLocationInSchedule = (
       };
     });
   });
+};
+
+const regexURLParams = /[?&]([^=#]+)=([^&#]*)/g;
+const regexURL =
+  /^([^=#]+):\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/;
+
+const getParams = (pathParam: string) => {
+  const params: Record<string, any> = {};
+  let match: any = [];
+  while ((match = regexURLParams.exec(pathParam))) {
+    params[match[1]] = match[2];
+  }
+  return params;
+};
+
+type ParseURL = {
+  protocol: string;
+  host: string;
+  hostname: string;
+  port: string | undefined;
+  pathname: string | undefined;
+  event: string;
+  params: Record<string, any>;
+  hash: string;
+};
+
+export const parseURL = (url: string): ParseURL | null => {
+  var match = url.match(regexURL);
+  if (!match) {
+    return null;
+  }
+  return {
+    protocol: match[1],
+    host: match[2],
+    hostname: match[3],
+    port: match[4],
+    pathname: match[5],
+    event: match[5].replace('/dl/', ''),
+    params: getParams(match[6]),
+    hash: match[7],
+  };
+};
+
+export const renderDeepLink = (params: Pick<ParseURL, 'event' | 'params'>) => {
+  let res = `avatour://link.avatour.life/dl/${params.event}`;
+  Object.entries(params.params).forEach(([key, value], index) => {
+    if (index === 0) {
+      res = `${res}?${key}=${value}`;
+    } else {
+      res = `${res}&${key}=${value}`;
+    }
+  });
+  return res;
 };

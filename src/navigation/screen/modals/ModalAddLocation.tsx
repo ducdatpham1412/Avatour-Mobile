@@ -47,7 +47,7 @@ type ListLocationsProps = TypeShowModalAddLocation & {
 let timeOut: NodeJS.Timeout;
 
 const ListLocations = ({onSelect, onDelete, type}: ListLocationsProps) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {t} = useTranslation();
   const theme = useTheme();
 
@@ -200,7 +200,7 @@ const ListLocations = ({onSelect, onDelete, type}: ListLocationsProps) => {
             />
           );
         }}
-        contentContainerStyle={[$content, {paddingBottom: bottom}]}
+        contentContainerStyle={[$content, {paddingBottom}]}
         initLoading={loading}
         refreshing={validating}
         onRefresh={mutate}

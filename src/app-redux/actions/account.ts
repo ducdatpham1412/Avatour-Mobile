@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {accountSliceAction, initialAccountState} from '../account/accountSlice';
 import Store, {RootState} from '../store';
-import {setIsLogOut, setToken, updateListChatTag} from './logic';
+import {setToken, updateListChatTag} from './logic';
 
 type PassportType = DeepPartial<RootState['accountSlice']['passport']>;
 
@@ -39,10 +39,9 @@ export const logOut = () => {
   // Redux.setModeExp(true);
 
   setToken(null);
-  setModeExp(false);
+  setModeExp(true);
   updatePassport({
     profile: passport.profile,
   });
   updateListChatTag([]);
-  setIsLogOut(true);
 };

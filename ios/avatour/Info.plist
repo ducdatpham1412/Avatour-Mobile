@@ -49,7 +49,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Camera permission</string>
+	<string>Truy cập camera giúp bạn quét mã, tải ảnh lên trang cá nhân hoặc tour của mình</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location permission</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -57,7 +57,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Photo add only permission</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Photo library permission</string>
+	<string>Truy cập thư viện giúp bạn tải ảnh lên trang cá nhân hoặc tour của mình</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

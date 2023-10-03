@@ -1,4 +1,5 @@
 import {apiGetListGBJoined} from 'api/profile';
+import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE} from 'asset';
 import {APP_EVENT} from 'asset/enum';
 import {IconEmpty, ImageEmpty} from 'asset/icons';
@@ -25,7 +26,39 @@ import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import {scale, verticalScale} from 'utility/scale';
 import {ItemEstimate} from './components';
 
-const OrderScreen = () => {
+const Empty = () => {
+  const theme = useTheme();
+
+  return (
+    <View style={[$emptyScreen, {backgroundColor: theme.white}]}>
+      <ImageEmpty size={300} />
+      <StyleText
+        i18Text="discovery.notHaveAnyOrder"
+        customStyle={{
+          fontSize: FONT_SIZE.f1,
+          marginTop: verticalMargin,
+          fontWeight: 'bold',
+        }}
+      />
+      <StyleText
+        i18Text="discovery.goToExploreTour"
+        customStyle={{
+          fontSize: FONT_SIZE.f3,
+          marginTop: verticalMargin,
+          textAlign: 'center',
+        }}
+        mode="html"
+      />
+      <StyleButton
+        title="discovery.exploreTour"
+        containerStyle={{marginTop: verticalScale(40)}}
+        onPress={() => navigate(DISCOVERY_ROUTE.searchScreen)}
+      />
+    </View>
+  );
+};
+
+const OrderScreenUser = () => {
   const theme = useTheme();
   const {
     data: {estimates, joinings},
@@ -58,36 +91,6 @@ const OrderScreen = () => {
       />
     );
   }, []);
-
-  if (!estimates.length && !joinings.length && !list.length) {
-    return (
-      <View style={[$emptyScreen, {backgroundColor: theme.white}]}>
-        <ImageEmpty size={300} />
-        <StyleText
-          i18Text="discovery.notHaveAnyOrder"
-          customStyle={{
-            fontSize: FONT_SIZE.f1,
-            marginTop: verticalMargin,
-            fontWeight: 'bold',
-          }}
-        />
-        <StyleText
-          i18Text="discovery.goToExploreTour"
-          customStyle={{
-            fontSize: FONT_SIZE.f3,
-            marginTop: verticalMargin,
-            textAlign: 'center',
-          }}
-          mode="html"
-        />
-        <StyleButton
-          title="discovery.exploreTour"
-          containerStyle={{marginTop: verticalScale(40)}}
-          onPress={() => navigate(DISCOVERY_ROUTE.searchScreen)}
-        />
-      </View>
-    );
-  }
 
   const renderHeaderComponent = () => {
     return (
@@ -165,20 +168,16 @@ const OrderScreen = () => {
     );
   };
 
-  return (
-    <StyleContainer
-      layOut="view"
-      headerProps={{
-        title: 'order.orderManagement',
-        LeftComponent: null,
-      }}
-      backgroundColor={theme.white}
-      customStyle={$container}>
+  const renderContent = () => {
+    if (!estimates.length && !joinings.length && !list.length) {
+      return <Empty />;
+    }
+
+    return (
       <StyleList
         data={list}
         renderItem={({item}) => renderItemJoin(item)}
         keyExtractor={item => String(item?.id)}
-        initLoading={initLoading || loading}
         refreshing={refreshing}
         onRefresh={() => {
           onRefresh();
@@ -199,8 +198,44 @@ const OrderScreen = () => {
           </View>
         }
       />
+    );
+  };
+
+  return (
+    <StyleContainer
+      layOut="view"
+      headerProps={{
+        title: 'order.orderManagement',
+        LeftComponent: null,
+      }}
+      backgroundColor={theme.white}
+      customStyle={$container}
+      initLoading={initLoading || loading}>
+      {renderContent()}
     </StyleContainer>
   );
+};
+
+const OrderScreen = () => {
+  const {modeExp} = useAppSelector(state => state.accountSlice);
+  const theme = useTheme();
+
+  if (modeExp) {
+    return (
+      <StyleContainer
+        layOut="view"
+        headerProps={{
+          title: 'order.orderManagement',
+          LeftComponent: null,
+        }}
+        backgroundColor={theme.white}
+        customStyle={$container}>
+        <Empty />
+      </StyleContainer>
+    );
+  }
+
+  return <OrderScreenUser />;
 };
 
 const $container: ViewStyle = {

@@ -30,7 +30,6 @@ export const initialLogicState = {
   listChatTag: <Array<TypeChatTagResponse>>[],
   chatTagFocusing: '', // this flag to check if socket do action update chat tag hasNewMessage
 
-  isLogOut: false,
   borderMessRoute: 'yellow',
 
   // notification
@@ -91,9 +90,6 @@ const logicSlice = createSlice({
     },
     setPostCreatedHandling: (state, action) => {
       state.postCreatedHandling = action.payload;
-    },
-    setIsLogOut: (state, action) => {
-      state.isLogOut = action.payload;
     },
     setScrollMainAndChatEnable: (state, action) => {
       state.scrollMainAndChatEnable = action.payload;

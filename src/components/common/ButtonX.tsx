@@ -12,14 +12,14 @@ interface Props {
   size?: number;
 }
 
-const ButtonX = ({containerStyle, onPress, iconStyle, size = 10}: Props) => {
+const ButtonX = ({containerStyle, onPress, iconStyle, size = 14}: Props) => {
   const theme = useTheme();
 
   return (
     <StyleTouchable
       customStyle={[
         $container,
-        {backgroundColor: theme.gray_200},
+        {backgroundColor: theme.gray_100},
         containerStyle,
       ]}
       onPress={onPress}

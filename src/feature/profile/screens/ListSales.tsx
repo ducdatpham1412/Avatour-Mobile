@@ -6,7 +6,7 @@ import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {View, ViewStyle} from 'react-native';
-import {onReactSale} from 'utility/assistant';
+import {onReactPost} from 'utility/assistant';
 
 interface Props {
   userId: number;
@@ -73,7 +73,7 @@ const ListSalesSupplier = ({userId}: Props) => {
       <ItemSale
         item={item}
         onReact={() =>
-          onReactSale(item.id, {
+          onReactPost(item.id, {
             type: REACT.sale,
             setList,
           })

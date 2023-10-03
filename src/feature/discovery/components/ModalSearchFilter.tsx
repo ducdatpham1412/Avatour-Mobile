@@ -93,7 +93,7 @@ const ModalSearchFilter = (
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
   const {t} = useTranslation();
-  const {bottom} = useSafeArea();
+  const {paddingBottom, bottom} = useSafeArea();
   const theme = useTheme();
 
   const modalEditPriceRef = useRef<ElementRef<typeof ModalEdit>>(null);
@@ -126,7 +126,8 @@ const ModalSearchFilter = (
       <AppModalize
         ref={ref}
         panGestureEnabled
-        onOpen={() => Keyboard.dismiss()}>
+        onOpen={() => Keyboard.dismiss()}
+        containerStyle={{paddingBottom: editable ? bottom : paddingBottom}}>
         {/*
         TODO: When develop search suggest vehicle for "start-location"
         */}
@@ -324,7 +325,7 @@ const ModalSearchFilter = (
         {editable && (
           <StyleButton
             title={titleButton ?? 'common.search'}
-            containerStyle={[$buttonView, {marginBottom: bottom}]}
+            containerStyle={$buttonView}
             onPress={onSave}
           />
         )}

@@ -28,8 +28,10 @@ import {ScrollCropImages} from 'feature/profile/components';
 import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, ReactNode, useRef} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   ImageSourcePropType,
   ScrollView,
@@ -39,6 +41,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Share from 'react-native-share';
 import {I18Normalize} from 'utility/I18Next';
 import {
   borderWidthTiny,
@@ -53,8 +56,6 @@ import {
   ModalStillHavePeopleJoin,
 } from './components';
 import {useDetailSale} from './hooks';
-import Share from 'react-native-share';
-import {useTranslation} from 'react-i18next';
 
 interface ButtonReactionProps {
   icon?: ImageSourcePropType;
@@ -117,12 +118,12 @@ const DetailSale = ({
   const {id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
-  const {bottom} = useSafeArea();
+  const {bottom, paddingBottom} = useSafeArea();
   const {t} = useTranslation();
 
   const [
     {data, initLoading, loadingJoin, refreshing, loadingDelete},
-    {onReaction, onRefresh, onJoin, deleteSale},
+    {onReaction, mutate, onJoin, deleteSale},
   ] = useDetailSale(saleId, {
     revalidateAll: true,
   });
@@ -567,7 +568,7 @@ const DetailSale = ({
 
   const bottomComponent = () => {
     if (isMySale || estimating) {
-      return null;
+      return <View style={{marginBottom: paddingBottom}} />;
     }
 
     return (
@@ -576,7 +577,11 @@ const DetailSale = ({
         style={[$interactView, {marginBottom: bottom}]}>
         <StyleTouchable
           customStyle={$buttonInteract}
-          onPress={() => modalConfirmJoinRef.current?.show()}>
+          onPress={() => {
+            checkAuthenticated({
+              onAuthenticated: () => modalConfirmJoinRef.current?.show(),
+            });
+          }}>
           <StyleIcon
             source={Images.icons.createGroup}
             size={15}
@@ -609,11 +614,11 @@ const DetailSale = ({
             </StyleTouchable>
           ),
         }}
-        customStyle={[$container, {paddingBottom: bottom}]}
+        customStyle={$container}
         backgroundColor={theme.white}
         scrollEnabled
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={mutate} />
         }
         BottomComponent={bottomComponent()}>
         <ScrollCropImages
@@ -750,7 +755,7 @@ const $depositView: ViewStyle = {
   marginBottom: verticalMargin,
 };
 const $interactView: ViewStyle = {
-  width: '75%',
+  width: '90%',
   height: moderateScale(46),
   alignSelf: 'center',
   borderRadius: 100,

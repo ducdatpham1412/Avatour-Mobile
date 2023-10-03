@@ -8,7 +8,7 @@ import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
 import isEqual from 'react-fast-compare';
 import {View, ViewStyle} from 'react-native';
-import {onReactSale} from 'utility/assistant';
+import {onReactPost} from 'utility/assistant';
 
 const SearchListGroupBuying = () => {
   const {paddingBottom} = useSafeArea();
@@ -82,7 +82,7 @@ const SearchListGroupBuying = () => {
           <ItemSale
             item={item}
             onReact={() =>
-              onReactSale(item.id, {
+              onReactPost(item.id, {
                 type: REACT.sale,
                 setList,
               })

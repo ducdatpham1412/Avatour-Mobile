@@ -51,6 +51,7 @@ import {
   listOptionsPrice,
 } from 'utility/staticData';
 import isEqual from 'react-fast-compare';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
   ModalActionSheet.show({
@@ -158,56 +159,56 @@ const CreateLocation = ({
     },
   ] = useCreateLocation(initValue.current);
 
-  let disableButton = false;
+  let disableButton =
+    !avatar ||
+    !name ||
+    !address ||
+    !(Number(duration) > 0) ||
+    !services.length ||
+    (avatar === initValue.current.avatar &&
+      name === initValue.current.name &&
+      address === initValue.current.address &&
+      duration === initValue.current.duration &&
+      isEqual(services, initValue.current.services) &&
+      description === initValue.current.description);
 
-  if (itemEdit) {
+  if (disableButton) {
     disableButton =
-      !avatar ||
-      !name ||
-      !address ||
-      !(Number(duration) > 0) ||
-      !services.length ||
-      (avatar === initValue.current.avatar &&
-        name === initValue.current.name &&
-        address === initValue.current.address &&
-        duration === initValue.current.duration &&
-        isEqual(services, initValue.current.services) &&
-        description === initValue.current.description);
-
-    if (disableButton) {
-      disableButton =
-        typePrice === 'free'
-          ? Number(initValue.current.minCost) === 0 &&
-            Number(initValue.current.maxCost) === 0
-          : Number(minCost) === Number(initValue.current.minCost) &&
-            Number(maxCost) === Number(initValue.current.maxCost);
-    }
-
-    if (disableButton) {
-      disableButton =
-        typeTime === 'all-day'
-          ? Number(initValue.current.startTime) === 0 &&
-            Number(initValue.current?.endTime) === 0
-          : startTime === Number(initValue.current.startTime) &&
-            endTime === Number(initValue.current.endTime);
-    }
+      typePrice === 'free'
+        ? Number(initValue.current.minCost) === 0 &&
+          Number(initValue.current.maxCost) === 0
+        : Number(minCost) === Number(initValue.current.minCost) &&
+          Number(maxCost) === Number(initValue.current.maxCost);
   }
 
-  const onSave = async () => {
-    try {
-      const res = await save();
-      ModalAlert.success({
-        i18Content:
-          res === 'new-location'
-            ? 'alert.createLocationSuccess'
-            : 'alert.editLocationSuccess',
-        onClose: goBack,
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    }
+  if (disableButton) {
+    disableButton =
+      typeTime === 'all-day'
+        ? Number(initValue.current.startTime) === 0 &&
+          Number(initValue.current?.endTime) === 0
+        : startTime === Number(initValue.current.startTime) &&
+          endTime === Number(initValue.current.endTime);
+  }
+
+  const onSave = () => {
+    checkAuthenticated({
+      onAuthenticated: async () => {
+        try {
+          const res = await save();
+          ModalAlert.success({
+            i18Content:
+              res === 'new-location'
+                ? 'alert.createLocationSuccess'
+                : 'alert.editLocationSuccess',
+            onClose: goBack,
+          });
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        }
+      },
+    });
   };
 
   return (

@@ -1,5 +1,6 @@
 import {apiFollowUser, apiUnFollowUser} from 'api/profile';
 import {apiBlockUser, apiUnBlockUser} from 'api/setting';
+import Store from 'app-redux/store';
 import {APP_EVENT, RELATIONSHIP} from 'asset/enum';
 import {emitAppEvent, useApi} from 'hook';
 import {navigate} from 'navigation/NavigationService';
@@ -20,6 +21,7 @@ const useOtherProfile = (id: number | null, params?: Params) => {
       config: {
         fallbackData: params?.initValue,
         revalidateAll: params?.revalidateAll,
+        revalidateModeExpChange: true,
       },
     });
 
@@ -30,6 +32,11 @@ const useOtherProfile = (id: number | null, params?: Params) => {
     ['api.Follow', data?.id],
     async () => {
       if (data?.id) {
+        const {modeExp} = Store.getState().accountSlice;
+        if (modeExp) {
+          return;
+        }
+
         impactLight();
         if (!isFollowing) {
           await apiFollowUser(data.id);
@@ -74,6 +81,11 @@ const useOtherProfile = (id: number | null, params?: Params) => {
 
   const {trigger: block} = useSWRMutation(['api.Block', data?.id], async () => {
     if (data) {
+      const {modeExp} = Store.getState().accountSlice;
+      if (modeExp) {
+        return;
+      }
+
       const agree = async () => {
         try {
           if (isBlocked) {

@@ -110,7 +110,7 @@ const discovery = {
   report: {
     title: 'Report',
     reportPerson: 'Report {{name}}',
-    chooseReason: '※ Choose a reason for report this user:',
+    chooseReason: 'Choose a reason for report this user:',
     offensiveLanguage: 'Profanity, offensive language',
     dangerousAction: 'Dangerous behavior that threatens me or peole',
     spamRuining: 'Spam keeps ruining my experience',
@@ -536,6 +536,7 @@ const setting = {
     title: 'User guide',
   },
   updateStatus: 'Update status',
+  signInSignUp: 'Sign in/Sign up',
 };
 
 const notification = {
@@ -555,6 +556,7 @@ const alert = {
   wantToSave: 'Want to save your account information for the next login?',
   loginFail: 'Login Fail',
   wantToChange: 'Want to change ?',
+  someError: "There're some error",
 
   // FOR DISCOVERY
   clickHeartModeExp: 'Finding hobby chat is only used when you logged in !',
@@ -619,6 +621,7 @@ To be able to delete, please follow these two steps:
     'Check-in time is not today\nPlease scan the code at the store on <b>{{time}}</b>',
   locationHadBeenAdded:
     '<b>{{value}}</b> is already in the schedule\nDo you want to add more?',
+  loginToExplore: 'Please log in to continue experiencing Avatour',
 
   // PERMISSION
   permissionCamera: 'Access camera',

@@ -2,7 +2,7 @@ import {apiJoinSale} from 'api/discovery';
 import {apiDeleteSale, apiLikePost, apiUnLikePost} from 'api/profile';
 import {APP_EVENT, REACT, STATUS} from 'asset/enum';
 import {emitAppEvent, useApi, useEstimatesAndJoinings} from 'hook';
-import {ModalAlert} from 'navigation/screen/modals';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import useSWRMutation from 'swr/mutation';
 import {impactLight} from 'utility/haptic';
 
@@ -13,66 +13,60 @@ interface Params {
 const useDetailSale = (saleId: number | undefined, options?: Params) => {
   const {revalidateAll = true} = options ?? {};
 
-  const {data, mutate, loading} = useApi<TypeGroupBuying>({
+  const {data, mutate, loading, validating} = useApi<TypeGroupBuying>({
     path: saleId ? `/profile/sales/${saleId}` : null,
     config: {
       revalidateAll,
+      revalidateModeExpChange: true,
     },
   });
 
   const {mutate: mutateEstimatesAndJoinings} = useEstimatesAndJoinings();
 
-  const {trigger: onRefresh, isMutating: refreshing} = useSWRMutation(
-    'api.refreshSale',
-    async () => {
-      try {
-        await mutate();
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
-    },
-  );
-
   const {trigger: onReaction} = useSWRMutation(
     [data?.id, 'api.reactSale'],
-    async () => {
-      if (data) {
-        const currentLiked = !!data?.is_liked;
-        let newTotalLikes = currentLiked
-          ? data.total_likes - 1
-          : data.total_likes + 1;
-        newTotalLikes = newTotalLikes >= 0 ? newTotalLikes : 0;
-        try {
-          await mutate(
-            {...data, is_liked: !currentLiked, total_likes: newTotalLikes},
-            {revalidate: false},
-          );
-          impactLight();
-          if (currentLiked) {
-            await apiUnLikePost({
-              type: REACT.sale,
-              reactedId: data?.id,
-            });
-            emitAppEvent(APP_EVENT.reactSale, {
-              saleId: data?.id,
-              type: 'dislike',
-            });
-          } else {
-            await apiLikePost({
-              type: REACT.sale,
-              reactedId: data?.id,
-            });
-            emitAppEvent(APP_EVENT.reactSale, {
-              saleId: data?.id,
-              type: 'like',
-            });
+    () => {
+      const onAuthenticated = async () => {
+        if (data) {
+          const currentLiked = !!data?.is_liked;
+          let newTotalLikes = currentLiked
+            ? data.total_likes - 1
+            : data.total_likes + 1;
+          newTotalLikes = newTotalLikes >= 0 ? newTotalLikes : 0;
+          try {
+            await mutate(
+              {...data, is_liked: !currentLiked, total_likes: newTotalLikes},
+              {revalidate: false},
+            );
+            impactLight();
+            if (currentLiked) {
+              await apiUnLikePost({
+                type: REACT.sale,
+                reactedId: data?.id,
+              });
+              emitAppEvent(APP_EVENT.reactSale, {
+                saleId: data?.id,
+                type: 'dislike',
+              });
+            } else {
+              await apiLikePost({
+                type: REACT.sale,
+                reactedId: data?.id,
+              });
+              emitAppEvent(APP_EVENT.reactSale, {
+                saleId: data?.id,
+                type: 'like',
+              });
+            }
+          } catch (err) {
+            await mutate({...data, is_liked: currentLiked});
           }
-        } catch (err) {
-          await mutate({...data, is_liked: currentLiked});
         }
-      }
+      };
+
+      checkAuthenticated({
+        onAuthenticated,
+      });
     },
   );
 
@@ -130,14 +124,13 @@ const useDetailSale = (saleId: number | undefined, options?: Params) => {
       data,
       initLoading: loading,
       loadingJoin,
-      refreshing,
+      refreshing: validating && !loading,
       loadingDelete,
     },
     {
-      onRefresh,
+      mutate,
       onReaction,
       onJoin,
-      mutate,
       deleteSale,
     },
   ] as const;

@@ -1,6 +1,6 @@
+import {StyleContainer} from 'components/base';
 import StyleWebView from 'components/base/StyleWebView';
-import ViewSafeTopPadding from 'components/ViewSafeTopPadding';
-import StyleHeader from 'navigation/components/StyleHeader';
+import {useTheme} from 'hook';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
 
@@ -8,13 +8,17 @@ type Props = RouteParams<AppParamsList[ROOT_SCREEN.webView]>;
 
 const WebViewScreen = ({route}: Props) => {
   const {title, linkWeb} = route.params;
+  const theme = useTheme();
 
   return (
-    <>
-      <ViewSafeTopPadding />
-      <StyleHeader title={title || ''} />
+    <StyleContainer
+      headerProps={{
+        title,
+      }}
+      backgroundColor={theme.white}
+      customStyle={{paddingHorizontal: 0}}>
       <StyleWebView source={{uri: linkWeb}} />
-    </>
+    </StyleContainer>
   );
 };
 
