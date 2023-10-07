@@ -6,6 +6,9 @@ import {useUpdateEffect} from 'react-use';
 
 const {CancelToken} = axios;
 
+/**
+ * TODO: Move to useSWRInfinity instead of ahooks
+ */
 const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
   request: (config: any) => Promise<any>;
   // request: (config: AxiosRequestConfig) => Promise<any>;

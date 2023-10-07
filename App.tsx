@@ -7,7 +7,6 @@ import {
 import Store from 'app-redux/store';
 import {SocketProvider} from 'hook/sockets';
 import {navigationRef} from 'navigation/NavigationService';
-import {DynamicLink, Notification} from 'navigation/screen';
 import AppModal from 'navigation/screen/AppModal';
 import RootScreen from 'navigation/screen/RootScreen';
 import React from 'react';
@@ -72,15 +71,11 @@ const App = () => {
               <NavigationContainer
                 ref={navigationRef}
                 onStateChange={trackActiveRoute}>
-                <SocketProvider>
-                  <RootScreen />
+                <RootScreen />
 
-                  {/* Extension */}
-                  <Notification />
-                  <DynamicLink />
-                  <AppModal />
-                  <StatusBar barStyle="dark-content" />
-                </SocketProvider>
+                <AppModal />
+                <SocketProvider />
+                <StatusBar barStyle="dark-content" />
               </NavigationContainer>
             </ReduxProvider>
           </LanguageProvider>

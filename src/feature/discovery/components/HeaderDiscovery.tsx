@@ -8,7 +8,10 @@ import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {Avatar} from 'components/common';
 import {useEstimatesAndJoinings, useTheme} from 'hook';
-import ROOT_SCREEN, {MAIN_SCREEN} from 'navigation/config/routes';
+import ROOT_SCREEN, {
+  DISCOVERY_ROUTE,
+  MAIN_SCREEN,
+} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import React, {useEffect, useRef} from 'react';
 import {
@@ -19,9 +22,10 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import Authentication from 'utility/authentication';
 import {getSessionOfDay} from 'utility/format';
 import {I18Normalize} from 'utility/I18Next';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {moderateScale, scale} from 'utility/scale';
 
 interface IconEstimateProps {
   estimates: TypeJoinEstimate[];
@@ -29,12 +33,12 @@ interface IconEstimateProps {
 
 const IconHavingEstimate = ({estimates}: IconEstimateProps) => {
   const theme = useTheme();
-  const scale = useRef(new Animated.Value(1)).current;
+  const scaleRef = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const loopAnimation = () => {
-      Animated.timing(scale, {
+      Animated.timing(scaleRef, {
         toValue: 1.3,
         useNativeDriver: true,
         duration: 300,
@@ -61,7 +65,7 @@ const IconHavingEstimate = ({estimates}: IconEstimateProps) => {
             useNativeDriver: true,
           }),
         ]).start(() => {
-          Animated.timing(scale, {
+          Animated.timing(scaleRef, {
             toValue: 1,
             useNativeDriver: true,
             duration: 300,
@@ -82,7 +86,10 @@ const IconHavingEstimate = ({estimates}: IconEstimateProps) => {
       customStyle={[$newEstimateBox, {backgroundColor: theme.white}]}
       onPress={() => navigate(MAIN_SCREEN.orderRoute)}>
       <Animated.View
-        style={[$newEstimateBox, {transform: [{scale}, {translateX}]}]}>
+        style={[
+          $newEstimateBox,
+          {transform: [{scale: scaleRef}, {translateX}]},
+        ]}>
         <StyleIcon
           source={Images.icons.bag}
           size={20}
@@ -104,6 +111,7 @@ const HeaderDiscovery = () => {
   const {
     accountSlice: {
       passport: {profile},
+      modeExp,
     },
     logicSlice: {numberNewMessages},
   } = useAppSelector(state => state);
@@ -133,11 +141,23 @@ const HeaderDiscovery = () => {
             customStyle={$textHello}
             numberOfLines={1}
           />
-          <StyleText
-            originValue={profile?.name?.toUpperCase()}
-            customStyle={$textHello}
-            numberOfLines={1}
-          />
+          {modeExp ? (
+            <StyleText
+              i18Text="setting.signInSignUp"
+              customStyle={$textSignUp}
+              onPress={() => {
+                Authentication.open(() => {
+                  navigate(DISCOVERY_ROUTE.discoveryScreen);
+                });
+              }}
+            />
+          ) : (
+            <StyleText
+              originValue={profile?.name?.toUpperCase()}
+              customStyle={$textHello}
+              numberOfLines={1}
+            />
+          )}
         </View>
       </View>
 
@@ -191,6 +211,10 @@ const $sessionBox: ViewStyle = {
 const $textHello: TextStyle = {
   fontSize: FONT_SIZE.f1,
   fontWeight: 'bold',
+};
+const $textSignUp: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  textDecorationLine: 'underline',
 };
 const $buttonMessage: ViewStyle = {
   width: moderateScale(45),

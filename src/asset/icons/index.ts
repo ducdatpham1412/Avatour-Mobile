@@ -10,6 +10,7 @@ export interface IconSvgProps {
 export {default as ErrorIcon} from './ErrorIcon';
 export {default as IconClock} from './IconClock';
 export {default as IconClose} from './IconClose';
+export {default as IconDrag} from './IconDrag';
 export {default as IconEdit} from './IconEdit';
 export {default as IconEmpty} from './IconEmpty';
 export {default as IconLocation} from './IconLocation';

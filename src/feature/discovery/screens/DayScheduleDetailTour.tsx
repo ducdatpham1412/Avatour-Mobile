@@ -17,7 +17,7 @@ interface Props {
 }
 
 const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const [, {suggestLocation}] = useMyRequests();
   const [{data, validating}, {mutate}] = useDetailTour(tourId);
   const listLocations = data?.schedule?.[dayIndex] ?? [];
@@ -48,7 +48,8 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
         $contentContainer,
         {
           paddingBottom:
-            bottom + (data?.status === STATUS.draft ? verticalScale(80) : 0),
+            paddingBottom +
+            (data?.status === STATUS.draft ? verticalScale(80) : 0),
         },
       ]}
       showsVerticalScrollIndicator={false}

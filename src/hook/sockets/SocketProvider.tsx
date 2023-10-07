@@ -1,16 +1,13 @@
 import {useAppSelector} from 'app-redux/store';
-import {SOCKET_EVENT, TYPE_NOTIFICATION} from 'asset/enum';
-import {showLocalNotification} from 'hook/notifications';
+import {SOCKET_EVENT, TYPE_EVENT_DL} from 'asset/enum';
 import useEstimatesAndJoinings from 'hook/useEstimatesAndJoinings';
-import {ReactNode, useEffect, useRef} from 'react';
+import {showLocalNotification} from 'hook/useNotifications';
+import {Fragment, createElement, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
+import {renderDeepLink} from 'utility/assistant';
 import SocketManager from './SocketManager';
 
-interface Props {
-  children: ReactNode;
-}
-
-const SocketUser = ({children}: Props) => {
+const SocketUser = () => {
   const {t} = useTranslation();
   const {token} = useAppSelector(state => state.logicSlice);
   const {socketOn, socketOff, authenticate, close} =
@@ -34,11 +31,16 @@ const SocketUser = ({children}: Props) => {
   useEffect(() => {
     socketOn(SOCKET_EVENT.joinSuccess, async ({sale_id}) => {
       await mutate();
-      showLocalNotification(TYPE_NOTIFICATION.joinSuccess, {
+      showLocalNotification({
         title: t('profile.joinedSuccess'),
         content: t('profile.goToSeeJoins'),
         data: {
-          saleId: sale_id,
+          link: renderDeepLink({
+            event: TYPE_EVENT_DL.join_success,
+            params: {
+              sale_id,
+            },
+          }),
         },
       });
     });
@@ -57,17 +59,13 @@ const SocketUser = ({children}: Props) => {
     };
   }, []);
 
-  return <>{children}</>;
+  return null;
 };
 
-const SocketProvider = ({children}: Props) => {
+const SocketProvider = () => {
   const {modeExp} = useAppSelector(state => state.accountSlice);
 
-  if (modeExp) {
-    return <>{children}</>;
-  }
-
-  return <SocketUser>{children}</SocketUser>;
+  return createElement(modeExp ? Fragment : SocketUser);
 };
 
 export default SocketProvider;

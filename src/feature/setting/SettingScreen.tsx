@@ -6,27 +6,40 @@ import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {SETTING_ROUTE} from 'navigation/config/routes';
 import React, {useState} from 'react';
 import {ActivityIndicator, ViewStyle} from 'react-native';
-import {renderIconGender} from 'utility/assistant';
-import {logOut} from 'utility/authentication';
-import {scale} from 'utility/scale';
-import TypeMainSetting from './components/TypeMainSetting';
 import {useSWRConfig} from 'swr';
 import {I18Normalize} from 'utility/I18Next';
+import {renderIconGender} from 'utility/assistant';
+import Authentication from 'utility/authentication';
+import {scale} from 'utility/scale';
+import TypeMainSetting from './components/TypeMainSetting';
 
 const SettingScreen = () => {
   const theme = useTheme();
   const {mutate} = useSWRConfig();
-  const {gender} = useAppSelector(state => state.accountSlice.passport.profile);
+  const {
+    passport: {
+      profile: {gender},
+    },
+    modeExp,
+  } = useAppSelector(state => state.accountSlice);
   const [loadingLogOut, setLoadingLogOut] = useState(false);
 
-  const onLogOut = async () => {
+  const onSignOrLogout = async () => {
+    if (modeExp) {
+      Authentication.open(() => {
+        navigate(ROOT_SCREEN.mainScreen);
+      });
+      return;
+    }
+
     if (loadingLogOut) {
       return;
     }
     setLoadingLogOut(true);
-    await logOut();
+    await Authentication.logOut();
     await mutate(() => true, undefined, {revalidate: false});
     setLoadingLogOut(false);
+    navigate(ROOT_SCREEN.mainScreen);
   };
 
   return (
@@ -67,8 +80,8 @@ const SettingScreen = () => {
             Images.icons.logout
           )
         }
-        title="setting.logOut"
-        onPress={onLogOut}
+        title={modeExp ? 'setting.signInSignUp' : 'setting.logOut'}
+        onPress={onSignOrLogout}
       />
 
       {__DEV__ && (

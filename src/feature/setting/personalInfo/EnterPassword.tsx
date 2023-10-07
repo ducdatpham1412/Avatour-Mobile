@@ -16,10 +16,9 @@ import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ViewStyle} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
 import {borderWidthTiny} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
-import {logOut} from 'utility/authentication';
+import Authentication from 'utility/authentication';
 import {scale, verticalScale} from 'utility/scale';
 
 const EnterPassword = ({
@@ -37,7 +36,7 @@ const EnterPassword = ({
   const onConfirmPassword = async () => {
     const activeUser = await AsyncStorage.getActiveUser();
 
-    if (activeUser.password !== password) {
+    if (activeUser?.password !== password) {
       ModalAlert.error({
         i18Content: 'setting.personalInfo.passwordNotTrue',
       });
@@ -105,7 +104,7 @@ const EnterPassword = ({
       try {
         setLoading(true);
         await apiLockAccount();
-        await logOut();
+        await Authentication.logOut();
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -123,7 +122,7 @@ const EnterPassword = ({
       try {
         setLoading(true);
         await apiRequestDeleteAccount();
-        await logOut();
+        await Authentication.logOut();
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -153,7 +152,7 @@ const EnterPassword = ({
 
       <StyleButton
         title="setting.personalInfo.confirm"
-        containerStyle={styles.buttonView}
+        containerStyle={$button}
         onPress={onConfirmPassword}
         isLoading={loading}
       />
@@ -169,15 +168,8 @@ const $inputView: ViewStyle = {
   paddingHorizontal: scale(8),
   paddingBottom: verticalScale(8),
 };
-
-const styles = ScaledSheet.create({
-  inputView: {
-    marginTop: '150@vs',
-  },
-  buttonView: {
-    paddingVertical: '10@vs',
-    marginTop: '50@vs',
-  },
-});
+const $button: ViewStyle = {
+  marginTop: verticalScale(100),
+};
 
 export default EnterPassword;

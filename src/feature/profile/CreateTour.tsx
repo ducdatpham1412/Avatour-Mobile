@@ -53,6 +53,7 @@ import {defaultSearchParams} from 'utility/staticData';
 import {ParamsCreateTour, useCreateTour} from './hooks';
 import {checkStatusSchedule} from 'utility/validate';
 import isEqual from 'react-fast-compare';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 type TypeContext = [
   {
@@ -222,37 +223,43 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
    */
   const onSave = async () => {
     if (isCreateNew.current) {
-      try {
-        const res = await createTour();
-        if (res) {
-          impactMedium();
-          navigate(PROFILE_ROUTE.createTourSuccess, {
-            data: res,
-          });
-          emitAppEvent(APP_EVENT.createNewTour, {
-            newTour: {
-              id: res?.tour_id,
-              name,
-              number_people: searchParams.number_people ?? 0,
-              start_price: searchParams.start_price ?? 0,
-              end_price: searchParams.end_price ?? 0,
-              creator: profile.id,
-              creator_name: profile.name,
-              creator_avatar: profile.avatar,
-              is_liked: false,
-              total_likes: 0,
-              schedule: schedules.map(day => {
-                return day.map(location => location.avatar);
-              }),
-              status: STATUS.draft,
-            },
+      const onAuthenticated = async () => {
+        try {
+          const res = await createTour();
+          if (res) {
+            impactMedium();
+            navigate(PROFILE_ROUTE.createTourSuccess, {
+              data: res,
+            });
+            emitAppEvent(APP_EVENT.createNewTour, {
+              newTour: {
+                id: res?.tour_id,
+                name,
+                number_people: searchParams.number_people ?? 0,
+                start_price: searchParams.start_price ?? 0,
+                end_price: searchParams.end_price ?? 0,
+                creator: profile.id,
+                creator_name: profile.name,
+                creator_avatar: profile.avatar,
+                is_liked: false,
+                total_likes: 0,
+                schedule: schedules.map(day => {
+                  return day.map(location => location.avatar);
+                }),
+                status: STATUS.draft,
+              },
+            });
+          }
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
           });
         }
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
+      };
+
+      checkAuthenticated({
+        onAuthenticated,
+      });
       return;
     }
 

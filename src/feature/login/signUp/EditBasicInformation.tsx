@@ -21,7 +21,7 @@ import {useUpdateEffect} from 'react-use';
 import {I18Normalize} from 'utility/I18Next';
 import {isIOS} from 'utility/assistant';
 import AsyncStore from 'utility/asyncStore';
-import {loginSuccess} from 'utility/authentication';
+import Authentication from 'utility/authentication';
 import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
 import {impactLight} from 'utility/haptic';
 import {moderateScale} from 'utility/scale';
@@ -73,7 +73,7 @@ const EditBasicInformation = ({
            */
           await AsyncStore.setActiveUser(itemLoginSuccess);
           await apiChangeInformation(updateObject);
-          await loginSuccess({
+          await Authentication.loginSuccess({
             itemLoginSuccess,
             rememberAccount: isKeep,
           });

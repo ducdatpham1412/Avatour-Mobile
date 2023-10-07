@@ -2,7 +2,7 @@ import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {JOIN_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
-import {safePaddingNotZero, verticalMargin} from 'asset/metrics';
+import {verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
   StyleButton,
@@ -40,9 +40,9 @@ import {
   formatddddDDMMYYYY,
 } from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {canSupplierConfirmBought} from 'utility/validate';
 import {ModalPeopleInGroup} from './components';
 import {useDetailSale, useJoinEstimate} from './hooks';
-import {canSupplierConfirmBought} from 'utility/validate';
 
 interface CountDownProps {
   estimate: TypeJoinEstimate;
@@ -261,7 +261,7 @@ const DetailMeJoin = ({
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
   const {estimateId, initValue, mode} = params;
   const theme = useTheme();
-  const {bottom} = useSafeArea();
+  const {bottom, paddingBottom} = useSafeArea();
   const {t} = useTranslation();
   const {avatar, id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
@@ -953,7 +953,7 @@ const DetailMeJoin = ({
 
   const renderBottomComponent = () => {
     if (loading || !data) {
-      return null;
+      return <View style={{marginBottom: paddingBottom}} />;
     }
 
     if (sale?.creator === myId) {
@@ -961,7 +961,7 @@ const DetailMeJoin = ({
         return <ButtonConfirmBought estimate={data} />;
       }
 
-      return null;
+      return <View style={{marginBottom: paddingBottom}} />;
     }
 
     if (isEstimate) {
@@ -1054,7 +1054,7 @@ const DetailMeJoin = ({
       );
     }
 
-    return null;
+    return <View style={{marginBottom: paddingBottom}} />;
   };
 
   return (
@@ -1065,7 +1065,6 @@ const DetailMeJoin = ({
           title: data?.sale?.name as I18Normalize,
         }}
         scrollEnabled
-        customStyle={{paddingBottom: safePaddingNotZero}}
         initLoading={loading}
         refreshControl={
           <RefreshControl

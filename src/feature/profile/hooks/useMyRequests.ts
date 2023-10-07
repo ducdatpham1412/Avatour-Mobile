@@ -1,14 +1,17 @@
 import {TypeGetRequestResponse} from 'api/interface';
 import request from 'api/request';
+import {useAppSelector} from 'app-redux/store';
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import {useApi} from 'hook';
 import useSWRMutation from 'swr/mutation';
 
 const useMyRequests = () => {
+  const {modeExp} = useAppSelector(state => state.accountSlice);
+
   const {data, mutate, loading, validating} = useApi<
     TypeGetRequestResponse<any>[]
   >({
-    path: 'auth/request',
+    path: modeExp ? null : 'auth/request',
     params: {
       type: 'all',
     },

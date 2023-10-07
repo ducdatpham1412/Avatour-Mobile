@@ -7,7 +7,7 @@ import {StyleList} from 'components/base';
 import {usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {ViewStyle} from 'react-native';
-import {onReactSale} from 'utility/assistant';
+import {onReactPost} from 'utility/assistant';
 
 const FavoriteTours = () => {
   const {bottom} = useSafeArea();
@@ -35,7 +35,7 @@ const FavoriteTours = () => {
       <ItemTour
         item={item}
         onReact={() => {
-          onReactSale(item.id, {
+          onReactPost(item.id, {
             type: REACT.tour,
             setList,
           });

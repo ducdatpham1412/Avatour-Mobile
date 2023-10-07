@@ -20,6 +20,7 @@ import {$styleDropShadow, copyObject} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 const DiscoveryScreen = () => {
   const isFocused = useIsFocused();
@@ -37,40 +38,46 @@ const DiscoveryScreen = () => {
     }
   }, [isFocused]);
 
-  const onReactTour = async (tour: Tour) => {
-    const currentTours = copyObject(favorite_tours);
-    const currentLiked = tour.is_liked;
+  const onReactTour = (tour: Tour) => {
+    const onAuthenticated = async () => {
+      const currentTours = copyObject(favorite_tours);
+      const currentLiked = tour.is_liked;
 
-    try {
-      updateResource({
-        favorite_tours: currentTours.map(item => {
-          if (item.id !== tour.id) {
-            return item;
-          }
-          return {
-            ...item,
-            is_liked: !currentLiked,
-            total_likes: item.total_likes + (currentLiked ? -1 : 1),
-          };
-        }),
-      });
-      if (currentLiked) {
-        await apiUnLikePost({
-          type: REACT.tour,
-          reactedId: tour.id,
+      try {
+        updateResource({
+          favorite_tours: currentTours.map(item => {
+            if (item.id !== tour.id) {
+              return item;
+            }
+            return {
+              ...item,
+              is_liked: !currentLiked,
+              total_likes: item.total_likes + (currentLiked ? -1 : 1),
+            };
+          }),
         });
-      } else {
-        await apiLikePost({
-          type: REACT.tour,
-          reactedId: tour.id,
+        if (currentLiked) {
+          await apiUnLikePost({
+            type: REACT.tour,
+            reactedId: tour.id,
+          });
+        } else {
+          await apiLikePost({
+            type: REACT.tour,
+            reactedId: tour.id,
+          });
+          impactLight();
+        }
+      } catch (err) {
+        updateResource({
+          favorite_tours: currentTours,
         });
-        impactLight();
       }
-    } catch (err) {
-      updateResource({
-        favorite_tours: currentTours,
-      });
-    }
+    };
+
+    checkAuthenticated({
+      onAuthenticated,
+    });
   };
 
   return (

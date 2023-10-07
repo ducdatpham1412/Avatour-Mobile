@@ -13,7 +13,7 @@ import {ModalAlert} from 'navigation/screen/modals';
 import {useRef, useState} from 'react';
 import {useAsync} from 'react-use';
 import AsyncStorage from 'utility/asyncStore';
-import {loginSuccess, requestLoginSocial} from 'utility/authentication';
+import Authentication from 'utility/authentication';
 
 const loginForm = __DEV__
   ? {
@@ -27,6 +27,7 @@ const useLogin = () => {
     state => state.accountSlice.login,
   );
   const isFocused = useIsFocused();
+  //   const {mutate} = useSWRConfig();
 
   const [username, setUsername] = useState(initUserName || loginForm?.username);
   const [password, setPassword] = useState(initPassword || loginForm?.password);
@@ -48,7 +49,7 @@ const useLogin = () => {
         showPlayServicesUpdateDialog: true,
       });
       const userInfo = await GoogleSignin.signIn();
-      await requestLoginSocial({
+      await Authentication.requestLoginSocial({
         tokenSocial: userInfo.idToken,
         typeSocial: TYPE_SOCIAL_LOGIN.google,
       });
@@ -76,7 +77,7 @@ const useLogin = () => {
       });
 
       const tokenSocial = res.authorizationCode;
-      requestLoginSocial({
+      Authentication.requestLoginSocial({
         tokenSocial,
         typeSocial: TYPE_SOCIAL_LOGIN.apple,
       });
@@ -107,7 +108,7 @@ const useLogin = () => {
        * Login success
        */
       if (res.data?.token && res.data?.refreshToken) {
-        await loginSuccess({
+        await Authentication.loginSuccess({
           itemLoginSuccess: {
             username,
             password,
@@ -116,6 +117,8 @@ const useLogin = () => {
           },
           rememberAccount,
         });
+        // await mutate(() => true);
+        Authentication.callback?.();
       }
     } catch (err) {
       ModalAlert.error({

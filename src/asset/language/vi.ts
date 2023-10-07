@@ -112,7 +112,7 @@ const discovery = {
   report: {
     title: 'Tố cáo',
     reportPerson: 'Tố cáo {{name}}',
-    chooseReason: '※ Chọn một lý do để tố cáo người dùng này:',
+    chooseReason: 'Chọn một lý do để tố cáo người dùng này:',
     offensiveLanguage: 'Ngôn từ tục tĩu, gây xúc phạm',
     dangerousAction: 'Hành vi nguy hiểm, đe doạ tới tôi hoặc mọi người',
     spamRuining: 'Liên tục spam, ảnh hưởng tới trải nghiệm cá nhân',
@@ -539,6 +539,7 @@ const setting = {
     title: 'Hướng dẫn sử dụng',
   },
   updateStatus: 'Cập nhật trạng thái',
+  signInSignUp: 'Đăng nhập/Đăng ký',
 };
 
 const notification = {
@@ -559,6 +560,7 @@ const alert = {
     'Bạn muốn lưu thông tin tài khoản của mình cho lần đăng nhập sau chứ?',
   loginFail: 'Đăng nhập thất bại',
   wantToChange: 'Xác nhận thay đổi',
+  someError: 'Có lỗi gì đó ở đây',
 
   // FOR DISCOVERY
   clickHeartModeExp:
@@ -626,6 +628,7 @@ const alert = {
     'Thời gian check-in không phải hôm nay\nBạn vui lòng quét mã tại cửa hàng vào <b>{{time}}</b> nha',
   locationHadBeenAdded:
     '<b>{{value}}</b> đã có trong lịch trình\nBạn vẫn muốn thêm nữa chứ?',
+  loginToExplore: 'Bạn hãy đăng nhập để tiếp tục trải nghiệm Avatour nhé',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

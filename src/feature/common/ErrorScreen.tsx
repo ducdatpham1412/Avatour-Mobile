@@ -1,6 +1,10 @@
-import {SafeView, StyleButton} from 'components/base';
+import {FONT_SIZE} from 'asset';
+import {ImageEmptyWithDesk} from 'asset/icons';
+import {verticalMargin} from 'asset/metrics';
+import {StyleButton, StyleText} from 'components/base';
+import {useTheme} from 'hook';
 import React from 'react';
-import {Text, ViewStyle} from 'react-native';
+import {View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {verticalScale} from 'utility/scale';
 
@@ -11,22 +15,47 @@ interface Props {
 }
 
 const ErrorScreen = ({title, onPress, loading}: Props) => {
+  const theme = useTheme();
+
   return (
-    <SafeView center>
-      <Text>Opp!</Text>
-      <Text>There're some error</Text>
-      <StyleButton
-        title={title ?? 'common.null'}
-        containerStyle={$error}
-        onPress={onPress}
-        isLoading={loading}
+    <View style={[$container, {backgroundColor: theme.white}]}>
+      <ImageEmptyWithDesk size={300} />
+      <StyleText
+        originValue="Opp!"
+        customStyle={{
+          fontSize: FONT_SIZE.f1,
+          marginTop: verticalMargin,
+          fontWeight: 'bold',
+        }}
       />
-    </SafeView>
+      <StyleText
+        i18Text="alert.someError"
+        customStyle={{
+          fontSize: FONT_SIZE.f3,
+          marginTop: verticalMargin,
+          textAlign: 'center',
+        }}
+        mode="html"
+      />
+      {!!title && (
+        <StyleButton
+          title={title ?? 'common.null'}
+          containerStyle={$error}
+          onPress={onPress}
+          isLoading={loading}
+        />
+      )}
+    </View>
   );
 };
 
+const $container: ViewStyle = {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+};
 const $error: ViewStyle = {
-  marginTop: verticalScale(20),
+  marginTop: verticalScale(40),
 };
 
 export default ErrorScreen;

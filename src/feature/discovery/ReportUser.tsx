@@ -1,6 +1,10 @@
 import {apiReportUser} from 'api/discovery';
 import {safePaddingNotZero} from 'asset/metrics';
-import {FONT_SIZE, REPORT_REASONS} from 'asset/standardValue';
+import {
+  FONT_SIZE,
+  FONT_WEIGHT_MEDIUM,
+  REPORT_REASONS,
+} from 'asset/standardValue';
 import {
   AppInput,
   StyleButton,
@@ -13,6 +17,7 @@ import {useTheme} from 'hook';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {goBack} from 'navigation/NavigationService';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {TextInput, View} from 'react-native';
@@ -42,27 +47,31 @@ const ReportUser = ({
   const [description, setDescription] = useState('');
   const [images, setImages] = useState([]);
 
-  const onSubmitReport = async () => {
+  const onSubmitReport = () => {
     if (reasonReport) {
-      try {
-        await apiReportUser({
-          userId: idUser,
-          body: {
-            reason: reasonReport.id,
-            description,
-            listImages: [],
-          },
-        });
+      checkAuthenticated({
+        onAuthenticated: async () => {
+          try {
+            await apiReportUser({
+              userId: idUser,
+              body: {
+                reason: reasonReport.id,
+                description,
+                listImages: [],
+              },
+            });
 
-        ModalAlert.notification({
-          i18Content: 'discovery.report.reportHadSent',
-          onClose: goBack,
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
+            ModalAlert.notification({
+              i18Content: 'discovery.report.reportHadSent',
+              onClose: goBack,
+            });
+          } catch (err) {
+            ModalAlert.error({
+              content: err,
+            });
+          }
+        },
+      });
     }
   };
 
@@ -87,10 +96,16 @@ const ReportUser = ({
           }}
         />
       }>
-      <StyleText
-        i18Text="discovery.report.chooseReason"
-        customStyle={styles.titleChooseReason}
-      />
+      <StyleText customStyle={styles.titleChooseReason}>
+        <StyleText
+          originValue="※ "
+          customStyle={[styles.titleChooseReason, {color: theme.red}]}
+        />
+        <StyleText
+          i18Text="discovery.report.chooseReason"
+          customStyle={styles.titleChooseReason}
+        />
+      </StyleText>
       <View style={styles.chooseReasonView}>
         <View style={[styles.textReasonBox, {borderColor: theme.gray_400}]}>
           <StyleText
@@ -158,7 +173,8 @@ const ReportUser = ({
 const styles = ScaledSheet.create({
   // pick reason
   titleChooseReason: {
-    marginTop: '20@vs',
+    marginTop: '16@vs',
+    fontWeight: FONT_WEIGHT_MEDIUM,
   },
   chooseReasonView: {
     width: '100%',

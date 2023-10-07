@@ -124,7 +124,7 @@ export default class AppAsyncStorage {
       (await AsyncStorage.getItem(ASYNC_TYPE.searchParams)) || '{}',
     );
     return {
-      location: '',
+      text_search: '',
       start_location: res?.start_location || 'Ha Noi',
       number_people: res?.number_people || 2,
       services: res?.services || LIST_TOPICS.map(item => item.id),

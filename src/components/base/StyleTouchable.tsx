@@ -48,6 +48,7 @@ export default class StyleTouchable extends Component<StyleTouchableProps> {
         disabled={disable}
         onPress={onPress}
         onLongPress={onLongPress}
+        delayLongPress={100}
         hitSlop={moderateScale(10)}
         {...rest}>
         {children}

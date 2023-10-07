@@ -1,3 +1,4 @@
+import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT, APP_EVENT, STATUS} from 'asset/enum';
 import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
@@ -22,7 +23,6 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, ViewStyle} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {I18Normalize} from 'utility/I18Next';
 import {$styleTopShadow, borderWidthTiny} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import {IconTabBarProfile, InformationProfile} from './components';
@@ -34,6 +34,10 @@ type Props = RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>;
 interface ButtonSuggestProps {
   userId: number;
 }
+
+const renderNull = () => {
+  return <View />;
+};
 
 const renderTabIndex = (
   profile: TypeGetProfileResponse,
@@ -200,7 +204,7 @@ const OtherProfile = ({
   },
 }: Props) => {
   const theme = useTheme();
-
+  const {modeExp} = useAppSelector(state => state.accountSlice);
   const [
     {data, isFollowing, isBlocked, loading, validating},
     {follow, block, report, mutate},
@@ -254,13 +258,61 @@ const OtherProfile = ({
     return null;
   };
 
-  const renderListReviews = () => {
+  const listReviews = () => {
     if (data) {
       return (
         <ListReviews userId={data?.id} account_type={data?.account_type} />
       );
     }
     return null;
+  };
+
+  const renderContent = () => {
+    if (isBlocked || !data) {
+      return null;
+    }
+
+    if (modeExp) {
+      return (
+        <TabView
+          style={[$body, {height: tabViewHeight}]}
+          tabBarStyle={$tabBar}
+          listElements={[renderShop, renderNull, renderNull]}
+          listIconTabBar={[
+            <IconTabBarProfile title="profile.shop" icon={Images.icons.shop} />,
+            <IconTabBarProfile
+              title="discovery.tour"
+              icon={<IconTour size={22} />}
+            />,
+            <IconTabBarProfile
+              title="profile.checkIn"
+              icon={Images.icons.review}
+            />,
+          ]}
+          initialIndex={renderTabIndex(data, tab)}
+        />
+      );
+    }
+
+    return (
+      <TabView
+        style={[$body, {height: tabViewHeight}]}
+        tabBarStyle={$tabBar}
+        listElements={[renderShop, renderTour, listReviews]}
+        listIconTabBar={[
+          <IconTabBarProfile title="profile.shop" icon={Images.icons.shop} />,
+          <IconTabBarProfile
+            title="discovery.tour"
+            icon={<IconTour size={22} />}
+          />,
+          <IconTabBarProfile
+            title="profile.checkIn"
+            icon={Images.icons.review}
+          />,
+        ]}
+        initialIndex={renderTabIndex(data, tab)}
+      />
+    );
   };
 
   return (
@@ -283,44 +335,23 @@ const OtherProfile = ({
       initLoading={loading || !data}
       layOut="view"
       BottomComponent={<ButtonSuggest userId={id} />}>
-      {!isBlocked && data && (
-        <View style={$container}>
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={validating && !loading}
-                onRefresh={mutate}
-              />
-            }
-            stickyHeaderIndices={[1]}
-            onLayout={e => {
-              setTabViewHeight(e.nativeEvent.layout.height);
-            }}
-            showsVerticalScrollIndicator={false}>
-            <InformationProfile profile={data} />
-            <TabView
-              style={[$body, {height: tabViewHeight}]}
-              tabBarStyle={$tabBar}
-              listElements={[renderShop, renderTour, renderListReviews]}
-              listIconTabBar={[
-                <IconTabBarProfile
-                  title="profile.shop"
-                  icon={Images.icons.shop}
-                />,
-                <IconTabBarProfile
-                  title="discovery.tour"
-                  icon={<IconTour size={22} />}
-                />,
-                <IconTabBarProfile
-                  title="profile.checkIn"
-                  icon={Images.icons.review}
-                />,
-              ]}
-              initialIndex={renderTabIndex(data, tab)}
+      <View style={$container}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={validating && !loading}
+              onRefresh={mutate}
             />
-          </ScrollView>
-        </View>
-      )}
+          }
+          stickyHeaderIndices={[1]}
+          onLayout={e => {
+            setTabViewHeight(e.nativeEvent.layout.height);
+          }}
+          showsVerticalScrollIndicator={false}>
+          {!!data && <InformationProfile profile={data} />}
+          {renderContent()}
+        </ScrollView>
+      </View>
     </StyleContainer>
   );
 };

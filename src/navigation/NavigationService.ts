@@ -1,8 +1,9 @@
 import {
-  createNavigationContainerRef,
   NavigationState,
   PartialState,
+  Route,
   StackActions,
+  createNavigationContainerRef,
 } from '@react-navigation/native';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {ReactNode} from 'react';
@@ -51,8 +52,8 @@ export function replace<T extends AllRoutes>(
   }
 }
 
-export const getCurrentRoute = () => {
-  return navigationRef.getCurrentRoute();
+export const getCurrentRoute = (): Route<AllRoutes> => {
+  return navigationRef.getCurrentRoute() as Route<AllRoutes>;
 };
 
 interface TypeMoreChoiceAlert {

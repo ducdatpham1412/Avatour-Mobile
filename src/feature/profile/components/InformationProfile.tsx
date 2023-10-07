@@ -6,19 +6,21 @@ import {FONT_SIZE, FONT_WEIGHT_MEDIUM, ratioAvatar} from 'asset/standardValue';
 import {SquareButton, StyleText, StyleTouchable} from 'components/base';
 import dayjs from 'dayjs';
 import {useTheme} from 'hook';
-import {navigate, push} from 'navigation/NavigationService';
+import {getCurrentRoute, navigate, push} from 'navigation/NavigationService';
 import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
+import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {LayoutChangeEvent, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {seeDetailImage} from 'utility/assistant';
+import Authentication from 'utility/authentication';
 import {formatHours, formatLocaleNumber, formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useOtherProfile} from '../hooks';
 import ScrollCropImages from './ScrollCropImages';
-import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
-import {useTranslation} from 'react-i18next';
 
 interface Props {
   profile: TypeGetProfileResponse;
@@ -35,9 +37,13 @@ const onNavigateFollow = (
   type: 'follower' | 'following',
   profile: TypeGetProfileResponse,
 ) => {
-  push(ROOT_SCREEN.listFollows, {
-    initTab: type,
-    profile,
+  checkAuthenticated({
+    onAuthenticated: () => {
+      push(ROOT_SCREEN.listFollows, {
+        initTab: type,
+        profile,
+      });
+    },
   });
 };
 
@@ -90,13 +96,17 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
       return;
     }
 
-    try {
-      await follow();
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    }
+    checkAuthenticated({
+      onAuthenticated: async () => {
+        try {
+          await follow();
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        }
+      },
+    });
   };
 
   return (
@@ -401,14 +411,62 @@ const InformationUser = ({profile}: ComponentProps) => {
   );
 };
 
+const InformationModeExp = () => {
+  const theme = useTheme();
+
+  return (
+    <View style={$introduceView}>
+      <View style={[$buttonView, {marginTop: 0}]}>
+        <SquareButton
+          title="setting.signInSignUp"
+          titleStyle={$textButton}
+          containerStyle={$buttonTouch}
+          onPress={() => {
+            const curRoute = getCurrentRoute();
+            Authentication.open(() => {
+              navigate(curRoute.name, {
+                key: curRoute.key,
+              });
+            });
+          }}
+        />
+        <SquareButton
+          title="profile.createTour"
+          containerStyle={[
+            $buttonTouch,
+            {backgroundColor: theme.p_600, marginLeft: scale(8)},
+          ]}
+          titleStyle={[
+            $textButton,
+            {
+              color: theme.white,
+              fontWeight: 'bold',
+            },
+          ]}
+          onPress={() => {
+            navigate(PROFILE_ROUTE.createTour);
+          }}
+          icon={
+            <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
+          }
+        />
+      </View>
+    </View>
+  );
+};
+
 const InformationProfile = ({profile, onLayOut}: Props) => {
   const {avatar, account_type} = profile;
+  const {modeExp} = useAppSelector(state => state.accountSlice);
 
   const isShopAccount = account_type === ACCOUNT.shop;
 
   const renderContent = () => {
     if (isShopAccount || account_type === ACCOUNT.location) {
       return <InformationSupplier profile={profile} />;
+    }
+    if (modeExp) {
+      return <InformationModeExp />;
     }
     return <InformationUser profile={profile} />;
   };

@@ -7,7 +7,7 @@ import {StyleList} from 'components/base';
 import {usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
 import {View, ViewStyle} from 'react-native';
-import {onReactSale} from 'utility/assistant';
+import {onReactPost} from 'utility/assistant';
 import SearchListShops from './SearchListShops';
 
 const SearchListTour = () => {
@@ -46,7 +46,7 @@ const SearchListTour = () => {
           <ItemTour
             item={item}
             onReact={() => {
-              onReactSale(item.id, {
+              onReactPost(item.id, {
                 type: REACT.tour,
                 setList,
               });

@@ -1,6 +1,6 @@
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {IconPaddingField} from 'asset/icons';
-import {Metrics} from 'asset/metrics';
+import {Metrics, horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {AppModalize} from 'components';
 import {
@@ -9,9 +9,10 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
+import {ButtonX} from 'components/common';
 import InputBox from 'components/common/InputBox';
-import {useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
+import {useSafeArea, useTheme} from 'hook';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useRef, useState} from 'react';
@@ -35,6 +36,7 @@ const LoginScreen = () => {
   ] = useLogin();
   const theme = useTheme();
   const {t} = useTranslation();
+  const {top} = useSafeArea();
 
   const inputPasswordRef = useRef<any>(null);
   const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
@@ -158,6 +160,17 @@ const LoginScreen = () => {
           </StyleText>
         </View>
       </StyleContainer>
+
+      <ButtonX
+        size={20}
+        containerStyle={{
+          top: top || safePaddingNotZero,
+          right: horizontalPadding,
+          backgroundColor: theme.white_opacity(0.3),
+        }}
+        iconStyle={{color: theme.white}}
+        onPress={goBack}
+      />
 
       <ModalAccounts
         ref={modalRef}

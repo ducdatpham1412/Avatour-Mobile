@@ -1,6 +1,6 @@
 import {BORDER_RADIUS, FONT_SIZE} from 'asset';
 import {ACCOUNT, STATUS} from 'asset/enum';
-import {IconTagStars} from 'asset/icons';
+import {IconDrag, IconTagStars} from 'asset/icons';
 import Images from 'asset/img/images';
 import {
   StyleIcon,
@@ -25,7 +25,6 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ScaleDecorator, ShadowDecorator} from 'react-native-draggable-flatlist';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {detectFromStyle, onGoToProfile} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
 import {impactLight} from 'utility/haptic';
@@ -48,7 +47,7 @@ type InfoProps = {
 };
 
 type DragProps = {
-  onDrag: () => void;
+  onLongPress: () => void;
 };
 
 type SuggestProps = Pick<ItemLocationProps, 'item' | 'onSuggestLocation'>;
@@ -75,17 +74,11 @@ const Info = ({icon, content, contentStyle}: InfoProps) => {
   );
 };
 
-const ButtonDrag = ({onDrag}: DragProps) => {
+const ButtonDrag = ({onLongPress}: DragProps) => {
   const theme = useTheme();
   return (
-    <StyleTouchable
-      customStyle={$dragView}
-      onLongPress={onDrag}
-      delayLongPress={100}>
-      <MaterialIcons
-        name="drag-indicator"
-        style={[$iconDrag, {color: theme.p_900}]}
-      />
+    <StyleTouchable customStyle={$dragView} onLongPress={onLongPress}>
+      <IconDrag tintColor={theme.black} size={22} style={$iconDrag} />
     </StyleTouchable>
   );
 };
@@ -167,6 +160,11 @@ const ItemLocation = ({
   const theme = useTheme();
   const {t} = useTranslation();
 
+  const onLongPress = () => {
+    impactLight();
+    onDrag();
+  };
+
   const renderPrice = () => {
     if (item?.min_cost === 0 && item?.max_cost === 0) {
       return (
@@ -202,7 +200,8 @@ const ItemLocation = ({
             })
           }
           disable={isActive}
-          disableOpacity={1}>
+          disableOpacity={1}
+          onLongPress={onLongPress}>
           <View style={$body}>
             <StyleImage
               source={{uri: item?.avatar}}
@@ -224,14 +223,7 @@ const ItemLocation = ({
               />
             </View>
 
-            {isEditMode && (
-              <ButtonDrag
-                onDrag={() => {
-                  impactLight();
-                  onDrag();
-                }}
-              />
-            )}
+            {isEditMode && <ButtonDrag onLongPress={onLongPress} />}
           </View>
 
           {isEditMode && (
@@ -267,7 +259,8 @@ const ItemLocation = ({
 
 const $container: ViewStyle = {
   width: '100%',
-  padding: scale(12),
+  paddingHorizontal: scale(12),
+  paddingVertical: verticalScale(12),
   borderRadius: BORDER_RADIUS.f3,
 };
 const $body: ViewStyle = {
@@ -299,12 +292,11 @@ const $infoContent: TextStyle = {
 };
 const $dragView: ViewStyle = {
   width: scale(50),
-  height: verticalScale(100),
   alignItems: 'flex-end',
   justifyContent: 'center',
 };
 const $iconDrag: TextStyle = {
-  fontSize: moderateScale(40),
+  marginTop: (moderateScale(36) + verticalScale(24) + verticalScale(12)) / 2,
 };
 const $iconX: ViewStyle = {
   position: 'absolute',
@@ -314,7 +306,7 @@ const $iconX: ViewStyle = {
 };
 const $joinGroupBuying: ViewStyle = {
   width: '80%',
-  height: verticalScale(36),
+  height: moderateScale(36),
   borderRadius: 100,
   borderWidth: 0,
   marginTop: verticalScale(12),

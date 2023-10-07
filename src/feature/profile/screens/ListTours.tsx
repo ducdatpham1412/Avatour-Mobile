@@ -6,7 +6,7 @@ import {StyleList} from 'components/base';
 import {usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
 import {ViewStyle} from 'react-native';
-import {onReactSale} from 'utility/assistant';
+import {onReactPost} from 'utility/assistant';
 
 interface Props {
   userId: number;
@@ -34,7 +34,7 @@ const ListTours = ({userId}: Props) => {
       <ItemTour
         item={item}
         onReact={() => {
-          onReactSale(item.id, {
+          onReactPost(item.id, {
             type: REACT.tour,
             setList,
           });
