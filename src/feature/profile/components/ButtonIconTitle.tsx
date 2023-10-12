@@ -52,7 +52,7 @@ const ButtonIconTitle = (
   ref: ForwardedRef<Refs>,
 ) => {
   const theme = useTheme();
-  const scale = useRef(new Animated.Value(1));
+  const scaleRef = useRef(new Animated.Value(1));
   const translateX = useRef(new Animated.Value(0));
 
   useImperativeHandle(
@@ -60,7 +60,7 @@ const ButtonIconTitle = (
     () => ({
       slug: () => {
         Vibration.vibrate();
-        Animated.timing(scale.current, {
+        Animated.timing(scaleRef.current, {
           toValue: 1.5,
           useNativeDriver: true,
           duration: 100,
@@ -87,7 +87,7 @@ const ButtonIconTitle = (
               useNativeDriver: true,
             }),
           ]).start(() => {
-            Animated.timing(scale.current, {
+            Animated.timing(scaleRef.current, {
               toValue: 1,
               useNativeDriver: true,
               duration: 100,
@@ -103,7 +103,10 @@ const ButtonIconTitle = (
     <View style={[$container, containerStyle]}>
       <Animated.View
         style={{
-          transform: [{scale: scale.current}, {translateX: translateX.current}],
+          transform: [
+            {scale: scaleRef.current},
+            {translateX: translateX.current},
+          ],
         }}>
         <StyleTouchable
           customStyle={[$body, {borderColor: theme.gray_500}, buttonStyle]}

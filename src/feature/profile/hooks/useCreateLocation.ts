@@ -135,7 +135,9 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
         form.append('duration', duration);
       }
 
-      await request.put(`/admin/suppliers/${params.id}`, form);
+      await request.put(`/admin/suppliers/${params.id}`, form, {
+        timeout: 30000,
+      });
       await mutate();
       await mutateProfile(
         pre => {

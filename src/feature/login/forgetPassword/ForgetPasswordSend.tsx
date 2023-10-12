@@ -2,6 +2,7 @@ import {apiRequestOTP} from 'api/authentication';
 import {SIGN_UP_TYPE, TYPE_OTP} from 'asset/enum';
 import Images from 'asset/img/images';
 import {StyleContainer, StyleText} from 'components/base';
+import {useTheme} from 'hook';
 import Redux from 'hook/useRedux';
 import {navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
@@ -11,10 +12,8 @@ import React from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import {I18Normalize} from 'utility/I18Next';
-import HeaderLogo from '../components/HeaderLogo';
-import IconType from '../components/IconType';
 import {moderateScale, verticalScale} from 'utility/scale';
-import {useTheme} from 'hook';
+import IconType from '../components/IconType';
 
 const ForgetPasswordSend = ({
   route,
@@ -51,8 +50,6 @@ const ForgetPasswordSend = ({
 
   return (
     <StyleContainer>
-      <HeaderLogo />
-
       <View style={styles.contentView}>
         <StyleText
           i18Text="login.receiveThrow"

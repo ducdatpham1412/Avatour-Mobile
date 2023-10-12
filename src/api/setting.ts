@@ -1,4 +1,3 @@
-import {TYPE_CHANGE} from 'asset/enum';
 import request from './request';
 
 export const apiChangeLanguage = (new_language: number) => {
@@ -9,7 +8,7 @@ export const apiChangeLanguage = (new_language: number) => {
     },
     {
       params: {
-        type: TYPE_CHANGE.language,
+        type: 'language',
       },
     },
   );
@@ -23,7 +22,7 @@ export const apiChangeTheme = (new_theme: number) => {
     },
     {
       params: {
-        type: TYPE_CHANGE.theme,
+        type: 'theme',
       },
     },
   );
@@ -32,7 +31,7 @@ export const apiChangeTheme = (new_theme: number) => {
 export const apiChangePassword = (body: TypeChangePasswordRequest) => {
   return request.put('/setting/changes', body, {
     params: {
-      type: TYPE_CHANGE.password,
+      type: 'password',
     },
   });
 };
@@ -57,7 +56,7 @@ export const apiChangeInformation = (
 ): Promise<TypeChangeInformationResponse> => {
   return request.put('/setting/changes', body, {
     params: {
-      type: TYPE_CHANGE.information,
+      type: 'information',
     },
   });
 };

@@ -14,7 +14,7 @@ export const apiRequestOTP = (
   params: TypeRequestOTPRequest,
 ): Promise<TypeRequestOTPResponse> => {
   return request.post('/auth/otp', params, {
-    timeout: 15000,
+    timeout: 30000,
   });
 };
 

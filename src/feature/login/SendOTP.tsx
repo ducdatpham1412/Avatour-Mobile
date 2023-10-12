@@ -39,6 +39,7 @@ import {
 } from 'react-native-confirmation-code-field';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
+import AsyncStore from 'utility/asyncStore';
 
 const SendOTP = ({
   route: {params},
@@ -132,6 +133,7 @@ const SendOTP = ({
           token: res.data.token,
           refreshToken: res.data.refreshToken,
         };
+        await AsyncStore.setActiveUser(itemLoginSuccess);
         replace(LOGIN_ROUTE.agreeTermOfService, {
           itemLoginSuccess,
         });

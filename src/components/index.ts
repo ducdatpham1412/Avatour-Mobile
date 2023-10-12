@@ -1,6 +1,7 @@
 export {default as LoadingScreen} from '../feature/profile/screens/LoadingScreen';
 export {default as BoxInformation} from './BoxInformation';
 export {default as BoxView} from './BoxView';
+export {default as Eye} from './Eye';
 export {default as ItemModalProfile} from './ItemModalProfile';
 export {default as ItemReview} from './ItemReview';
 export {default as ItemSale} from './ItemSale';

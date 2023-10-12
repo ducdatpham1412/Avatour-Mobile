@@ -172,22 +172,32 @@ const CreateLocation = ({
       isEqual(services, initValue.current.services) &&
       description === initValue.current.description);
 
-  if (disableButton) {
-    disableButton =
-      typePrice === 'free'
-        ? Number(initValue.current.minCost) === 0 &&
-          Number(initValue.current.maxCost) === 0
-        : Number(minCost) === Number(initValue.current.minCost) &&
-          Number(maxCost) === Number(initValue.current.maxCost);
-  }
+  if (itemNew) {
+    if (!disableButton) {
+      disableButton = typeTime === 'limit' && (!startTime || !endTime);
+    }
 
-  if (disableButton) {
-    disableButton =
-      typeTime === 'all-day'
-        ? Number(initValue.current.startTime) === 0 &&
-          Number(initValue.current?.endTime) === 0
-        : startTime === Number(initValue.current.startTime) &&
-          endTime === Number(initValue.current.endTime);
+    if (!disableButton) {
+      disableButton = typePrice === 'paid' && Number(maxCost) <= 0;
+    }
+  } else if (itemEdit) {
+    if (disableButton) {
+      disableButton =
+        typePrice === 'free'
+          ? Number(initValue.current.minCost) === 0 &&
+            Number(initValue.current.maxCost) === 0
+          : Number(minCost) === Number(initValue.current.minCost) &&
+            Number(maxCost) === Number(initValue.current.maxCost);
+    }
+
+    if (disableButton) {
+      disableButton =
+        typeTime === 'all-day'
+          ? Number(initValue.current.startTime) === 0 &&
+            Number(initValue.current?.endTime) === 0
+          : startTime === Number(initValue.current.startTime) &&
+            endTime === Number(initValue.current.endTime);
+    }
   }
 
   const onSave = () => {
@@ -518,7 +528,7 @@ const CreateLocation = ({
         </StyleTouchable>
       </StyleContainer>
 
-      {loadingSave && <LoadingScreen />}
+      {loadingSave && <LoadingScreen withMessage />}
     </>
   );
 };

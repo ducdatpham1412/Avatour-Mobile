@@ -46,10 +46,6 @@ type InfoProps = {
   contentStyle?: StyleProp<TextStyle>;
 };
 
-type DragProps = {
-  onLongPress: () => void;
-};
-
 type SuggestProps = Pick<ItemLocationProps, 'item' | 'onSuggestLocation'>;
 
 /**
@@ -71,15 +67,6 @@ const Info = ({icon, content, contentStyle}: InfoProps) => {
         customStyle={[$infoContent, {color: theme.gray_500}, contentStyle]}
       />
     </View>
-  );
-};
-
-const ButtonDrag = ({onLongPress}: DragProps) => {
-  const theme = useTheme();
-  return (
-    <StyleTouchable customStyle={$dragView} onLongPress={onLongPress}>
-      <IconDrag tintColor={theme.black} size={22} style={$iconDrag} />
-    </StyleTouchable>
   );
 };
 
@@ -160,9 +147,13 @@ const ItemLocation = ({
   const theme = useTheme();
   const {t} = useTranslation();
 
+  const isAccShop = item?.account_type === ACCOUNT.shop;
+
   const onLongPress = () => {
-    impactLight();
-    onDrag();
+    if (isEditMode) {
+      impactLight();
+      onDrag();
+    }
   };
 
   const renderPrice = () => {
@@ -223,7 +214,17 @@ const ItemLocation = ({
               />
             </View>
 
-            {isEditMode && <ButtonDrag onLongPress={onLongPress} />}
+            {isEditMode && (
+              <StyleTouchable customStyle={$dragView} onLongPress={onLongPress}>
+                <IconDrag
+                  tintColor={theme.black}
+                  size={22}
+                  style={{
+                    marginTop: isAccShop ? iconDragMarginShop : 0,
+                  }}
+                />
+              </StyleTouchable>
+            )}
           </View>
 
           {isEditMode && (
@@ -234,7 +235,7 @@ const ItemLocation = ({
             />
           )}
 
-          {item.account_type === ACCOUNT.shop && (
+          {isAccShop && (
             <View style={[$joinGroupBuying, {backgroundColor: theme.p_200}]}>
               <StyleIcon
                 source={Images.icons.createGroup}
@@ -295,9 +296,8 @@ const $dragView: ViewStyle = {
   alignItems: 'flex-end',
   justifyContent: 'center',
 };
-const $iconDrag: TextStyle = {
-  marginTop: (moderateScale(36) + verticalScale(24) + verticalScale(12)) / 2,
-};
+const iconDragMarginShop =
+  (moderateScale(36) + verticalScale(24) + verticalScale(12)) / 2;
 const $iconX: ViewStyle = {
   position: 'absolute',
   left: 2,

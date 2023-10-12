@@ -126,7 +126,6 @@ const CreateSale = ({route}: Props) => {
 
   const headerRight = () => {
     if (itemEdit) {
-      let disableButtonEdit = true;
       const temp: typeof initValue.current = {
         postId: itemEdit.id,
         name,
@@ -134,7 +133,7 @@ const CreateSale = ({route}: Props) => {
         images,
         prices,
       };
-      disableButtonEdit = isEqual(temp, initValue.current);
+      const disableButtonEdit = isEqual(temp, initValue.current);
 
       return (
         <View style={$header}>

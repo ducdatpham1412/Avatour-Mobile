@@ -259,6 +259,44 @@ const InformationSupplier = ({profile}: ComponentProps) => {
   const theme = useTheme();
   const arrayStars = Array(Math.floor(5)).fill(0);
 
+  const renderPx = () => {
+    if (!profile.min_cost && !profile.max_cost) {
+      return (
+        <StyleText
+          customStyle={[
+            $textMoreInfo,
+            {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
+          ]}
+          i18Text="discovery.free"
+        />
+      );
+    }
+
+    if (profile.min_cost === profile.max_cost) {
+      return (
+        <StyleText
+          customStyle={[
+            $textMoreInfo,
+            {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
+          ]}
+          originValue={`${formatMoney(profile.min_cost)}`}
+        />
+      );
+    }
+
+    return (
+      <StyleText
+        customStyle={[
+          $textMoreInfo,
+          {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
+        ]}
+        originValue={`${formatLocaleNumber(profile.min_cost)} - ${formatMoney(
+          profile.max_cost,
+        )}`}
+      />
+    );
+  };
+
   return (
     <View style={$introduceView}>
       {!!profile.name && (
@@ -277,7 +315,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
       {!!profile.description && (
         <StyleText
           originValue={profile.description}
-          customStyle={[$textDescription, {color: theme.gray_500}]}
+          customStyle={[$textDescription, {color: theme.gray_600}]}
         />
       )}
 
@@ -346,25 +384,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
       </View>
       <View style={$moreInfoBox}>
         <IconPrice size={18} tintColor={theme.black} />
-        {!profile.min_cost && !profile.max_cost ? (
-          <StyleText
-            customStyle={[
-              $textMoreInfo,
-              {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
-            ]}
-            i18Text="discovery.free"
-          />
-        ) : (
-          <StyleText
-            customStyle={[
-              $textMoreInfo,
-              {marginLeft: scale(4), fontWeight: FONT_WEIGHT_MEDIUM},
-            ]}
-            originValue={`${formatLocaleNumber(
-              profile.min_cost,
-            )} - ${formatMoney(profile.max_cost)}`}
-          />
-        )}
+        {renderPx()}
       </View>
     </View>
   );
@@ -381,7 +401,7 @@ const InformationUser = ({profile}: ComponentProps) => {
       {!!profile.description && (
         <StyleText
           originValue={profile.description}
-          customStyle={[$textDescription, {color: theme.gray_500}]}
+          customStyle={[$textDescription, {color: theme.gray_600}]}
         />
       )}
       <View style={$followBox}>

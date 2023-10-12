@@ -92,14 +92,15 @@ const login = {
   forgotPassword: 'Quên mật khẩu?',
   orSignIn: 'Đăng nhập với:',
   contentSuggest:
-    'Đăng ký thành công! 🥰\nBây giờ chúng ta hãy bắt đầu chỉnh sửa một số thông tin nào',
+    '<b>Đăng ký thành công!</b>🥰\nBây giờ chúng ta hãy bắt đầu chỉnh sửa một số thông tin nào',
   letGo: 'Đi thôi',
   emailPhone: 'Email/SĐT',
   email: 'Email',
   password: 'Mật khẩu',
   confirmPassword: 'Xác nhận mật khẩu',
   newPassword: 'Mật khẩu mới',
-  openAccountSuccess: 'Mở khoá tài khoản thành công!',
+  openAccountSuccess: 'Mở khoá tài khoản thành công',
+  savedAccount: 'Tài khoản đã lưu',
 };
 
 const discovery = {
@@ -637,6 +638,7 @@ const alert = {
   cameraHadBeenDisable:
     'Đang không có quyền truy cập camera\nĐi tới cài đặt và mở quyền truy cập',
   openSetting: 'Mở cài đặt',
+  waitingMinute: 'Bạn đợi chút nhé',
 };
 
 const order = {

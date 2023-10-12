@@ -1,4 +1,3 @@
-import {FONT_SIZE} from 'asset';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {SafeView, StyleButton, StyleImage, StyleText} from 'components/base';
@@ -6,7 +5,8 @@ import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import React from 'react';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ImageStyle, TextStyle} from 'react-native';
+import {scale, verticalScale} from 'utility/scale';
 
 const AgreeTermOfService = ({
   route,
@@ -23,28 +23,26 @@ const AgreeTermOfService = ({
     <SafeView center safeBottom>
       <StyleImage
         source={Images.images.successful}
-        customStyle={styles.imageSuccess}
+        customStyle={$imageSuccess}
       />
       <StyleText
         i18Text="login.contentSuggest"
-        customStyle={styles.contentSuggest}
+        customStyle={$contentSuggest}
+        mode="html"
       />
       <StyleButton title="login.letGo" onPress={onGoToEditInformation} />
     </SafeView>
   );
 };
 
-const styles = ScaledSheet.create({
-  imageSuccess: {
-    width: Metrics.width / 2.5,
-    height: Metrics.width / 2.5,
-  },
-  contentSuggest: {
-    marginVertical: '32@vs',
-    fontSize: FONT_SIZE.f1,
-    textAlign: 'center',
-    paddingHorizontal: '40@s',
-  },
-});
+const $imageSuccess: ImageStyle = {
+  width: Metrics.width / 2.5,
+  height: Metrics.width / 2.5,
+};
+const $contentSuggest: TextStyle = {
+  marginVertical: verticalScale(32),
+  textAlign: 'center',
+  paddingHorizontal: scale(40),
+};
 
 export default AgreeTermOfService;

@@ -47,10 +47,17 @@ interface Props {
 const onAddPhone = () => {
   ModalInputEdit.show({
     onSave: async value => {
+      const newPhone = removePrefixPhone(value);
       await apiChangeInformation({
-        username: removePrefixPhone(value),
+        username: newPhone,
       });
-      updatePassport({profile: {information: {phone: value}}});
+      updatePassport({
+        profile: {
+          information: {
+            phone: newPhone,
+          },
+        },
+      });
     },
     keyboardType: 'numeric',
     placeholder: 'profile.phoneNumber',

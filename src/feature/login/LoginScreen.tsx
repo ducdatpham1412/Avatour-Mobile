@@ -2,7 +2,7 @@ import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {IconPaddingField} from 'asset/icons';
 import {Metrics, horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
-import {AppModalize} from 'components';
+import {AppModalize, Eye} from 'components';
 import {
   StyleButton,
   StyleContainer,
@@ -43,6 +43,7 @@ const LoginScreen = () => {
 
   const [rememberAccount, setRememberAccount] = useState(false);
   const [passwordPaddingRight, setPasswordPaddingRight] = useState(0);
+  const [securePw, setSecurePw] = useState(true);
 
   return (
     <View style={[$container, {backgroundColor: theme.p_600}]}>
@@ -68,62 +69,73 @@ const LoginScreen = () => {
           ]}>
           <View style={$inputView}>
             <StyleText i18Text="login.login" customStyle={$title} />
-            <View style={$username}>
-              <InputBox
-                i18Placeholder="login.emailPhone"
-                value={username}
-                onChangeText={value => setUsername(value)}
-                onSubmitEditing={() => inputPasswordRef.current.focus()}
-                style={[
-                  $input,
-                  {
-                    backgroundColor: theme.gray_100,
-                    paddingRight: moderateScale(70),
-                  },
-                ]}
-              />
-              <StyleTouchable
-                customStyle={$btnContact}
-                onPress={() => {
-                  Keyboard.dismiss();
-                  modalRef.current?.show();
-                }}>
-                <AntDesign
-                  name="contacts"
-                  style={[$iconContact, {color: theme.gray_600}]}
-                />
-              </StyleTouchable>
-            </View>
-            <View style={$password}>
-              <InputBox
-                ref={inputPasswordRef}
-                i18Placeholder="login.password"
-                value={password}
-                onChangeText={value => setPassword(value)}
-                style={[
-                  $input,
-                  {
-                    backgroundColor: theme.gray_100,
-                    paddingRight: passwordPaddingRight,
-                  },
-                ]}
-                returnKeyType="default"
-                secureTextEntry
-              />
-              <StyleTouchable
-                customStyle={$forgot}
-                onLayout={e =>
-                  setPasswordPaddingRight(
-                    e.nativeEvent.layout.width + scale(36),
-                  )
-                }
-                onPress={() => navigate(LOGIN_ROUTE.forgetPasswordType)}>
-                <StyleText
-                  i18Text="login.forgetPassword"
-                  customStyle={[$forgotText, {color: theme.gray_600}]}
-                />
-              </StyleTouchable>
-            </View>
+
+            <InputBox
+              i18Placeholder="login.emailPhone"
+              value={username}
+              onChangeText={value => setUsername(value)}
+              onSubmitEditing={() => inputPasswordRef.current.focus()}
+              rightCpn={
+                <StyleTouchable
+                  customStyle={$btnContact}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    modalRef.current?.show();
+                  }}>
+                  <AntDesign
+                    name="contacts"
+                    style={[$iconContact, {color: theme.gray_600}]}
+                  />
+                </StyleTouchable>
+              }
+              width="100%"
+              containerStyle={$username}
+              style={{
+                backgroundColor: theme.gray_100,
+                paddingRight: moderateScale(70),
+              }}
+            />
+
+            <InputBox
+              ref={inputPasswordRef}
+              i18Placeholder="login.password"
+              value={password}
+              onChangeText={value => setPassword(value)}
+              returnKeyType="default"
+              secureTextEntry={securePw}
+              width="100%"
+              containerStyle={$password}
+              style={{
+                backgroundColor: theme.gray_100,
+                paddingRight: passwordPaddingRight,
+              }}
+              rightCpn={
+                <StyleTouchable
+                  customStyle={$forgot}
+                  onLayout={e =>
+                    setPasswordPaddingRight(
+                      e.nativeEvent.layout.width + scale(36),
+                    )
+                  }
+                  onPress={() => {
+                    if (password) {
+                      setSecurePw(!securePw);
+                    } else {
+                      navigate(LOGIN_ROUTE.forgetPasswordType);
+                    }
+                  }}>
+                  {password ? (
+                    <Eye style={{color: theme.gray_600}} />
+                  ) : (
+                    <StyleText
+                      i18Text="login.forgetPassword"
+                      customStyle={[$forgotText, {color: theme.gray_600}]}
+                    />
+                  )}
+                </StyleTouchable>
+              }
+            />
+
             <View style={$rememberView}>
               <StyleTouchable
                 customStyle={[$rememberButton, {borderColor: theme.gray_600}]}
@@ -262,9 +274,6 @@ const $password: ViewStyle = {
   marginTop: verticalScale(16),
   justifyContent: 'center',
 };
-const $input: TextStyle = {
-  width: '100%',
-};
 const $forgot: ViewStyle = {
   position: 'absolute',
   right: scale(20),
@@ -280,6 +289,7 @@ const $rememberView: ViewStyle = {
   alignItems: 'center',
   marginTop: verticalScale(20),
   alignSelf: 'flex-start',
+  marginLeft: scale(8),
 };
 const $rememberButton: ViewStyle = {
   width: verticalScale(20),

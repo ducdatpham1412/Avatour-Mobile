@@ -278,7 +278,7 @@ export enum ERROR_KEY_ENUM {
   conversation_not_existed = 4.2,
 }
 
-export enum ERROR_MESSAGE_ENUM {
+export enum ERROR_MESSAGE {
   init_err = 'Having error',
 
   // common
@@ -317,6 +317,8 @@ export enum ERROR_MESSAGE_ENUM {
   not_joined_group_buying = 'not_joined_group_buying',
   bought_group_buying = 'bought_group_buying',
   group_buying_out_of_date = 'group_buying_out_of_date',
+  still_having_people_join = 'still_having_people_join',
+  still_having_location_draft = 'still_having_location_draft',
 
   // chat
   not_have_permission_delete_message = 'not_have_permission_delete_message',
@@ -354,20 +356,8 @@ export enum TYPE_AUTH_REQUEST {
   suggest_location = 6,
 }
 
-export enum TYPE_CHANGE {
-  password = 'password',
-  theme = 'theme',
-  language = 'language',
-  information = 'information',
-}
-
 export enum STATUS_JOIN_ESTIMATE {
   notActive = 0,
   active = 1,
   confirmed = 2,
-}
-
-export enum ERROR_MESSAGE {
-  still_having_people_join = 'still_having_people_join',
-  still_having_location_draft = 'still_having_location_draft',
 }
