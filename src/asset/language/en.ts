@@ -59,12 +59,11 @@ const login = {
   forgetPassword: 'Forgot password',
   chooseMethodSignUp: 'Choose method signing up',
   notHaveAccountYet: "Do not have an account? Let's",
+  sendAgain: 'Re-send',
   component: {
     sendOTP: {
       enterCode: 'Enter',
       confirmButton: 'Confirm',
-      sendAgain: 'Re-send ({{countdown}})',
-      sendAgainNoCount: 'Re-send',
     },
   },
   signUp: {
@@ -91,14 +90,15 @@ const login = {
   forgotPassword: 'Forgot password?',
   orSignIn: 'Sign in with:',
   contentSuggest:
-    'Register successfully! 🥰\nNow let’s go editting your profile',
+    '<b>Register successfully!</b>🥰\nNow let’s go editting your profile',
   letGo: "Let's go",
   emailPhone: 'Email/Phone',
   email: 'Email',
   password: 'Password',
   confirmPassword: 'Confirm password',
   newPassword: 'New password',
-  openAccountSuccess: 'Open account successfully!',
+  openAccountSuccess: 'Open account successfully',
+  savedAccount: 'Saved account',
 };
 
 const discovery = {
@@ -630,6 +630,7 @@ To be able to delete, please follow these two steps:
   cameraHadBeenDisable:
     'Camera had been disable\nGo to setting and open camera access',
   openSetting: 'Open setting',
+  waitingMinute: 'Wait a minute',
 };
 
 const order = {

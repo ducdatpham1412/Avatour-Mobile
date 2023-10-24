@@ -1,4 +1,5 @@
 import {BORDER_RADIUS} from 'asset';
+import {verticalMargin} from 'asset/metrics';
 import {AppModalize} from 'components';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useSafeArea, useTheme} from 'hook';
@@ -17,7 +18,7 @@ const ModalAccounts = (
   {listAccounts, onSelect, onDelete}: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const theme = useTheme();
   const isOverFlow8Items = listAccounts.length > 8;
 
@@ -25,9 +26,12 @@ const ModalAccounts = (
     if (isOverFlow8Items) {
       return (
         <ScrollView style={$scroll}>
-          {listAccounts.map(account => {
+          {listAccounts.map((account, index) => {
+            const isLast = index === listAccounts.length - 1;
             return (
-              <View key={account.username} style={$item}>
+              <View
+                key={account.username}
+                style={[$item, {marginBottom: isLast ? 0 : verticalMargin}]}>
                 <StyleTouchable
                   customStyle={[$content, {backgroundColor: theme.white}]}
                   onPress={() => onSelect?.(account)}>
@@ -48,11 +52,18 @@ const ModalAccounts = (
       );
     }
 
+    if (!listAccounts.length) {
+      return <StyleText originValue="---" customStyle={$textEmpty} />;
+    }
+
     return (
       <>
-        {listAccounts.map(account => {
+        {listAccounts.map((account, index) => {
+          const isLast = index === listAccounts.length - 1;
           return (
-            <View key={account.username} style={$item}>
+            <View
+              key={account.username}
+              style={[$item, {marginBottom: isLast ? 0 : verticalMargin}]}>
               <StyleTouchable
                 customStyle={[$content, {backgroundColor: theme.white}]}
                 onPress={() => onSelect?.(account)}>
@@ -77,9 +88,10 @@ const ModalAccounts = (
     <AppModalize
       ref={ref}
       containerStyle={{
-        paddingBottom: bottom,
+        paddingBottom,
         backgroundColor: theme.background,
-      }}>
+      }}
+      title="login.savedAccount">
       {renderContent()}
     </AppModalize>
   );
@@ -93,7 +105,6 @@ const $item: ViewStyle = {
   width: '90%',
   height: verticalScale(44),
   alignSelf: 'center',
-  marginTop: verticalScale(12),
   flexDirection: 'row',
 };
 const $content: ViewStyle = {
@@ -109,6 +120,10 @@ const $buttonX: ViewStyle = {
 };
 const $iconX: TextStyle = {
   fontSize: moderateScale(20),
+};
+const $textEmpty: TextStyle = {
+  marginTop: verticalMargin,
+  alignSelf: 'center',
 };
 
 export default forwardRef(ModalAccounts);

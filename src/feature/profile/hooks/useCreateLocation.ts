@@ -1,7 +1,7 @@
 import request from 'api/request';
 import {ACCOUNT} from 'asset/enum';
-import {isEqual} from 'lodash';
 import {useState} from 'react';
+import isEqual from 'react-fast-compare';
 import useSWRMutation from 'swr/mutation';
 import useMyLocations from './useMyLocations';
 import useOtherProfile from './useOtherProfile';
@@ -135,7 +135,9 @@ const useCreateLocation = (params: ParamsCreateLocation) => {
         form.append('duration', duration);
       }
 
-      await request.put(`/admin/suppliers/${params.id}`, form);
+      await request.put(`/admin/suppliers/${params.id}`, form, {
+        timeout: 30000,
+      });
       await mutate();
       await mutateProfile(
         pre => {

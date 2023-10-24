@@ -220,7 +220,11 @@ export const formatInputNumber = (
     if (!params?.isDecimal) {
       return null;
     }
-    value = `${value.slice(0, -1)}.`;
+    const temp = value.slice(0, -1);
+    if (temp.includes('.')) {
+      return null;
+    }
+    value = `${temp}.`;
   } else if (!validateIsNumber(lastCharacter)) {
     return null;
   }

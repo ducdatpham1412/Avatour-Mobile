@@ -105,7 +105,7 @@ const FollowerScreen = ({profile, type}: Props) => {
         );
       }
     }
-  }, [data?.totalItems, type]);
+  }, [data?.totalItems, type, mutate]);
 
   const onFollow = async (item: TypeFollow) => {
     let savedList: TypeFollow[] = [];

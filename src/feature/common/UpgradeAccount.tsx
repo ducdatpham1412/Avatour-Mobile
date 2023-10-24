@@ -21,6 +21,7 @@ import {verticalScale} from 'utility/scale';
 import {validateIsPhone} from 'utility/validate';
 import ModalBankAccount from './components/ModalBankAccount';
 import ModalChooseBank from './components/ModalChooseBank';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 const UpgradeAccount = () => {
   const timeOutRef = useRef<NodeJS.Timeout>();
@@ -52,28 +53,32 @@ const UpgradeAccount = () => {
     };
   }, []);
 
-  const onConfirm = async () => {
-    try {
-      setLoading(true);
-      await apiUpgradeAccount({
-        name,
-        location,
-        phone,
-        bank_code: chosenBank?.code || chosenBank?.shortName || '',
-        bank_account: bankAccount,
-      });
-      await mutate();
-      ModalAlert.success({
-        i18Content: 'profile.requestUpgradeSuccess',
-        onClose: () => goBack(),
-      });
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
-      });
-    } finally {
-      setLoading(false);
-    }
+  const onConfirm = () => {
+    checkAuthenticated({
+      onAuthenticated: async () => {
+        try {
+          setLoading(true);
+          await apiUpgradeAccount({
+            name,
+            location,
+            phone,
+            bank_code: chosenBank?.code || chosenBank?.shortName || '',
+            bank_account: bankAccount,
+          });
+          await mutate();
+          ModalAlert.success({
+            i18Content: 'profile.requestUpgradeSuccess',
+            onClose: () => goBack(),
+          });
+        } catch (err) {
+          ModalAlert.error({
+            content: err,
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   /**

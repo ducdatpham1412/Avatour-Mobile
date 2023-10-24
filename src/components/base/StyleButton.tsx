@@ -6,6 +6,7 @@ import {detectFromStyle} from 'utility/assistant';
 import {moderateScale, scale} from 'utility/scale';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
+import {LoadingIcon} from 'feature/profile/screens';
 
 interface StyleTouchableProps {
   title: I18Normalize;
@@ -33,7 +34,16 @@ const StyleButton = (props: StyleTouchableProps) => {
       disable={disable || isLoading}
       disableOpacity={1}>
       {isLoading ? (
-        <ActivityIndicator color={(tintColor as string) ?? theme.white} />
+        <LoadingIcon
+          withMessage
+          layout="horizontal"
+          loadingCpn={
+            <ActivityIndicator color={(tintColor as string) ?? theme.white} />
+          }
+          textWaitingStyle={{
+            color: theme.white,
+          }}
+        />
       ) : (
         <StyleText
           i18Text={title || 'common.done'}

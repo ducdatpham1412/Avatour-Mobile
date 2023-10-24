@@ -11,7 +11,7 @@ import {
 import {CircleButton} from 'components/common';
 import InputBox from 'components/common/InputBox';
 import {useLoading, useTheme} from 'hook';
-import {AppParamsList, LOGIN_ROUTE} from 'navigation/config';
+import {AppParamsList, LOGIN_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
 import {FlatList, TextInput, TextStyle, View, ViewStyle} from 'react-native';
@@ -26,6 +26,7 @@ import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
 import {impactLight} from 'utility/haptic';
 import {moderateScale} from 'utility/scale';
 import GenderSwipe from '../components/GenderSwipe';
+import {navigate} from 'navigation/NavigationService';
 
 const defaultDate = new Date(2000, 0, 1);
 
@@ -77,6 +78,7 @@ const EditBasicInformation = ({
             itemLoginSuccess,
             rememberAccount: isKeep,
           });
+          navigate(ROOT_SCREEN.mainScreen);
         } catch (err) {
           await AsyncStore.logOut();
           ModalAlert.error({

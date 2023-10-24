@@ -1,6 +1,6 @@
 import {setToken} from 'app-redux';
 import Store from 'app-redux/store';
-import {ERROR_KEY_ENUM} from 'asset/enum';
+import {ERROR_MESSAGE} from 'asset/enum';
 import Config from 'asset/env';
 import axios, {InternalAxiosRequestConfig} from 'axios';
 import {logger} from 'utility/assistant';
@@ -8,8 +8,6 @@ import AsyncStorage from 'utility/asyncStore';
 import Authentication from 'utility/authentication';
 
 const baseURL = Config.API_URL;
-
-const AUTH_URL_REFRESH_TOKEN = `${baseURL}/auth/refresh-token`;
 
 const request = axios.create({
   baseURL,
@@ -21,7 +19,10 @@ const request = axios.create({
 
 // for multiple requests
 let isRefreshing = false;
-let failedQueue: Array<any> = [];
+let failedQueue: Array<{
+  resolve: (v: any) => void;
+  reject: (v: any) => void;
+}> = [];
 
 const processQueue = (error: any, token: string | null | undefined = null) => {
   failedQueue.forEach((item: any) => {
@@ -46,6 +47,7 @@ request.interceptors.request.use(
       const activeUser = await AsyncStorage.getActiveUser();
       token = activeUser?.token;
     }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -73,7 +75,7 @@ request.interceptors.response.use(
 
     logger('Response error: ', errorMessage);
 
-    if (errorKey === ERROR_KEY_ENUM.token_expired && !config.retry) {
+    if (errorMessage === ERROR_MESSAGE.token_expired && !config.retry) {
       // if is refreshing token in other request
       if (isRefreshing) {
         try {
@@ -93,7 +95,7 @@ request.interceptors.response.use(
 
       const activeUser = await AsyncStorage.getActiveUser();
       try {
-        const res = await axios.post(AUTH_URL_REFRESH_TOKEN, {
+        const res = await axios.post(`${baseURL}/auth/refresh-token`, {
           refresh: activeUser?.refreshToken,
         });
         const newToken = res.data.data.access;
@@ -108,16 +110,26 @@ request.interceptors.response.use(
       } catch (err) {
         // handle when refreshing token, refresh is blacked list
         const temp: any = err;
-        const _error = temp.response.data;
-        if (_error.errorKey === ERROR_KEY_ENUM.token_blacklisted) {
+        const __error = temp.response.data;
+        if (__error.errorMessage === ERROR_MESSAGE.token_blacklisted) {
           Authentication.logOut({
             callApiLogOut: false,
           });
         }
-        return Promise.reject(_error.errorMessage);
+        // throw error all requests when refreshing
+        processQueue('Errors', null);
+        return Promise.reject(__error.errorMessage);
       } finally {
         isRefreshing = false;
       }
+    } else if (errorMessage?.code === 'user_not_found') {
+      // This is bug of system, when you call api with token not found
+      await Authentication.logOut({
+        callApiLogOut: false,
+      });
+      config.headers.Authorization = undefined;
+      processQueue('Errors', null);
+      return request(config);
     }
 
     error.message = errorMessage || 'Have some errors';

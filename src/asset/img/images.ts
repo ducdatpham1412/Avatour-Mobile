@@ -81,7 +81,6 @@ const Images = {
     // discovery
     defaultImage: require('./img_default_image.png'),
     defaultAvatar: require('./img_default_avatar.png'),
-    loadingPlane: require('./img_loading_plane.json'),
     loadingTravel: require('./img_loading_travel.json'),
     congratulation: require('./img_congratulation.json'),
     travelCamping: require('./img_travel_camping.png'),

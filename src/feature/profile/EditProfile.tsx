@@ -714,11 +714,14 @@ const EditProfile = () => {
     state => state.accountSlice.passport.profile,
   );
 
-  if (account_type === ACCOUNT.user || account_type === ACCOUNT.shareTour) {
-    return <EditProfileUser />;
+  const isSupplier =
+    account_type === ACCOUNT.shop || account_type === ACCOUNT.location;
+
+  if (isSupplier) {
+    return <EditProfileSupplier />;
   }
 
-  return <EditProfileSupplier />;
+  return <EditProfileUser />;
 };
 
 const imageWidth = Metrics.width - scale(32);

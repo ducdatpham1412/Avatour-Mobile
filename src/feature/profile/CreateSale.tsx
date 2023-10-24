@@ -52,7 +52,7 @@ const {width} = Metrics;
 
 const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {itemNew, itemEdit, itemError} = route.params ?? {};
 
   const theme = useTheme();
@@ -126,7 +126,6 @@ const CreateSale = ({route}: Props) => {
 
   const headerRight = () => {
     if (itemEdit) {
-      let disableButtonEdit = true;
       const temp: typeof initValue.current = {
         postId: itemEdit.id,
         name,
@@ -134,7 +133,7 @@ const CreateSale = ({route}: Props) => {
         images,
         prices,
       };
-      disableButtonEdit = isEqual(temp, initValue.current);
+      const disableButtonEdit = isEqual(temp, initValue.current);
 
       return (
         <View style={$header}>
@@ -269,7 +268,7 @@ const CreateSale = ({route}: Props) => {
         onGoBack,
       }}
       scrollEnabled
-      customStyle={[$container, {paddingBottom: bottom || safePaddingNotZero}]}>
+      customStyle={[$container, {paddingBottom}]}>
       <ScrollCropImages
         images={images}
         width={width}

@@ -1,7 +1,7 @@
 import {FONT_SIZE} from 'asset/standardValue';
 import {AppInput, StyleText} from 'components/base';
 import {useTheme} from 'hook';
-import React, {forwardRef} from 'react';
+import React, {ReactNode, forwardRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   Platform,
@@ -18,9 +18,13 @@ import {scale, verticalScale} from 'utility/scale';
 type Props = TextInputProps & {
   i18Placeholder?: I18Normalize;
   containerStyle?: StyleProp<ViewStyle>;
-  isError?: boolean;
-  textError?: I18Normalize;
   width?: ViewStyle['width'];
+  rightCpn?: ReactNode;
+  errorProps?: {
+    isError?: boolean;
+    textError?: I18Normalize;
+    inputWithRightCpnStyle?: StyleProp<ViewStyle>;
+  };
 };
 
 interface ErrorTextProps {
@@ -42,7 +46,7 @@ const ErrorText = ({text}: ErrorTextProps) => {
       <StyleText
         i18Text={text}
         customStyle={[$textError, {color: theme.red}]}
-        onTextLayout={e => {
+        onTextLayout={() => {
           //   const totalHeight =
           //     e.nativeEvent.lines.reduce(
           //       (pre, current) => pre + current.height,
@@ -59,26 +63,96 @@ const ErrorText = ({text}: ErrorTextProps) => {
 };
 
 const InputBox = (
-  {i18Placeholder, containerStyle, isError, textError, width, ...rest}: Props,
+  {i18Placeholder, containerStyle, width, rightCpn, errorProps, ...rest}: Props,
   ref: any,
 ) => {
   const theme = useTheme();
   const {t} = useTranslation();
 
-  if (isError !== undefined) {
-    return (
-      <View style={[$container, {width: width ?? '80%'}, containerStyle]}>
+  if (errorProps !== undefined) {
+    const renderInput = () => {
+      if (rightCpn) {
+        return (
+          <View
+            style={[
+              $inputWithRightCpn,
+              {
+                backgroundColor: theme.white,
+              },
+              errorProps.inputWithRightCpnStyle,
+            ]}>
+            <AppInput
+              ref={ref}
+              {...rest}
+              placeholder={
+                i18Placeholder ? t(i18Placeholder) : rest.placeholder
+              }
+              style={[
+                $input,
+                {
+                  width: undefined,
+                  flex: 1,
+                  color: theme.black,
+                },
+                rest.style,
+              ]}
+            />
+            {rightCpn}
+          </View>
+        );
+      }
+
+      return (
         <AppInput
           ref={ref}
           {...rest}
           placeholder={i18Placeholder ? t(i18Placeholder) : rest.placeholder}
           style={[
             $input,
-            {width: '100%', backgroundColor: theme.white, color: theme.black},
+            {
+              width: '100%',
+              backgroundColor: theme.white,
+              color: theme.black,
+            },
             rest.style,
           ]}
         />
-        {isError && textError && <ErrorText text={textError} />}
+      );
+    };
+
+    return (
+      <View style={[$container, {width: width ?? '80%'}, containerStyle]}>
+        {renderInput()}
+        {!!errorProps.isError && !!errorProps.textError && (
+          <ErrorText text={errorProps.textError} />
+        )}
+      </View>
+    );
+  }
+
+  if (rightCpn) {
+    return (
+      <View
+        style={[
+          $containerWithRightCpn,
+          {width: width ?? '80%', backgroundColor: theme.white},
+          containerStyle,
+        ]}>
+        <AppInput
+          ref={ref}
+          {...rest}
+          placeholder={i18Placeholder ? t(i18Placeholder) : rest.placeholder}
+          style={[
+            $input,
+            {
+              width: undefined,
+              flex: 1,
+              color: theme.black,
+            },
+            rest.style,
+          ]}
+        />
+        {rightCpn}
       </View>
     );
   }
@@ -106,6 +180,12 @@ const InputBox = (
 const $container: ViewStyle = {
   alignSelf: 'center',
 };
+const $containerWithRightCpn: ViewStyle = {
+  alignSelf: 'center',
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderRadius: 100,
+};
 const $input: TextStyle = {
   width: '80%',
   borderRadius: 100,
@@ -122,6 +202,12 @@ const $input: TextStyle = {
 const $textError: TextStyle = {
   fontSize: FONT_SIZE.f4,
   paddingHorizontal: scale(15),
+};
+const $inputWithRightCpn: ViewStyle = {
+  flex: 1,
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderRadius: 100,
 };
 
 export default forwardRef(InputBox);

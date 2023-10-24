@@ -52,8 +52,10 @@ const ForgetPasswordType = () => {
           setUsername(text);
         }}
         autoFocus
-        isError={disable && !!username}
-        textError="alert.invalidUsername"
+        errorProps={{
+          isError: disable && !!username,
+          textError: 'alert.invalidUsername',
+        }}
         width="90%"
         style={$input}
       />
