@@ -18,10 +18,13 @@ import {scale, verticalScale} from 'utility/scale';
 type Props = TextInputProps & {
   i18Placeholder?: I18Normalize;
   containerStyle?: StyleProp<ViewStyle>;
-  isError?: boolean;
-  textError?: I18Normalize;
   width?: ViewStyle['width'];
   rightCpn?: ReactNode;
+  errorProps?: {
+    isError?: boolean;
+    textError?: I18Normalize;
+    inputWithRightCpnStyle?: StyleProp<ViewStyle>;
+  };
 };
 
 interface ErrorTextProps {
@@ -60,25 +63,24 @@ const ErrorText = ({text}: ErrorTextProps) => {
 };
 
 const InputBox = (
-  {
-    i18Placeholder,
-    containerStyle,
-    isError,
-    textError,
-    width,
-    rightCpn,
-    ...rest
-  }: Props,
+  {i18Placeholder, containerStyle, width, rightCpn, errorProps, ...rest}: Props,
   ref: any,
 ) => {
   const theme = useTheme();
   const {t} = useTranslation();
 
-  if (isError !== undefined) {
+  if (errorProps !== undefined) {
     const renderInput = () => {
       if (rightCpn) {
         return (
-          <View style={$inputWithRightCpn}>
+          <View
+            style={[
+              $inputWithRightCpn,
+              {
+                backgroundColor: theme.white,
+              },
+              errorProps.inputWithRightCpnStyle,
+            ]}>
             <AppInput
               ref={ref}
               {...rest}
@@ -88,8 +90,8 @@ const InputBox = (
               style={[
                 $input,
                 {
-                  width: '100%',
-                  backgroundColor: theme.white,
+                  width: undefined,
+                  flex: 1,
                   color: theme.black,
                 },
                 rest.style,
@@ -121,14 +123,21 @@ const InputBox = (
     return (
       <View style={[$container, {width: width ?? '80%'}, containerStyle]}>
         {renderInput()}
-        {isError && textError && <ErrorText text={textError} />}
+        {!!errorProps.isError && !!errorProps.textError && (
+          <ErrorText text={errorProps.textError} />
+        )}
       </View>
     );
   }
 
   if (rightCpn) {
     return (
-      <View style={[$container, {width: width ?? '80%'}, containerStyle]}>
+      <View
+        style={[
+          $containerWithRightCpn,
+          {width: width ?? '80%', backgroundColor: theme.white},
+          containerStyle,
+        ]}>
         <AppInput
           ref={ref}
           {...rest}
@@ -136,8 +145,8 @@ const InputBox = (
           style={[
             $input,
             {
-              width: '100%',
-              backgroundColor: theme.white,
+              width: undefined,
+              flex: 1,
               color: theme.black,
             },
             rest.style,
@@ -171,6 +180,12 @@ const InputBox = (
 const $container: ViewStyle = {
   alignSelf: 'center',
 };
+const $containerWithRightCpn: ViewStyle = {
+  alignSelf: 'center',
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderRadius: 100,
+};
 const $input: TextStyle = {
   width: '80%',
   borderRadius: 100,
@@ -189,9 +204,10 @@ const $textError: TextStyle = {
   paddingHorizontal: scale(15),
 };
 const $inputWithRightCpn: ViewStyle = {
-  width: '100%',
+  flex: 1,
   flexDirection: 'row',
   alignItems: 'center',
+  borderRadius: 100,
 };
 
 export default forwardRef(InputBox);

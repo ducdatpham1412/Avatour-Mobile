@@ -40,19 +40,22 @@ import {
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 import AsyncStore from 'utility/asyncStore';
+import {useTranslation} from 'react-i18next';
 
 const SendOTP = ({
   route: {params},
 }: RouteParams<AppParamsList[LOGIN_ROUTE.sendOTP]>) => {
   const {paramsOTP} = params;
   const theme = useTheme();
+  const {t} = useTranslation();
   const isFocusedScreen = useIsFocused();
+
   const codeRef = useRef<TextInput>(null);
+
   const {loading, setLoading} = useLoading();
   const {countdown, resetCountdown, clearCountdown} = useCountdown(
     standValue.COUNT_DOWN,
   );
-  const shouldSendAgain = countdown <= 0;
 
   const [isAnimation, setIsAnimation] = useState(false);
   const [code, setCode] = useState('');
@@ -85,6 +88,7 @@ const SendOTP = ({
     Vibration.vibrate();
     setIsAnimation(true);
     setCode('');
+    codeRef.current?.focus();
   };
 
   const onPressConfirm = async () => {
@@ -277,15 +281,12 @@ const SendOTP = ({
 
       <StyleTouchable
         customStyle={$btnSendAgain}
-        disable={!shouldSendAgain}
+        disable={countdown > 0}
         onPress={onSendAgain}>
         <StyleText
-          i18Text={
-            shouldSendAgain
-              ? 'login.component.sendOTP.sendAgain'
-              : 'login.component.sendOTP.sendAgainNoCount'
-          }
-          i18Params={{countdown}}
+          originValue={`${t('login.sendAgain')}${
+            countdown <= 0 ? '' : ` (${countdown})`
+          }`}
           customStyle={$textSendAgain}
         />
       </StyleTouchable>

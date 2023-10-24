@@ -42,7 +42,6 @@ const LoginScreen = () => {
   const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
 
   const [rememberAccount, setRememberAccount] = useState(false);
-  const [passwordPaddingRight, setPasswordPaddingRight] = useState(0);
   const [securePw, setSecurePw] = useState(true);
 
   return (
@@ -89,11 +88,12 @@ const LoginScreen = () => {
                 </StyleTouchable>
               }
               width="100%"
-              containerStyle={$username}
-              style={{
-                backgroundColor: theme.gray_100,
-                paddingRight: moderateScale(70),
-              }}
+              containerStyle={[
+                $username,
+                {
+                  backgroundColor: theme.gray_100,
+                },
+              ]}
             />
 
             <InputBox
@@ -104,19 +104,15 @@ const LoginScreen = () => {
               returnKeyType="default"
               secureTextEntry={securePw}
               width="100%"
-              containerStyle={$password}
-              style={{
-                backgroundColor: theme.gray_100,
-                paddingRight: passwordPaddingRight,
-              }}
+              containerStyle={[
+                $password,
+                {
+                  backgroundColor: theme.gray_100,
+                },
+              ]}
               rightCpn={
                 <StyleTouchable
                   customStyle={$forgot}
-                  onLayout={e =>
-                    setPasswordPaddingRight(
-                      e.nativeEvent.layout.width + scale(36),
-                    )
-                  }
                   onPress={() => {
                     if (password) {
                       setSecurePw(!securePw);
@@ -125,7 +121,7 @@ const LoginScreen = () => {
                     }
                   }}>
                   {password ? (
-                    <Eye style={{color: theme.gray_600}} />
+                    <Eye open={!securePw} style={{color: theme.gray_600}} />
                   ) : (
                     <StyleText
                       i18Text="login.forgetPassword"
@@ -255,28 +251,21 @@ const $title: TextStyle = {
   fontWeight: 'bold',
 };
 const $username: TextStyle = {
-  width: '100%',
   marginTop: verticalScale(20),
-  justifyContent: 'center',
 };
 const $btnContact: ViewStyle = {
-  position: 'absolute',
-  width: moderateScale(30),
-  right: scale(20),
-  paddingVertical: verticalScale(4),
-  alignItems: 'flex-end',
+  paddingHorizontal: scale(16),
+  paddingVertical: scale(4),
 };
 const $iconContact: TextStyle = {
   fontSize: moderateScale(20),
 };
 const $password: ViewStyle = {
-  width: '100%',
   marginTop: verticalScale(16),
-  justifyContent: 'center',
+  backgroundColor: 'lightblue',
 };
 const $forgot: ViewStyle = {
-  position: 'absolute',
-  right: scale(20),
+  paddingHorizontal: scale(16),
   paddingVertical: scale(4),
 };
 const $forgotText: TextStyle = {

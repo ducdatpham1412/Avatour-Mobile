@@ -59,12 +59,11 @@ const login = {
   forgetPassword: 'Forgot password',
   chooseMethodSignUp: 'Choose method signing up',
   notHaveAccountYet: "Do not have an account? Let's",
+  sendAgain: 'Re-send',
   component: {
     sendOTP: {
       enterCode: 'Enter',
       confirmButton: 'Confirm',
-      sendAgain: 'Re-send ({{countdown}})',
-      sendAgainNoCount: 'Re-send',
     },
   },
   signUp: {

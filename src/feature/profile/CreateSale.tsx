@@ -52,7 +52,7 @@ const {width} = Metrics;
 
 const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {itemNew, itemEdit, itemError} = route.params ?? {};
 
   const theme = useTheme();
@@ -268,7 +268,7 @@ const CreateSale = ({route}: Props) => {
         onGoBack,
       }}
       scrollEnabled
-      customStyle={[$container, {paddingBottom: bottom || safePaddingNotZero}]}>
+      customStyle={[$container, {paddingBottom}]}>
       <ScrollCropImages
         images={images}
         width={width}

@@ -59,12 +59,11 @@ const login = {
   forgetPassword: 'Quên mật khẩu',
   chooseMethodSignUp: 'Chọn cách thức đăng ký tài khoản',
   notHaveAccountYet: 'Bạn chưa có tài khoản? Hãy',
+  sendAgain: 'Gửi lại',
   component: {
     sendOTP: {
       enterCode: 'Nhập mã',
       confirmButton: 'Xác nhận',
-      sendAgain: 'Gửi lại ({{countdown}})',
-      sendAgainNoCount: 'Gửi lại',
     },
   },
   signUp: {

@@ -5,11 +5,11 @@ import {moderateScale} from 'utility/scale';
 
 interface Props {
   open?: boolean;
-  onChangeOpen?: (v: boolean) => void;
+  onPress?: () => void;
   style?: StyleProp<TextStyle>;
 }
 
-const Eye = ({open, onChangeOpen, style}: Props) => {
+const Eye = ({open, onPress, style}: Props) => {
   return (
     <Entypo
       name={open ? 'eye' : 'eye-with-line'}
@@ -19,7 +19,7 @@ const Eye = ({open, onChangeOpen, style}: Props) => {
         },
         style,
       ]}
-      onPress={onChangeOpen ? () => onChangeOpen?.(!open) : undefined}
+      onPress={onPress ? () => onPress?.() : undefined}
     />
   );
 };

@@ -6,7 +6,7 @@ import {useTheme} from 'hook';
 import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {onGoToProfile} from 'utility/assistant';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
   item: TypeFollow;
@@ -38,15 +38,13 @@ const ItemFollow = ({item, onFollow}: Props) => {
         )}
       </View>
 
-      <View style={$buttonFollowBox}>
-        {item.relationship === RELATIONSHIP.notFollowing && (
-          <StyleTouchable
-            customStyle={[$buttonFollow, {backgroundColor: theme.p_100}]}
-            onPress={onFollow}>
-            <StyleText i18Text="profile.follow" customStyle={$textFollow} />
-          </StyleTouchable>
-        )}
-      </View>
+      {item.relationship === RELATIONSHIP.notFollowing && (
+        <StyleTouchable
+          customStyle={[$buttonFollow, {backgroundColor: theme.p_100}]}
+          onPress={onFollow}>
+          <StyleText i18Text="profile.follow" customStyle={$textFollow} />
+        </StyleTouchable>
+      )}
     </StyleTouchable>
   );
 };
@@ -68,16 +66,12 @@ const $textDescription: TextStyle = {
   fontSize: FONT_SIZE.f3,
   marginTop: verticalScale(2),
 };
-const $buttonFollowBox: ViewStyle = {
-  width: moderateScale(80),
-  alignItems: 'center',
-  justifyContent: 'center',
-};
 const $buttonFollow: ViewStyle = {
-  width: '100%',
+  paddingHorizontal: scale(16),
   paddingVertical: verticalScale(8),
   alignItems: 'center',
   borderRadius: 30,
+  marginLeft: scale(12),
 };
 const $textFollow: TextStyle = {
   fontSize: FONT_SIZE.f4,

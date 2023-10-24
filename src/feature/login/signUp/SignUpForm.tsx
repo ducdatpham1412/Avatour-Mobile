@@ -1,6 +1,8 @@
 import {apiRequestOTP} from 'api/authentication';
 import {TYPE_OTP} from 'asset/enum';
+import {verticalMargin} from 'asset/metrics';
 import {FONT_SIZE, standValue, TERMS_URL} from 'asset/standardValue';
+import {Eye} from 'components';
 import {
   StyleButton,
   StyleContainer,
@@ -15,7 +17,7 @@ import {ModalAlert} from 'navigation/screen/modals';
 import React, {Dispatch, SetStateAction, useRef, useState} from 'react';
 import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {ms, s, vs} from 'utility/scale';
+import {ms, s, scale, vs} from 'utility/scale';
 import {validateIsEmail, validatePassword} from 'utility/validate';
 
 const onSignUp = async (
@@ -51,8 +53,13 @@ const SignUpForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
   const [haveAgreed, setHaveAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [securePw, setSecurePw] = useState({
+    pw: true,
+    cfPw: true,
+  });
 
   const isValidEmail = validateIsEmail(username);
   const isValidPassword = validatePassword(password);
@@ -70,8 +77,10 @@ const SignUpForm = () => {
           i18Placeholder="login.email"
           onChangeText={value => setUsername(value)}
           onSubmitEditing={() => passwordRef.current?.focus()}
-          isError={!!username && !isValidEmail}
-          textError="alert.inValidEmail"
+          errorProps={{
+            isError: !!username && !isValidEmail,
+            textError: 'alert.inValidEmail',
+          }}
           width="90%"
         />
         <InputBox
@@ -80,11 +89,27 @@ const SignUpForm = () => {
           onChangeText={value => setPassword(value)}
           onSubmitEditing={() => confirmPasswordRef.current?.focus()}
           maxLength={standValue.PASSWORD_MAX_LENGTH}
-          isError={!!password && !isValidPassword}
-          textError="alert.regexPass"
-          style={$inputPassword}
+          errorProps={{
+            isError: !!password && !isValidPassword,
+            textError: 'alert.regexPass',
+          }}
+          rightCpn={
+            <Eye
+              open={!securePw.pw}
+              onPress={() =>
+                setSecurePw(pre => ({
+                  pw: !pre.pw,
+                  cfPw: pre.cfPw,
+                }))
+              }
+              style={{
+                color: theme.gray_600,
+                paddingHorizontal: scale(12),
+              }}
+            />
+          }
           containerStyle={$inputPassword}
-          secureTextEntry
+          secureTextEntry={securePw.pw}
           width="90%"
         />
         <InputBox
@@ -92,12 +117,28 @@ const SignUpForm = () => {
           i18Placeholder="login.confirmPassword"
           onChangeText={value => setConfirmPassword(value)}
           maxLength={standValue.PASSWORD_MAX_LENGTH}
-          isError={!!confirmPassword && confirmPassword !== password}
-          textError="alert.passNotMatch"
-          style={$inputPassword}
+          errorProps={{
+            isError: !!confirmPassword && confirmPassword !== password,
+            textError: 'alert.passNotMatch',
+          }}
           containerStyle={$inputPassword}
-          secureTextEntry
+          secureTextEntry={securePw.cfPw}
           width="90%"
+          rightCpn={
+            <Eye
+              open={!securePw.cfPw}
+              onPress={() =>
+                setSecurePw(pre => ({
+                  pw: pre.pw,
+                  cfPw: !pre.cfPw,
+                }))
+              }
+              style={{
+                color: theme.gray_600,
+                paddingHorizontal: scale(12),
+              }}
+            />
+          }
         />
       </View>
 
@@ -157,13 +198,13 @@ const $inputView: ViewStyle = {
   marginTop: vs(20),
 };
 const $inputPassword: ViewStyle = {
-  marginTop: vs(8),
+  marginTop: verticalMargin,
 };
 const $termPolicyView: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
-  paddingHorizontal: '5%',
-  marginTop: vs(15),
+  paddingHorizontal: '7%',
+  marginTop: verticalMargin,
 };
 const $titleAgree: TextStyle = {
   fontSize: FONT_SIZE.f3,
@@ -186,6 +227,7 @@ const $boxTitleAgree: ViewStyle = {
 };
 const $button: ViewStyle = {
   marginTop: vs(60),
+  width: '90%',
 };
 
 export default SignUpForm;

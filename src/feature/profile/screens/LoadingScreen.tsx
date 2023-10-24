@@ -21,7 +21,7 @@ interface Props {
 
 type LoadingIconProps = {
   size?: number;
-  layout: 'horizontal' | 'vertical';
+  layout?: 'horizontal' | 'vertical';
   loadingCpn?: ReactNode;
   withMessage?: boolean;
   textWaitingStyle?: StyleProp<TextStyle>;
