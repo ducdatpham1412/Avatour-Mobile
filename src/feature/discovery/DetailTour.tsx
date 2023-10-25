@@ -170,15 +170,9 @@ const ButtonPublicTour = ({aim, tourId}: ButtonPublicTourProps) => {
         icon: <StyleIcon source={Images.icons.nice} size={80} />,
       });
     } catch (err) {
-      if (err === ERROR_MESSAGE.still_having_location_draft) {
-        ModalAlert.error({
-          i18Content: 'tour.tourStillHaveDraftLocation',
-        });
-      } else {
-        ModalAlert.error({
-          content: err,
-        });
-      }
+      ModalAlert.error({
+        content: err,
+      });
     }
   };
 

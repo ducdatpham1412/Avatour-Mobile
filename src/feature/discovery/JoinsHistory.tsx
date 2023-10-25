@@ -13,15 +13,17 @@ import {ItemJoin} from './components';
 type TypeRouteParams = RouteParams<AppParamsList[ROOT_SCREEN.joinsHistory]>;
 
 const EmptyView = () => {
+  const theme = useTheme();
+
   return (
     <View style={$empty}>
       <ImageEmpty size={300} />
       <StyleText
         i18Text="discovery.notHaveAnyOrder"
         customStyle={{
-          fontSize: FONT_SIZE.f1,
+          fontSize: FONT_SIZE.f3,
           marginTop: verticalMargin,
-          fontWeight: 'bold',
+          color: theme.gray_500,
         }}
       />
     </View>

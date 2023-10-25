@@ -1,12 +1,12 @@
 import {apiChangePassword} from 'api/setting';
 import {useAppSelector} from 'app-redux/store';
-import {BORDER_RADIUS} from 'asset';
-import {AppInput, StyleButton} from 'components/base';
+import {Eye} from 'components';
+import {StyleButton} from 'components/base';
+import {InputBox} from 'components/common';
 import {useLoading, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {TextInput, TextStyle, ViewStyle} from 'react-native';
+import {Keyboard, TextInput, TextStyle, ViewStyle} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -14,9 +14,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {verticalScale} from 'react-native-size-matters';
 import {useAsync} from 'react-use';
-import {borderWidthTiny} from 'utility/assistant';
 import AsyncStorage from 'utility/asyncStore';
-import {moderateScale, scale} from 'utility/scale';
+import {scale} from 'utility/scale';
 import {validatePassword} from 'utility/validate';
 
 interface Props {
@@ -25,7 +24,6 @@ interface Props {
 }
 
 const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
-  const {t} = useTranslation();
   const {modeExp} = useAppSelector(state => state.accountSlice);
   const theme = useTheme();
   const {loading, setLoading} = useLoading();
@@ -35,17 +33,29 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
     height: aim.value,
   }));
 
-  const ref_newPassword = useRef<TextInput>(null);
-  const ref_passwordCf = useRef<TextInput>(null);
+  const newPwRef = useRef<TextInput>(null);
+  const cfPwRef = useRef<TextInput>(null);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const [securePw, setSecurePw] = useState({
+    curPw: true,
+    pw: true,
+    cfPw: true,
+  });
+
   useAsync(async () => {
     aim.value = withTiming(isOpening ? verticalScale(250) : 0, {
       duration: 300,
     });
+    setSecurePw({
+      curPw: true,
+      pw: true,
+      cfPw: true,
+    });
+    Keyboard.dismiss();
   }, [isOpening]);
 
   const confirmChangePassword = async () => {
@@ -101,51 +111,85 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
 
   return (
     <Animated.View style={[$container, heightStyle]}>
-      <AppInput
+      <InputBox
         value={currentPassword}
-        placeholder={t('setting.securityAndLogin.nowPass')}
-        style={[
-          $moduleInput,
-          {
-            borderColor: theme.gray_500,
-          },
-        ]}
-        secureTextEntry
-        onSubmitEditing={() => ref_newPassword.current?.focus()}
+        i18Placeholder="setting.currentPassword"
+        containerStyle={$moduleInput}
+        secureTextEntry={securePw.curPw}
+        onSubmitEditing={() => newPwRef.current?.focus()}
         onChangeText={text => setCurrentPassword(text)}
+        rightCpn={
+          <Eye
+            open={!securePw.curPw}
+            onPress={() =>
+              setSecurePw(pre => ({
+                curPw: !pre.curPw,
+                pw: pre.pw,
+                cfPw: pre.cfPw,
+              }))
+            }
+            style={{
+              paddingHorizontal: scale(12),
+              color: theme.gray_600,
+            }}
+          />
+        }
       />
-      <AppInput
+
+      <InputBox
+        ref={newPwRef}
         value={newPassword}
-        ref={ref_newPassword}
-        placeholder={t('setting.securityAndLogin.newPass')}
-        style={[
-          $moduleInput,
-          {
-            borderColor: theme.gray_500,
-          },
-        ]}
-        secureTextEntry
-        onSubmitEditing={() => ref_passwordCf.current?.focus()}
+        i18Placeholder="setting.newPassword"
+        containerStyle={$moduleInput}
+        secureTextEntry={securePw.pw}
+        onSubmitEditing={() => cfPwRef.current?.focus()}
         onChangeText={text => setNewPassword(text)}
+        rightCpn={
+          <Eye
+            open={!securePw.pw}
+            onPress={() =>
+              setSecurePw(pre => ({
+                curPw: pre.curPw,
+                pw: !pre.pw,
+                cfPw: pre.cfPw,
+              }))
+            }
+            style={{
+              paddingHorizontal: scale(12),
+              color: theme.gray_600,
+            }}
+          />
+        }
       />
-      <AppInput
+
+      <InputBox
+        ref={cfPwRef}
         value={confirmPassword}
-        ref={ref_passwordCf}
-        placeholder={t('setting.securityAndLogin.confirmPass')}
-        style={[
-          $moduleInput,
-          {
-            borderColor: theme.gray_500,
-          },
-        ]}
-        secureTextEntry
+        i18Placeholder="setting.confirmPassword"
+        containerStyle={$moduleInput}
+        secureTextEntry={securePw.cfPw}
         onChangeText={text => setConfirmPassword(text)}
+        rightCpn={
+          <Eye
+            open={!securePw.cfPw}
+            onPress={() =>
+              setSecurePw(pre => ({
+                curPw: pre.curPw,
+                pw: pre.pw,
+                cfPw: !pre.cfPw,
+              }))
+            }
+            style={{
+              paddingHorizontal: scale(12),
+              color: theme.gray_600,
+            }}
+          />
+        }
       />
 
       <StyleButton
         containerStyle={$buttonConfirm}
-        titleStyle={$textButtonCf}
-        title="setting.securityAndLogin.buttonChangePass"
+        title="common.confirm"
         onPress={confirmChangePassword}
         isLoading={loading}
       />
@@ -154,28 +198,18 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
 };
 
 const $container: ViewStyle = {
-  width: '90%',
-  paddingHorizontal: scale(12),
+  width: '100%',
   alignItems: 'center',
   alignSelf: 'center',
   overflow: 'hidden',
 };
 const $moduleInput: TextStyle = {
-  width: '100%',
-  borderWidth: borderWidthTiny,
-  borderRadius: BORDER_RADIUS.f3,
   marginTop: verticalScale(8),
-  paddingTop: verticalScale(8),
-  paddingBottom: verticalScale(8),
-  paddingHorizontal: scale(10),
 };
 const $buttonConfirm: ViewStyle = {
   marginTop: verticalScale(16),
   paddingHorizontal: scale(30),
   paddingVertical: verticalScale(8),
-};
-const $textButtonCf: TextStyle = {
-  fontSize: moderateScale(14),
 };
 
 export default ChangingPassword;

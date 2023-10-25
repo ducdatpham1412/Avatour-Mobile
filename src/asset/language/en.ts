@@ -484,6 +484,9 @@ const profile = {
 const setting = {
   title: 'Setting',
   logOut: 'Log out',
+  currentPassword: 'Current password',
+  newPassword: 'New password',
+  confirmPassword: 'Confirm password',
   component: {
     typeMainSetting: {
       security: 'Security and login',
@@ -494,10 +497,6 @@ const setting = {
   },
   securityAndLogin: {
     headerTitle: 'Security and login',
-    nowPass: 'Current password',
-    newPass: 'New password',
-    confirmPass: 'Confirm password',
-    buttonChangePass: 'Confirm',
     changePass: 'Change password',
     userBlocked: 'User blocked',
     lockAccount: 'Lock my account',
