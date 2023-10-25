@@ -487,6 +487,9 @@ const mess = {
 const setting = {
   title: 'Cài đặt',
   logOut: 'Đăng xuất',
+  currentPassword: 'Mật khẩu hiện tại',
+  newPassword: 'Mật khẩu mới',
+  confirmPassword: 'Xác nhận mật khẩu',
   component: {
     typeMainSetting: {
       security: 'Bảo mật và đăng nhập',
@@ -497,10 +500,6 @@ const setting = {
   },
   securityAndLogin: {
     headerTitle: 'Bảo mật và đăng nhập',
-    nowPass: 'Mật khẩu hiện tại',
-    newPass: 'Mật khẩu mới',
-    confirmPass: 'Xác nhận mật khẩu',
-    buttonChangePass: 'Xác nhận',
     changePass: 'Thay đổi mật khẩu',
     userBlocked: 'Chặn người dùng',
     lockAccount: 'Khoá tài khoản',

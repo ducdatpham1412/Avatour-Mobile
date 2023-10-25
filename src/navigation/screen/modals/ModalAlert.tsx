@@ -1,4 +1,5 @@
 import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {ERROR_MESSAGE} from 'asset/enum';
 import {
   ErrorIcon,
   NotificationIcon,
@@ -57,6 +58,17 @@ type TypeStatus = 'notification' | 'success' | 'error' | 'options';
  */
 let promiseForNextShow: Promise<any>;
 let resolveForNextShow: any;
+
+const detectError = (errMessage: string): I18Normalize => {
+  switch (errMessage) {
+    case ERROR_MESSAGE.still_having_location_draft:
+      return 'tour.tourStillHaveDraftLocation';
+    case ERROR_MESSAGE.password_not_match:
+      return 'alert.passNotMatch';
+    default:
+      return errMessage as I18Normalize;
+  }
+};
 
 const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
   const theme = useTheme();
@@ -127,11 +139,13 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
         setIcon(value?.icon);
         setStatus('error');
         setTitle(value?.title ?? 'common.error');
-        setContent(
-          value?.i18Content ??
-            (value?.content as I18Normalize) ??
-            'common.null',
-        );
+        if (value?.i18Content) {
+          setContent(value.i18Content);
+        } else if (value?.content) {
+          setContent(detectError(value.content));
+        } else {
+          setContent('common.null');
+        }
         setTitleButton(value?.titleButton ?? 'common.ok');
         onCloseFunction.current = value?.onClose;
         setVisible(true);
