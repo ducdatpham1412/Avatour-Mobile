@@ -809,7 +809,7 @@ const DetailMeJoin = ({
               <BoxInformation
                 key={index}
                 listInformation={[
-                  <View style={$viewInfo}>
+                  <View style={$groupDay}>
                     <StyleText
                       i18Text="discovery.groupDay"
                       i18Params={{
@@ -819,7 +819,9 @@ const DetailMeJoin = ({
                       }}
                       customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
                     />
-                    <StyleText i18Text="discovery.maximumMembers">
+                    <StyleText
+                      i18Text="discovery.maximumMembers"
+                      customStyle={$textMaximum}>
                       <StyleText originValue={`: ${maximumMember}`} />
                     </StyleText>
                   </View>,
@@ -908,7 +910,7 @@ const DetailMeJoin = ({
             <BoxInformation
               key={index}
               listInformation={[
-                <View style={$viewInfo}>
+                <View style={$groupDay}>
                   <StyleText
                     i18Text="discovery.groupDay"
                     i18Params={{
@@ -918,7 +920,9 @@ const DetailMeJoin = ({
                     }}
                     customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
                   />
-                  <StyleText i18Text="discovery.maximumMembers">
+                  <StyleText
+                    i18Text="discovery.maximumMembers"
+                    customStyle={$textMaximum}>
                     <StyleText originValue={`: ${maximumMember}`} />
                   </StyleText>
                 </View>,
@@ -953,7 +957,7 @@ const DetailMeJoin = ({
 
   const renderBottomComponent = () => {
     if (loading || !data) {
-      return <View style={{marginBottom: paddingBottom}} />;
+      return null;
     }
 
     if (sale?.creator === myId) {
@@ -961,7 +965,7 @@ const DetailMeJoin = ({
         return <ButtonConfirmBought estimate={data} />;
       }
 
-      return <View style={{marginBottom: paddingBottom}} />;
+      return null;
     }
 
     if (isEstimate) {
@@ -1054,7 +1058,7 @@ const DetailMeJoin = ({
       );
     }
 
-    return <View style={{marginBottom: paddingBottom}} />;
+    return null;
   };
 
   return (
@@ -1078,7 +1082,8 @@ const DetailMeJoin = ({
             tintColor={theme.p_600}
             colors={[theme.p_600]}
           />
-        }>
+        }
+        customStyle={{paddingBottom}}>
         {renderStatus()}
         {renderInfo()}
         {renderListPersonal()}
@@ -1162,6 +1167,12 @@ const $viewInfo: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
+};
+const $groupDay: ViewStyle = {
+  width: '100%',
+};
+const $textMaximum: TextStyle = {
+  marginTop: verticalScale(4),
 };
 const $infoGroup: ViewStyle = {
   flex: 1,

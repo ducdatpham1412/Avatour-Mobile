@@ -75,7 +75,7 @@ const handleEvent = (event: string, data: Record<string, string>) => {
 
 const RootScreen = () => {
   const theme = useTheme();
-  const [{loading, error}, {mutate}] = useInitApp();
+  const [{loading, validating, error}, {mutate}] = useInitApp();
   const {link, resetNotification} = useNotifications();
   const {gestureHandle} = useAppSelector(state => state.logicSlice);
 
@@ -94,7 +94,13 @@ const RootScreen = () => {
     return <LoadingScreen size={200} />;
   }
   if (error) {
-    return <ErrorScreen onPress={mutate} title="common.retry" />;
+    return (
+      <ErrorScreen
+        onPress={mutate}
+        title="common.retry"
+        loading={loading || validating}
+      />
+    );
   }
 
   return (

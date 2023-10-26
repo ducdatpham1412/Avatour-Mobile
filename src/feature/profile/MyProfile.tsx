@@ -11,6 +11,7 @@ import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, SETTING_ROUTE} from 'navigation/config';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {View, ViewStyle} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {logger} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
@@ -171,19 +172,29 @@ const MyProfile = ({route}: TypeRouteParams) => {
         ),
       }}
       customStyle={$content}
-      stickyHeaderIndices={[1]}
-      onLayout={e => {
-        setTabViewHeight(e.nativeEvent.layout.height);
-      }}
-      scrollEnabled
-      refreshControl={<RefreshControl refreshing={false} onRefresh={refresh} />}
+      layOut="view"
       backgroundColor={theme.white}>
-      <InformationProfile profile={profile} />
-      {renderTabView()}
+      <View
+        style={$container}
+        onLayout={e => {
+          setTabViewHeight(e.nativeEvent.layout.height);
+        }}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={refresh} />
+          }
+          stickyHeaderIndices={[1]}>
+          <InformationProfile profile={profile} />
+          {renderTabView()}
+        </ScrollView>
+      </View>
     </StyleContainer>
   );
 };
 
+const $container: ViewStyle = {
+  flex: 1,
+};
 const $body: ViewStyle = {
   width: '100%',
   marginTop: verticalScale(8),

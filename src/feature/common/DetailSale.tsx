@@ -567,8 +567,8 @@ const DetailSale = ({
   };
 
   const bottomComponent = () => {
-    if (isMySale || estimating) {
-      return <View style={{marginBottom: paddingBottom}} />;
+    if (isMySale || estimating || !(data?.status === STATUS.active)) {
+      return null;
     }
 
     return (
@@ -614,7 +614,7 @@ const DetailSale = ({
             </StyleTouchable>
           ),
         }}
-        customStyle={$container}
+        customStyle={[$container, {paddingBottom}]}
         backgroundColor={theme.white}
         scrollEnabled
         refreshControl={

@@ -7,7 +7,7 @@ import {ItemRequest} from './components';
 import {useMyRequests} from './hooks';
 
 const ListMyRequests = () => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const [{data, initLoading, validating}, {mutate}] = useMyRequests();
 
   return (
@@ -24,7 +24,7 @@ const ListMyRequests = () => {
         refreshing={validating}
         onRefresh={mutate}
         contentContainerStyle={{
-          paddingBottom: bottom,
+          paddingBottom,
           paddingTop: verticalMargin,
         }}
         ItemSeparatorComponent={Separator}
