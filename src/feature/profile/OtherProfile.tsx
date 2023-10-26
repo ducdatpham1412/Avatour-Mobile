@@ -267,7 +267,7 @@ const OtherProfile = ({
     return null;
   };
 
-  const renderContent = () => {
+  const renderTabView = () => {
     if (isBlocked || !data) {
       return null;
     }
@@ -335,7 +335,11 @@ const OtherProfile = ({
       initLoading={loading || !data}
       layOut="view"
       BottomComponent={<ButtonSuggest userId={id} />}>
-      <View style={$container}>
+      <View
+        style={$container}
+        onLayout={e => {
+          setTabViewHeight(e.nativeEvent.layout.height);
+        }}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -344,12 +348,9 @@ const OtherProfile = ({
             />
           }
           stickyHeaderIndices={[1]}
-          onLayout={e => {
-            setTabViewHeight(e.nativeEvent.layout.height);
-          }}
           showsVerticalScrollIndicator={false}>
           {!!data && <InformationProfile profile={data} />}
-          {renderContent()}
+          {renderTabView()}
         </ScrollView>
       </View>
     </StyleContainer>

@@ -14,6 +14,7 @@ import AsyncStorage from 'utility/asyncStore';
 const useInitApp = () => {
   const {
     isLoading: loading,
+    isValidating: validating,
     error,
     mutate,
   } = useSWR(
@@ -49,6 +50,7 @@ const useInitApp = () => {
   return [
     {
       loading,
+      validating,
       error,
     },
     {mutate},

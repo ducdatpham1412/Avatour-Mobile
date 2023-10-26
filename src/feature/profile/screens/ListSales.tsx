@@ -14,7 +14,7 @@ interface Props {
 }
 
 const ListSalesSupplier = ({userId}: Props) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
 
   const {
     list,
@@ -86,7 +86,7 @@ const ListSalesSupplier = ({userId}: Props) => {
   return (
     <StyleList
       data={list}
-      contentContainerStyle={[$contentContainer, {paddingBottom: bottom}]}
+      contentContainerStyle={[$contentContainer, {paddingBottom}]}
       keyExtractor={item => String(item?.id)}
       renderItem={({item}) => renderItemSale(item)}
       refreshing={refreshing}

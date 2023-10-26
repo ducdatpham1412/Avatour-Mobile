@@ -68,6 +68,9 @@ const MyQRCode = () => {
             {
               title: 'profile.address',
               content: profile.location,
+              contentStyle: {
+                fontWeight: 'normal',
+              },
             },
           ]}
           containerStyle={$informationView}

@@ -1,6 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {safePaddingNotZero} from 'asset/metrics';
+import {verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
   StyleButton,
@@ -9,14 +9,18 @@ import {
   StyleTouchable,
 } from 'components/base';
 import dayjs from 'dayjs';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {TextStyle, View, ViewStyle} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {borderWidthTiny, calculatePriceDeposit, copy} from 'utility/assistant';
+import {
+  $styleTopShadow,
+  borderWidthTiny,
+  calculatePriceDeposit,
+  copy,
+} from 'utility/assistant';
 import {formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 
@@ -25,7 +29,7 @@ const GoToDeposit = ({
     params: {joinEstimate},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.goToDeposit]>) => {
-  const {bottom} = useSafeAreaInsets();
+  const {bottom, paddingBottom} = useSafeArea();
   const theme = useTheme();
   const {
     t,
@@ -43,17 +47,25 @@ const GoToDeposit = ({
     <StyleContainer
       headerProps={{title: 'discovery.goToDeposit'}}
       BottomComponent={
-        <StyleButton
-          containerStyle={{
-            marginBottom: bottom || safePaddingNotZero,
-            width: '80%',
-          }}
-          onPress={() => navigate(ROOT_SCREEN.mainScreen)}
-          title="discovery.backToHome"
-        />
+        <View
+          style={[
+            $btnHome,
+            $styleTopShadow,
+            {
+              paddingBottom: bottom,
+              backgroundColor: theme.white,
+              shadowColor: theme.black,
+            },
+          ]}>
+          <StyleButton
+            containerStyle={{width: '90%'}}
+            onPress={() => navigate(ROOT_SCREEN.mainScreen)}
+            title="discovery.backToHome"
+          />
+        </View>
       }
       scrollEnabled
-      customStyle={{paddingBottom: verticalScale(8)}}>
+      customStyle={{paddingBottom}}>
       <StyleText
         i18Text="discovery.yourTransactionHash"
         i18Params={{
@@ -185,6 +197,10 @@ const $countdownView: ViewStyle = {
 };
 const $textNotifyContent: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $btnHome: ViewStyle = {
+  width: '100%',
+  paddingTop: verticalMargin,
 };
 
 export default GoToDeposit;

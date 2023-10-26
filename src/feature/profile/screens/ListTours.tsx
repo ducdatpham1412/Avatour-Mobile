@@ -64,7 +64,6 @@ const ListTours = ({userId}: Props) => {
 
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
-  paddingBottom: safePaddingNotZero,
   paddingHorizontal: horizontalPadding,
 };
 

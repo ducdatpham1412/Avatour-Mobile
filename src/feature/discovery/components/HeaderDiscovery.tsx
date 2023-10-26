@@ -1,6 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS} from 'asset';
-import {SESSION} from 'asset/enum';
+import {GENDER_TYPE, SESSION} from 'asset/enum';
 import Images from 'asset/img/images';
 import {horizontalMargin} from 'asset/metrics';
 import {FONT_SIZE} from 'asset/standardValue';
@@ -127,13 +127,23 @@ const HeaderDiscovery = () => {
     textSession = 'discovery.goodEvening';
   }
 
+  const defaultSource =
+    profile.gender === GENDER_TYPE.man
+      ? Images.images.avatar04
+      : Images.images.avatar01;
+
   return (
     <View style={$container}>
       <View style={$leftView}>
         {estimates?.length ? (
           <IconHavingEstimate estimates={estimates} />
         ) : (
-          <Avatar source={{uri: profile.avatar}} style={$avatar} size={48} />
+          <Avatar
+            source={{uri: profile.avatar}}
+            style={$avatar}
+            size={48}
+            defaultSource={defaultSource}
+          />
         )}
         <View style={$sessionBox}>
           <StyleText
