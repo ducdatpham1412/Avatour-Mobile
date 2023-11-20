@@ -316,3 +316,16 @@ export enum STATUS_JOIN_ESTIMATE {
   active = 1,
   confirmed = 2,
 }
+
+export enum NOTIFICATION {
+  joinGb = 0,
+  hasNewJoin = 1,
+  request = 2,
+  likeTour = 3,
+  likeSale = 4,
+}
+
+export enum STATUS_NOTIFICATION {
+  notRead = 1,
+  read = 2,
+}

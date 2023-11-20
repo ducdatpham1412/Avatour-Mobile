@@ -23,7 +23,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ModalAccounts} from './components';
 import {useLogin} from './hooks';
 
-const LoginScreen = () => {
+const InputLogin = () => {
   const [
     {username, password, listSavedAccounts, loading},
     {
@@ -45,16 +45,7 @@ const LoginScreen = () => {
   const [securePw, setSecurePw] = useState(true);
 
   return (
-    <View style={[$container, {backgroundColor: theme.p_600}]}>
-      <View style={$paddingField}>
-        <StyleText originValue="Avatour" customStyle={$textAvatour} />
-        <StyleText
-          originValue="Tôn vinh nét độc bản của du lịch Việt"
-          customStyle={$textHonneur}
-        />
-        <IconPaddingField size={Metrics.width} style={$field} />
-      </View>
-
+    <>
       <StyleContainer
         containerStyle={$styleContainer}
         customStyle={$body}
@@ -197,6 +188,25 @@ const LoginScreen = () => {
           });
         }}
       />
+    </>
+  );
+};
+
+const LoginScreen = () => {
+  const theme = useTheme();
+
+  return (
+    <View style={[$container, {backgroundColor: theme.p_600}]}>
+      <View style={$paddingField}>
+        <StyleText originValue="Avatour" customStyle={$textAvatour} />
+        <StyleText
+          originValue="Tôn vinh nét độc bản của du lịch Việt"
+          customStyle={$textHonneur}
+        />
+        <IconPaddingField size={Metrics.width} style={$field} />
+      </View>
+
+      <InputLogin />
     </View>
   );
 };

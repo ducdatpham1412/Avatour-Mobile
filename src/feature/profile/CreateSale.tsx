@@ -14,7 +14,6 @@ import {
   FONT_WEIGHT_MEDIUM,
   ratioImageSale,
 } from 'asset/standardValue';
-import Theme from 'asset/theme/Theme';
 import {
   AppInput,
   StyleButton,
@@ -36,6 +35,7 @@ import React, {useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {$styleTopShadow} from 'utility/assistant';
 import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {PricesEdit, ScrollCropImages, TitleAndInput} from './components';
@@ -52,7 +52,7 @@ const {width} = Metrics;
 
 const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
-  const {paddingBottom} = useSafeArea();
+  const {paddingBottom, bottom} = useSafeArea();
   const {itemNew, itemEdit, itemError} = route.params ?? {};
 
   const theme = useTheme();
@@ -122,47 +122,6 @@ const CreateSale = ({route}: Props) => {
         />
       </View>
     );
-  };
-
-  const headerRight = () => {
-    if (itemEdit) {
-      const temp: typeof initValue.current = {
-        postId: itemEdit.id,
-        name,
-        content,
-        images,
-        prices,
-      };
-      const disableButtonEdit = isEqual(temp, initValue.current);
-
-      return (
-        <View style={$header}>
-          <StyleButton
-            title="common.update"
-            containerStyle={$postBox}
-            onPress={onEditPost}
-            disable={disableButtonEdit}
-            isLoading={loadingCreate}
-          />
-        </View>
-      );
-    }
-
-    if (itemNew || itemError) {
-      return (
-        <View style={$header}>
-          <StyleButton
-            title="common.create"
-            containerStyle={$postBox}
-            onPress={onConfirmPost}
-            disable={!prices.length || !name}
-            isLoading={loadingCreate}
-          />
-        </View>
-      );
-    }
-
-    return null;
   };
 
   const renderInfoBox = () => {
@@ -258,24 +217,84 @@ const CreateSale = ({route}: Props) => {
     );
   };
 
+  const bottomComponent = () => {
+    if (itemEdit) {
+      const temp: typeof initValue.current = {
+        postId: itemEdit.id,
+        name,
+        content,
+        images,
+        prices,
+      };
+      const disableButtonEdit = isEqual(temp, initValue.current);
+
+      return (
+        <View
+          style={[
+            $button,
+            $styleTopShadow,
+            {
+              marginBottom: bottom,
+              backgroundColor: theme.white,
+              shadowColor: theme.black,
+            },
+          ]}>
+          <StyleButton
+            title="common.update"
+            containerStyle={$postBox}
+            onPress={onEditPost}
+            disable={disableButtonEdit}
+            isLoading={loadingCreate}
+          />
+        </View>
+      );
+    }
+
+    if (itemNew || itemError) {
+      return (
+        <View
+          style={[
+            $button,
+            $styleTopShadow,
+            {
+              marginBottom: bottom,
+              backgroundColor: theme.white,
+              shadowColor: theme.black,
+            },
+          ]}>
+          <StyleButton
+            title="common.create"
+            containerStyle={$postBox}
+            onPress={onConfirmPost}
+            disable={!prices.length || !name}
+            isLoading={loadingCreate}
+          />
+        </View>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <StyleContainer
       headerProps={{
-        RightComponent: headerRight(),
         LeftComponent: headerLeft(),
         title: 'common.null',
         containerStyle: $headerContainer,
         onGoBack,
       }}
       scrollEnabled
-      customStyle={[$container, {paddingBottom}]}>
+      customStyle={[$container, {paddingBottom}]}
+      BottomComponent={bottomComponent()}
+      backgroundColor={theme.white}>
       <ScrollCropImages
         images={images}
         width={width}
         height={width * ratioImageSale}
         enableRemoveImage={false}
       />
-      <View style={[$body, {backgroundColor: theme.background}]}>
+      <View style={$body}>
         <TitleAndInput
           containerStyle={$inputName}
           title="profile.groupBuyingName"
@@ -327,12 +346,6 @@ const $container: ViewStyle = {
 };
 const $body: ViewStyle = {
   paddingHorizontal: horizontalPadding,
-  shadowColor: Theme.newTheme.black,
-  shadowOffset: {
-    width: 0,
-    height: -4,
-  },
-  shadowOpacity: 0.08,
 };
 const $headerContainer: ViewStyle = {
   paddingBottom: verticalScale(20),
@@ -344,19 +357,7 @@ const $headerLeft: ViewStyle = {
 const $myName: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
   marginLeft: scale(4),
-  maxWidth: scale(130),
-};
-const $header: ViewStyle = {
-  width: '100%',
-  flexDirection: 'row-reverse',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-};
-const $postBox: ViewStyle = {
-  width: scale(100),
-  alignItems: 'center',
-  paddingVertical: verticalScale(5),
-  height: undefined,
+  maxWidth: scale(230),
 };
 const $buttonInfo: ViewStyle = {
   marginTop: verticalMargin,
@@ -404,6 +405,15 @@ const $inputDescriptionBox: ViewStyle = {
   borderRadius: BORDER_RADIUS.f3,
   paddingHorizontal: scale(12),
   paddingTop: verticalScale(12),
+};
+const $button: ViewStyle = {
+  width: '100%',
+  paddingTop: safePaddingNotZero,
+  paddingHorizontal: horizontalPadding,
+};
+const $postBox: ViewStyle = {
+  width: '100%',
+  alignItems: 'center',
 };
 
 export default CreateSale;

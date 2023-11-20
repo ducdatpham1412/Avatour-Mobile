@@ -2,7 +2,7 @@ import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {JOIN_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
-import {verticalMargin} from 'asset/metrics';
+import {horizontalPadding, verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
   StyleButton,
@@ -1143,7 +1143,7 @@ const $buttonView: ViewStyle = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingTop: verticalMargin,
-  paddingHorizontal: scale(12),
+  paddingHorizontal: horizontalPadding,
 };
 const $buttonConfirmView: ViewStyle = {
   width: '100%',
