@@ -13,7 +13,6 @@ interface Props {
   containerStyle?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
   loading?: boolean;
-  disable?: boolean;
   icon?: ReactNode;
 }
 
@@ -23,7 +22,6 @@ const SquareButton = ({
   containerStyle,
   titleStyle,
   loading = false,
-  disable = false,
   icon,
 }: Props) => {
   const theme = useTheme();
@@ -35,9 +33,7 @@ const SquareButton = ({
         {backgroundColor: theme.gray_100},
         containerStyle,
       ]}
-      onPress={onPress}
-      disable={disable || loading}
-      disableOpacity={loading ? 1 : 0.4}>
+      onPress={onPress}>
       {loading ? (
         <ActivityIndicator size="small" color={theme.black} />
       ) : (

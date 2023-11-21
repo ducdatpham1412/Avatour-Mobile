@@ -1,6 +1,5 @@
-import {useIsFocused} from '@react-navigation/native';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
-import {setScrollMainAndChatEnable, updateResource} from 'app-redux';
+import {updateResource} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM, LIST_TOPICS} from 'asset';
 import {REACT} from 'asset/enum';
@@ -12,31 +11,21 @@ import {CardInformation} from 'components/common';
 import {useSafeArea, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {DISCOVERY_ROUTE} from 'navigation/config';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import React from 'react';
 import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useUpdateEffect} from 'react-use';
 import {$styleDropShadow, copyObject} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
-import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 const DiscoveryScreen = () => {
-  const isFocused = useIsFocused();
   const theme = useTheme();
   const {top} = useSafeArea();
   const {banners, hot_locations, favorite_tours} = useAppSelector(
     state => state.logicSlice.resource,
   );
-
-  useUpdateEffect(() => {
-    if (isFocused) {
-      setScrollMainAndChatEnable(true);
-    } else {
-      setScrollMainAndChatEnable(false);
-    }
-  }, [isFocused]);
 
   const onReactTour = (tour: Tour) => {
     const onAuthenticated = async () => {

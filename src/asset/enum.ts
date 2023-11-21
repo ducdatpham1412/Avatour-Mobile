@@ -214,9 +214,11 @@ export enum JOIN_STATUS {
   notActive = 0,
   active = 1,
   adminConfirm = 2,
+  supplierConfirm = 6,
+  supplierRejected = 7,
   overtime = 3,
   consumerConfirmed = 4,
-  supplierConfirmed = 5,
+  supplierConfirmBought = 5,
 }
 
 export enum FONT_FAMILY {
@@ -300,6 +302,7 @@ export enum APP_EVENT {
   deleteTour = 'delete-tour',
   editTour = 'edit-tour',
   suggestLocation = 'suggest-location',
+  refreshNotification = 'refresh-notification',
 }
 
 export enum TYPE_AUTH_REQUEST {
@@ -318,14 +321,21 @@ export enum STATUS_JOIN_ESTIMATE {
 }
 
 export enum NOTIFICATION {
-  joinGb = 0,
-  hasNewJoin = 1,
-  request = 2,
-  likeTour = 3,
-  likeSale = 4,
+  joinGb = 1,
+  hasNewJoin = 2,
+  request = 3,
+  likeTour = 4,
+  likeSale = 5,
 }
 
 export enum STATUS_NOTIFICATION {
   notRead = 1,
   read = 2,
+}
+
+export enum STATUS_REQUEST {
+  notActive = 0,
+  active = 1,
+  adminConfirm = 2,
+  adminReject = 3,
 }

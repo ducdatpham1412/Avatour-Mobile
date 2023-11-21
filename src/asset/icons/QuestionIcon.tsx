@@ -4,14 +4,16 @@ import {moderateScale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
 const QuestionIcon = ({
-  size = moderateScale(80),
+  size = 80,
   style,
   tintColor = '#F9A000',
 }: IconSvgProps) => {
+  const width = moderateScale(size);
+
   return (
     <Svg
-      width={size}
-      height={size}
+      width={width}
+      height={width}
       viewBox="0 0 80 80"
       fill="none"
       style={style}>

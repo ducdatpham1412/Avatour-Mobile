@@ -40,7 +40,7 @@ export const apiGetListGroupBuying = ({
 export const apiGetListReviewAboutUser = ({params}: TypeParamsPaging) => {
   return request.get(`/profile/list-posts-review-user/${params.userId}`, {
     params: {
-      pageIndex: params.page_index,
+      page_index: params.page_index,
       take: params.take,
     },
   });

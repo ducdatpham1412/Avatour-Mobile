@@ -3,15 +3,14 @@ import {Path, Svg} from 'react-native-svg';
 import {moderateScale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
-const IconTour = ({
-  size = moderateScale(24),
-  style,
-  tintColor = 'black',
-}: IconSvgProps) => {
+const IconTour = ({size = 24, style, tintColor = 'black'}: IconSvgProps) => {
+  const width = moderateScale(size);
+  const height = (20 / 21) * width;
+
   return (
     <Svg
-      width={size}
-      height={(20 / 21) * size}
+      width={width}
+      height={height}
       viewBox="0 0 21 20"
       fill="none"
       style={style}>

@@ -62,6 +62,7 @@ interface TypeJoinEstimate {
     id: number;
     name: string;
     images: string[];
+    creator: number;
     creator_name: string;
   };
   list_personals: TypeJoinPersonal[];

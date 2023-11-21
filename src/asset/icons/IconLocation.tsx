@@ -4,14 +4,16 @@ import {moderateScale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
 const IconLocation = ({
-  size = moderateScale(16),
+  size = 16,
   style,
   tintColor = 'black',
 }: IconSvgProps) => {
+  const width = moderateScale(size);
+
   return (
     <Svg
-      width={size}
-      height={size}
+      width={width}
+      height={width}
       viewBox="0 0 16 17"
       fill="none"
       style={style}>

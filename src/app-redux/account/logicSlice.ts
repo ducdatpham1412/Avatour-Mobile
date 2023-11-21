@@ -27,19 +27,9 @@ export const initialLogicState = {
 
   token: null, // is set from active user in async, to handle SocketProvider
 
-  listChatTag: <Array<TypeChatTagResponse>>[],
-  chatTagFocusing: '', // this flag to check if socket do action update chat tag hasNewMessage
-
   borderMessRoute: 'yellow',
 
-  // notification
-  numberNewMessages: 0,
-  chatTagFromNotification: undefined,
-  numberNewNotifications: 0,
-
-  // is use when user block other and OtherProfile should re-render
-  shouldRenderOtherProfile: true,
-  scrollMainAndChatEnable: true,
+  newNotifications: 0,
 
   postCreatedHandling: <ReduxPostCreatedHandle>{
     status: 'done',
@@ -67,32 +57,14 @@ const logicSlice = createSlice({
     setResource: (state, action) => {
       state.resource = action.payload;
     },
-    setListChatTag: (state, action) => {
-      state.listChatTag = action.payload;
-    },
-    setChatTagFocusing: (state, action) => {
-      state.chatTagFocusing = action.payload;
-    },
-    setNumberNewMessages: (state, action) => {
-      state.numberNewMessages = action.payload;
-    },
-    setChatTagFromNotification: (state, action) => {
-      state.chatTagFromNotification = action.payload;
-    },
     setBorderMessRoute: (state, action) => {
       state.borderMessRoute = action.payload;
     },
-    setShouldRenderOtherProfile: (state, action) => {
-      state.shouldRenderOtherProfile = action.payload;
-    },
-    setNumberNewNotification: (state, action) => {
-      state.numberNewNotifications = action.payload;
+    setNewNotification: (state, action) => {
+      state.newNotifications = action.payload;
     },
     setPostCreatedHandling: (state, action) => {
       state.postCreatedHandling = action.payload;
-    },
-    setScrollMainAndChatEnable: (state, action) => {
-      state.scrollMainAndChatEnable = action.payload;
     },
     setGestureHandle: (state, action) => {
       state.gestureHandle = action.payload;

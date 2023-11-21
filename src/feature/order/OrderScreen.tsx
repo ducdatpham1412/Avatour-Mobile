@@ -7,10 +7,8 @@ import {
   Metrics,
   horizontalMargin,
   horizontalPadding,
-  safePaddingNotZero,
   verticalMargin,
 } from 'asset/metrics';
-import {Separator} from 'components';
 import {
   StyleButton,
   StyleContainer,
@@ -18,7 +16,13 @@ import {
   StyleText,
 } from 'components/base';
 import {ItemJoin, ItemJoinWithBanner} from 'feature/discovery/components';
-import {useAppEvent, useEstimatesAndJoinings, usePaging, useTheme} from 'hook';
+import {
+  useAppEvent,
+  useEstimatesAndJoinings,
+  usePaging,
+  useSafeArea,
+  useTheme,
+} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {DISCOVERY_ROUTE} from 'navigation/config';
 import React, {useCallback} from 'react';
@@ -65,6 +69,7 @@ const OrderScreenUser = () => {
     loading,
     mutate,
   } = useEstimatesAndJoinings();
+  const {paddingBottom} = useSafeArea();
 
   const {list, refreshing, onRefresh, onLoadMore, loadingMore, initLoading} =
     usePaging<TypeJoinEstimate>({
@@ -98,7 +103,7 @@ const OrderScreenUser = () => {
         {!!estimates?.length && (
           <View style={$header}>
             <StyleText
-              i18Text="discovery.goToDeposit"
+              i18Text="discovery.waitingDeposit"
               customStyle={$textJoining}
             />
             <ScrollView
@@ -185,9 +190,8 @@ const OrderScreenUser = () => {
         }}
         loadingMore={loadingMore}
         onLoadMore={onLoadMore}
-        contentContainerStyle={$contentContainer}
+        contentContainerStyle={[$contentContainer, {paddingBottom}]}
         ListHeaderComponent={renderHeaderComponent()}
-        ItemSeparatorComponent={Separator}
         ListEmptyComponent={
           <View style={[$empty, {marginTop: 0}]}>
             <IconEmpty size={20} tintColor={theme.gray_500} />
@@ -244,7 +248,7 @@ const $container: ViewStyle = {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   alignItems: 'center',
-  paddingBottom: safePaddingNotZero,
+  gap: verticalMargin,
 };
 const $header: ViewStyle = {
   width: Metrics.width,

@@ -18,6 +18,7 @@ export {default as IconPaddingField} from './IconPaddingField';
 export {default as IconPrice} from './IconPrice';
 export {default as IconShop} from './IconShop';
 export {default as IconTagStars} from './IconTagStars';
+export {default as IconTagStarsBorder} from './IconTagStarsBorder';
 export {default as IconTour} from './IconTour';
 export {default as ImageEmpty} from './ImageEmpty';
 export {default as ImageEmptyWithDesk} from './ImageEmptyWithDesk';

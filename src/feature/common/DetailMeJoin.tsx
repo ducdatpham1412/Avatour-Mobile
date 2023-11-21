@@ -2,16 +2,15 @@ import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {JOIN_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
-import {horizontalPadding, verticalMargin} from 'asset/metrics';
+import {verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
-  StyleButton,
   StyleContainer,
   StyleImage,
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {Avatar} from 'components/common';
+import {Avatar, ButtonBottom} from 'components/common';
 import dayjs from 'dayjs';
 import {useSaleJoins} from 'feature/discovery/hooks';
 import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
@@ -28,11 +27,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {
-  $styleTopShadow,
-  borderWidthTiny,
-  takePriceRange,
-} from 'utility/assistant';
+import {takePriceRange} from 'utility/assistant';
 import {
   checkIsToday,
   formatLocaleNumber,
@@ -111,7 +106,6 @@ const ButtonConfirmArrived = ({
   estimate,
   isGoFromScan,
 }: ButtonConfirmArrivedProps) => {
-  const {bottom} = useSafeArea();
   const {t} = useTranslation();
   const theme = useTheme();
   const {mutate: mutateEstimateAndJoinings} = useEstimatesAndJoinings();
@@ -170,90 +164,159 @@ const ButtonConfirmArrived = ({
   };
 
   return (
-    <View
-      style={[
-        $buttonConfirmView,
-        $styleTopShadow,
-        {
-          paddingBottom: bottom,
-          backgroundColor: theme.white,
-          shadowColor: theme.black,
-          justifyContent: 'center',
-        },
-      ]}>
-      {isGoFromScan && (
-        <StyleText customStyle={{marginBottom: verticalMargin}}>
-          <StyleText originValue={`${t('discovery.moneyToPay')}: `} />
-          <StyleText
-            originValue={formatMoney(priceDeposit.price - priceDeposit.deposit)}
-            customStyle={{fontWeight: 'bold', color: theme.red}}
-          />
-        </StyleText>
-      )}
-      <StyleButton
-        containerStyle={$buttonConfirm}
-        title="discovery.confirmArrived"
-        onPress={onConfirmArrived}
-        isLoading={loadingConfirmArrived}
-      />
-    </View>
+    <ButtonBottom
+      action={{
+        title: 'discovery.confirmArrived',
+        onPress: onConfirmArrived,
+        loading: loadingConfirmArrived,
+      }}
+      topComponent={
+        isGoFromScan ? (
+          <StyleText customStyle={{marginBottom: verticalMargin}}>
+            <StyleText originValue={`${t('discovery.moneyToPay')}: `} />
+            <StyleText
+              originValue={formatMoney(
+                priceDeposit.price - priceDeposit.deposit,
+              )}
+              customStyle={{fontWeight: 'bold', color: theme.red}}
+            />
+          </StyleText>
+        ) : null
+      }
+    />
   );
 };
 
 const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
-  const {bottom} = useSafeArea();
-  const theme = useTheme();
-  const [{loadingConfirmBought}, {confirmBought}] = useSaleJoins(
-    estimate?.sale?.id,
-  );
+  const [
+    {loadingConfirmBought, loadingApproveOrder, loadingRejectOrder},
+    {confirmBought, rejectOrder, approveOrder},
+  ] = useSaleJoins(estimate?.sale?.id);
   const [{data}, {mutate}] = useJoinEstimate(estimate.id, {
     initValue: estimate,
   });
 
-  const onConfirmBought = async () => {
-    try {
-      await confirmBought({
-        list_join_id: [estimate?.id],
-      });
-      await mutate(
-        () => {
-          if (data) {
-            return {
-              ...data,
-              status: JOIN_STATUS.supplierConfirmed,
-            };
+  if (!data) {
+    return null;
+  }
+
+  if (data.status === JOIN_STATUS.adminConfirm) {
+    const isOverTimeUserCome = dayjs(data.time_will_buy).isBefore(dayjs());
+
+    const onApprove = async () => {
+      try {
+        await approveOrder(estimate.id);
+        await mutate(
+          pre => {
+            if (pre) {
+              return {
+                ...pre,
+                status: JOIN_STATUS.supplierConfirm,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    };
+
+    const onReject = () => {
+      ModalAlert.options({
+        i18Content: 'profile.post.sureDeletePost',
+        onContinue: async () => {
+          try {
+            await rejectOrder(estimate.id);
+            await mutate(
+              pre => {
+                if (pre) {
+                  return {
+                    ...pre,
+                    status: JOIN_STATUS.supplierRejected,
+                  };
+                }
+              },
+              {revalidate: false},
+            );
+          } catch (err) {
+            ModalAlert.error({
+              content: err,
+            });
           }
         },
-        {revalidate: false},
-      );
-    } catch (err) {
-      ModalAlert.error({
-        content: err,
       });
-    }
-  };
+    };
 
-  return (
-    <View
-      style={[
-        $buttonConfirmView,
-        $styleTopShadow,
-        {
-          paddingBottom: bottom,
-          backgroundColor: theme.white,
-          shadowColor: theme.black,
-          justifyContent: 'center',
-        },
-      ]}>
-      <StyleButton
-        containerStyle={$buttonConfirm}
-        title="discovery.confirmBought"
-        onPress={onConfirmBought}
-        isLoading={loadingConfirmBought}
-        disable={!canSupplierConfirmBought(estimate?.status)}
+    return (
+      <ButtonBottom
+        action={{
+          left: {
+            title: 'common.cancel',
+            onPress: onReject,
+            loading: loadingRejectOrder,
+            disable: isOverTimeUserCome || loadingApproveOrder,
+          },
+          right: {
+            title: 'discovery.confirmOrder',
+            onPress: onApprove,
+            loading: loadingRejectOrder,
+            disable: isOverTimeUserCome || loadingRejectOrder,
+          },
+        }}
+        title={isOverTimeUserCome ? 'discovery.confirmOvertime' : undefined}
       />
-    </View>
-  );
+    );
+  }
+
+  if (
+    [
+      JOIN_STATUS.supplierConfirm,
+      JOIN_STATUS.overtime,
+      JOIN_STATUS.consumerConfirmed,
+    ].includes(data.status)
+  ) {
+    const canConfirm = canSupplierConfirmBought(estimate.status);
+
+    const onConfirmBought = async () => {
+      try {
+        await confirmBought({
+          list_join_id: [estimate?.id],
+        });
+        await mutate(
+          () => {
+            if (data) {
+              return {
+                ...data,
+                status: JOIN_STATUS.supplierConfirmBought,
+              };
+            }
+          },
+          {revalidate: false},
+        );
+      } catch (err) {
+        ModalAlert.error({
+          content: err,
+        });
+      }
+    };
+
+    return (
+      <ButtonBottom
+        title={canConfirm ? undefined : 'discovery.canNotConfirmNow'}
+        action={{
+          title: 'discovery.confirmBought',
+          onPress: onConfirmBought,
+          loading: loadingConfirmBought,
+          disable: !canConfirm,
+        }}
+      />
+    );
+  }
+
+  return null;
 };
 
 const DetailMeJoin = ({
@@ -261,7 +324,7 @@ const DetailMeJoin = ({
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
   const {estimateId, initValue, mode} = params;
   const theme = useTheme();
-  const {bottom, paddingBottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {t} = useTranslation();
   const {avatar, id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
@@ -280,7 +343,10 @@ const DetailMeJoin = ({
     useRef<ElementRef<typeof ModalPeopleInGroup>>(null);
 
   const maximumMember = sale?.prices[sale?.prices.length - 1].number_people;
-  const isEstimate = data?.status === JOIN_STATUS.active;
+  const isEstimate =
+    data?.status === JOIN_STATUS.active ||
+    data?.status === JOIN_STATUS.adminConfirm;
+  const isMySale = data?.sale?.creator === myId;
 
   /**
    * Functions
@@ -314,6 +380,9 @@ const DetailMeJoin = ({
    */
   const renderStatus = () => {
     if (isEstimate) {
+      if (isMySale) {
+        return null;
+      }
       return (
         <StyleText
           i18Text="discovery.goToDepositToConfirm"
@@ -322,7 +391,7 @@ const DetailMeJoin = ({
       );
     }
 
-    if (data?.status === JOIN_STATUS.adminConfirm) {
+    if (data?.status === JOIN_STATUS.supplierConfirm) {
       const isToday = dayjs(data?.time_will_buy).isToday();
 
       if (isToday) {
@@ -352,6 +421,26 @@ const DetailMeJoin = ({
           customStyle={[
             $textAlert,
             {color: theme.gray_600, marginTop: verticalScale(12)},
+          ]}
+        />
+      );
+    }
+
+    if (data?.status === JOIN_STATUS.supplierRejected) {
+      return (
+        <StyleText
+          i18Text={
+            isMySale
+              ? 'discovery.notReceiveThisOrder'
+              : 'discovery.shopNotReceiveOrderNow'
+          }
+          customStyle={[
+            $textAlert,
+            {
+              marginTop: verticalScale(12),
+              color: theme.red,
+              fontWeight: FONT_WEIGHT_MEDIUM,
+            },
           ]}
         />
       );
@@ -393,7 +482,7 @@ const DetailMeJoin = ({
       );
     }
 
-    if (data?.status === JOIN_STATUS.supplierConfirmed) {
+    if (data?.status === JOIN_STATUS.supplierConfirmBought) {
       return (
         <StyleText
           i18Text="profile.joinedSuccess"
@@ -491,7 +580,7 @@ const DetailMeJoin = ({
                   : null,
               },
               {
-                title: `${t('discovery.deposit')} (20%)`,
+                title: `${t('discovery.deposit')} (~20%)`,
                 content: formatMoney(priceDeposit.deposit),
                 contentStyle: {color: theme.red},
               },
@@ -518,7 +607,7 @@ const DetailMeJoin = ({
       );
     }
 
-    if (data.status === JOIN_STATUS.adminConfirm) {
+    if (data.status === JOIN_STATUS.supplierConfirm) {
       return (
         <>
           <BoxInformation
@@ -584,7 +673,7 @@ const DetailMeJoin = ({
                   : null,
               },
               {
-                title: `${t('discovery.deposit')} (20%)`,
+                title: `${t('discovery.deposit')} (~20%)`,
                 content: formatMoney(priceDeposit.deposit),
                 contentStyle: {fontWeight: 'normal'},
               },
@@ -624,7 +713,7 @@ const DetailMeJoin = ({
       [
         JOIN_STATUS.overtime,
         JOIN_STATUS.consumerConfirmed,
-        JOIN_STATUS.supplierConfirmed,
+        JOIN_STATUS.supplierConfirmBought,
       ].includes(data.status)
     ) {
       return (
@@ -664,7 +753,7 @@ const DetailMeJoin = ({
                 contentStyle: {color: theme.green},
               },
               {
-                title: `${t('discovery.deposit')} (20%)`,
+                title: `${t('discovery.deposit')} (~20%)`,
                 content: formatMoney(priceDeposit.deposit),
                 contentStyle: {fontWeight: 'normal'},
               },
@@ -840,7 +929,7 @@ const DetailMeJoin = ({
                     content: formatMoney(join.price),
                   },
                   {
-                    title: `${t('discovery.deposit')} (20%)`,
+                    title: `${t('discovery.deposit')} (~20%)`,
                     content: formatMoney(join.deposit),
                     contentStyle: {fontWeight: 'normal'},
                   },
@@ -942,7 +1031,7 @@ const DetailMeJoin = ({
                   content: formatMoney(join.price),
                 },
                 {
-                  title: `${t('discovery.deposit')} (20%)`,
+                  title: `${t('discovery.deposit')} (~20%)`,
                   content: formatMoney(join.deposit),
                   contentStyle: {fontWeight: 'normal'},
                 },
@@ -960,12 +1049,8 @@ const DetailMeJoin = ({
       return null;
     }
 
-    if (sale?.creator === myId) {
-      if (data?.status !== JOIN_STATUS.supplierConfirmed) {
-        return <ButtonConfirmBought estimate={data} />;
-      }
-
-      return null;
+    if (isMySale) {
+      return <ButtonConfirmBought estimate={data} />;
     }
 
     if (isEstimate) {
@@ -1023,33 +1108,23 @@ const DetailMeJoin = ({
       };
 
       return (
-        <View
-          style={[
-            $buttonView,
-            $styleTopShadow,
-            {
-              paddingBottom: bottom,
-              backgroundColor: theme.white,
-              shadowColor: theme.black,
+        <ButtonBottom
+          action={{
+            left: {
+              title: 'common.cancel',
+              onPress: onDeleteEstimate,
+              loading: loadingDeleteEstimate,
             },
-          ]}>
-          <StyleButton
-            title="common.cancel"
-            containerStyle={[$buttonCancel, {borderColor: theme.black}]}
-            titleStyle={{color: theme.black}}
-            onPress={onDeleteEstimate}
-            isLoading={loadingDeleteEstimate}
-          />
-          <StyleButton
-            title="discovery.goToDeposit"
-            containerStyle={{width: '70%'}}
-            onPress={onGoToDeposit}
-          />
-        </View>
+            right: {
+              title: 'discovery.goToDeposit',
+              onPress: onGoToDeposit,
+            },
+          }}
+        />
       );
     }
 
-    if (data?.status === JOIN_STATUS.adminConfirm) {
+    if (data?.status === JOIN_STATUS.supplierConfirm) {
       return (
         <ButtonConfirmArrived
           estimate={data}
@@ -1138,24 +1213,6 @@ const $textClassified: TextStyle = {
   marginTop: verticalScale(2),
   fontSize: FONT_SIZE.f3,
 };
-const $buttonView: ViewStyle = {
-  width: '100%',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingTop: verticalMargin,
-  paddingHorizontal: horizontalPadding,
-};
-const $buttonConfirmView: ViewStyle = {
-  width: '100%',
-  paddingTop: verticalMargin,
-  paddingHorizontal: scale(12),
-  alignItems: 'center',
-};
-const $buttonCancel: ViewStyle = {
-  width: '28%',
-  backgroundColor: 'transparent',
-  borderWidth: borderWidthTiny,
-};
 const $countdownView: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
@@ -1203,9 +1260,6 @@ const $amountAvatarMember: ViewStyle = {
   borderRadius: 30,
   alignItems: 'center',
   justifyContent: 'center',
-};
-const $buttonConfirm: ViewStyle = {
-  width: '90%',
 };
 
 export default DetailMeJoin;

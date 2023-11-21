@@ -23,7 +23,7 @@ interface TypeGetPassportResponse {
         bank_code: string;
       };
     };
-    numberNewNotifications: number;
+    new_notifications: number;
   };
 }
 
@@ -106,7 +106,8 @@ interface TypeResourceResponse {
     banners: Array<string>;
     favorite_tours: Array<Tour>;
     hot_locations: Array<TypeHotLocation>;
-    prices: Array<TypePriceResource>;
+    // TODO: Uncomment when doing in-app-purchase
+    // prices: Array<TypePriceResource>;
     deposit_bank: {
       code: string;
       name: {
@@ -115,6 +116,7 @@ interface TypeResourceResponse {
       };
       account_number: string;
       account_holder: string;
+      latest_version: string;
     };
   };
 }
@@ -165,3 +167,33 @@ type TypeGradient = {
 interface TypeMoreOptionsMe {
   postModal: TypeBubblePalace | TypeGroupBuying;
 }
+
+type EnumNotification = typeof import('../../asset/enum').NOTIFICATION;
+type TypeNotification = {
+  id: number;
+  creator: number;
+  created: string;
+  modified: string;
+  status: number;
+} & (
+  | {
+      type: EnumNotification['joinGb'];
+      data: TypeJoinEstimate;
+    }
+  | {
+      type: EnumNotification['hasNewJoin'];
+      data: TypeJoinEstimate;
+    }
+  | {
+      type: EnumNotification['request'];
+      data: TypeGetRequestResponse;
+    }
+  | {
+      type: EnumNotification['likeSale'];
+      data: TypeGroupBuying;
+    }
+  | {
+      type: EnumNotification['likeTour'];
+      data: Tour;
+    }
+);

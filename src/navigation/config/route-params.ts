@@ -1,14 +1,14 @@
 import {APP_EVENT, SOCKET_EVENT} from 'asset/enum';
-import {ParamsCreateLocation, ParamsCreateTour} from 'feature/profile/hooks';
+import {ParamsCreateTour} from 'feature/profile/hooks';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   LOGIN_ROUTE,
   MAIN_SCREEN,
+  ORDER_ROUTE,
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
-  ORDER_ROUTE,
 } from './routes';
 
 export type AllRoutes =

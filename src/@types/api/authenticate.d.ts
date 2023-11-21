@@ -101,9 +101,6 @@ interface TypeRequestUpdatePrice {
 /**
  * Request
  */
-interface TypeRequestResponse {
-  request_id: number;
-}
 
 type TypeAuthRequest = typeof import('../../asset/enum').TYPE_AUTH_REQUEST;
 interface UpgradeAccount {
@@ -118,12 +115,7 @@ interface UpdateBank {
   bank_account: string;
 }
 interface UpdatePrice {
-  sale: {
-    id: number | null;
-    name: string;
-    content: string;
-    images: string[];
-  };
+  sale: TypeGroupBuying;
   prices: TypePrice[];
 }
 
@@ -131,6 +123,10 @@ type TypeGetRequestResponse = {
   id: number;
   created: string;
   expired: string;
+  creator: number;
+  creator_name: string;
+  creator_avatar: string;
+  status: number;
 } & (
   | {
       type: TypeAuthRequest['suggest_location'];

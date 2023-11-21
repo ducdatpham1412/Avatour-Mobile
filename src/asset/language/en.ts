@@ -187,6 +187,7 @@ const discovery = {
   moneyToPay: 'Money to pay remaining',
   moneyToPayAll: 'Total money to pay remaining',
   goToDeposit: 'Go to deposit',
+  waitingDeposit: 'Waiting for deposit',
   hotLocation: '🔥 Hot location',
   travelCamping: 'Experience',
   travelVolunteer: 'Volunteer',
@@ -247,7 +248,7 @@ const discovery = {
     'You have no general orders to confirm today at {{storeName}}',
   confirmAll: 'Confirm all above',
   buyingHistory: 'Buying history',
-  arrivalTimePassed: 'The arrival time has passed',
+  arrivalTimePassed: 'Arrival time passed',
   notRequestConfirm: 'No confirmation request yet',
   dayNumber: 'Day {{value}}',
   durationHere: 'Exploring duration',
@@ -303,6 +304,13 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
   suggestNewLocation: 'Suggest new location',
   searchNameOrTransactionHash: 'Search name or order number',
   shareToCommunity: 'Share to community',
+  confirmOrder: 'Confirm ordering',
+  confirmOvertime: 'Confirmation expired',
+  canNotConfirmNow:
+    'You can only confirm when the user has arrived at the store or the order is overdue',
+  shopNotReceiveOrderNow:
+    'The store is currently not accepting orders\nWe will refund you within 1-3 days',
+  notReceiveThisOrder: 'You did not receive this order',
 };
 
 const tour = {
@@ -448,7 +456,7 @@ const profile = {
   maxGroups: 'Maximum number of groups',
   sendRequestChangePrice: 'Request changing prices',
   updateBankAccount: 'Receiving account',
-  postGroupBuying: 'Create group buying',
+  postGroupBuying: 'Create sale',
   havingRequestUpdate: "You're having an update request",
   review: 'Review',
   thisIsAccountReceive:
@@ -540,12 +548,25 @@ const setting = {
 
 const notification = {
   title: 'Notifications',
-  comment: ' commented on your post',
-  follow: ' start following you',
-  likePost: ' liked your post',
-  friendPostNew: ' post new post',
-  likeGroupBuying: '  like your group buying campaign',
   notHaveNotifications: "You don't have any notifications",
+  requestUpdatePrice:
+    'Request updating price for <b>{{name}}</b> has been sent',
+  requestUpdateInfo: 'Your bank account correction request has been sent',
+  requestUpgradeToShop:
+    'Request to transfer to your store account has been sent',
+  suggestLocation: 'Location {{name}} proposal has been submitted',
+  inReview: 'In review',
+  approved: 'Approved',
+  rejected: 'Rejected',
+  orderedAt: 'You have placed <b>{{product}}</b> at <b>{{name}}</b>',
+  orderedFrom:
+    '<b>{{name}}</b> have placed <b>{{product}}</b> an order at your store',
+  waitingConfirmFromShop: 'Wait for confirmation from shop',
+  waitingConfirmFromYou: 'Waiting for your order confirmation',
+  checkInAtShop: 'Check-in at shop',
+  userComeToYourShop: 'User checked-in your shop',
+  successOrder: 'Order successful',
+  goToConfirm: 'Go to confirming',
 };
 
 const alert = {
@@ -605,8 +626,8 @@ const alert = {
   sureUpdateBankAccount: 'Are you sure want to update your bank account?',
   requestUpdateBankSuccess:
     'Request updating bank account successfully\nOur team will review and respond to you within 1 day',
-  sureToBlock: 'Are you sure you want to block this person?',
-  sureToDeleteJoin: 'Are you sure you want to cancel this order?',
+  sureToBlock: 'Are you sure to block this person?',
+  sureToDeleteJoin: 'Are you sure to cancel this order?',
   afterTemporarilyClose:
     'After pressing <b>"Temporarily closed"</b>, people cannot participate in buying {{value}} until you reopen',
   stillHavePeopleJoin: `You cannot delete {{name}} at the moment because there are still people participating in the joint purchase.

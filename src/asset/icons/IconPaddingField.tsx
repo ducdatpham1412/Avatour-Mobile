@@ -3,9 +3,10 @@ import {SvgFromXml} from 'react-native-svg';
 import {scale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
-const IconPaddingField = ({size = scale(542), style}: IconSvgProps) => {
-  const height = (280 / 542) * size;
-  return <SvgFromXml xml={xml(size, height)} style={style} />;
+const IconPaddingField = ({size = 542, style}: IconSvgProps) => {
+  const width = scale(size);
+  const height = (280 / 542) * width;
+  return <SvgFromXml xml={xml(width, height)} style={style} />;
 };
 
 const xml = (width: number, height: number) => {

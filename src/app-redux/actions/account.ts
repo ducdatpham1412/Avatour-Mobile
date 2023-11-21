@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {accountSliceAction, initialAccountState} from '../account/accountSlice';
 import Store, {RootState} from '../store';
-import {setToken, updateListChatTag} from './logic';
+import {setToken} from './logic';
 
 type PassportType = DeepPartial<RootState['accountSlice']['passport']>;
 
@@ -43,5 +43,4 @@ export const logOut = () => {
   updatePassport({
     profile: passport.profile,
   });
-  updateListChatTag([]);
 };

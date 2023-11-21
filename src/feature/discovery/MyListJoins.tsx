@@ -19,7 +19,7 @@ const MyListJoins = ({
     params: {saleId},
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.myListJoins]>) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const [{data: sale}] = useDetailSale(saleId, {revalidateAll: false});
   const [
     {data: savedData, loading, validating, loadingConfirmBought},
@@ -98,7 +98,7 @@ const MyListJoins = ({
             />
           )}
           keyExtractor={item => String(item.id)}
-          contentContainerStyle={{paddingBottom: bottom}}
+          contentContainerStyle={{paddingBottom}}
           refreshing={validating}
           onRefresh={mutate}
           style={$list}
