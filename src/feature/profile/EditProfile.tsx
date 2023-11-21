@@ -4,7 +4,7 @@ import Store, {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, LIST_TOPICS, ratioAvatar} from 'asset';
 import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';
-import {Metrics, safePaddingNotZero, verticalMargin} from 'asset/metrics';
+import {Metrics, verticalMargin} from 'asset/metrics';
 import {
   AppInput,
   StyleButton,
@@ -87,7 +87,7 @@ const onShowOptionAvatar = (setAvatar: Dispatch<SetStateAction<string>>) => {
 };
 
 const EditProfileUser = () => {
-  const {bottom} = useSafeArea();
+  const {bottom, paddingBottom} = useSafeArea();
   const theme = useTheme();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const {loading, setLoading} = useLoading();
@@ -151,6 +151,7 @@ const EditProfileUser = () => {
         scrollEnabled
         headerProps={{title: 'profile.editProfile'}}
         backgroundColor={theme.white}
+        contentContainerStyle={{paddingBottom}}
         BottomComponent={
           <View
             style={[
@@ -228,7 +229,7 @@ const EditProfileUser = () => {
 };
 
 const EditProfileSupplier = () => {
-  const {bottom} = useSafeArea();
+  const {bottom, paddingBottom} = useSafeArea();
   const theme = useTheme();
   const {profile} = useAppSelector(state => state.accountSlice.passport);
   const {loading, setLoading} = useLoading();
@@ -383,7 +384,7 @@ const EditProfileSupplier = () => {
         scrollEnabled
         headerProps={{title: 'profile.editProfile'}}
         backgroundColor={theme.white}
-        customStyle={{paddingBottom: safePaddingNotZero}}
+        customStyle={{paddingBottom}}
         BottomComponent={
           <View
             style={[
