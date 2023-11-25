@@ -30,7 +30,7 @@ export const apiGetListGroupBuying = ({
   return request.get('/profile/sales', {
     params: {
       user_id: params.userId,
-      page_index: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       type: TYPE_SALE_SEARCH.list,
     },
@@ -40,7 +40,7 @@ export const apiGetListGroupBuying = ({
 export const apiGetListReviewAboutUser = ({params}: TypeParamsPaging) => {
   return request.get(`/profile/list-posts-review-user/${params.userId}`, {
     params: {
-      pageIndex: params.pageIndex,
+      pageIndex: params.page_index,
       take: params.take,
     },
   });
@@ -112,7 +112,7 @@ export const apiDeletePost = (idPost: string) => {
 export const apiGetListSalesLiked = ({params}: TypeParamsPaging) => {
   return request.get('/profile/sales', {
     params: {
-      page_index: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       type: TYPE_SALE_SEARCH.favorite,
     },
@@ -122,7 +122,7 @@ export const apiGetListSalesLiked = ({params}: TypeParamsPaging) => {
 export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
   return request.get('/profile/sales', {
     params: {
-      page_index: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       type: TYPE_SALE_SEARCH.joined,
     },
@@ -132,7 +132,7 @@ export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
 export const apiGetListFollow = ({params}: TypeParamsPaging) => {
   return request.get(`/profile/follow/${params.userId}`, {
     params: {
-      page_index: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       type: params.type,
     },

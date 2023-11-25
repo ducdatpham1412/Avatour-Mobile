@@ -1,6 +1,5 @@
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import request from './request';
-import {TypeGetRequestResponse} from 'api/interface';
 
 export const apiUpgradeAccount = (body: TypeRequestUpgradeAccount) => {
   return request.put('auth/request', body, {
@@ -112,12 +111,3 @@ export const apiUpdateBankAccount = (params: TypeRequestUpdateBankAccount) => {
     },
   );
 };
-
-export const apiGetUpdateBank =
-  (): PromiseApiResponse<TypeGetRequestResponse<'update_bank'> | null> => {
-    return request.get('auth/request', {
-      params: {
-        type: TYPE_AUTH_REQUEST.update_bank,
-      },
-    });
-  };

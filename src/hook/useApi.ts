@@ -12,6 +12,12 @@ interface TypeParamsApi {
   };
 }
 
+export const defaultSWRConfig: SWRConfiguration = {
+  revalidateOnFocus: false,
+  shouldRetryOnError: false,
+  revalidateIfStale: false,
+};
+
 const useApi = <T>({path, params, config}: TypeParamsApi) => {
   const {modeExp} = useAppSelector(state => state.accountSlice);
   const moreConfig: SWRConfiguration = config?.revalidateAll

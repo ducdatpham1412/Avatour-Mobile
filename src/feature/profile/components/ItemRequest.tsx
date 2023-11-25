@@ -1,4 +1,3 @@
-import {TypeGetRequestResponse} from 'api/interface';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import {APP_EVENT, TYPE_AUTH_REQUEST} from 'asset/enum';
 import Images from 'asset/img/images';
@@ -25,7 +24,7 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useMyRequests} from '../hooks';
 
 interface Props {
-  item: TypeGetRequestResponse<keyof typeof TYPE_AUTH_REQUEST>;
+  item: TypeGetRequestResponse;
 }
 
 const ItemRequest = ({item}: Props) => {
@@ -51,41 +50,41 @@ const ItemRequest = ({item}: Props) => {
 
   const renderData = () => {
     if (item.type === TYPE_AUTH_REQUEST.update_bank) {
-      const data =
-        item.data as unknown as TypeGetRequestResponse<'update_bank'>['data'];
-
       return (
         <View style={[$upgradeAccount, {backgroundColor: theme.gray_50}]}>
           <StyleText
-            originValue={`${t('profile.bankName')}: ${data.bank_code}`}
+            originValue={`${t('profile.bankName')}: ${item.data.bank_code}`}
           />
           <StyleText
-            originValue={`${t('profile.accountNumber')}: ${data.bank_account}`}
+            originValue={`${t('profile.accountNumber')}: ${
+              item.data.bank_account
+            }`}
           />
         </View>
       );
     }
 
     if (item.type === TYPE_AUTH_REQUEST.update_price) {
-      const data =
-        item.data as unknown as TypeGetRequestResponse<'update_price'>['data'];
       return (
         <StyleTouchable
           customStyle={[$upgradeAccount, {backgroundColor: theme.gray_50}]}
           onPress={() => {
-            if (data.sale.id) {
+            if (item.data.sale.id) {
               push(ROOT_SCREEN.detailSale, {
-                saleId: data.sale.id,
+                saleId: item.data?.sale?.id,
               });
             }
           }}>
           <View style={$updatePrice}>
-            <Avatar source={{uri: data.sale.images?.[0]}} size={35} />
+            <Avatar source={{uri: item.data.sale.images?.[0]}} size={35} />
             <View style={$name}>
-              <StyleText originValue={data.sale.name} customStyle={$textName} />
+              <StyleText
+                originValue={item.data?.sale?.name}
+                customStyle={$textName}
+              />
               <View style={$location}>
                 <StyleText
-                  originValue={data.sale.name}
+                  originValue={item.data?.sale?.name}
                   customStyle={[$textLocation, {color: theme.gray_500}]}
                 />
               </View>
@@ -93,7 +92,7 @@ const ItemRequest = ({item}: Props) => {
           </View>
 
           <BoxUpdatePrice
-            prices={data.prices}
+            prices={item.data?.prices}
             containerStyle={{marginTop: verticalScale(4)}}
           />
         </StyleTouchable>
@@ -101,16 +100,14 @@ const ItemRequest = ({item}: Props) => {
     }
 
     if (item.type === TYPE_AUTH_REQUEST.suggest_location) {
-      const data =
-        item.data as unknown as TypeGetRequestResponse<'suggest_location'>['data'];
       return (
         <View style={$data}>
           <StyleTouchable
             customStyle={[$suggestLocation, {backgroundColor: theme.gray_50}]}
-            onPress={() => onGoToProfile(data.id)}>
-            <Avatar source={{uri: data.avatar}} size={35} />
+            onPress={() => onGoToProfile(item.data.id)}>
+            <Avatar source={{uri: item.data.avatar}} size={35} />
             <View style={$name}>
-              <StyleText originValue={data.name} customStyle={$textName} />
+              <StyleText originValue={item.data.name} customStyle={$textName} />
               <View style={$location}>
                 <StyleIcon
                   source={Images.icons.location}
@@ -118,7 +115,7 @@ const ItemRequest = ({item}: Props) => {
                   tintColor={theme.gray_500}
                 />
                 <StyleText
-                  originValue={data.location}
+                  originValue={item.data?.location}
                   customStyle={[$textLocation, {color: theme.gray_500}]}
                 />
               </View>
@@ -129,20 +126,22 @@ const ItemRequest = ({item}: Props) => {
     }
 
     if (item.type === TYPE_AUTH_REQUEST.upgrade_to_shop) {
-      const data =
-        item.data as unknown as TypeGetRequestResponse<'upgrade_to_shop'>['data'];
       return (
         <View style={[$upgradeAccount, {backgroundColor: theme.gray_100}]}>
-          <StyleText originValue={`${t('discovery.name')}: ${data.name}`} />
           <StyleText
-            originValue={`${t('profile.address')}: ${data.location}`}
-          />
-          <StyleText originValue={`${t('login.phone')}: ${data.phone}`} />
-          <StyleText
-            originValue={`${t('profile.bankName')}: ${data.bank_code}`}
+            originValue={`${t('discovery.name')}: ${item.data.name}`}
           />
           <StyleText
-            originValue={`${t('profile.accountNumber')}: ${data.bank_account}`}
+            originValue={`${t('profile.address')}: ${item.data.location}`}
+          />
+          <StyleText originValue={`${t('login.phone')}: ${item.data.phone}`} />
+          <StyleText
+            originValue={`${t('profile.bankName')}: ${item.data.bank_code}`}
+          />
+          <StyleText
+            originValue={`${t('profile.accountNumber')}: ${
+              item.data?.bank_account
+            }`}
           />
         </View>
       );
@@ -156,9 +155,8 @@ const ItemRequest = ({item}: Props) => {
       try {
         await onDeleteRequest(item.id);
         if (item.type === TYPE_AUTH_REQUEST.suggest_location) {
-          const temp: TypeGetRequestResponse<'suggest_location'> = item;
           emitAppEvent(APP_EVENT.suggestLocation, {
-            locationId: temp?.data?.id,
+            locationId: item.data?.id,
             event: 'delete-suggest',
           });
         }
@@ -240,14 +238,12 @@ const $textLocation: TextStyle = {
   fontSize: FONT_SIZE.f4,
   marginLeft: scale(4),
 };
-// Upgrade account
 const $upgradeAccount: ViewStyle = {
   width: '100%',
   paddingHorizontal: scale(16),
   paddingVertical: verticalScale(12),
   borderRadius: BORDER_RADIUS.f3,
 };
-// Update price
 const $updatePrice: ViewStyle = {
   width: '100%',
   flexDirection: 'row',

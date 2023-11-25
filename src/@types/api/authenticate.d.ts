@@ -98,6 +98,54 @@ interface TypeRequestUpdatePrice {
   prices: TypePrice[];
 }
 
+/**
+ * Request
+ */
 interface TypeRequestResponse {
   request_id: number;
 }
+
+type TypeAuthRequest = typeof import('../../asset/enum').TYPE_AUTH_REQUEST;
+interface UpgradeAccount {
+  name: string;
+  location: string;
+  phone: string;
+  bank_code: string;
+  bank_account: string;
+}
+interface UpdateBank {
+  bank_code: string;
+  bank_account: string;
+}
+interface UpdatePrice {
+  sale: {
+    id: number | null;
+    name: string;
+    content: string;
+    images: string[];
+  };
+  prices: TypePrice[];
+}
+
+type TypeGetRequestResponse = {
+  id: number;
+  created: string;
+  expired: string;
+} & (
+  | {
+      type: TypeAuthRequest['suggest_location'];
+      data: TypeGetProfileResponse;
+    }
+  | {
+      type: TypeAuthRequest['update_bank'];
+      data: UpdateBank;
+    }
+  | {
+      type: TypeAuthRequest['update_price'];
+      data: UpdatePrice;
+    }
+  | {
+      type: TypeAuthRequest['upgrade_to_shop'];
+      data: UpgradeAccount;
+    }
+);

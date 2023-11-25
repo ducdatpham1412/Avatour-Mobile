@@ -1,5 +1,4 @@
 import {apiUpdateBankAccount} from 'api/authentication';
-import {TypeGetRequestResponse} from 'api/interface';
 import {useAppSelector} from 'app-redux/store';
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
 import {FONT_SIZE} from 'asset/standardValue';
@@ -14,27 +13,13 @@ import {useMyRequests} from 'feature/profile/hooks';
 import {useLoading, useSafeArea, useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {ModalAlert, ModalInputEdit} from 'navigation/screen/modals';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
 import {scale} from 'react-native-size-matters';
-import {borderWidthTiny, logger} from 'utility/assistant';
+import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, verticalScale} from 'utility/scale';
 import ModalChooseBank from './components/ModalChooseBank';
-
-type TypeChosenBank = {
-  id: number;
-  name: string;
-  code: string;
-  bin: string;
-  shortName: string;
-  logo: string;
-  transferSupported: number;
-  lookupSupported: number;
-  short_name: string;
-  support: number;
-  isTransfer: number;
-  swift_code: string;
-};
+import {useVietQRBank} from './hooks';
 
 const UpdateBankAccount = () => {
   const {bottom} = useSafeArea();
@@ -43,14 +28,15 @@ const UpdateBankAccount = () => {
     profile: {information},
   } = useAppSelector(state => state.accountSlice.passport);
   const [{data: listRequests}, {mutate}] = useMyRequests();
-  const updateBankData: TypeGetRequestResponse<'update_bank'> | undefined =
-    listRequests.find(item => item.type === TYPE_AUTH_REQUEST.update_bank);
+  const requestUpdateBank = listRequests.find(
+    item => item.type === TYPE_AUTH_REQUEST.update_bank,
+  );
+  const [{listBanks}] = useVietQRBank();
 
   const {loading, setLoading} = useLoading();
+  const modalChooseBankRef = useRef<ElementRef<typeof ModalChooseBank>>(null);
 
-  const modalChooseBankRef = useRef<ModalChooseBank>(null);
-
-  const [chosenBank, setChosenBank] = useState<TypeChosenBank>();
+  const [chosenBank, setChosenBank] = useState<TypeItemBank>();
   const [bankAccount, setBankAccount] = useState(information.bank_account);
 
   const disableButton =
@@ -60,24 +46,13 @@ const UpdateBankAccount = () => {
       bankAccount === information.bank_account);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch('https://api.vietqr.io/v2/banks');
-        const {data} = await res.json();
-        const temp: TypeChosenBank = data.find(
-          (item: TypeChosenBank) => item?.code === information.bank_code,
-        );
-        if (temp) {
-          setChosenBank(temp);
-        }
-      } catch (err) {
-        logger(err);
-      }
-    };
-    if (information.bank_code && chosenBank === undefined) {
-      getData();
+    if (information.bank_code && !chosenBank) {
+      const findBank = listBanks?.find(
+        bank => bank.code === information.bank_code,
+      );
+      setChosenBank(findBank);
     }
-  }, [information.bank_code, chosenBank]);
+  }, [information.bank_code, chosenBank, listBanks]);
 
   const onSave = async () => {
     if (chosenBank?.code) {
@@ -110,9 +85,12 @@ const UpdateBankAccount = () => {
   };
 
   const renderUpdateBefore = () => {
-    if (!updateBankData) {
+    if (!requestUpdateBank) {
       return null;
     }
+
+    const updateBankData = requestUpdateBank.data as UpdateBank;
+
     return (
       <View style={$preViewUpdate}>
         <StyleText
@@ -123,7 +101,7 @@ const UpdateBankAccount = () => {
           <StyleText i18Text="profile.bankName" />
           <StyleText originValue=": " />
           <StyleText
-            originValue={updateBankData.data.bank_code}
+            originValue={updateBankData?.bank_code}
             customStyle={$textBankCode}
           />
         </StyleText>
@@ -131,7 +109,7 @@ const UpdateBankAccount = () => {
           <StyleText i18Text="profile.accountNumber" />
           <StyleText originValue=": " />
           <StyleText
-            originValue={updateBankData.data.bank_account}
+            originValue={updateBankData?.bank_account}
             customStyle={$textBankCode}
           />
         </StyleText>
@@ -222,6 +200,7 @@ const UpdateBankAccount = () => {
         onChangeBank={value => {
           setChosenBank(value);
           setBankAccount('');
+          modalChooseBankRef.current?.hide();
         }}
         theme={theme}
       />

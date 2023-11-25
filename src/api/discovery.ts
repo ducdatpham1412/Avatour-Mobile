@@ -63,24 +63,9 @@ export const apiReportUser = (params: {
 export const apiGetListComments = ({params}: TypeParamsPaging) => {
   return request.get(`/common/list-comments/${params.postId}`, {
     params: {
-      pageIndex: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       replied_id: params.replied_id || undefined,
-    },
-  });
-};
-
-export const apiGetListReactsPost = ({
-  params,
-}: TypeParamsPaging): Promise<{
-  success: boolean;
-  data: Array<TypeGetLikePostsResponse>;
-}> => {
-  return request.get(`/common/list-people-react/${params.idBubble}`, {
-    params: {
-      pageIndex: params.pageIndex,
-      take: params.take,
-      type: params.type,
     },
   });
 };
@@ -98,7 +83,7 @@ export const apiGetListTours = ({
 }: TypeParamsPaging<{user_id: number}>) => {
   return request.get('/common/tours', {
     params: {
-      page_index: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       user_id: params.user_id,
       type: 'list',
@@ -109,7 +94,7 @@ export const apiGetListTours = ({
 export const apiGetListToursFavorite = ({params}: TypeParamsPaging<{}>) => {
   return request.get('/common/tours', {
     params: {
-      page_index: params.pageIndex,
+      page_index: params.page_index,
       take: params.take,
       type: 'favorite',
     },

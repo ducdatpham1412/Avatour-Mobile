@@ -26,3 +26,12 @@ interface TypeChangeInformationResponse {
   success: boolean;
   data: any;
 }
+
+type TypeItemBank = {
+  id: number;
+  code: string;
+  shortName: string;
+  short_name: string;
+  name: string;
+  logo: string;
+};
