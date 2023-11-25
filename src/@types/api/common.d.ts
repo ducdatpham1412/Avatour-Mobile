@@ -121,7 +121,7 @@ interface TypeResourceResponse {
 
 interface TypeParamsPaging<T = any> {
   params: {
-    pageIndex: number;
+    page_index: number;
     take: number;
   } & T;
   [key: string]: any;

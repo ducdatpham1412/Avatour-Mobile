@@ -1,4 +1,3 @@
-import {TypeGetRequestResponse} from 'api/interface';
 import request from 'api/request';
 import {useAppSelector} from 'app-redux/store';
 import {TYPE_AUTH_REQUEST} from 'asset/enum';
@@ -8,9 +7,7 @@ import useSWRMutation from 'swr/mutation';
 const useMyRequests = () => {
   const {modeExp} = useAppSelector(state => state.accountSlice);
 
-  const {data, mutate, loading, validating} = useApi<
-    TypeGetRequestResponse<any>[]
-  >({
+  const {data, mutate, loading, validating} = useApi<TypeGetRequestResponse[]>({
     path: modeExp ? null : 'auth/request',
     params: {
       type: 'all',
@@ -67,7 +64,8 @@ const useMyRequests = () => {
     'api.deleteSuggestLocation',
     async (_, {arg: locationId}: {arg: number}) => {
       const findingRequest = data?.find(
-        (i: TypeGetRequestResponse<'suggest_location'>) =>
+        i =>
+          i.type === TYPE_AUTH_REQUEST.suggest_location &&
           i.data.id === locationId,
       );
       if (!findingRequest) {
@@ -79,7 +77,7 @@ const useMyRequests = () => {
 
   return [
     {
-      data: data || ([] as TypeGetRequestResponse<any>[]),
+      data: data ?? [],
       initLoading: loading,
       validating,
       isCanceling,

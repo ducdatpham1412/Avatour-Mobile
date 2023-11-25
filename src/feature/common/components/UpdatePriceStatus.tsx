@@ -13,7 +13,6 @@ import {borderWidthTiny} from 'utility/assistant';
 import {formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import {useDetailSale} from '../hooks';
-import {TypeGetRequestResponse} from 'api/interface';
 
 interface Props {
   saleId: number;
@@ -74,20 +73,13 @@ const UpdatePriceStatus = ({saleId}: Props) => {
   const [{data: saleData}] = useDetailSale(saleId);
 
   const findingRequest = data.find(item => {
-    const check = item.type === TYPE_AUTH_REQUEST.update_price;
-    if (!check) {
-      return false;
-    }
-    if (check) {
-      const checkData =
-        item.data as unknown as TypeGetRequestResponse<'update_price'>['data'];
-      return checkData.sale.id === saleId;
-    }
-  }) as TypeGetRequestResponse<'update_price'> | undefined;
+    return (
+      item.type === TYPE_AUTH_REQUEST.update_price &&
+      item.data.sale.id === saleId
+    );
+  });
 
-  const pricesRequest: TypePrice[] | undefined = findingRequest?.data?.prices;
-
-  if (initLoading || !findingRequest || !pricesRequest) {
+  if (initLoading || !findingRequest) {
     return (
       <SquareButton
         title="profile.editPrice"
@@ -103,6 +95,8 @@ const UpdatePriceStatus = ({saleId}: Props) => {
       />
     );
   }
+
+  const priceRequest = (findingRequest?.data as UpdatePrice).prices;
 
   const onDelete = async () => {
     const agree = async () => {
@@ -124,7 +118,7 @@ const UpdatePriceStatus = ({saleId}: Props) => {
   const onEdit = () => {
     navigate(ROOT_SCREEN.editSalePrice, {
       saleId: saleId,
-      prices: pricesRequest,
+      prices: priceRequest,
     });
   };
 
@@ -132,7 +126,7 @@ const UpdatePriceStatus = ({saleId}: Props) => {
     <View style={[$container, {borderColor: theme.gray_500}]}>
       <StyleText i18Text="discovery.reviewUpdatePrice" customStyle={$title} />
 
-      <BoxUpdatePrice prices={pricesRequest} />
+      <BoxUpdatePrice prices={priceRequest} />
 
       <View style={$button}>
         <SquareButton
