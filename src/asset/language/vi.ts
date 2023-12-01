@@ -190,6 +190,7 @@ const discovery = {
   moneyToPay: 'Số tiền cần thanh toán còn lại',
   moneyToPayAll: 'Tổng số cần thanh toán còn lại',
   goToDeposit: 'Đi tới đặt cọc',
+  waitingDeposit: 'Chờ đặt cọc',
   hotLocation: '🔥 Địa điểm nổi bật',
   travelCamping: 'Cắm trại',
   travelVolunteer: 'Tình nguyện',
@@ -306,6 +307,13 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
   suggestNewLocation: 'Đề xuất địa điểm mới',
   searchNameOrTransactionHash: 'Tìm kiếm tên hoặc mã đơn hàng',
   shareToCommunity: 'Chia sẻ với cộng đồng',
+  confirmOrder: 'Xác nhận đơn hàng',
+  confirmOvertime: 'Quá hạn xác nhận',
+  canNotConfirmNow:
+    'Bạn chỉ có thể xác nhận khi người dùng đã đến cửa hàng hoặc đơn hàng quá hạn',
+  shopNotReceiveOrderNow:
+    'Cửa hàng hiện tại không nhận đơn hàng\nChúng tôi sẽ hoàn tiền lại bạn trong thời gian 1-3 ngày',
+  notReceiveThisOrder: 'Bạn đã không nhận đơn hàng này',
 };
 
 const tour = {
@@ -543,12 +551,25 @@ const setting = {
 
 const notification = {
   title: 'Thông báo',
-  comment: ' đã bình luận bài của bạn',
-  follow: ' bắt đầu theo dõi bạn',
-  likePost: ' thích bài đăng của bạn',
-  friendPostNew: ' vừa đăng một bài mới',
-  likeGroupBuying: '  thích chiến dịch mua chung của bạn',
   notHaveNotifications: 'Bạn chưa có thông báo nào',
+  requestUpdatePrice:
+    'Yêu cầu chỉnh sửa giá sản phẩm <b>{{name}}</b> đã được gửi',
+  requestUpdateInfo:
+    'Yêu cầu chỉnh sửa tài khoản ngân hàng của bạn đã được gửi',
+  requestUpgradeToShop:
+    'Yêu cầu chuyển sang tài khoản cửa hàng của bạn đã được ghi nhận',
+  suggestLocation: 'Đề xuất địa điểm {{name}} của bạn đã được ghi nhận',
+  inReview: 'Đang xét duyệt',
+  approved: 'Đã xác nhận',
+  rejected: 'Bị từ chối',
+  orderedAt: 'Bạn đã đặt <b>{{product}}</b> tại <b>{{name}}</b>',
+  orderedFrom: '<b>{{name}}</b> đã đặt <b>{{product}}</b> tại cửa hàng của bạn',
+  waitingConfirmFromShop: 'Chờ xác nhận từ cửa hàng',
+  waitingConfirmFromYou: 'Chờ bạn xác nhận đơn hàng',
+  checkInAtShop: 'Check in tại cửa hàng',
+  userComeToYourShop: 'Người dùng đến cửa hàng',
+  successOrder: 'Đơn hàng thành công',
+  goToConfirm: 'Đi tới xác nhận',
 };
 
 const alert = {

@@ -3,8 +3,10 @@ import {SvgFromXml} from 'react-native-svg';
 import {scale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
-const ImageEmpty = ({size = scale(500), style}: IconSvgProps) => {
-  return <SvgFromXml xml={xml(size, size)} style={style} />;
+const ImageEmpty = ({size = 500, style}: IconSvgProps) => {
+  const width = scale(size);
+
+  return <SvgFromXml xml={xml(width, width)} style={style} />;
 };
 
 const xml = (width: number, height: number) => {

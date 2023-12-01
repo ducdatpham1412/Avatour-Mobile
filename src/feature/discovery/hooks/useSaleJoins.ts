@@ -1,6 +1,6 @@
 import request from 'api/request';
-import {JOIN_STATUS} from 'asset/enum';
-import {useApi} from 'hook';
+import {APP_EVENT, JOIN_STATUS} from 'asset/enum';
+import {emitAppEvent, useApi} from 'hook';
 import useSWRMutation from 'swr/mutation';
 
 type ConfirmBoughtParams = {
@@ -19,7 +19,7 @@ const useSaleJoins = (saleId: number) => {
     useSWRMutation(
       'api.confirmUserBought',
       async (_, {arg}: {arg: ConfirmBoughtParams}) => {
-        await request.put('profile/sales/confirm', {
+        await request.put('/profile/sales/confirm', {
           list_joins_id: arg.list_join_id,
         });
         await mutate(
@@ -29,7 +29,7 @@ const useSaleJoins = (saleId: number) => {
                 if (arg.list_join_id.includes(item.id)) {
                   return {
                     ...item,
-                    status: JOIN_STATUS.supplierConfirmed,
+                    status: JOIN_STATUS.supplierConfirmBought,
                   };
                 }
                 return item;
@@ -38,12 +38,45 @@ const useSaleJoins = (saleId: number) => {
           },
           {revalidate: false},
         );
+        emitAppEvent(APP_EVENT.refreshNotification);
       },
     );
 
+  const {trigger: approveOrder, isMutating: loadingApproveOrder} =
+    useSWRMutation(
+      'api.approveOrder',
+      async (_, {arg: estimateId}: {arg: number}) => {
+        await request.put(`/profile/sales/join/${estimateId}`, null, {
+          params: {
+            type: 'approved',
+          },
+        });
+        emitAppEvent(APP_EVENT.refreshNotification);
+      },
+    );
+
+  const {trigger: rejectOrder, isMutating: loadingRejectOrder} = useSWRMutation(
+    'api.approveOrder',
+    async (_, {arg: estimateId}: {arg: number}) => {
+      await request.put(`/profile/sales/join/${estimateId}`, null, {
+        params: {
+          type: 'reject',
+        },
+      });
+      emitAppEvent(APP_EVENT.refreshNotification);
+    },
+  );
+
   return [
-    {data, loading, validating, loadingConfirmBought},
-    {mutate, confirmBought},
+    {
+      data,
+      loading,
+      validating,
+      loadingConfirmBought,
+      loadingApproveOrder,
+      loadingRejectOrder,
+    },
+    {mutate, confirmBought, approveOrder, rejectOrder},
   ] as const;
 };
 

@@ -7,8 +7,8 @@ export const setPostCreatedHandling = (value: ReduxPostCreatedHandle) => {
   Store.dispatch(logicSliceAction.setPostCreatedHandling(value));
 };
 
-export const setNumberNewNotifications = (value: number) => {
-  Store.dispatch(logicSliceAction.setNumberNewNotification(value));
+export const setNewNotifications = (value: number) => {
+  Store.dispatch(logicSliceAction.setNewNotification(value));
 };
 
 export const setToken = (newToken: string | null) => {
@@ -21,10 +21,6 @@ export const updateResource = (update: ResourceType) => {
     ...update,
   };
   Store.dispatch(logicSliceAction.setResource(newResource));
-};
-
-export const updateListChatTag = (newList: any) => {
-  Store.dispatch(logicSliceAction.setListChatTag(newList));
 };
 
 export const setGestureHandle = (
@@ -40,10 +36,6 @@ export const setGestureHandle = (
 
 export const setBorderMessRoute = (color: string) => {
   Store.dispatch(logicSliceAction.setBorderMessRoute(color));
-};
-
-export const setScrollMainAndChatEnable = (value: boolean) => {
-  Store.dispatch(logicSliceAction.setScrollMainAndChatEnable(value));
 };
 
 export const setSearchParams = (value: TypeSearchParams) => {

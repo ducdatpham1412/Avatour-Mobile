@@ -13,13 +13,13 @@ import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
 import {push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN from 'navigation/config/routes';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {ModalAlert, Toast} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction} from 'react';
 import {Platform, ViewStyle} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {I18Normalize} from './I18Next';
 import {impactLight} from './haptic';
-import {checkAuthenticated} from 'navigation/screen/AppModal';
 
 export const isIOS = Platform.OS === 'ios';
 
@@ -361,7 +361,7 @@ export const renderJoinStatus = (
         text: 'profile.waitingConfirm',
         color: theme.p_800,
       };
-    case JOIN_STATUS.supplierConfirmed:
+    case JOIN_STATUS.supplierConfirmBought:
       return {
         text: 'profile.joinedSuccess',
         color: theme.green,

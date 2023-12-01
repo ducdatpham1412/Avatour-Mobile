@@ -3,15 +3,14 @@ import {Path, Svg} from 'react-native-svg';
 import {moderateScale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
-const IconPrice = ({
-  size = moderateScale(24),
-  style,
-  tintColor = 'black',
-}: IconSvgProps) => {
+const IconPrice = ({size = 24, style, tintColor = 'black'}: IconSvgProps) => {
+  const width = moderateScale(size);
+  const height = (25 / 24) * width;
+
   return (
     <Svg
-      width={size}
-      height={(25 / 24) * size}
+      width={width}
+      height={height}
       viewBox="0 0 24 25"
       fill="none"
       style={style}>

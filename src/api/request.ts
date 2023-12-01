@@ -11,7 +11,7 @@ const baseURL = Config.API_URL;
 
 const request = axios.create({
   baseURL,
-  timeout: 5000,
+  timeout: 15000,
   headers: {
     Accept: '*/*',
   },

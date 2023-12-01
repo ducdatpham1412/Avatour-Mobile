@@ -16,7 +16,7 @@ const useMyRequests = () => {
 
   const {trigger: onDeleteRequest, isMutating: isCanceling} = useSWRMutation(
     'api.cancelRequest',
-    async (_, {arg: requestId}) => {
+    async (_, {arg: requestId}: {arg: number}) => {
       await request.delete('auth/request', {params: {request_id: requestId}});
       await mutate(
         pre => {
@@ -42,20 +42,24 @@ const useMyRequests = () => {
   );
 
   const {trigger: suggestLocation, isMutating: loadingSuggestLocation} =
-    useSWRMutation('api.suggestLocation', async (_, {arg: locationId}) => {
-      await request.put(
-        'auth/request',
-        {
-          location_id: locationId,
-        },
-        {
-          params: {
-            type: TYPE_AUTH_REQUEST.suggest_location,
+    useSWRMutation(
+      'api.suggestLocation',
+      async (_, {arg: locationId}: {arg: number}) => {
+        await request.put(
+          'auth/request',
+          {
+            location_id: locationId,
           },
-        },
-      );
-      mutate();
-    });
+          {
+            params: {
+              type: TYPE_AUTH_REQUEST.suggest_location,
+            },
+            timeout: 20000,
+          },
+        );
+        mutate();
+      },
+    );
 
   const {
     trigger: deleteSuggestLocation,

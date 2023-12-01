@@ -78,7 +78,7 @@ const usePaging = <TResult = any, TParams = TypeObjectAny>(paramsPaging: {
   const runRequest = (requestPageIndex: number, otherParams?: any) => {
     umiRequest.run({
       params: {
-        pageIndex: requestPageIndex,
+        page_index: requestPageIndex,
         ...otherParams,
         take: params?.take || SIZE_LOADING_LIMIT,
       },

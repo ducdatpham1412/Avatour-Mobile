@@ -1,17 +1,19 @@
 import React from 'react';
 import {Circle, Path, Svg} from 'react-native-svg';
-import {IconSvgProps} from '.';
 import {moderateScale} from 'utility/scale';
+import {IconSvgProps} from '.';
 
 const SuccessIcon = ({
-  size = moderateScale(80),
+  size = 80,
   style,
   tintColor = '#4527CE',
 }: IconSvgProps) => {
+  const width = moderateScale(size);
+
   return (
     <Svg
-      width={size}
-      height={size}
+      width={width}
+      height={width}
       viewBox="0 0 80 80"
       fill="none"
       style={style}>

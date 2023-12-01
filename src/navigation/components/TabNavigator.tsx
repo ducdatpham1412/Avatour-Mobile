@@ -1,11 +1,11 @@
-import {setNumberNewNotifications} from 'app-redux';
+import {setNewNotifications} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE} from 'asset';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
-import {useTheme} from 'hook';
+import {useEstimatesAndJoinings, useTheme} from 'hook';
 import ROOT_SCREEN, {
   MAIN_SCREEN,
   PROFILE_ROUTE,
@@ -20,6 +20,10 @@ import {borderWidthTiny, logger} from 'utility/assistant';
 import {moderateScale, scale} from 'utility/scale';
 
 const iconSize = 27;
+
+interface TagRedProps {
+  value: number;
+}
 
 const showModalQr = async () => {
   try {
@@ -38,10 +42,21 @@ const showModalQr = async () => {
   }
 };
 
+const TagRed = ({value}: TagRedProps) => {
+  return (
+    <View style={$newNotificationBox}>
+      <StyleText originValue={value} customStyle={$textNewMessages} />
+    </View>
+  );
+};
+
 const TabNavigator = (props: any) => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
-  const {numberNewNotifications} = useAppSelector(state => state.logicSlice);
+  const {newNotifications} = useAppSelector(state => state.logicSlice);
+  const {
+    data: {estimates},
+  } = useEstimatesAndJoinings();
 
   const tabIndexFocus = props.state.index;
 
@@ -76,36 +91,39 @@ const TabNavigator = (props: any) => {
     );
   }, [isFocusDiscovery, theme]);
 
-  const FavoriteButton = useMemo(() => {
+  const TourButton = useMemo(() => {
     const tintColor = isFocusHeart ? theme.p_600 : theme.gray_500;
     return (
       <StyleTouchable
         customStyle={$button}
         onPress={() => navigate(MAIN_SCREEN.orderRoute)}>
-        <StyleIcon
-          source={
-            isFocusHeart
-              ? Images.icons.tourTabBarFocus
-              : Images.icons.tourTabBar
-          }
-          size={iconSize}
-          customStyle={{tintColor}}
-        />
+        <View>
+          <StyleIcon
+            source={
+              isFocusHeart
+                ? Images.icons.tourTabBarFocus
+                : Images.icons.tourTabBar
+            }
+            size={iconSize}
+            customStyle={{tintColor}}
+          />
+          {!!estimates.length && <TagRed value={estimates.length} />}
+        </View>
         <StyleText
           i18Text="order.order"
           customStyle={[$textTitle, {color: tintColor}]}
         />
       </StyleTouchable>
     );
-  }, [isFocusHeart, theme]);
+  }, [isFocusHeart, theme, estimates.length]);
 
-  const ScanButton = useRef(() => (
+  const ScanButton = useRef(
     <StyleTouchable
       customStyle={[$button, {justifyContent: 'flex-start'}]}
       onPress={showModalQr}>
       <StyleIcon source={Images.icons.scan} size={30} />
-    </StyleTouchable>
-  ));
+    </StyleTouchable>,
+  );
 
   const NotificationButton = useMemo(() => {
     const tintColor = isFocusNotification ? theme.p_600 : theme.gray_500;
@@ -113,7 +131,7 @@ const TabNavigator = (props: any) => {
       <StyleTouchable
         customStyle={$button}
         onPress={() => {
-          setNumberNewNotifications(0);
+          setNewNotifications(0);
           navigate(MAIN_SCREEN.notificationRoute);
         }}>
         <View>
@@ -126,15 +144,8 @@ const TabNavigator = (props: any) => {
             size={25}
             customStyle={{tintColor}}
           />
-          {numberNewNotifications > 0 && (
-            <View style={$newNotificationBox}>
-              <StyleText
-                originValue={
-                  numberNewNotifications > 99 ? 99 : numberNewNotifications
-                }
-                customStyle={$textNewMessages}
-              />
-            </View>
+          {!!newNotifications && (
+            <TagRed value={newNotifications > 99 ? 99 : newNotifications} />
           )}
         </View>
         <StyleText
@@ -143,7 +154,7 @@ const TabNavigator = (props: any) => {
         />
       </StyleTouchable>
     );
-  }, [isFocusNotification, theme, numberNewNotifications]);
+  }, [isFocusNotification, theme, newNotifications]);
 
   const ProfileButton = useMemo(() => {
     const tintColor = isFocusProfile ? theme.p_600 : theme.gray_500;
@@ -186,8 +197,8 @@ const TabNavigator = (props: any) => {
         },
       ]}>
       {DiscoveryButton}
-      {FavoriteButton}
-      {ScanButton.current()}
+      {TourButton}
+      {ScanButton.current}
       {NotificationButton}
       {ProfileButton}
     </Animated.View>
@@ -203,7 +214,7 @@ const $newNotificationBox: ViewStyle = {
   justifyContent: 'center',
   backgroundColor: Theme.common.red,
   top: 0,
-  right: 0,
+  right: -moderateScale(6),
 };
 const $textNewMessages: TextStyle = {
   fontSize: moderateScale(10),

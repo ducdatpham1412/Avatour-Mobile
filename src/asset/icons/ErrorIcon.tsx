@@ -3,15 +3,13 @@ import {Circle, Path, Svg} from 'react-native-svg';
 import {moderateScale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
-const ErrorIcon = ({
-  size = moderateScale(80),
-  style,
-  tintColor = '#FF3B30',
-}: IconSvgProps) => {
+const ErrorIcon = ({size = 80, style, tintColor = '#FF3B30'}: IconSvgProps) => {
+  const width = moderateScale(size);
+
   return (
     <Svg
-      width={size}
-      height={size}
+      width={width}
+      height={width}
       viewBox="0 0 80 80"
       fill="none"
       style={style}>

@@ -52,10 +52,10 @@ const ItemSale = ({item, onReact, containerStyle, hidingElements}: Props) => {
 
   let textPrice = '';
   if (startPrice && endPrice) {
-    textPrice = `${startPrice} - ${formatMoney(endPrice)}`;
+    textPrice = `${formatLocaleNumber(startPrice)} - ${formatMoney(endPrice)}`;
   } else {
     const temp = startPrice ?? endPrice ?? '0';
-    textPrice = `${formatLocaleNumber(temp)}vnd`;
+    textPrice = formatMoney(temp);
   }
 
   const renderJoins = () => {

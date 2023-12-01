@@ -5,9 +5,9 @@ import Theme from 'asset/theme/Theme';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import StyleList from 'components/base/StyleList';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Platform, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import {isIOS, logger} from 'utility/assistant';
+import {borderWidthTiny, isIOS, logger} from 'utility/assistant';
 import ImageUploader from 'utility/ImageUploader';
 import {moderateScale} from 'utility/scale';
 
@@ -195,10 +195,7 @@ const styles = ScaledSheet.create({
   imageBox: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Platform.select({
-      ios: '0.25@ms',
-      android: '0.25@ms',
-    }),
+    padding: borderWidthTiny,
   },
   image: {
     width: '100%',

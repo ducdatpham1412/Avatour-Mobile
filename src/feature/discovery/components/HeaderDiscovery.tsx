@@ -113,7 +113,6 @@ const HeaderDiscovery = () => {
       passport: {profile},
       modeExp,
     },
-    logicSlice: {numberNewMessages},
   } = useAppSelector(state => state);
   const {
     data: {estimates},
@@ -179,14 +178,6 @@ const HeaderDiscovery = () => {
           customStyle={{tintColor: theme.gray_500}}
           size={23}
         />
-        {!!numberNewMessages && (
-          <View style={$newMessageBox}>
-            <StyleText
-              originValue={numberNewMessages}
-              customStyle={[$textNewMessages, {color: theme.white}]}
-            />
-          </View>
-        )}
       </StyleTouchable>
     </View>
   );

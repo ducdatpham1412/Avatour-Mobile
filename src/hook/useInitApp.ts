@@ -1,7 +1,7 @@
 import {apiGetPassport, apiGetResource} from 'api/discovery';
 import {
   setModeExp,
-  setNumberNewNotifications,
+  setNewNotifications,
   setToken,
   updatePassport,
   updateResource,
@@ -29,7 +29,7 @@ const useInitApp = () => {
 
         updatePassport(passport.data);
         // passport must be above token to set in SocketProvider
-        setNumberNewNotifications(passport?.data.numberNewNotifications);
+        setNewNotifications(passport.data?.new_notifications);
         setToken(activeUser?.token);
         setModeExp(false);
         I18Next.changeLanguage(

@@ -3,15 +3,13 @@ import {Path, Svg} from 'react-native-svg';
 import {moderateScale} from 'utility/scale';
 import {IconSvgProps} from '.';
 
-const IconClose = ({
-  size = moderateScale(24),
-  style,
-  tintColor = 'black',
-}: IconSvgProps) => {
+const IconClose = ({size = 24, style, tintColor = 'black'}: IconSvgProps) => {
+  const width = moderateScale(size);
+
   return (
     <Svg
-      width={size}
-      height={size}
+      width={width}
+      height={width}
       viewBox="0 0 24 24"
       fill="none"
       style={style}>
