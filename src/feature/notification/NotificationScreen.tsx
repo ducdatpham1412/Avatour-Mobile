@@ -36,7 +36,7 @@ const Empty = () => {
   );
 };
 
-const NotificationScreen = () => {
+const NotificationUser = () => {
   const theme = useTheme();
   const {paddingBottom} = useSafeArea();
   const {id: myId} = useAppSelector(
@@ -130,6 +130,27 @@ const NotificationScreen = () => {
       />
     </StyleContainer>
   );
+};
+
+const NotificationScreen = () => {
+  const theme = useTheme();
+  const {modeExp} = useAppSelector(state => state.accountSlice);
+
+  if (modeExp) {
+    return (
+      <StyleContainer
+        headerProps={{
+          title: 'notification.title',
+          LeftComponent: null,
+        }}
+        backgroundColor={theme.white}
+        customStyle={$container}>
+        <Empty />
+      </StyleContainer>
+    );
+  }
+
+  return <NotificationUser />;
 };
 
 const $container: ViewStyle = {

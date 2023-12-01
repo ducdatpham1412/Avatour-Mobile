@@ -178,7 +178,7 @@ const discovery = {
   goodMorning: 'Good morning 🌤',
   goodAfternoon: 'Good afternoon ☀️',
   goodEvening: 'Good evening 🌙',
-  thankyou: 'Thanks you',
+  thankyou: 'Thank you',
   suggestHaveBeenAcknowledged:
     'Your contribution to Avatour has been acknowledged. Thank you!',
   amountBookGb: 'Quantities orders: {{value}}',
@@ -262,7 +262,7 @@ const discovery = {
   estimate: 'Estimate',
   estimatedPrice: 'Estimated range',
   appliedPrice: 'Applicable price',
-  nowPrice: 'Your current price',
+  nowPrice: 'Current price',
   priceCanBeChange:
     'The price may fluctuate according to the <b>Estimated range</b> depending on the quantity in the buying group',
   priceCanBeDecrease:
@@ -311,6 +311,7 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
   shopNotReceiveOrderNow:
     'The store is currently not accepting orders\nWe will refund you within 1-3 days',
   notReceiveThisOrder: 'You did not receive this order',
+  shopNotReceiveOrder: 'The store did not receive this order',
 };
 
 const tour = {
@@ -487,6 +488,7 @@ const profile = {
   ex: 'Ex',
   noReviewYet: 'No reviews yet',
   checkIn: 'Check-in',
+  confirmSuccess: 'Confirmed successfully',
 };
 
 const setting = {
@@ -567,6 +569,7 @@ const notification = {
   userComeToYourShop: 'User checked-in your shop',
   successOrder: 'Order successful',
   goToConfirm: 'Go to confirming',
+  haveNewOrder: 'You have a new order from Avatour',
 };
 
 const alert = {

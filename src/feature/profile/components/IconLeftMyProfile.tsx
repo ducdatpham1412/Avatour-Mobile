@@ -1,6 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT} from 'asset/enum';
-import {StyleText, StyleTouchable} from 'components/base';
+import {StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {PROFILE_ROUTE} from 'navigation/config';
@@ -8,14 +8,12 @@ import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {moderateScale, scale} from 'utility/scale';
-import {useMyRequests} from '../hooks';
 
 const IconLeftMyProfile = () => {
   const theme = useTheme();
   const {account_type} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
-  const [{data}] = useMyRequests();
 
   return (
     <View style={$container}>
@@ -31,11 +29,7 @@ const IconLeftMyProfile = () => {
         <StyleTouchable onPress={() => navigate(PROFILE_ROUTE.listMyRequests)}>
           <AntDesign name="mail" style={[$iconQr, {color: theme.black}]} />
         </StyleTouchable>
-        {!!data.length && (
-          <View style={$numberRequest}>
-            <StyleText originValue={data?.length} customStyle={$textNumber} />
-          </View>
-        )}
+        {/* {!!data.length && <TagRed value={data.length} />} */}
       </View>
     </View>
   );
@@ -60,21 +54,6 @@ const $buttonRequest: ViewStyle = {
   width: moderateScale(22),
   justifyContent: 'center',
   alignItems: 'center',
-};
-const $numberRequest: ViewStyle = {
-  position: 'absolute',
-  right: -4,
-  top: 0,
-  backgroundColor: 'red',
-  width: moderateScale(13.5),
-  height: moderateScale(13.5),
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 50,
-};
-const $textNumber: TextStyle = {
-  fontSize: moderateScale(10),
-  color: 'white',
 };
 
 export default IconLeftMyProfile;

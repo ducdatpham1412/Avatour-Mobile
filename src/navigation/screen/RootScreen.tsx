@@ -3,6 +3,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {useAppSelector} from 'app-redux/store';
+import {TYPE_EVENT_DL} from 'asset/enum';
 import SwipeImages from 'components/SwipeImages';
 import {DetailMeJoin, DetailSale} from 'feature/common';
 import ErrorScreen from 'feature/common/ErrorScreen';
@@ -47,29 +48,46 @@ import {
   SettingScreen,
 } from 'feature/setting';
 import {useInitApp, useNotifications, useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   LOGIN_ROUTE,
+  MAIN_SCREEN,
   PROFILE_ROUTE,
   SETTING_ROUTE,
 } from 'navigation/config/routes';
-import MainTabs from './MainTabs';
-import WebViewScreen from './WebViewScreen';
-import LoginRoute from './LoginRoute';
 import {useEffect} from 'react';
 import {parseURL} from 'utility/assistant';
-import {TYPE_EVENT_DL} from 'asset/enum';
-import {navigate} from 'navigation/NavigationService';
+import LoginRoute from './LoginRoute';
+import MainTabs from './MainTabs';
+import WebViewScreen from './WebViewScreen';
 
 const Stack = createStackNavigator<AppParamsList>();
 
-const handleEvent = (event: string, data: Record<string, string>) => {
-  if (event === TYPE_EVENT_DL.join_success && data?.sale_id) {
-    navigate(ROOT_SCREEN.joinsHistory, {
-      saleId: Number(data.sale_id),
-      mode: 'go-from-notification',
+const handleEvent = (event: string, data: Record<string, any>) => {
+  /**
+   * @Tag Config handle notification
+   */
+  if (event === TYPE_EVENT_DL.join_success && data?.join_id) {
+    navigate(ROOT_SCREEN.detailMeJoin, {
+      estimateId: data.join_id,
+      mode: 'see-detail',
     });
+    return;
+  }
+
+  if (event === TYPE_EVENT_DL.join_rejected && data?.join_id) {
+    navigate(ROOT_SCREEN.detailMeJoin, {
+      estimateId: data.join_id,
+      mode: 'see-detail',
+    });
+    return;
+  }
+
+  if (event === TYPE_EVENT_DL.has_new_join) {
+    navigate(MAIN_SCREEN.notificationRoute);
+    return;
   }
 };
 

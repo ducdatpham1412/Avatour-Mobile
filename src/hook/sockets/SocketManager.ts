@@ -2,6 +2,7 @@ import {SOCKET_EVENT} from 'asset/enum';
 import Config from 'asset/env';
 import {SocketEmitList, SocketOnList} from 'navigation/config';
 import io, {Socket} from 'socket.io-client';
+import {logger} from 'utility/assistant';
 
 // const socketDev = isIOS ? Config.API_SOCKET : 'http://10.0.2.2:3000';
 const socketDev = Config.API_SOCKET;
@@ -29,6 +30,9 @@ class SocketManager {
     SocketManager.instance.socket = io(socketUrl, {
       transports: ['websocket'],
       timeout: 2000,
+    });
+    SocketManager.instance.socket?.on('connect', () => {
+      logger('Socket connected');
     });
     return SocketManager.instance;
   };

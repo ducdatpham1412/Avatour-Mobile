@@ -1,11 +1,12 @@
 import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {JOIN_STATUS} from 'asset/enum';
+import {APP_EVENT, JOIN_STATUS} from 'asset/enum';
 import Images from 'asset/img/images';
 import {verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
   StyleContainer,
+  StyleIcon,
   StyleImage,
   StyleText,
   StyleTouchable,
@@ -13,7 +14,12 @@ import {
 import {Avatar, ButtonBottom} from 'components/common';
 import dayjs from 'dayjs';
 import {useSaleJoins} from 'feature/discovery/hooks';
-import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
+import {
+  emitAppEvent,
+  useEstimatesAndJoinings,
+  useSafeArea,
+  useTheme,
+} from 'hook';
 import {goBack, navigate, push, replace} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -34,6 +40,7 @@ import {
   formatMoney,
   formatddddDDMMYYYY,
 } from 'utility/format';
+import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {canSupplierConfirmBought} from 'utility/validate';
 import {ModalPeopleInGroup} from './components';
@@ -137,6 +144,7 @@ const ButtonConfirmArrived = ({
             },
             {revalidate: false},
           );
+          emitAppEvent(APP_EVENT.refreshNotification);
           ModalAlert.success({
             i18Content: 'profile.joinedSuccess',
           });
@@ -206,17 +214,23 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
     const onApprove = async () => {
       try {
         await approveOrder(estimate.id);
+        ModalAlert.success({
+          i18Content: 'profile.confirmSuccess',
+          title: 'discovery.thankyou',
+          icon: <StyleIcon source={Images.icons.nice} size={80} />,
+        });
         await mutate(
-          pre => {
-            if (pre) {
+          () => {
+            if (data) {
               return {
-                ...pre,
+                ...data,
                 status: JOIN_STATUS.supplierConfirm,
               };
             }
           },
           {revalidate: false},
         );
+        emitAppEvent(APP_EVENT.refreshNotification);
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -231,16 +245,17 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
           try {
             await rejectOrder(estimate.id);
             await mutate(
-              pre => {
-                if (pre) {
+              () => {
+                if (data) {
                   return {
-                    ...pre,
+                    ...data,
                     status: JOIN_STATUS.supplierRejected,
                   };
                 }
               },
               {revalidate: false},
             );
+            emitAppEvent(APP_EVENT.refreshNotification);
           } catch (err) {
             ModalAlert.error({
               content: err,
@@ -262,7 +277,7 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
           right: {
             title: 'discovery.confirmOrder',
             onPress: onApprove,
-            loading: loadingRejectOrder,
+            loading: loadingApproveOrder,
             disable: isOverTimeUserCome || loadingRejectOrder,
           },
         }}
@@ -285,8 +300,10 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
         await confirmBought({
           list_join_id: [estimate?.id],
         });
+        impactMedium();
         await mutate(
           () => {
+            // Not use "pre" in here because we use fallback data, so sometime pre is undefined
             if (data) {
               return {
                 ...data,
@@ -296,6 +313,7 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
           },
           {revalidate: false},
         );
+        emitAppEvent(APP_EVENT.refreshNotification);
       } catch (err) {
         ModalAlert.error({
           content: err,
@@ -394,6 +412,25 @@ const DetailMeJoin = ({
     if (data?.status === JOIN_STATUS.supplierConfirm) {
       const isToday = dayjs(data?.time_will_buy).isToday();
 
+      if (isMySale) {
+        if (isToday) {
+          return (
+            <StyleText
+              i18Text="discovery.todayIsTimeWillBuy"
+              i18Params={{value: sale?.creator_name}}
+              customStyle={[
+                $textAlert,
+                {marginTop: verticalScale(12), color: theme.gray_600},
+              ]}
+              mode="html"
+              htmlTextBoldColor={theme.black}
+            />
+          );
+        }
+
+        return null;
+      }
+
       if (isToday) {
         return (
           <>
@@ -447,6 +484,18 @@ const DetailMeJoin = ({
     }
 
     if (data?.status === JOIN_STATUS.overtime) {
+      if (isMySale) {
+        return (
+          <StyleText
+            i18Text="discovery.arrivalTimePassed"
+            customStyle={[
+              $textAlert,
+              {marginTop: verticalScale(12), color: theme.gray_600},
+            ]}
+          />
+        );
+      }
+
       return (
         <>
           <StyleText
@@ -607,7 +656,10 @@ const DetailMeJoin = ({
       );
     }
 
-    if (data.status === JOIN_STATUS.supplierConfirm) {
+    if (
+      data.status === JOIN_STATUS.supplierConfirm ||
+      data.status === JOIN_STATUS.supplierRejected
+    ) {
       return (
         <>
           <BoxInformation
@@ -889,10 +941,12 @@ const DetailMeJoin = ({
             )})`}
             customStyle={$textApplied}
           />
-          <StyleText
-            i18Text="discovery.beInGroupEstimate"
-            customStyle={$textClassified}
-          />
+          {!isMySale && (
+            <StyleText
+              i18Text="discovery.beInGroupEstimate"
+              customStyle={$textClassified}
+            />
+          )}
           {data?.list_personals?.map((join, index) => {
             return (
               <BoxInformation
@@ -988,12 +1042,14 @@ const DetailMeJoin = ({
           i18Text="discovery.appliedPrice"
           customStyle={$textApplied}
         />
-        <StyleText
-          i18Text={
-            isEstimate ? 'discovery.beInGroupEstimate' : 'discovery.beInGroup'
-          }
-          customStyle={$textClassified}
-        />
+        {!isMySale && (
+          <StyleText
+            i18Text={
+              isEstimate ? 'discovery.beInGroupEstimate' : 'discovery.beInGroup'
+            }
+            customStyle={$textClassified}
+          />
+        )}
         {data?.list_personals?.map((join, index) => {
           return (
             <BoxInformation
@@ -1150,7 +1206,7 @@ const DetailMeJoin = ({
             refreshing={validating}
             onRefresh={() => {
               mutate();
-              if (isEstimate || data?.status === JOIN_STATUS.adminConfirm) {
+              if (isEstimate || data?.status === JOIN_STATUS.supplierConfirm) {
                 mutateEstimateAndJoin();
               }
             }}

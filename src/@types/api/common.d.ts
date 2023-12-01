@@ -116,8 +116,8 @@ interface TypeResourceResponse {
       };
       account_number: string;
       account_holder: string;
-      latest_version: string;
     };
+    latest_version: string;
   };
 }
 

@@ -7,104 +7,94 @@ import {FONT_SIZE} from 'asset/standardValue';
 import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {Avatar} from 'components/common';
-import {useEstimatesAndJoinings, useTheme} from 'hook';
-import ROOT_SCREEN, {
-  DISCOVERY_ROUTE,
-  MAIN_SCREEN,
-} from 'navigation/config/routes';
+import {useTheme} from 'hook';
+import ROOT_SCREEN, {DISCOVERY_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
-import React, {useEffect, useRef} from 'react';
-import {
-  Animated,
-  ImageStyle,
-  Platform,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import React from 'react';
+import {ImageStyle, Platform, TextStyle, View, ViewStyle} from 'react-native';
 import Authentication from 'utility/authentication';
 import {getSessionOfDay} from 'utility/format';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, scale} from 'utility/scale';
 
-interface IconEstimateProps {
-  estimates: TypeJoinEstimate[];
-}
+// interface IconEstimateProps {
+//   estimates: TypeJoinEstimate[];
+// }
 
-const IconHavingEstimate = ({estimates}: IconEstimateProps) => {
-  const theme = useTheme();
-  const scaleRef = useRef(new Animated.Value(1)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
+// const IconHavingEstimate = ({estimates}: IconEstimateProps) => {
+//   const theme = useTheme();
+//   const scaleRef = useRef(new Animated.Value(1)).current;
+//   const translateX = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const loopAnimation = () => {
-      Animated.timing(scaleRef, {
-        toValue: 1.3,
-        useNativeDriver: true,
-        duration: 300,
-      }).start(() => {
-        Animated.sequence([
-          Animated.timing(translateX, {
-            toValue: 7,
-            duration: 80,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateX, {
-            toValue: -7,
-            duration: 80,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateX, {
-            toValue: 7,
-            duration: 80,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateX, {
-            toValue: 0,
-            duration: 80,
-            useNativeDriver: true,
-          }),
-        ]).start(() => {
-          Animated.timing(scaleRef, {
-            toValue: 1,
-            useNativeDriver: true,
-            duration: 300,
-          }).start(() => {
-            setTimeout(() => {
-              loopAnimation();
-            }, 2000);
-          });
-        });
-      });
-    };
+//   useEffect(() => {
+//     const loopAnimation = () => {
+//       Animated.timing(scaleRef, {
+//         toValue: 1.3,
+//         useNativeDriver: true,
+//         duration: 300,
+//       }).start(() => {
+//         Animated.sequence([
+//           Animated.timing(translateX, {
+//             toValue: 7,
+//             duration: 80,
+//             useNativeDriver: true,
+//           }),
+//           Animated.timing(translateX, {
+//             toValue: -7,
+//             duration: 80,
+//             useNativeDriver: true,
+//           }),
+//           Animated.timing(translateX, {
+//             toValue: 7,
+//             duration: 80,
+//             useNativeDriver: true,
+//           }),
+//           Animated.timing(translateX, {
+//             toValue: 0,
+//             duration: 80,
+//             useNativeDriver: true,
+//           }),
+//         ]).start(() => {
+//           Animated.timing(scaleRef, {
+//             toValue: 1,
+//             useNativeDriver: true,
+//             duration: 300,
+//           }).start(() => {
+//             setTimeout(() => {
+//               loopAnimation();
+//             }, 2000);
+//           });
+//         });
+//       });
+//     };
 
-    loopAnimation();
-  }, []);
+//     loopAnimation();
+//   }, []);
 
-  return (
-    <StyleTouchable
-      customStyle={[$newEstimateBox, {backgroundColor: theme.white}]}
-      onPress={() => navigate(MAIN_SCREEN.orderRoute)}>
-      <Animated.View
-        style={[
-          $newEstimateBox,
-          {transform: [{scale: scaleRef}, {translateX}]},
-        ]}>
-        <StyleIcon
-          source={Images.icons.bag}
-          size={20}
-          customStyle={{tintColor: theme.p_700}}
-        />
-        <View style={$newMessageBox}>
-          <StyleText
-            originValue={estimates.length}
-            customStyle={[$textNewMessages, {color: theme.white}]}
-          />
-        </View>
-      </Animated.View>
-    </StyleTouchable>
-  );
-};
+//   return (
+//     <StyleTouchable
+//       customStyle={[$newEstimateBox, {backgroundColor: theme.white}]}
+//       onPress={() => navigate(MAIN_SCREEN.orderRoute)}>
+//       <Animated.View
+//         style={[
+//           $newEstimateBox,
+//           {transform: [{scale: scaleRef}, {translateX}]},
+//         ]}>
+//         <StyleIcon
+//           source={Images.icons.bag}
+//           size={20}
+//           customStyle={{tintColor: theme.p_700}}
+//         />
+//         <View style={$newMessageBox}>
+//           <StyleText
+//             originValue={estimates.length}
+//             customStyle={[$textNewMessages, {color: theme.white}]}
+//           />
+//         </View>
+//       </Animated.View>
+//     </StyleTouchable>
+//   );
+// };
 
 const HeaderDiscovery = () => {
   const theme = useTheme();
@@ -114,9 +104,9 @@ const HeaderDiscovery = () => {
       modeExp,
     },
   } = useAppSelector(state => state);
-  const {
-    data: {estimates},
-  } = useEstimatesAndJoinings();
+  //   const {
+  //     data: {estimates},
+  //   } = useEstimatesAndJoinings();
 
   const session = getSessionOfDay();
   let textSession: I18Normalize = 'discovery.goodMorning';
@@ -134,7 +124,7 @@ const HeaderDiscovery = () => {
   return (
     <View style={$container}>
       <View style={$leftView}>
-        {estimates?.length ? (
+        {/* {estimates?.length ? (
           <IconHavingEstimate estimates={estimates} />
         ) : (
           <Avatar
@@ -143,7 +133,13 @@ const HeaderDiscovery = () => {
             size={48}
             defaultSource={defaultSource}
           />
-        )}
+        )} */}
+        <Avatar
+          source={{uri: profile.avatar}}
+          style={$avatar}
+          size={48}
+          defaultSource={defaultSource}
+        />
         <View style={$sessionBox}>
           <StyleText
             i18Text={textSession}

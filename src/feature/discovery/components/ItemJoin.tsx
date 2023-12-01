@@ -1,5 +1,5 @@
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {verticalMargin} from 'asset/metrics';
+import {horizontalPadding, verticalMargin} from 'asset/metrics';
 import {
   StyleButton,
   StyleImage,
@@ -14,7 +14,7 @@ import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {ImageStyle, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {calculatePriceDeposit, renderJoinStatus} from 'utility/assistant';
-import {formatDDMMMMYY, formatMoney} from 'utility/format';
+import {formatDDMMYYYY, formatMoney} from 'utility/format';
 import {scale, verticalScale} from 'utility/scale';
 import {canSupplierConfirmBought} from 'utility/validate';
 
@@ -88,7 +88,7 @@ const ItemJoin = ({
 
           <View style={[$informationView, {marginTop: verticalScale(4)}]}>
             <StyleText
-              originValue={formatDDMMMMYY(item?.time_will_buy)}
+              originValue={formatDDMMYYYY(item?.time_will_buy)}
               numberOfLines={1}
               customStyle={$textInfo}
             />
@@ -212,6 +212,8 @@ const $textInfo: TextStyle = {
 };
 const $buttonConfirmBought: ViewStyle = {
   marginTop: verticalMargin,
+  width: undefined,
+  paddingHorizontal: horizontalPadding,
 };
 
 export default memo(ItemJoin, (pre: Props, next: Props) => {

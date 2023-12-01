@@ -1,10 +1,11 @@
 import {useAppSelector} from 'app-redux/store';
-import {SOCKET_EVENT, TYPE_EVENT_DL} from 'asset/enum';
+import {APP_EVENT, SOCKET_EVENT, TYPE_EVENT_DL} from 'asset/enum';
+import {emitAppEvent} from 'hook/useAppEvent';
 import useEstimatesAndJoinings from 'hook/useEstimatesAndJoinings';
 import {showLocalNotification} from 'hook/useNotifications';
 import {Fragment, createElement, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
-import {renderDeepLink} from 'utility/assistant';
+import {logger, renderDeepLink} from 'utility/assistant';
 import SocketManager from './SocketManager';
 
 const SocketUser = () => {
@@ -29,8 +30,12 @@ const SocketUser = () => {
   }, [token]);
 
   useEffect(() => {
-    socketOn(SOCKET_EVENT.joinSuccess, async ({sale_id}) => {
-      await mutate();
+    /**
+     * @Tag Config handle notification
+     */
+    socketOn(SOCKET_EVENT.joinSuccess, async e => {
+      mutate().catch(logger);
+      emitAppEvent(APP_EVENT.refreshNotification);
       showLocalNotification({
         title: t('profile.joinedSuccess'),
         content: t('profile.goToSeeJoins'),
@@ -38,16 +43,44 @@ const SocketUser = () => {
           link: renderDeepLink({
             event: TYPE_EVENT_DL.join_success,
             params: {
-              sale_id,
+              join_id: e.join_id,
             },
           }),
         },
       });
     });
-    socketOn(SOCKET_EVENT.haveNewJoin, async () => {
-      /**
-       * TO DO: Handle when have new join
-       */
+
+    socketOn(SOCKET_EVENT.joinRejected, async e => {
+      mutate().catch(logger);
+      emitAppEvent(APP_EVENT.refreshNotification);
+      showLocalNotification({
+        title: t('notification.title'),
+        content: t('discovery.shopNotReceiveOrderNow'),
+        data: {
+          link: renderDeepLink({
+            event: TYPE_EVENT_DL.join_rejected,
+            params: {
+              join_id: e.join_id,
+            },
+          }),
+        },
+      });
+    });
+
+    socketOn(SOCKET_EVENT.haveNewJoin, async e => {
+      emitAppEvent(APP_EVENT.refreshNotification);
+      showLocalNotification({
+        title: t('notification.title'),
+        content: t('notification.haveNewOrder'),
+        data: {
+          link: renderDeepLink({
+            event: TYPE_EVENT_DL.has_new_join,
+            params: {
+              join_id: e.join_id,
+            },
+          }),
+        },
+      });
     });
 
     return () => {
@@ -56,6 +89,7 @@ const SocketUser = () => {
         close();
       }
       socketOff(SOCKET_EVENT.joinSuccess);
+      socketOff(SOCKET_EVENT.haveNewJoin);
     };
   }, []);
 
