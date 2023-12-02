@@ -104,6 +104,7 @@ export enum SOCKET_EVENT {
   // join
   joinSuccess = '6.0',
   haveNewJoin = '6.1',
+  joinRejected = '6.2',
 }
 
 export enum TYPE_FOLLOW {
@@ -130,6 +131,8 @@ export const TYPE_EVENT_DL = {
   friend_post_new: 'friend-post-new',
   like_sale: 'like-sale',
   join_success: 'join-success',
+  join_rejected: 'join-rejected',
+  has_new_join: 'has-new-join',
 };
 
 export enum TYPE_BUBBLE_PALACE_ACTION {

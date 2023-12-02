@@ -3,6 +3,7 @@ import {apiGetPassport, apiGetResource} from 'api/discovery';
 import {
   logOut as reduxLogOut,
   setModeExp,
+  setNewNotifications,
   setToken,
   updatePassport,
   updateResource,
@@ -59,6 +60,7 @@ class Authentication {
     const resource = await apiGetResource();
     updatePassport(passport.data);
     updateResource(resource.data);
+    setNewNotifications(passport.data?.new_notifications);
 
     setModeExp(false);
 

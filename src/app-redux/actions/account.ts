@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {accountSliceAction, initialAccountState} from '../account/accountSlice';
 import Store, {RootState} from '../store';
-import {setToken} from './logic';
+import {setNewNotifications, setToken} from './logic';
 
 type PassportType = DeepPartial<RootState['accountSlice']['passport']>;
 
@@ -43,4 +43,5 @@ export const logOut = () => {
   updatePassport({
     profile: passport.profile,
   });
+  setNewNotifications(0);
 };

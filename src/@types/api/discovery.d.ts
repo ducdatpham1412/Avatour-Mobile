@@ -53,6 +53,7 @@ interface TypeJoinEstimate {
   time_will_buy: string;
   note: string;
   hash: string;
+  deposit: number;
   creator: number;
   creator_name: string;
   created: string;

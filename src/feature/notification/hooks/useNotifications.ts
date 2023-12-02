@@ -1,16 +1,9 @@
 import {apiGetListNotifications, apiReadNotification} from 'api/notification';
-import {useAppSelector} from 'app-redux/store';
 import {STATUS_NOTIFICATION} from 'asset/enum';
 import {usePaging} from 'hook';
 import useSWRMutation from 'swr/mutation';
 
-const nullRequest = async () => {
-  return [];
-};
-
 const useNotifications = () => {
-  const {modeExp} = useAppSelector(state => state.accountSlice);
-
   const {
     list,
     setList,
@@ -20,7 +13,7 @@ const useNotifications = () => {
     onLoadMore,
     initLoading,
   } = usePaging<TypeNotification>({
-    request: modeExp ? nullRequest : apiGetListNotifications,
+    request: apiGetListNotifications,
     params: {
       take: 30,
     },

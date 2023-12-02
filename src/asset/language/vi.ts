@@ -314,6 +314,7 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
   shopNotReceiveOrderNow:
     'Cửa hàng hiện tại không nhận đơn hàng\nChúng tôi sẽ hoàn tiền lại bạn trong thời gian 1-3 ngày',
   notReceiveThisOrder: 'Bạn đã không nhận đơn hàng này',
+  shopNotReceiveOrder: 'Cửa hàng không nhận đơn hàng',
 };
 
 const tour = {
@@ -463,6 +464,7 @@ const profile = {
   ex: 'Vd',
   noReviewYet: 'Chưa có đánh giá nào',
   checkIn: 'Check-in',
+  confirmSuccess: 'Xác nhận thành công',
 };
 
 const mess = {
@@ -570,6 +572,7 @@ const notification = {
   userComeToYourShop: 'Người dùng đến cửa hàng',
   successOrder: 'Đơn hàng thành công',
   goToConfirm: 'Đi tới xác nhận',
+  haveNewOrder: 'Bạn có đơn hàng mới từ Avatour',
 };
 
 const alert = {

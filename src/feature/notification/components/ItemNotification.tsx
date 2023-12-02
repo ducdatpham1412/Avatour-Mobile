@@ -24,6 +24,7 @@ import React, {ReactNode, memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
+import {I18Normalize} from 'utility/I18Next';
 import {formatFromNow} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
@@ -115,11 +116,30 @@ const renderContent = (
       name: notification.data.sale?.creator_name,
       product: notification?.data?.sale?.name,
     });
+
+    const isOvertime = status === JOIN_STATUS.overtime;
+    const isRejected = status === JOIN_STATUS.supplierRejected;
+
+    let textApproved: I18Normalize = 'notification.approved';
+    if (status === JOIN_STATUS.adminConfirm) {
+      textApproved = 'notification.waitingConfirmFromShop';
+    } else if (isRejected) {
+      textApproved = 'discovery.shopNotReceiveOrder';
+    }
+
     image = (
       <Progress
         progress={[
-          {text: 'notification.waitingConfirmFromShop'},
-          {text: 'notification.checkInAtShop'},
+          {
+            text: textApproved,
+            focusColor: isRejected ? theme.red : theme.blue,
+          },
+          {
+            text: isOvertime
+              ? 'discovery.arrivalTimePassed'
+              : 'notification.checkInAtShop',
+            focusColor: isOvertime ? theme.red : theme.blue,
+          },
           {text: 'notification.successOrder', focusColor: theme.green},
         ]}
         indexFocusing={
@@ -148,14 +168,20 @@ const renderContent = (
 
     const isOvertime = status === JOIN_STATUS.overtime;
     const isRejected = status === JOIN_STATUS.supplierRejected;
+
+    let textApproved: I18Normalize = 'notification.approved';
+    if (status === JOIN_STATUS.adminConfirm) {
+      textApproved = 'notification.waitingConfirmFromYou';
+    } else if (isRejected) {
+      textApproved = 'discovery.notReceiveThisOrder';
+    }
+
     image = (
       <>
         <Progress
           progress={[
             {
-              text: isRejected
-                ? 'discovery.notReceiveThisOrder'
-                : 'notification.waitingConfirmFromYou',
+              text: textApproved,
               focusColor: isRejected ? theme.red : theme.blue,
             },
             {

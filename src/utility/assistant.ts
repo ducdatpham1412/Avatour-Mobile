@@ -346,7 +346,7 @@ export const renderJoinStatus = (
   theme: TypeTheme,
 ): RenderStatus => {
   switch (status) {
-    case JOIN_STATUS.adminConfirm:
+    case JOIN_STATUS.supplierConfirm:
       return {
         text: 'profile.joining',
         color: theme.blue,
@@ -455,20 +455,16 @@ export type PriceDeposit = {
   price: number;
   deposit: number;
 };
-export const calculatePriceDeposit = (joinEstimate: TypeJoinEstimate) => {
-  const res = joinEstimate.list_personals?.reduce(
-    (pre: PriceDeposit, current) => {
-      return {
-        price: pre.price + current.price,
-        deposit: pre.deposit + current.deposit,
-      };
-    },
-    {
-      price: 0,
-      deposit: 0,
-    },
-  );
-  return res;
+export const calculatePriceDeposit = (
+  joinEstimate: TypeJoinEstimate,
+): PriceDeposit => {
+  const price = joinEstimate.list_personals?.reduce((pre, current) => {
+    return pre + current.price;
+  }, 0);
+  return {
+    price,
+    deposit: joinEstimate.deposit,
+  };
 };
 
 export const copyObject = <T extends object>(origin: T) => {

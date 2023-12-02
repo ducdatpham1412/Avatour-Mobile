@@ -3,27 +3,23 @@ import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE} from 'asset';
 import Images from 'asset/img/images';
 import {safePaddingNotZero} from 'asset/metrics';
-import Theme from 'asset/theme/Theme';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {useEstimatesAndJoinings, useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
 import ROOT_SCREEN, {
   MAIN_SCREEN,
   PROFILE_ROUTE,
 } from 'navigation/config/routes';
-import {navigate} from 'navigation/NavigationService';
 import {ModalScanQr} from 'navigation/screen/modals';
 import React, {useMemo, useRef} from 'react';
 import {Animated, TextStyle, Vibration, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'react-native-size-matters';
 import {borderWidthTiny, logger} from 'utility/assistant';
-import {moderateScale, scale} from 'utility/scale';
+import {scale} from 'utility/scale';
+import TagRed from './TagRed';
 
 const iconSize = 27;
-
-interface TagRedProps {
-  value: number;
-}
 
 const showModalQr = async () => {
   try {
@@ -40,14 +36,6 @@ const showModalQr = async () => {
   } catch (err) {
     logger(err);
   }
-};
-
-const TagRed = ({value}: TagRedProps) => {
-  return (
-    <View style={$newNotificationBox}>
-      <StyleText originValue={value} customStyle={$textNewMessages} />
-    </View>
-  );
 };
 
 const TabNavigator = (props: any) => {
@@ -205,22 +193,6 @@ const TabNavigator = (props: any) => {
   );
 };
 
-const $newNotificationBox: ViewStyle = {
-  position: 'absolute',
-  width: moderateScale(15),
-  height: moderateScale(15),
-  borderRadius: 20,
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: Theme.common.red,
-  top: 0,
-  right: -moderateScale(6),
-};
-const $textNewMessages: TextStyle = {
-  fontSize: moderateScale(10),
-  color: 'white',
-  fontFamily: undefined,
-};
 const $tabBarDown: ViewStyle = {
   width: '100%',
   flexDirection: 'row',

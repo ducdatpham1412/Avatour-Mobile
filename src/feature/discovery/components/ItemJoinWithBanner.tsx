@@ -12,13 +12,9 @@ import React, {memo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {
-  borderWidthTiny,
-  calculatePriceDeposit,
-  detectFromStyle,
-} from 'utility/assistant';
-import {formatDDMMMMYY, formatMoney} from 'utility/format';
-import {scale, verticalScale} from 'utility/scale';
+import {calculatePriceDeposit, detectFromStyle} from 'utility/assistant';
+import {formatDDMMYYYY, formatMoney} from 'utility/format';
+import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 interface Props {
   item: TypeJoinEstimate;
@@ -42,7 +38,7 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
     <StyleTouchable
       customStyle={[
         $container,
-        {backgroundColor: theme.white, borderColor: theme.gray_300},
+        {backgroundColor: theme.white, borderColor: theme.blue_800},
         containerStyle,
         {width: width.current as number},
       ]}
@@ -78,7 +74,7 @@ const ItemJoinWithBanner = ({item, containerStyle, contentFontSize}: Props) => {
           customStyle={{color: theme.gray_600, fontSize: fontSize.current}}
         />
         <StyleText
-          originValue={formatDDMMMMYY(item?.time_will_buy)}
+          originValue={formatDDMMYYYY(item?.time_will_buy)}
           customStyle={{fontSize: fontSize.current}}
           numberOfLines={1}
         />
@@ -134,7 +130,7 @@ const defaultWidth = scale(172);
 const $container: ViewStyle = {
   borderRadius: BORDER_RADIUS.f3,
   paddingBottom: scale(8),
-  borderWidth: borderWidthTiny,
+  borderWidth: moderateScale(2),
 };
 const $informationView: ViewStyle = {
   width: '100%',

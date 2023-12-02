@@ -194,7 +194,13 @@ export type AppEventList = {
 
 export type SocketOnList = {
   [SOCKET_EVENT.joinSuccess]: {
-    sale_id: number;
+    join_id: number;
+  };
+  [SOCKET_EVENT.haveNewJoin]: {
+    join_id: number;
+  };
+  [SOCKET_EVENT.joinRejected]: {
+    join_id: number;
   };
 };
 

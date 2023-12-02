@@ -1,14 +1,14 @@
 import {SESSION} from 'asset/enum';
 import dayjs, {Dayjs} from 'dayjs';
+import en from 'dayjs/locale/en';
+import vi from 'dayjs/locale/vi';
 import isToday from 'dayjs/plugin/isToday';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-import vi from 'dayjs/locale/vi';
-import en from 'dayjs/locale/en';
-import {useTranslation} from 'react-i18next';
 import {useEffect} from 'react';
-import I18Next from './I18Next';
+import {useTranslation} from 'react-i18next';
 import {registerTranslation} from 'react-native-paper-dates';
+import I18Next from './I18Next';
 import {validateIsNumber} from './validate';
 
 dayjs.extend(relativeTime);
@@ -188,8 +188,8 @@ export const LanguageProvider = ({children}: any) => {
 export const formatDDMMMM = (value: string | Dayjs) => {
   return dayjs(value).format('DD MMMM');
 };
-export const formatDDMMMMYY = (value: string | Dayjs) => {
-  return dayjs(value).format('DD MMMM YYYY');
+export const formatDDMMYYYY = (value: string | Dayjs) => {
+  return dayjs(value).format('DD/MM/YYYY');
 };
 export const formatddddDDMMYYYY = (value: string | Dayjs) => {
   return dayjs(value).format('dddd, DD/MM/YYYY');
