@@ -315,6 +315,10 @@ Avatour Co., Ltd xin chân thành cảm ơn bạn đã tin tưởng sử dụng 
     'Cửa hàng hiện tại không nhận đơn hàng\nChúng tôi sẽ hoàn tiền lại bạn trong thời gian 1-3 ngày',
   notReceiveThisOrder: 'Bạn đã không nhận đơn hàng này',
   shopNotReceiveOrder: 'Cửa hàng không nhận đơn hàng',
+  haveUpdateNow: 'Hiện đã có bản cập nhật',
+  updateForBestExp:
+    'Bạn hãy cập nhật phiên bản mới nhất để có trải nghiệm tốt nhất nhé',
+  downloadLatest: 'Tải bản mới nhất',
 };
 
 const tour = {
@@ -428,7 +432,7 @@ const profile = {
   rating: 'Đánh giá',
   joining: 'Đang tham gia',
   waitingConfirm: 'Chờ cửa hàng xác nhận',
-  joinedSuccess: 'Tham gia thành công 🏖',
+  joinedSuccess: '🏖 Tham gia thành công',
   goToSeeJoins: 'Đi tới xem đơn mua chung của bạn',
   gbOrder: 'Đơn hàng',
   maxGroups: 'Số lượng nhóm tối đa',
@@ -594,7 +598,7 @@ const alert = {
   needToAddPhone: 'Bạn cần thêm số điện thoại\nđể tham gia các dịch vụ',
   phoneExisted: 'Số điện thoại đã được một người khác sử dụng',
   beSureConfirmWhenInStore:
-    'Hãy chắc chắn bạn ấn xác nhận chỉ khi đã đến thanh toán tại cửa hàng.\nSau khi ấn xác nhận, bạn sẽ không nhận được thêm giá ưu đãi nếu có người cùng tham gia cùng nhóm mua chung với bạn.',
+    'Hãy chắc chắn bạn ấn xác nhận chỉ khi đã đến thanh toán tại cửa hàng',
 
   // FOR SETTING
   nowPassError: 'Mật khẩu hiện tại không đúng',

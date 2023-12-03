@@ -154,6 +154,16 @@ export const $styleTopShadow: ViewStyle = {
     height: -4,
   },
 };
+export const $styleAllShadow: ViewStyle = {
+  shadowOpacity: 0.2,
+  shadowRadius: 8,
+  shadowOffset: {
+    width: 0,
+    height: 0.5,
+  },
+  elevation: 20,
+  shadowColor: Theme.newTheme.gray_600,
+};
 
 export const chooseIconFeeling = (feeling: number) => {
   switch (feeling) {

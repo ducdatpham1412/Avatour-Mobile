@@ -4,7 +4,7 @@ import {useAppSelector} from 'app-redux/store';
 import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM, LIST_TOPICS} from 'asset';
 import {REACT} from 'asset/enum';
 import Images from 'asset/img/images';
-import {horizontalMargin, safePaddingNotZero} from 'asset/metrics';
+import {Metrics, horizontalMargin, horizontalPadding} from 'asset/metrics';
 import {ItemTour} from 'components';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {CardInformation} from 'components/common';
@@ -15,14 +15,15 @@ import {checkAuthenticated} from 'navigation/screen/AppModal';
 import React from 'react';
 import {ScrollView, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {$styleDropShadow, copyObject} from 'utility/assistant';
+import {$styleAllShadow, copyObject} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {Banner, HeaderDiscovery, ItemHotLocation} from './components';
+import FloatingBanners from './screens/FloatingBanners';
 
 const DiscoveryScreen = () => {
   const theme = useTheme();
-  const {top} = useSafeArea();
+  const {top, paddingBottom} = useSafeArea();
   const {banners, hot_locations, favorite_tours} = useAppSelector(
     state => state.logicSlice.resource,
   );
@@ -70,18 +71,14 @@ const DiscoveryScreen = () => {
   };
 
   return (
-    <View
-      style={[
-        $container,
-        {paddingTop: top, backgroundColor: theme.background},
-      ]}>
+    <View style={[$container, {paddingTop: top, backgroundColor: theme.white}]}>
       <ScrollView
-        contentContainerStyle={$contentContainer}
+        contentContainerStyle={[$contentContainer, {paddingBottom}]}
         showsVerticalScrollIndicator={false}>
         <HeaderDiscovery />
 
         <StyleTouchable
-          customStyle={[$buttonSearch, {backgroundColor: theme.white}]}
+          customStyle={[$buttonSearch, {borderColor: theme.gray_300}]}
           onPress={() => {
             navigate(DISCOVERY_ROUTE.searchScreen);
           }}>
@@ -101,14 +98,16 @@ const DiscoveryScreen = () => {
               url: value,
             };
           })}
-          containerStyle={$bannerView}
         />
 
         <View
           style={[
             $categoryView,
-            $styleDropShadow,
-            {backgroundColor: theme.white, shadowColor: theme.gray_600},
+            $styleAllShadow,
+            {
+              backgroundColor: theme.white,
+              shadowColor: theme.gray_600,
+            },
           ]}>
           {LIST_TOPICS.map(item => (
             <StyleTouchable
@@ -134,7 +133,7 @@ const DiscoveryScreen = () => {
 
         <CardInformation
           title="discovery.favoriteTour"
-          containerStyle={$favoriteTourView}
+          containerStyle={$card}
           contentContainerStyle={$listTourView}>
           <ScrollView
             horizontal
@@ -144,9 +143,7 @@ const DiscoveryScreen = () => {
               <ItemTour
                 key={tour.id}
                 item={tour}
-                containerStyle={$itemTourBox}
                 width={scale(270)}
-                fontSize={FONT_SIZE.f3}
                 onReact={() => onReactTour(tour)}
               />
             ))}
@@ -155,7 +152,7 @@ const DiscoveryScreen = () => {
 
         <CardInformation
           title="discovery.hotLocation"
-          containerStyle={$favoriteTourView}
+          containerStyle={$card}
           overflow="hidden">
           <View style={$locationView}>
             {hot_locations.map((location, index) => (
@@ -168,6 +165,8 @@ const DiscoveryScreen = () => {
           </View>
         </CardInformation>
       </ScrollView>
+
+      <FloatingBanners containerStyle={$floatingBanner} />
     </View>
   );
 };
@@ -178,16 +177,16 @@ const $container: ViewStyle = {
 };
 const $contentContainer: ViewStyle = {
   alignItems: 'center',
-  paddingBottom: safePaddingNotZero,
+  gap: verticalScale(20),
 };
 const $buttonSearch: ViewStyle = {
-  width: scale(307),
+  width: scale(335),
   height: verticalScale(40),
-  marginTop: verticalScale(16),
   flexDirection: 'row',
   alignItems: 'center',
   borderRadius: 100,
   paddingHorizontal: scale(13),
+  borderWidth: moderateScale(1),
 };
 const $iconSearch: TextStyle = {
   fontSize: moderateScale(23),
@@ -195,13 +194,9 @@ const $iconSearch: TextStyle = {
 const $textSearch: TextStyle = {
   marginLeft: scale(8),
 };
-const $bannerView: ViewStyle = {
-  marginTop: verticalScale(16),
-};
 const $categoryView: ViewStyle = {
-  width: scale(351),
+  width: Metrics.width - 2 * horizontalPadding,
   paddingVertical: verticalScale(12),
-  marginTop: verticalScale(16),
   borderRadius: BORDER_RADIUS.f2,
   flexDirection: 'row',
 };
@@ -214,23 +209,24 @@ const $titleCategory: TextStyle = {
   fontWeight: FONT_WEIGHT_MEDIUM,
   marginTop: verticalScale(8),
 };
-const $favoriteTourView: ViewStyle = {
-  marginTop: verticalScale(16),
-};
 const $listTourView: ViewStyle = {
   marginTop: verticalScale(12),
 };
 const $listTourContent: ViewStyle = {
-  paddingLeft: scale(24),
-  paddingRight: scale(12),
+  paddingLeft: horizontalPadding,
+  paddingRight: horizontalPadding,
+  gap: horizontalMargin,
 };
 const $locationView: ViewStyle = {
   width: '100%',
-  paddingHorizontal: scale(12),
   marginTop: verticalScale(12),
 };
-const $itemTourBox: ViewStyle = {
-  marginRight: horizontalMargin,
+const $card: ViewStyle = {
+  marginTop: verticalScale(16),
+};
+const $floatingBanner: ViewStyle = {
+  position: 'absolute',
+  bottom: verticalScale(16),
 };
 
 export default DiscoveryScreen;

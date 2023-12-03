@@ -1,12 +1,10 @@
 import {BORDER_RADIUS, FONT_SIZE} from 'asset';
-import {Metrics} from 'asset/metrics';
+import {Metrics, horizontalPadding} from 'asset/metrics';
 import {StyleText} from 'components/base';
 import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
 import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {$styleDropShadow} from 'utility/assistant';
-import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
   title: I18Normalize;
@@ -43,8 +41,8 @@ const CardInformation = ({
     <View
       style={[
         $container,
-        $styleDropShadow,
-        {backgroundColor: theme.white, shadowColor: theme.gray_500},
+        // $styleDropShadow,
+        {shadowColor: theme.gray_500},
         containerStyle,
       ]}>
       <StyleText i18Text={title} customStyle={$titleCard} />
@@ -54,19 +52,16 @@ const CardInformation = ({
 };
 
 const $container: ViewStyle = {
-  width: scale(351),
-  marginHorizontal: scale(12),
-  paddingVertical: verticalScale(12),
+  width: Metrics.width - 2 * horizontalPadding,
   borderRadius: BORDER_RADIUS.f2,
 };
 const $titleCard: TextStyle = {
-  fontSize: FONT_SIZE.f1,
+  fontSize: FONT_SIZE.h2,
   fontWeight: 'bold',
-  marginLeft: scale(12),
 };
 const $contentContainerStyle: ViewStyle = {
   width: Metrics.width,
-  left: -scale(12),
+  left: -horizontalPadding,
 };
 
 export default CardInformation;

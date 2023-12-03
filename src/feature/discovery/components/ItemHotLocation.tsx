@@ -1,4 +1,5 @@
-import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
+import {BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT_MEDIUM, ratioAvatar} from 'asset';
+import {Metrics, horizontalPadding} from 'asset/metrics';
 import {StyleImage, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
@@ -33,12 +34,13 @@ const ItemHotLocation = ({item, isLast}: Props) => {
   );
 };
 
+const width = Metrics.width - 2 * horizontalPadding;
 const $container: ViewStyle = {
   marginBottom: verticalScale(20),
 };
 const $image: ImageStyle = {
-  width: '100%',
-  height: scale(185),
+  width,
+  height: width * ratioAvatar,
   borderRadius: BORDER_RADIUS.f2,
 };
 const $textName: TextStyle = {
@@ -48,8 +50,6 @@ const $textName: TextStyle = {
   paddingHorizontal: scale(2),
 };
 const $textDescription: TextStyle = {
-  marginTop: 0,
-  fontSize: FONT_SIZE.f3,
   paddingHorizontal: scale(2),
 };
 

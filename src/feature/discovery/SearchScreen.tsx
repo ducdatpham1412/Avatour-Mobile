@@ -1,7 +1,6 @@
 import {setSearchParams} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
-import {FONT_SIZE} from 'asset/standardValue';
 import {TabView} from 'components';
 import {SafeView, StyleIcon, StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
@@ -206,7 +205,6 @@ const $iconBack: TextStyle = {
 };
 const $input: TextStyle = {
   flex: 1,
-  fontSize: FONT_SIZE.f2,
 };
 const $iconClear: TextStyle = {
   fontSize: moderateScale(20),

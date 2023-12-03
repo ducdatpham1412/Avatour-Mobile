@@ -1,6 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {APP_EVENT, ERROR_MESSAGE, STATUS} from 'asset/enum';
+import {APP_EVENT, STATUS} from 'asset/enum';
 import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';

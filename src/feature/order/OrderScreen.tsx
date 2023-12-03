@@ -4,7 +4,6 @@ import {FONT_SIZE} from 'asset';
 import {APP_EVENT} from 'asset/enum';
 import {IconEmpty, ImageEmpty} from 'asset/icons';
 import {
-  Metrics,
   horizontalMargin,
   horizontalPadding,
   verticalMargin,
@@ -15,6 +14,7 @@ import {
   StyleList,
   StyleText,
 } from 'components/base';
+import {CardInformation} from 'components/common';
 import {ItemJoin, ItemJoinWithBanner} from 'feature/discovery/components';
 import {
   useAppEvent,
@@ -101,14 +101,12 @@ const OrderScreenUser = () => {
     return (
       <>
         {!!estimates?.length && (
-          <View style={$header}>
-            <StyleText
-              i18Text="discovery.waitingDeposit"
-              customStyle={$textJoining}
-            />
+          <CardInformation
+            title="discovery.waitingDeposit"
+            containerStyle={$header}
+            contentContainerStyle={$containerHeader}>
             <ScrollView
               horizontal
-              style={$containerHeader}
               contentContainerStyle={$contentHeader}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}>
@@ -120,23 +118,18 @@ const OrderScreenUser = () => {
                 />
               ))}
             </ScrollView>
-          </View>
+          </CardInformation>
         )}
 
-        <View
-          style={[
-            $header,
-            {
-              marginTop: estimates.length
-                ? verticalScale(24)
-                : verticalScale(8),
-            },
-          ]}>
-          <StyleText i18Text="profile.joining" customStyle={$textJoining} />
+        <CardInformation
+          title="discovery.waitingDeposit"
+          containerStyle={{
+            marginTop: estimates.length ? verticalScale(24) : verticalScale(8),
+          }}
+          contentContainerStyle={$containerHeader}>
           {joinings.length ? (
             <ScrollView
               horizontal
-              style={$containerHeader}
               contentContainerStyle={$contentHeader}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}>
@@ -157,13 +150,13 @@ const OrderScreenUser = () => {
               />
             </View>
           )}
-        </View>
+        </CardInformation>
 
         <View
-          style={[
-            $header,
-            {marginTop: verticalScale(24), marginBottom: verticalMargin},
-          ]}>
+          style={{
+            marginTop: verticalScale(24),
+            marginBottom: verticalScale(12),
+          }}>
           <StyleText
             i18Text="profile.joinedSuccess"
             customStyle={$textJoining}
@@ -248,35 +241,32 @@ const $container: ViewStyle = {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   alignItems: 'center',
-  gap: verticalMargin,
 };
 const $header: ViewStyle = {
-  width: Metrics.width,
   marginTop: verticalScale(8),
 };
 const $containerHeader: ViewStyle = {
-  marginTop: verticalMargin,
+  marginTop: verticalScale(12),
 };
 const $contentHeader: ViewStyle = {
   paddingLeft: horizontalPadding,
   paddingRight: horizontalPadding,
 };
 const $textJoining: TextStyle = {
-  marginLeft: horizontalPadding,
   fontWeight: 'bold',
-  fontSize: FONT_SIZE.f1,
+  fontSize: FONT_SIZE.h2,
 };
 const $itemJoining: ViewStyle = {
   marginRight: horizontalMargin,
 };
 const $itemJoinSuccess: ViewStyle = {
   width: scale(343),
+  marginBottom: verticalMargin,
 };
 const $empty: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   alignItems: 'center',
-  marginTop: verticalMargin,
   paddingHorizontal: horizontalPadding,
 };
 const $textEmpty: TextStyle = {
