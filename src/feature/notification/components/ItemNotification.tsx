@@ -204,7 +204,7 @@ const renderContent = (
         {status === JOIN_STATUS.adminConfirm && (
           <SquareButton
             title="notification.goToConfirm"
-            containerStyle={{backgroundColor: theme.p_600}}
+            containerStyle={[$button, {backgroundColor: theme.p_600}]}
             titleStyle={{color: theme.white}}
             onPress={onPress}
           />
@@ -272,7 +272,7 @@ const $container: ViewStyle = {
   flexDirection: 'row',
   gap: scale(16),
   paddingHorizontal: horizontalPadding,
-  paddingVertical: verticalScale(20),
+  paddingVertical: verticalScale(16),
 };
 const $icon: ViewStyle = {
   width: moderateScale(48),
@@ -310,6 +310,9 @@ const $imgSuggestLocation: ImageStyle = {
   marginTop: verticalScale(8),
 };
 const $progress: ViewStyle = {
+  marginTop: verticalScale(4),
+};
+const $button: ViewStyle = {
   marginTop: verticalScale(4),
 };
 

@@ -17,11 +17,7 @@ const ButtonX = ({containerStyle, onPress, iconStyle, size = 14}: Props) => {
 
   return (
     <StyleTouchable
-      customStyle={[
-        $container,
-        {backgroundColor: theme.gray_100},
-        containerStyle,
-      ]}
+      customStyle={[$container, {backgroundColor: theme.white}, containerStyle]}
       onPress={onPress}
       hitSlop={10}>
       <Feather

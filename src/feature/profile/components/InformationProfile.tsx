@@ -525,7 +525,6 @@ const $textName: TextStyle = {
 };
 const $textDescription: TextStyle = {
   marginTop: verticalScale(4),
-  fontSize: FONT_SIZE.f3,
 };
 const $followBox: ViewStyle = {
   width: '100%',
@@ -567,7 +566,6 @@ const $locationBox: ViewStyle = {
 };
 const $textLocation: TextStyle = {
   marginLeft: scale(4),
-  fontSize: FONT_SIZE.f3,
 };
 const $starBox: ViewStyle = {
   width: '100%',

@@ -312,6 +312,10 @@ Avatour Co., Ltd would like to sincerely thank you for using our service!`,
     'The store is currently not accepting orders\nWe will refund you within 1-3 days',
   notReceiveThisOrder: 'You did not receive this order',
   shopNotReceiveOrder: 'The store did not receive this order',
+  haveUpdateNow: 'An update is now available',
+  updateForBestExp:
+    'Please update to the latest version for the best experience',
+  downloadLatest: 'Download latest version',
 };
 
 const tour = {
@@ -451,7 +455,7 @@ const profile = {
   rating: 'Rating',
   joining: 'Joining',
   waitingConfirm: "Waiting for supplier's confirmation",
-  joinedSuccess: 'Joined successfully 🏖',
+  joinedSuccess: '🏖 Joined successfully',
   goToSeeJoins: 'Go to see your group buying',
   gbOrder: 'Orders',
   maxGroups: 'Maximum number of groups',
@@ -588,7 +592,7 @@ const alert = {
   needToAddPhone: 'You need to add phone number\nin order to join services',
   phoneExisted: 'This phone have been used by one other',
   beSureConfirmWhenInStore:
-    "Make sure you press confirm only when you've arrived to pay at the store.\nAfter pressing confirm, you won't receive any additional discounts if someone joins the same group buying with you.",
+    "Make sure you press confirm only when you've arrived to pay at the store",
 
   // FOR SETTING
   nowPassError: 'Current password not true',

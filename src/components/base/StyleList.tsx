@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   FlatListProps,
   RefreshControl,
@@ -60,26 +61,25 @@ const StyleList = (props: StyleListProps, ref: any) => {
     );
   }
 
-  // render_view
   const renderFooterView = () => {
-    // if (loadingMore) {
-    //   return (
-    //     <View style={$loadingMore}>
-    //       {props.data.length ? (
-    //         <ActivityIndicator size="small" color={theme.p_700} />
-    //       ) : (
-    //         <LoadingIcon />
-    //       )}
-    //     </View>
-    //   );
-    // }
+    if (loadingMore) {
+      return (
+        <View style={$loadingMore}>
+          {props.data.length ? (
+            <ActivityIndicator size="small" color={theme.p_700} />
+          ) : (
+            <LoadingIcon />
+          )}
+        </View>
+      );
+    }
     return null;
   };
   const renderEmptyView = () => {
     return (
       <StyleText
         originValue="----"
-        customStyle={[$textEmpty, {color: theme.p_700}]}
+        customStyle={[$textEmpty, {color: theme.p_600}]}
       />
     );
   };

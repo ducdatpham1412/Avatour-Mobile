@@ -692,9 +692,9 @@ const $price: ViewStyle = {
 const $textTitlePrice: TextStyle = {
   fontWeight: 'bold',
   marginLeft: scale(2),
+  fontSize: FONT_SIZE.f1,
 };
 const $textBuyMore: TextStyle = {
-  fontSize: FONT_SIZE.f3,
   marginTop: verticalScale(2),
 };
 const $listPrices: ViewStyle = {
@@ -728,7 +728,7 @@ const $reactionView: ViewStyle = {
   marginTop: verticalScale(16),
 };
 const $reactionBox: ViewStyle = {
-  marginHorizontal: horizontalMargin,
+  marginHorizontal: scale(20),
   alignItems: 'center',
 };
 const $reaction: ViewStyle = {
@@ -742,7 +742,6 @@ const $likeIcon: TextStyle = {
   fontSize: moderateScale(25),
 };
 const $textReaction: TextStyle = {
-  fontSize: FONT_SIZE.f4,
   marginTop: verticalScale(10),
 };
 const $depositView: ViewStyle = {

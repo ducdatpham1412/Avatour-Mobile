@@ -1,8 +1,8 @@
+import {ImageSourcePropType} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, verticalScale} from 'utility/scale';
 import {FEELING, POST_TYPE, TOPIC} from './enum';
 import Images from './img/images';
-import {ImageSourcePropType} from 'react-native';
 
 export const standValue = {
   USERNAME_MIN_LENGTH: 7,
@@ -11,13 +11,6 @@ export const standValue = {
   PASSWORD_MAX_LENGTH: 20,
   COUNT_DOWN: 20,
   OTP_LENGTH: 4,
-};
-
-export const STAND_FONT_SIZE = {
-  small: 15,
-  medium: 20,
-  big: 25,
-  large: 28,
 };
 
 export enum COVER_SIZE {
@@ -178,12 +171,12 @@ export const LIST_POST_TYPES: Array<{
 ];
 
 export const FONT_SIZE = {
-  h1: moderateScale(34),
-  h2: moderateScale(22),
-  f1: moderateScale(18),
-  f2: moderateScale(16), // This is root font size
-  f3: moderateScale(14),
-  f4: moderateScale(12),
+  h1: moderateScale(32),
+  h2: moderateScale(20),
+  f1: moderateScale(16),
+  f2: moderateScale(15), // This is root font size
+  f3: moderateScale(13),
+  f4: moderateScale(11),
   f5: moderateScale(10),
 };
 
@@ -198,8 +191,8 @@ export const FONT_WEIGHT_MEDIUM = '500';
 /**
  * ratio = height / width
  */
-export const ratioImageTour = 130 / 200;
-export const ratioImageSale = 232 / 319;
-export const ratioAvatar = 200 / 341;
+export const ratioImageTour = 3 / 5;
+export const ratioImageSale = 3 / 4;
+export const ratioAvatar = 3 / 5;
 
 export const scrollItemHeight = verticalScale(250);

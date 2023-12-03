@@ -1,4 +1,4 @@
-import {BORDER_RADIUS, FONT_SIZE} from 'asset';
+import {BORDER_RADIUS} from 'asset';
 import {ACCOUNT, STATUS} from 'asset/enum';
 import {IconDrag, IconTagStars} from 'asset/icons';
 import Images from 'asset/img/images';
@@ -289,7 +289,6 @@ const $infoView: ViewStyle = {
 };
 const $infoContent: TextStyle = {
   marginLeft: scale(4),
-  fontSize: FONT_SIZE.f3,
 };
 const $dragView: ViewStyle = {
   width: scale(50),

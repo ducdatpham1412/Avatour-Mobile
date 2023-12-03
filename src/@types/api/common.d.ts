@@ -118,6 +118,7 @@ interface TypeResourceResponse {
       account_holder: string;
     };
     latest_version: string;
+    download_link: string;
   };
 }
 
