@@ -119,7 +119,7 @@ const FloatingBanners = ({containerStyle}: Props) => {
 
   const hasUpdate = currentVersion !== latest_version;
 
-  if (!show) {
+  if (!show || !hasUpdate) {
     return null;
   }
 

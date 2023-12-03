@@ -8,13 +8,22 @@ import {navigate} from 'navigation/NavigationService';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
 import {TextStyle, ViewStyle} from 'react-native';
+import {useDebounce} from 'react-use';
 import {verticalScale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 
 const ForgetPasswordType = () => {
   const {loading, setLoading} = useLoading();
   const [username, setUsername] = useState('');
-  const disable = !(validateIsEmail(username) || validateIsPhone(username));
+  const [disable, setDisable] = useState(false);
+
+  useDebounce(
+    () => {
+      setDisable(!(validateIsEmail(username) || validateIsPhone(username)));
+    },
+    100,
+    [username],
+  );
 
   const onRequestOTP = async () => {
     try {

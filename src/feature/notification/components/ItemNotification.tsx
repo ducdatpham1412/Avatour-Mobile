@@ -244,7 +244,7 @@ const ItemNotification = ({item, onPress}: Props) => {
       onPress={onPress}>
       <View style={[$icon, {backgroundColor: content.color}]}>
         {content.notRead && (
-          <View style={[$notRead, {backgroundColor: theme.p_600}]} />
+          <View style={[$notRead, {backgroundColor: theme.p_900}]} />
         )}
         {content.icon}
       </View>

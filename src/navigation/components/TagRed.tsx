@@ -1,5 +1,5 @@
-import Theme from 'asset/theme/Theme';
 import {StyleText} from 'components/base';
+import {useTheme} from 'hook';
 import React from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {moderateScale} from 'utility/scale';
@@ -9,8 +9,10 @@ interface TagRedProps {
 }
 
 const TagRed = ({value}: TagRedProps) => {
+  const theme = useTheme();
+
   return (
-    <View style={$newNotificationBox}>
+    <View style={[$newNotificationBox, {backgroundColor: theme.p_900}]}>
       <StyleText originValue={value} customStyle={$textNewMessages} />
     </View>
   );
@@ -23,7 +25,6 @@ const $newNotificationBox: ViewStyle = {
   borderRadius: 20,
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: Theme.common.red,
   top: 0,
   right: -moderateScale(6),
 };
