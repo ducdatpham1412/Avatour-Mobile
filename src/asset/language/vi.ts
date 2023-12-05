@@ -363,11 +363,6 @@ const profile = {
         'Đăng ký tài khoản để trải nghiệm các năng chat và tạo trang cá nhân của riêng mình nhé !',
       tellSignUp: 'Đi tới đăng ký',
     },
-    searchAndSetting: 'Tìm những người khác',
-  },
-  edit: {
-    name: 'Tên hiển thị',
-    anonymousName: 'Tên ẩn danh',
   },
   post: {
     title: 'Đăng ảnh',
@@ -469,6 +464,7 @@ const profile = {
   noReviewYet: 'Chưa có đánh giá nào',
   checkIn: 'Check-in',
   confirmSuccess: 'Xác nhận thành công',
+  deleteLocation: 'Xoá địa điểm',
 };
 
 const mess = {

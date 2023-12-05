@@ -12,8 +12,9 @@ import {StyleContainer, StyleList, StyleText} from 'components/base';
 import {useAppEvent, useSafeArea, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import {View, ViewStyle} from 'react-native';
+import {logger} from 'utility/assistant';
 import {verticalScale} from 'utility/scale';
 import {ItemNotification} from './components';
 import {useNotifications} from './hooks';
@@ -39,9 +40,6 @@ const Empty = () => {
 const NotificationUser = () => {
   const theme = useTheme();
   const {paddingBottom} = useSafeArea();
-  const {id: myId} = useAppSelector(
-    state => state.accountSlice.passport.profile,
-  );
 
   const [
     {list, initLoading, refreshing, loadingMore},
@@ -50,14 +48,10 @@ const NotificationUser = () => {
 
   useAppEvent(APP_EVENT.refreshNotification, onRefresh);
 
-  useEffect(() => {
-    onRefresh();
-  }, [myId]);
-
   const onPressNotification = useCallback(async (item: TypeNotification) => {
     if (item.status === STATUS_NOTIFICATION.notRead) {
       readNotification(item.id).catch(err => {
-        console.log('Error read notification: ', err);
+        logger('Error read notification: ', err);
       });
     }
 
@@ -101,7 +95,7 @@ const NotificationUser = () => {
     }
   }, []);
 
-  const renderItem = useCallback(({item}: {item: TypeNotification}) => {
+  const renderItem = useCallback((item: TypeNotification) => {
     return (
       <ItemNotification item={item} onPress={() => onPressNotification(item)} />
     );
@@ -118,7 +112,7 @@ const NotificationUser = () => {
       layOut="view">
       <StyleList
         data={list}
-        renderItem={renderItem}
+        renderItem={({item}) => renderItem(item)}
         keyExtractor={item => String(item?.id)}
         initLoading={initLoading}
         refreshing={refreshing}

@@ -1,7 +1,7 @@
 import Store from 'app-redux/store';
-import Images from 'asset/img/images';
-import {StyleIcon} from 'components/base';
+import {getCurrentRoute, navigate} from 'navigation/NavigationService';
 import React from 'react';
+import Authentication from 'utility/authentication';
 import {
   ModalActionSheet,
   ModalAlert,
@@ -14,8 +14,6 @@ import {
   Toast,
   ToolTip,
 } from './modals';
-import Authentication from 'utility/authentication';
-import {getCurrentRoute, navigate} from 'navigation/NavigationService';
 
 type CheckAuthenticated = {
   onLoginCallback?: () => void;
@@ -31,7 +29,7 @@ export const checkAuthenticated = ({
   if (modeExp) {
     ModalAlert.options({
       i18Content: 'alert.loginToExplore',
-      icon: <StyleIcon source={Images.icons.nice} size={70} />,
+      icon: 'nice',
       onContinue: () => {
         const curRoute = getCurrentRoute();
         Authentication.open(() => {

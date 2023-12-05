@@ -386,11 +386,6 @@ const profile = {
       introduce: 'Sign up for more chat enjoy and make your own profile !',
       tellSignUp: 'Go to sign up',
     },
-    searchAndSetting: 'Finding others',
-  },
-  edit: {
-    name: 'Your name',
-    anonymousName: 'Anonymous name',
   },
   post: {
     title: 'Post your image',
@@ -493,6 +488,7 @@ const profile = {
   noReviewYet: 'No reviews yet',
   checkIn: 'Check-in',
   confirmSuccess: 'Confirmed successfully',
+  deleteLocation: 'Delete location',
 };
 
 const setting = {

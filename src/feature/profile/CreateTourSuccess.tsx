@@ -37,7 +37,7 @@ const CreateTourSuccess = ({
       ModalAlert.success({
         title: 'discovery.thankyou',
         i18Content: 'discovery.suggestHaveBeenAcknowledged',
-        icon: <StyleIcon source={Images.icons.nice} size={80} />,
+        icon: 'nice',
         onClose: () => {
           navigate(MAIN_SCREEN.profileRoute, {
             screen: PROFILE_ROUTE.myProfile,

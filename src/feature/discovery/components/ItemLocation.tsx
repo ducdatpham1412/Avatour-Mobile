@@ -13,7 +13,7 @@ import {useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
 import {PROFILE_ROUTE} from 'navigation/config';
 import {ModalAlert, ToolTip} from 'navigation/screen/modals';
-import React, {memo, useRef} from 'react';
+import React, {ReactNode, memo, useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {
@@ -48,6 +48,11 @@ type InfoProps = {
 
 type SuggestProps = Pick<ItemLocationProps, 'item' | 'onSuggestLocation'>;
 
+type ContainerProps = {
+  isEditMode: boolean;
+  children: ReactNode;
+};
+
 /**
  * Components
  */
@@ -70,6 +75,18 @@ const Info = ({icon, content, contentStyle}: InfoProps) => {
   );
 };
 
+const Container = ({isEditMode, children}: ContainerProps) => {
+  if (isEditMode) {
+    return (
+      <ShadowDecorator>
+        <ScaleDecorator>{children}</ScaleDecorator>
+      </ShadowDecorator>
+    );
+  }
+
+  return <>{children}</>;
+};
+
 const Suggest = ({item, onSuggestLocation}: SuggestProps) => {
   const {t} = useTranslation();
   const theme = useTheme();
@@ -90,7 +107,7 @@ const Suggest = ({item, onSuggestLocation}: SuggestProps) => {
                 ModalAlert.success({
                   title: 'discovery.thankyou',
                   i18Content: 'discovery.suggestHaveBeenAcknowledged',
-                  icon: <StyleIcon source={Images.icons.nice} size={80} />,
+                  icon: 'nice',
                 });
                 return 'success';
               } catch (err) {
@@ -181,80 +198,78 @@ const ItemLocation = ({
   };
 
   return (
-    <ShadowDecorator>
-      <ScaleDecorator>
-        <StyleTouchable
-          style={[$container, {backgroundColor: theme.white}]}
-          onPress={() =>
-            onGoToProfile(item?.id, {
-              initValue: item,
-            })
-          }
-          disable={isActive}
-          disableOpacity={1}
-          onLongPress={onLongPress}>
-          <View style={$body}>
-            <StyleImage
-              source={{uri: item?.avatar}}
-              customStyle={$avatar}
-              defaultImageSource="image"
+    <Container isEditMode={isEditMode}>
+      <StyleTouchable
+        style={[$container, {backgroundColor: theme.white}]}
+        onPress={() =>
+          onGoToProfile(item?.id, {
+            initValue: item,
+          })
+        }
+        disable={isActive}
+        disableOpacity={1}
+        onLongPress={onLongPress}>
+        <View style={$body}>
+          <StyleImage
+            source={{uri: item?.avatar}}
+            customStyle={$avatar}
+            defaultImageSource="image"
+          />
+          <View style={$content}>
+            <StyleText
+              originValue={`(${(getIndex() ?? 0) + 1}) ${item.name}`}
+              numberOfLines={1}
+              customStyle={$textName}
             />
-            <View style={$content}>
-              <StyleText
-                originValue={`(${(getIndex() ?? 0) + 1}) ${item.name}`}
-                numberOfLines={1}
-                customStyle={$textName}
-              />
-              <Info icon={Images.icons.location} content={item?.location} />
-              {renderPrice()}
-              <Info
-                icon={Images.icons.clock}
-                content={`${item?.duration}h`}
-                contentStyle={{color: theme.black}}
-              />
-            </View>
-
-            {isEditMode && (
-              <StyleTouchable customStyle={$dragView} onLongPress={onLongPress}>
-                <IconDrag
-                  tintColor={theme.black}
-                  size={22}
-                  style={{
-                    marginTop: isAccShop ? iconDragMarginShop : 0,
-                  }}
-                />
-              </StyleTouchable>
-            )}
+            <Info icon={Images.icons.location} content={item?.location} />
+            {renderPrice()}
+            <Info
+              icon={Images.icons.clock}
+              content={`${item?.duration}h`}
+              contentStyle={{color: theme.black}}
+            />
           </View>
 
           {isEditMode && (
-            <ButtonX
-              size={15}
-              containerStyle={$iconX}
-              onPress={onDeleteLocation}
+            <StyleTouchable customStyle={$dragView} onLongPress={onLongPress}>
+              <IconDrag
+                tintColor={theme.black}
+                size={22}
+                style={{
+                  marginTop: isAccShop ? iconDragMarginShop : 0,
+                }}
+              />
+            </StyleTouchable>
+          )}
+        </View>
+
+        {isEditMode && (
+          <ButtonX
+            size={15}
+            containerStyle={$iconX}
+            onPress={onDeleteLocation}
+          />
+        )}
+
+        {isAccShop && (
+          <View style={[$joinGroupBuying, {backgroundColor: theme.p_200}]}>
+            <StyleIcon
+              source={Images.icons.createGroup}
+              size={17}
+              customStyle={{tintColor: theme.brown}}
             />
-          )}
+            <StyleText
+              i18Text="discovery.joinGroupBuying"
+              customStyle={[$textJoin, {color: theme.brown}]}
+            />
+          </View>
+        )}
 
-          {isAccShop && (
-            <View style={[$joinGroupBuying, {backgroundColor: theme.p_200}]}>
-              <StyleIcon
-                source={Images.icons.createGroup}
-                size={17}
-                customStyle={{tintColor: theme.brown}}
-              />
-              <StyleText
-                i18Text="discovery.joinGroupBuying"
-                customStyle={[$textJoin, {color: theme.brown}]}
-              />
-            </View>
-          )}
-
-          {[STATUS.draft, STATUS.suggesting].includes(item.status) && (
-            <Suggest item={item} onSuggestLocation={onSuggestLocation} />
-          )}
-        </StyleTouchable>
-      </ScaleDecorator>
-    </ShadowDecorator>
+        {[STATUS.draft, STATUS.suggesting].includes(item.status) && (
+          <Suggest item={item} onSuggestLocation={onSuggestLocation} />
+        )}
+      </StyleTouchable>
+    </Container>
   );
 };
 

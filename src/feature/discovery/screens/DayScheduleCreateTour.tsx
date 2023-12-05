@@ -1,6 +1,5 @@
 import {APP_EVENT} from 'asset/enum';
-import {horizontalPadding} from 'asset/metrics';
-import {Separator} from 'components';
+import {horizontalPadding, verticalMargin} from 'asset/metrics';
 import {SquareButton} from 'components/base';
 import {ItemLocation} from 'feature/discovery/components';
 import {useContextCreateTour} from 'feature/profile/CreateTour';
@@ -143,7 +142,6 @@ const DayScheduleCreateTour = ({dayIndex, onShowModalAddLocation}: Props) => {
             containerStyle={[$buttonAddLocation, {borderColor: theme.black}]}
           />
         )}
-        ItemSeparatorComponent={Separator}
       />
     </View>
   );
@@ -155,6 +153,7 @@ const $container: ViewStyle = {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingHorizontal: horizontalPadding,
+  gap: verticalMargin,
 };
 const $iconAdd: TextStyle = {
   fontSize: moderateScale(15),
@@ -165,7 +164,6 @@ const $buttonAddLocation: ViewStyle = {
   borderWidth: borderWidthTiny,
   alignSelf: 'center',
   backgroundColor: 'transparent',
-  marginBottom: verticalScale(12),
 };
 
 export default DayScheduleCreateTour;

@@ -6,7 +6,14 @@ import {SquareButton, StyleIcon, StyleText} from 'components/base';
 import {ButtonX} from 'components/common';
 import {useTheme} from 'hook';
 import React, {useEffect, useState} from 'react';
-import {Linking, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  Linking,
+  Platform,
+  StyleProp,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {getVersion} from 'react-native-device-info';
 import Animated, {
   interpolate,
@@ -29,7 +36,7 @@ type UpdateProps = {
 
 const Update = ({onClose}: UpdateProps) => {
   const theme = useTheme();
-  const {download_link} = useAppSelector(state => state.logicSlice.resource);
+  const {version} = useAppSelector(state => state.logicSlice.resource);
   const aim = useSharedValue(0);
 
   const containerStyle = useAnimatedStyle(() => {
@@ -90,7 +97,7 @@ const Update = ({onClose}: UpdateProps) => {
         containerStyle={[$btnDownload, {backgroundColor: theme.p_600}]}
         titleStyle={{color: theme.white, fontWeight: 'bold'}}
         onPress={() => {
-          Linking.openURL(download_link).catch(logger);
+          Linking.openURL(version.download_link).catch(logger);
         }}
       />
 
@@ -113,21 +120,30 @@ const Update = ({onClose}: UpdateProps) => {
 };
 
 const FloatingBanners = ({containerStyle}: Props) => {
-  const {latest_version} = useAppSelector(state => state.logicSlice.resource);
+  const {version} = useAppSelector(state => state.logicSlice.resource);
   const currentVersion = getVersion();
   const [show, setShow] = useState(true);
 
-  const hasUpdate = currentVersion !== latest_version;
+  const hasUpdate =
+    currentVersion !==
+    Platform.select({
+      ios: version.ios,
+      android: version.android,
+    });
 
   if (!show || !hasUpdate) {
     return null;
   }
 
-  return (
-    <View style={[$container, containerStyle]}>
-      {hasUpdate && <Update onClose={() => setShow(false)} />}
-    </View>
-  );
+  const content = () => {
+    if (hasUpdate) {
+      return <Update onClose={() => setShow(false)} />;
+    }
+
+    return null;
+  };
+
+  return <View style={[$container, containerStyle]}>{content()}</View>;
 };
 
 const $container: ViewStyle = {

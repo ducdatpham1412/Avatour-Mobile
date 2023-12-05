@@ -1,15 +1,13 @@
 import {APP_EVENT, STATUS} from 'asset/enum';
-import {horizontalPadding} from 'asset/metrics';
-import {RefreshControl} from 'components/base';
+import {horizontalPadding, verticalMargin} from 'asset/metrics';
+import {StyleList} from 'components/base';
 import {useMyRequests} from 'feature/profile/hooks';
 import {emitAppEvent, useSafeArea} from 'hook';
 import React from 'react';
 import {ViewStyle} from 'react-native';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import {verticalScale} from 'utility/scale';
 import {useDetailTour} from '../hooks';
 import {renderItemLocation} from './DayScheduleCreateTour';
-import {Separator} from 'components';
-import {verticalScale} from 'utility/scale';
 
 interface Props {
   tourId: number;
@@ -18,8 +16,10 @@ interface Props {
 
 const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
   const {paddingBottom} = useSafeArea();
+
   const [, {suggestLocation}] = useMyRequests();
   const [{data, validating}, {mutate}] = useDetailTour(tourId);
+
   const listLocations = data?.schedule?.[dayIndex] ?? [];
 
   const onSuggestLocation = async (value: TypeGetProfileResponse) => {
@@ -31,13 +31,13 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
   };
 
   return (
-    <DraggableFlatList
+    <StyleList
       data={listLocations}
-      renderItem={({item, drag, isActive, getIndex}) =>
+      renderItem={({item, index}) =>
         renderItemLocation(item, {
-          onDrag: drag,
-          isActive,
-          getIndex,
+          onDrag: () => null,
+          isActive: false,
+          getIndex: () => index,
           isEditMode: false,
           onDeleteLocation: () => null,
           onSuggestLocation,
@@ -52,21 +52,16 @@ const DayScheduleDetailTour = ({tourId, dayIndex}: Props) => {
             (data?.status === STATUS.draft ? verticalScale(80) : 0),
         },
       ]}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={validating} onRefresh={mutate} />
-      }
-      containerStyle={$container}
-      ItemSeparatorComponent={Separator}
+      refreshing={validating}
+      onRefresh={mutate}
     />
   );
 };
 
-const $container: ViewStyle = {
-  flex: 1,
-};
 const $contentContainer: ViewStyle = {
   paddingHorizontal: horizontalPadding,
+  gap: verticalMargin,
+  flexGrow: 1,
 };
 
 export default DayScheduleDetailTour;

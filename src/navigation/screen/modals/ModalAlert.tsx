@@ -6,12 +6,14 @@ import {
   QuestionIcon,
   SuccessIcon,
 } from 'asset/icons';
-import {StyleButton, StyleText} from 'components/base';
+import Images from 'asset/img/images';
+import {StyleButton, StyleIcon, StyleText} from 'components/base';
 import {ScaleView} from 'components/common';
 import {useTheme} from 'hook';
 import React, {
   ElementRef,
   ForwardedRef,
+  Fragment,
   ReactElement,
   createRef,
   forwardRef,
@@ -28,9 +30,29 @@ import {moderateScale, scale, verticalScale} from 'utility/scale';
 
 const modalRef = createRef<ElementRef<typeof ModalAlert>>();
 
+/**
+ * Quick icons
+ */
+const quickIcons = [
+  {
+    name: 'cute',
+    icon: <StyleIcon source={Images.icons.cute} size={80} />,
+  },
+  {
+    name: 'nice',
+    icon: <StyleIcon source={Images.icons.nice} size={80} />,
+  },
+] as const;
+const quickIconNames = quickIcons.map(q => q.name);
+type QuickIconName = (typeof quickIconNames)[number];
+const renderQuickIcon = (name: QuickIconName): ReactElement => {
+  const find = quickIcons.find(q => q.name === name);
+  return find?.icon ?? <Fragment />;
+};
+
 type TypeShowParams = {
   title?: I18Normalize;
-  icon?: ReactElement;
+  icon?: ReactElement | QuickIconName;
   i18Content?: I18Normalize;
   content?: any;
   onClose?: () => void;
@@ -106,7 +128,13 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       notification: async value => {
         await promiseForNextShow;
         impactLight();
-        setIcon(value?.icon);
+        if (value?.icon) {
+          setIcon(
+            typeof value.icon === 'string'
+              ? renderQuickIcon(value.icon)
+              : value.icon,
+          );
+        }
         setStatus('notification');
         setTitle(value?.title ?? 'common.alert');
         setContent(
@@ -121,7 +149,13 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       success: async value => {
         await promiseForNextShow;
         impactMedium();
-        setIcon(value?.icon);
+        if (value?.icon) {
+          setIcon(
+            typeof value.icon === 'string'
+              ? renderQuickIcon(value.icon)
+              : value.icon,
+          );
+        }
         setStatus('success');
         setTitle(value?.title ?? 'common.success');
         setContent(
@@ -136,7 +170,13 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       error: async value => {
         await promiseForNextShow;
         Vibration.vibrate();
-        setIcon(value?.icon);
+        if (value?.icon) {
+          setIcon(
+            typeof value.icon === 'string'
+              ? renderQuickIcon(value.icon)
+              : value.icon,
+          );
+        }
         setStatus('error');
         setTitle(value?.title ?? 'common.error');
         if (value?.i18Content) {
@@ -153,7 +193,13 @@ const ModalAlert = forwardRef((_: any, ref: ForwardedRef<TypeShow>) => {
       options: async value => {
         await promiseForNextShow;
         impactMedium();
-        setIcon(value?.icon);
+        if (value?.icon) {
+          setIcon(
+            typeof value.icon === 'string'
+              ? renderQuickIcon(value.icon)
+              : value.icon,
+          );
+        }
         setStatus('options');
         setTitle(value?.title ?? 'common.alert');
         setContent(
