@@ -92,9 +92,6 @@ export type AppParamsList = {
     itemLoginSuccess: TypeItemLoginSuccess;
     isLoginSocial?: boolean;
   };
-  [LOGIN_ROUTE.forgetPasswordSend]: {
-    username: string;
-  };
   [LOGIN_ROUTE.forgetPasswordForm]: {
     username: string;
     code: string;

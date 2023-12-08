@@ -7,7 +7,6 @@ import {
   ConfirmOpenAccount,
   EditBasicInformation,
   ForgetPasswordForm,
-  ForgetPasswordSend,
   ForgetPasswordType,
   LoginScreen,
   SendOTP,
@@ -54,17 +53,10 @@ const LoginRoute = () => {
         component={AgreeTermOfService}
       />
 
-      {/* FORGET */}
       <Stack.Screen
         name={LOGIN_ROUTE.forgetPasswordType}
         component={ForgetPasswordType}
       />
-
-      <Stack.Screen
-        name={LOGIN_ROUTE.forgetPasswordSend}
-        component={ForgetPasswordSend}
-      />
-
       <Stack.Screen
         name={LOGIN_ROUTE.forgetPasswordForm}
         component={ForgetPasswordForm}
