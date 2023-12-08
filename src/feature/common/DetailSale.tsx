@@ -12,6 +12,7 @@ import {
   Metrics,
   horizontalMargin,
   horizontalPadding,
+  safePaddingNotZero,
   verticalMargin,
 } from 'asset/metrics';
 import {AppModalize, LoadingScreen, TextCountDown} from 'components';
@@ -44,6 +45,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Share from 'react-native-share';
 import {I18Normalize} from 'utility/I18Next';
 import {
+  $styleTopShadow,
   borderWidthTiny,
   calculatePriceDeposit,
   onGoToProfile,
@@ -467,7 +469,7 @@ const DetailSale = ({
 
             <LinearGradient
               colors={[theme.blue, theme.blue_800]}
-              style={$interactView}>
+              style={[$interactView, {marginTop: verticalMargin}]}>
               <StyleTouchable
                 customStyle={$buttonInteract}
                 onPress={() => {
@@ -572,27 +574,38 @@ const DetailSale = ({
     }
 
     return (
-      <LinearGradient
-        colors={[theme.p_600, theme.p_600]}
-        style={[$interactView, {marginBottom: bottom}]}>
-        <StyleTouchable
-          customStyle={$buttonInteract}
-          onPress={() => {
-            checkAuthenticated({
-              onAuthenticated: () => modalConfirmJoinRef.current?.show(),
-            });
-          }}>
-          <StyleIcon
-            source={Images.icons.createGroup}
-            size={15}
-            customStyle={{tintColor: theme.white}}
-          />
-          <StyleText
-            i18Text="discovery.joinGroupBuying"
-            customStyle={[$textJoin, {color: theme.white}]}
-          />
-        </StyleTouchable>
-      </LinearGradient>
+      <View
+        style={[
+          $button,
+          $styleTopShadow,
+          {
+            marginBottom: bottom,
+            backgroundColor: theme.white,
+            shadowColor: theme.black,
+          },
+        ]}>
+        <LinearGradient
+          colors={[theme.p_600, theme.p_600]}
+          style={$interactView}>
+          <StyleTouchable
+            customStyle={$buttonInteract}
+            onPress={() => {
+              checkAuthenticated({
+                onAuthenticated: () => modalConfirmJoinRef.current?.show(),
+              });
+            }}>
+            <StyleIcon
+              source={Images.icons.createGroup}
+              size={15}
+              customStyle={{tintColor: theme.white}}
+            />
+            <StyleText
+              i18Text="discovery.joinGroupBuying"
+              customStyle={[$textJoin, {color: theme.white}]}
+            />
+          </StyleTouchable>
+        </LinearGradient>
+      </View>
     );
   };
 
@@ -753,12 +766,16 @@ const $depositView: ViewStyle = {
   borderRadius: BORDER_RADIUS.f2,
   marginBottom: verticalMargin,
 };
+const $button: ViewStyle = {
+  width: '100%',
+  paddingTop: safePaddingNotZero,
+  paddingHorizontal: horizontalPadding,
+};
 const $interactView: ViewStyle = {
-  width: '90%',
+  width: '100%',
   height: moderateScale(46),
   alignSelf: 'center',
   borderRadius: 100,
-  marginTop: verticalMargin,
 };
 const $buttonInteract: ViewStyle = {
   flex: 1,

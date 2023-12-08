@@ -37,7 +37,7 @@ import {
   checkIsToday,
   formatLocaleNumber,
   formatMoney,
-  formatddddDDMMYYYY,
+  formathhmmddddDDMMYYYY,
 } from 'utility/format';
 import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
@@ -165,7 +165,7 @@ const ButtonConfirmArrived = ({
     ModalAlert.notification({
       title: 'Opps' as I18Normalize,
       content: t('alert.timeBuyNotToday', {
-        time: formatddddDDMMYYYY(estimate.time_will_buy),
+        time: formathhmmddddDDMMYYYY(estimate.time_will_buy),
       }),
     });
   };
@@ -587,17 +587,15 @@ const DetailMeJoin = ({
               </StyleTouchable>,
               {
                 title: 'discovery.arrivalTime',
-                content: formatddddDDMMYYYY(data?.time_will_buy),
-                contentStyle: {fontWeight: 'normal'},
+                content: formathhmmddddDDMMYYYY(data?.time_will_buy),
+                contentStyle: $textNormal,
               },
               {
                 title: 'discovery.estimatedPrice',
                 content: `${formatLocaleNumber(priceRange.min)} - ${formatMoney(
                   priceRange.max,
                 )}`,
-                contentStyle: {
-                  fontWeight: 'normal',
-                },
+                contentStyle: $textNormal,
                 noteProps: {
                   i18Text: 'discovery.priceCanBeChange',
                   mode: 'html',
@@ -619,7 +617,7 @@ const DetailMeJoin = ({
                             value: formatMoney(moneyCanSavedMore),
                           }}
                           customStyle={{
-                            fontSize: FONT_SIZE.f3,
+                            fontSize: FONT_SIZE.f4,
                             color: theme.gray_500,
                           }}
                           htmlTextBoldColor={theme.blue}
@@ -688,22 +686,20 @@ const DetailMeJoin = ({
               </StyleTouchable>,
               {
                 title: 'discovery.arrivalTime',
-                content: formatddddDDMMYYYY(data?.time_will_buy),
-                contentStyle: {fontWeight: 'normal'},
+                content: formathhmmddddDDMMYYYY(data?.time_will_buy),
+                contentStyle: $textNormal,
               },
               {
                 title: 'discovery.estimatedPrice',
                 content: `${formatLocaleNumber(priceRange.min)} - ${formatMoney(
                   priceRange.max,
                 )}`,
-                contentStyle: {
-                  fontWeight: 'normal',
-                },
+                contentStyle: $textNormal,
               },
               {
                 title: 'discovery.nowPrice',
                 content: formatMoney(priceDeposit.price),
-                contentStyle: {color: theme.green},
+                contentStyle: $textNormal,
                 noteProps: moneyCanSavedMore
                   ? {
                       i18Text: 'common.null',
@@ -715,7 +711,7 @@ const DetailMeJoin = ({
                             value: formatMoney(moneyCanSavedMore),
                           }}
                           customStyle={{
-                            fontSize: FONT_SIZE.f3,
+                            fontSize: FONT_SIZE.f4,
                             color: theme.gray_500,
                           }}
                           htmlTextBoldColor={theme.blue}
@@ -725,9 +721,9 @@ const DetailMeJoin = ({
                   : null,
               },
               {
-                title: `${t('discovery.deposit')} (~20%)`,
+                title: t('discovery.deposited'),
                 content: formatMoney(priceDeposit.deposit),
-                contentStyle: {fontWeight: 'normal'},
+                contentStyle: $textNormal,
               },
               {
                 title: 'discovery.moneyToPay',
@@ -743,7 +739,7 @@ const DetailMeJoin = ({
               {
                 title: 'discovery.transactionHash',
                 content: data.hash,
-                contentStyle: {flex: 1.7, fontWeight: 'normal'},
+                contentStyle: [$textNormal, {flex: 1.7}],
               },
               <View style={{width: '100%'}}>
                 <StyleText i18Text="discovery.note" />
@@ -796,18 +792,18 @@ const DetailMeJoin = ({
               </StyleTouchable>,
               {
                 title: 'discovery.arrivalTime',
-                content: formatddddDDMMYYYY(data?.time_will_buy),
-                contentStyle: {fontWeight: 'normal'},
+                content: formathhmmddddDDMMYYYY(data?.time_will_buy),
+                contentStyle: $textNormal,
               },
               {
-                title: 'discovery.price',
+                title: 'discovery.allPrice',
                 content: formatMoney(priceDeposit.price),
-                contentStyle: {color: theme.green},
+                contentStyle: $textNormal,
               },
               {
-                title: `${t('discovery.deposit')} (~20%)`,
+                title: t('discovery.deposited'),
                 content: formatMoney(priceDeposit.deposit),
-                contentStyle: {fontWeight: 'normal'},
+                contentStyle: $textNormal,
               },
               {
                 title: 'discovery.moneyToPay',
@@ -823,7 +819,7 @@ const DetailMeJoin = ({
               {
                 title: 'discovery.transactionHash',
                 content: data.hash,
-                contentStyle: {flex: 1.7, fontWeight: 'normal'},
+                contentStyle: [$textNormal, {flex: 1.7}],
               },
               <View style={{width: '100%'}}>
                 <StyleText i18Text="discovery.note" />
@@ -972,20 +968,15 @@ const DetailMeJoin = ({
                   {
                     title: 'discovery.unitPrice',
                     content: formatMoney(join.price / join.amount),
-                    contentStyle: {fontWeight: 'normal'},
+                    contentStyle: $textNormal,
                   },
                   {
                     title: 'discovery.amount',
                     content: join.amount,
                   },
                   {
-                    title: 'discovery.allPrice',
+                    title: 'discovery.price',
                     content: formatMoney(join.price),
-                  },
-                  {
-                    title: `${t('discovery.deposit')} (~20%)`,
-                    content: formatMoney(join.deposit),
-                    contentStyle: {fontWeight: 'normal'},
                   },
                 ]}
                 containerStyle={$groupView}
@@ -1075,21 +1066,16 @@ const DetailMeJoin = ({
                 {
                   title: 'discovery.unitPrice',
                   content: formatMoney(join.price / join.amount),
-                  contentStyle: {fontWeight: 'normal'},
+                  contentStyle: $textNormal,
                 },
                 {
                   title: 'discovery.amount',
                   content: join.amount,
-                  contentStyle: {fontWeight: 'normal'},
+                  contentStyle: $textNormal,
                 },
                 {
-                  title: 'discovery.allPrice',
+                  title: 'discovery.price',
                   content: formatMoney(join.price),
-                },
-                {
-                  title: `${t('discovery.deposit')} (~20%)`,
-                  content: formatMoney(join.deposit),
-                  contentStyle: {fontWeight: 'normal'},
                 },
               ]}
               containerStyle={$groupView}
@@ -1316,6 +1302,9 @@ const $amountAvatarMember: ViewStyle = {
   borderRadius: 30,
   alignItems: 'center',
   justifyContent: 'center',
+};
+const $textNormal: TextStyle = {
+  fontWeight: 'normal',
 };
 
 export default DetailMeJoin;

@@ -326,6 +326,7 @@ export enum STATUS_JOIN_ESTIMATE {
 export enum NOTIFICATION {
   joinGb = 1,
   hasNewJoin = 2,
+  newJoinWithYou = 6,
   request = 3,
   likeTour = 4,
   likeSale = 5,

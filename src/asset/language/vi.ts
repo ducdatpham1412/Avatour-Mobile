@@ -350,6 +350,8 @@ const profile = {
   selectHour: 'Chọn giờ',
   selectOpenHour: 'Chọn giờ mở cửa',
   selectCloseHour: 'Chọn giờ đóng cửa',
+  selectDay: 'Chọn ngày',
+  selectTime: 'Chọn thời gian',
   openAllDay: 'Mở cả ngày',
   openLimit: 'Giới hạn giờ',
   opening: 'Đang mở cửa',
