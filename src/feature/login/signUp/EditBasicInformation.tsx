@@ -11,6 +11,7 @@ import {
 import {CircleButton} from 'components/common';
 import InputBox from 'components/common/InputBox';
 import {useLoading, useTheme} from 'hook';
+import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, LOGIN_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert, ModalDatePicker} from 'navigation/screen/modals';
 import React, {useRef, useState} from 'react';
@@ -26,7 +27,6 @@ import {formatDateDayMonthYear, formatUTCDate} from 'utility/format';
 import {impactLight} from 'utility/haptic';
 import {moderateScale} from 'utility/scale';
 import GenderSwipe from '../components/GenderSwipe';
-import {navigate} from 'navigation/NavigationService';
 
 const defaultDate = new Date(2000, 0, 1);
 
@@ -143,7 +143,7 @@ const EditBasicInformation = ({
                       marginTop: verticalScale(12),
                       backgroundColor: theme.background,
                     }}
-                    i18Placeholder="profile.edit.name"
+                    i18Placeholder="discovery.name"
                     onSubmitEditing={onPressButton}
                   />
                 </View>

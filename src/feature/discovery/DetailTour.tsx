@@ -167,7 +167,7 @@ const ButtonPublicTour = ({aim, tourId}: ButtonPublicTourProps) => {
       ModalAlert.success({
         title: 'discovery.thankyou',
         i18Content: 'discovery.suggestHaveBeenAcknowledged',
-        icon: <StyleIcon source={Images.icons.nice} size={80} />,
+        icon: 'nice',
       });
     } catch (err) {
       ModalAlert.error({
@@ -217,6 +217,8 @@ const DetailTour = ({
     revalidateAll: true,
   });
 
+  const isMyTour = data?.creator === myId;
+
   useAppEvent(APP_EVENT.suggestLocation, e => {
     mutate(
       pre => {
@@ -235,8 +237,6 @@ const DetailTour = ({
       {revalidate: false},
     );
   });
-
-  const isMyTour = data?.creator === myId;
 
   const aim = useSharedValue(levelModalScheduleHeight.high);
   const modalStyle = useAnimatedStyle(() => {
@@ -300,7 +300,7 @@ const DetailTour = ({
                     });
                   }
                 },
-                icon: <StyleIcon source={Images.icons.cute} size={80} />,
+                icon: 'cute',
               });
             },
           },
@@ -319,7 +319,7 @@ const DetailTour = ({
                         });
                       }
                     },
-                    icon: <StyleIcon source={Images.icons.cute} size={70} />,
+                    icon: 'cute',
                   });
                 },
               }

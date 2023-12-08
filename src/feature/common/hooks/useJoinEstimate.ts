@@ -8,6 +8,7 @@ import {calculatePriceDeposit} from 'utility/assistant';
 
 interface Params {
   initValue?: TypeJoinEstimate;
+  revalidateAll?: boolean;
 }
 
 const useJoinEstimate = (id: number | null, params?: Params) => {
@@ -18,6 +19,7 @@ const useJoinEstimate = (id: number | null, params?: Params) => {
     },
     config: {
       fallbackData: params?.initValue,
+      revalidateAll: params?.revalidateAll,
     },
   });
 

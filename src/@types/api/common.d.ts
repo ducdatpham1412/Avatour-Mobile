@@ -117,8 +117,11 @@ interface TypeResourceResponse {
       account_number: string;
       account_holder: string;
     };
-    latest_version: string;
-    download_link: string;
+    version: {
+      ios: string;
+      android: string;
+      download_link: string;
+    };
   };
 }
 

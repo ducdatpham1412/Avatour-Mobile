@@ -6,7 +6,6 @@ import {verticalMargin} from 'asset/metrics';
 import {BoxInformation, TextCountDown} from 'components';
 import {
   StyleContainer,
-  StyleIcon,
   StyleImage,
   StyleText,
   StyleTouchable,
@@ -217,7 +216,7 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
         ModalAlert.success({
           i18Content: 'profile.confirmSuccess',
           title: 'discovery.thankyou',
-          icon: <StyleIcon source={Images.icons.nice} size={80} />,
+          icon: 'nice',
         });
         await mutate(
           () => {
@@ -354,6 +353,7 @@ const DetailMeJoin = ({
     {mutate, deleteEstimate},
   ] = useJoinEstimate(estimateId, {
     initValue,
+    revalidateAll: true,
   });
   const [{data: sale}] = useDetailSale(data?.sale.id, {revalidateAll: false});
 

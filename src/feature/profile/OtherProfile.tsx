@@ -7,7 +7,7 @@ import {
   horizontalPadding,
   verticalMargin,
 } from 'asset/metrics';
-import {TabView} from 'components';
+import {LoadingScreen, TabView} from 'components';
 import {
   RefreshControl,
   StyleButton,
@@ -16,7 +16,7 @@ import {
   StyleTouchable,
 } from 'components/base';
 import {emitAppEvent, useSafeArea, useTheme} from 'hook';
-import {navigate} from 'navigation/NavigationService';
+import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
@@ -26,7 +26,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {$styleTopShadow, borderWidthTiny} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import {IconTabBarProfile, InformationProfile} from './components';
-import {useMyRequests, useOtherProfile} from './hooks';
+import {useMyLocations, useMyRequests, useOtherProfile} from './hooks';
 import {ListReviews, ListSales, ListTours} from './screens';
 
 type Props = RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>;
@@ -94,14 +94,14 @@ const ButtonSuggest = ({userId}: ButtonSuggestProps) => {
             value: data?.name,
           }),
           titleButton: 'common.suggest',
-          icon: <StyleIcon source={Images.icons.nice} size={70} />,
+          icon: 'nice',
           onContinue: async () => {
             try {
               await suggestLocation(userId);
               ModalAlert.success({
                 title: 'discovery.thankyou',
                 i18Content: 'discovery.suggestHaveBeenAcknowledged',
-                icon: <StyleIcon source={Images.icons.nice} size={70} />,
+                icon: 'nice',
               });
               await mutate(
                 pre => {
@@ -160,7 +160,7 @@ const ButtonSuggest = ({userId}: ButtonSuggestProps) => {
                   i18Content: 'profile.post.sureDeletePost',
                   titleButton: 'common.cancelSuggest',
                   onContinue: agree,
-                  icon: <StyleIcon source={Images.icons.cute} size={70} />,
+                  icon: 'cute',
                 });
               },
             },
@@ -213,6 +213,7 @@ const OtherProfile = ({
     // TODO: Only = true when routeParam having revalidateAll = True => Add revalidateAll in routeParams
     revalidateAll: true,
   });
+  const [{loadingDeleteLocation}, {deleteLocation}] = useMyLocations();
 
   const [tabViewHeight, setTabViewHeight] = useState(0);
 
@@ -223,6 +224,32 @@ const OtherProfile = ({
    * Functions
    */
   const onShowModalOptions = () => {
+    if (isPrivate) {
+      ModalActionSheet.show({
+        options: [
+          {
+            title: 'profile.deleteLocation',
+            onPress: () => {
+              ModalAlert.options({
+                i18Content: 'profile.post.sureDeletePost',
+                onContinue: () => {
+                  deleteLocation(id)
+                    .then(goBack)
+                    .catch(err => {
+                      ModalAlert.error({
+                        content: err,
+                      });
+                    });
+                },
+                icon: 'cute',
+              });
+            },
+          },
+        ],
+      });
+      return;
+    }
+
     ModalActionSheet.show({
       options: [
         {
@@ -316,11 +343,11 @@ const OtherProfile = ({
   };
 
   return (
-    <StyleContainer
-      headerProps={{
-        title: 'common.null',
-        RightComponent:
-          isBlocked || isPrivate ? null : (
+    <>
+      <StyleContainer
+        headerProps={{
+          title: 'common.null',
+          RightComponent: isBlocked ? null : (
             <StyleTouchable onPress={onShowModalOptions}>
               <StyleIcon
                 source={Images.icons.more}
@@ -329,31 +356,34 @@ const OtherProfile = ({
               />
             </StyleTouchable>
           ),
-      }}
-      customStyle={$content}
-      backgroundColor={theme.white}
-      initLoading={loading || !data}
-      layOut="view"
-      BottomComponent={<ButtonSuggest userId={id} />}>
-      <View
-        style={$container}
-        onLayout={e => {
-          setTabViewHeight(e.nativeEvent.layout.height);
-        }}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={validating && !loading}
-              onRefresh={mutate}
-            />
-          }
-          stickyHeaderIndices={[1]}
-          showsVerticalScrollIndicator={false}>
-          {!!data && <InformationProfile profile={data} />}
-          {renderTabView()}
-        </ScrollView>
-      </View>
-    </StyleContainer>
+        }}
+        customStyle={$content}
+        backgroundColor={theme.white}
+        initLoading={loading || !data}
+        layOut="view"
+        BottomComponent={<ButtonSuggest userId={id} />}>
+        <View
+          style={$container}
+          onLayout={e => {
+            setTabViewHeight(e.nativeEvent.layout.height);
+          }}>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={validating && !loading}
+                onRefresh={mutate}
+              />
+            }
+            stickyHeaderIndices={[1]}
+            showsVerticalScrollIndicator={false}>
+            {!!data && <InformationProfile profile={data} />}
+            {renderTabView()}
+          </ScrollView>
+        </View>
+      </StyleContainer>
+
+      {loadingDeleteLocation && <LoadingScreen />}
+    </>
   );
 };
 
