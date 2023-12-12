@@ -55,8 +55,9 @@ const useNotifications = () => {
       }
 
       const initMessageFirebase = await messaging().getInitialNotification();
+
       return {
-        link: initMessageFirebase?.data?.link ?? '',
+        link: String(initMessageFirebase?.data?.link ?? ''),
       };
     },
   );
@@ -87,7 +88,7 @@ const useNotifications = () => {
     const subscribeBackground = messaging().onNotificationOpenedApp(
       async message => {
         await mutate(
-          {link: message.data?.link ?? ''},
+          {link: String(message.data?.link ?? '')},
           {
             revalidate: false,
           },
@@ -99,7 +100,7 @@ const useNotifications = () => {
       await showLocalNotification({
         title: message.notification?.title ?? '',
         content: message.notification?.body ?? '',
-        data: {link: message.data?.link ?? ''},
+        data: {link: String(message.data?.link ?? '')},
       });
     });
 

@@ -1,22 +1,22 @@
 import {apiChangeTheme} from 'api/setting';
+import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import {THEME_TYPE} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import {StyleImage} from 'components/base';
 import {useTheme} from 'hook';
-import Redux from 'hook/useRedux';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ImageStyle, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {moderateScale, verticalScale} from 'utility/scale';
 
 const ThemeSetting = () => {
   const theme = useTheme();
   const {theme: themeSetting} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
-  const isModeExp = Redux.getModeExp();
+  const {modeExp} = useAppSelector(state => state.accountSlice);
   const [isPicked, setIsPicked] = useState(
     themeSetting === 0 ? 'dark' : 'light',
   );
@@ -34,10 +34,14 @@ const ThemeSetting = () => {
     }
 
     try {
-      if (!isModeExp) {
+      if (!modeExp) {
         await apiChangeTheme(newTheme);
       }
-      Redux.setTheme(newTheme);
+      updatePassport({
+        profile: {
+          theme: newTheme,
+        },
+      });
       ModalAlert.success({
         i18Content: 'alert.successChange',
       });
@@ -50,51 +54,39 @@ const ThemeSetting = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* DARK THEME */}
+    <View style={$container}>
       <TouchableOpacity
-        style={[styles.themeBox, {borderColor: selectBdColor('dark')}]}
+        style={[$theme, {borderColor: selectBdColor('dark')}]}
         onPress={() => switchTheme('dark')}>
-        <StyleImage
-          source={Images.images.darkTheme}
-          customStyle={styles.themeImage}
-        />
+        <StyleImage source={Images.images.darkTheme} customStyle={$img} />
       </TouchableOpacity>
 
-      {/* LIGHT THEME */}
       <TouchableOpacity
-        style={[styles.themeBox, {borderColor: selectBdColor('light')}]}
+        style={[$theme, {borderColor: selectBdColor('light')}]}
         onPress={() => switchTheme('light')}>
-        <StyleImage
-          source={Images.images.lightTheme}
-          customStyle={styles.themeImage}
-        />
+        <StyleImage source={Images.images.lightTheme} customStyle={$img} />
       </TouchableOpacity>
     </View>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '80%',
-    paddingVertical: '20@vs',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignSelf: 'center',
-  },
-  themeBox: {
-    width: Metrics.width / 4,
-    height: Metrics.width / 4,
-    borderWidth: '5@vs',
-    borderRadius: '20@vs',
-    overflow: 'hidden',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  themeImage: {
-    width: '100%',
-    height: '100%',
-  },
-});
+const $container: ViewStyle = {
+  width: '80%',
+  paddingVertical: verticalScale(20),
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignSelf: 'center',
+};
+const $theme: ViewStyle = {
+  width: Metrics.width / 4,
+  height: Metrics.width / 4,
+  borderWidth: moderateScale(4),
+  borderRadius: moderateScale(20),
+  overflow: 'hidden',
+};
+const $img: ImageStyle = {
+  width: '100%',
+  height: '100%',
+};
 
 export default ThemeSetting;

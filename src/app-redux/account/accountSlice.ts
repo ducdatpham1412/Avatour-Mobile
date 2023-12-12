@@ -48,7 +48,7 @@ export const initialAccountState = {
       },
       status: 0,
     },
-    numberNewNotifications: 0,
+    new_notifications: 0,
   },
   // modeExp
   modeExp: true,
