@@ -374,6 +374,8 @@ const profile = {
   selectHour: 'Select hours',
   selectOpenHour: 'Select open hour',
   selectCloseHour: 'Select close hour',
+  selectDay: 'Select day',
+  selectTime: 'Select time',
   openAllDay: 'Open all day',
   openLimit: 'Limit',
   opening: 'Opening',

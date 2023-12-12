@@ -47,7 +47,6 @@ enum LOGIN_ROUTE {
   // ------------------------------
   // THIS BLOCK IF FOR FORGET_PASSWORD
   forgetPasswordType = '@LOGIN_ROUTE/forgetPasswordType',
-  forgetPasswordSend = '@LOGIN_ROUTE/forgetPasswordSend',
   forgetPasswordConfirm = '@LOGIN_ROUTE/forgetPasswordConfirm',
   forgetPasswordForm = '@LOGIN_ROUTE/forgetPasswordForm',
   // ------------------------------
@@ -113,9 +112,9 @@ export {
   DISCOVERY_ROUTE,
   LOGIN_ROUTE,
   MAIN_SCREEN,
+  ORDER_ROUTE,
   PROFILE_ROUTE,
   REPUTATION_ROUTE,
   SETTING_ROUTE,
-  ORDER_ROUTE,
 };
 export default ROOT_SCREEN;

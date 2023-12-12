@@ -1,8 +1,9 @@
 import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
+import {IconEdit} from 'asset/icons';
 import Images from 'asset/img/images';
-import {safePaddingNotZero} from 'asset/metrics';
+import {horizontalPadding} from 'asset/metrics';
 import {BORDER_RADIUS, FONT_SIZE} from 'asset/standardValue';
 import {AppModalize} from 'components';
 import {
@@ -14,7 +15,11 @@ import {
 import AppInput from 'components/base/AppInput';
 import dayjs from 'dayjs';
 import {useSafeArea, useTheme} from 'hook';
-import {ModalDatePicker, ModalInputEdit} from 'navigation/screen/modals';
+import {
+  ModalDatePicker,
+  ModalInputEdit,
+  ModalTimePicker,
+} from 'navigation/screen/modals';
 import React, {
   ElementRef,
   ForwardedRef,
@@ -29,10 +34,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {I18Normalize} from 'utility/I18Next';
 import {borderWidthTiny, removePrefixPhone} from 'utility/assistant';
 import {
-  addDate,
-  formatDayGroupBuying,
   formatPhone,
   formatUTCDate,
+  formathhmmddddDDMMYYYY,
 } from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {validateIsPhone} from 'utility/validate';
@@ -71,7 +75,7 @@ const ModalConfirmJoinGb = (
   {onConfirm, loadingJoin, initValue, titleButton}: Props,
   ref: ForwardedRef<TypeShowModalize>,
 ) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {t} = useTranslation();
   const theme = useTheme();
   const {phone} = useAppSelector(
@@ -82,15 +86,9 @@ const ModalConfirmJoinGb = (
 
   const [amount, setAmount] = useState(initValue?.amount ?? 1);
   const [timeWillJoin, setTimeWillJoin] = useState(
-    formatUTCDate(
-      initValue?.time_will_buy ??
-        addDate(dayjs(), {
-          value: 1,
-          unit: 'day',
-        }),
-    ),
+    initValue?.time_will_buy ? dayjs(initValue.time_will_buy) : undefined,
   );
-  const [note, setNote] = useState(initValue?.note ?? '');
+  const note = useRef(initValue?.note ?? '');
 
   useImperativeHandle(
     ref,
@@ -109,11 +107,75 @@ const ModalConfirmJoinGb = (
     setAmount(nextAmount);
   };
 
+  const selectDay = () => {
+    if (timeWillJoin) {
+      return (
+        <View style={[$timeJoin, {borderColor: theme.p_600}]}>
+          <StyleText
+            originValue={`${formathhmmddddDDMMYYYY(timeWillJoin)}`}
+            customStyle={$textJoinDate}
+          />
+          <StyleTouchable
+            onPress={() => {
+              ModalDatePicker.show({
+                date: formatUTCDate(timeWillJoin),
+                onChangeRange: value => {
+                  setTimeWillJoin(dayjs(value.date));
+                  ModalTimePicker.show({
+                    title: 'profile.selectHour',
+                    onChange: v => {
+                      setTimeWillJoin(pre => {
+                        if (pre) {
+                          return pre.hour(v.hours).minute(v.minutes);
+                        }
+                      });
+                    },
+                  });
+                },
+                validRange: {
+                  startDate: new Date(),
+                },
+              });
+            }}>
+            <IconEdit tintColor={theme.gray_600} />
+          </StyleTouchable>
+        </View>
+      );
+    }
+
+    return (
+      <StyleTouchable
+        customStyle={[$timeJoin, {borderColor: theme.p_600}]}
+        onPress={() => {
+          ModalDatePicker.show({
+            date: formatUTCDate(timeWillJoin),
+            onChangeRange: value => {
+              setTimeWillJoin(dayjs(value.date));
+              ModalTimePicker.show({
+                title: 'profile.selectHour',
+                onChange: v => {
+                  setTimeWillJoin(pre => {
+                    if (pre) {
+                      return pre.hour(v.hours).minute(v.minutes);
+                    }
+                  });
+                },
+              });
+            },
+            validRange: {
+              startDate: new Date(),
+            },
+          });
+        }}>
+        <StyleText i18Text="profile.selectTime" />
+        <IconEdit tintColor={theme.gray_600} />
+      </StyleTouchable>
+    );
+  };
+
   return (
     <>
-      <AppModalize
-        ref={modalizeRef}
-        containerStyle={{paddingBottom: bottom || safePaddingNotZero}}>
+      <AppModalize ref={modalizeRef} containerStyle={{paddingBottom}}>
         <StyleText
           i18Text="discovery.joinGroupBuying"
           customStyle={$textHeader}
@@ -129,7 +191,7 @@ const ModalConfirmJoinGb = (
             i18Text="discovery.amount"
             customStyle={$textTitleEnterInfo}
           />
-          <View style={$minusPlusBox}>
+          <View style={$infoBox}>
             <StyleTouchable onPress={() => onChangeAmount(-1)} hitSlop={10}>
               <AntDesign
                 name="minussquareo"
@@ -146,37 +208,23 @@ const ModalConfirmJoinGb = (
           </View>
         </View>
 
-        <View style={$enterInfoView}>
+        <View
+          style={[
+            $enterInfoView,
+            {flexDirection: 'column', alignItems: 'flex-start'},
+          ]}>
           <StyleText
             i18Text="discovery.arrivalTime"
             customStyle={$textTitleEnterInfo}
           />
-          <View style={$minusPlusBox}>
-            <StyleTouchable
-              onPress={() => {
-                ModalDatePicker.show({
-                  date: timeWillJoin,
-                  onChangeRange: value => {
-                    setTimeWillJoin(formatUTCDate(dayjs(value.date)));
-                  },
-                  validRange: {
-                    startDate: new Date(),
-                  },
-                });
-              }}>
-              <StyleText
-                originValue={`${formatDayGroupBuying(timeWillJoin)}`}
-                customStyle={$textJoinDate}
-              />
-            </StyleTouchable>
-          </View>
+          {selectDay()}
         </View>
 
         <View style={$enterInfoView}>
           <StyleText i18Text="login.phone" customStyle={$textTitleEnterInfo}>
             <StyleText originValue=":" customStyle={$textTitleEnterInfo} />
           </StyleText>
-          <View style={$minusPlusBox}>
+          <View style={$infoBox}>
             <StyleTouchable
               onPress={onAddPhone}
               disable={!!phone}
@@ -207,8 +255,8 @@ const ModalConfirmJoinGb = (
         </View>
 
         <AppInput
-          value={note}
-          onChangeText={text => setNote(text)}
+          defaultValue={note.current}
+          onChangeText={text => (note.current = text)}
           style={[
             $inputNote,
             {
@@ -223,11 +271,13 @@ const ModalConfirmJoinGb = (
           title={titleButton ?? 'discovery.joinGroupBuying'}
           containerStyle={$button}
           onPress={() => {
-            onConfirm({
-              amount,
-              time_will_buy: timeWillJoin,
-              note,
-            });
+            if (timeWillJoin) {
+              onConfirm({
+                amount,
+                time_will_buy: formatUTCDate(timeWillJoin),
+                note: note.current,
+              });
+            }
           }}
           disable={!phone}
           isLoading={loadingJoin}
@@ -250,7 +300,6 @@ const $icon: ImageStyle = {
 const $button: ViewStyle = {
   width: '90%',
   marginTop: verticalScale(20),
-  marginBottom: verticalScale(4),
   paddingVertical: scale(4),
 };
 const $enterInfoView: ViewStyle = {
@@ -262,7 +311,7 @@ const $textTitleEnterInfo: TextStyle = {
   fontSize: FONT_SIZE.f2,
   fontWeight: 'bold',
 };
-const $minusPlusBox: ViewStyle = {
+const $infoBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   marginLeft: scale(20),
@@ -290,6 +339,18 @@ const $inputNote: TextStyle = {
   paddingTop: verticalScale(8),
   paddingBottom: verticalScale(8),
   fontSize: FONT_SIZE.f2,
+};
+const $timeJoin: ViewStyle = {
+  width: '100%',
+  height: moderateScale(40),
+  marginTop: verticalScale(4),
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  borderWidth: moderateScale(1),
+  borderRadius: BORDER_RADIUS.f4,
+  borderStyle: 'dashed',
+  paddingHorizontal: horizontalPadding,
 };
 
 export default forwardRef(ModalConfirmJoinGb);

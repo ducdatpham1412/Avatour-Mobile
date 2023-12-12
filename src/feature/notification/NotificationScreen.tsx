@@ -109,12 +109,12 @@ const NotificationUser = () => {
       }}
       backgroundColor={theme.white}
       customStyle={$container}
-      layOut="view">
+      layOut="view"
+      initLoading={initLoading}>
       <StyleList
         data={list}
         renderItem={({item}) => renderItem(item)}
         keyExtractor={item => String(item?.id)}
-        initLoading={initLoading}
         refreshing={refreshing}
         onRefresh={onRefresh}
         loadingMore={loadingMore}

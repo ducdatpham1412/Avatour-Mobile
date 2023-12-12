@@ -92,13 +92,6 @@ export const formatDateChatTag = (date: Date | string) => {
   return dayjs(date).format('DD MMM');
 };
 
-export const formatDayGroupBuying = (date: string) => {
-  if (!date) {
-    return '';
-  }
-  return dayjs(date).locale('jp').format('dddd, DD/MM/YYYY');
-};
-
 export const formatLocaleNumber = (value: string | number) => {
   if (
     value === undefined ||
@@ -193,6 +186,9 @@ export const formatDDMMYYYY = (value: string | Dayjs) => {
 };
 export const formatddddDDMMYYYY = (value: string | Dayjs) => {
   return dayjs(value).format('dddd, DD/MM/YYYY');
+};
+export const formathhmmddddDDMMYYYY = (value: string | Dayjs) => {
+  return dayjs(value).format('H:mm dddd, DD/MM/YYYY');
 };
 
 type FormatMoneyOptions = {
