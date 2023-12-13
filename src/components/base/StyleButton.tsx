@@ -1,3 +1,4 @@
+import {LoadingIcon} from 'feature/profile/screens';
 import {useTheme} from 'hook';
 import React from 'react';
 import {ActivityIndicator, StyleProp, TextStyle, ViewStyle} from 'react-native';
@@ -6,7 +7,6 @@ import {detectFromStyle} from 'utility/assistant';
 import {moderateScale, scale} from 'utility/scale';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
-import {LoadingIcon} from 'feature/profile/screens';
 
 interface StyleTouchableProps {
   title: I18Normalize;
@@ -36,12 +36,14 @@ const StyleButton = (props: StyleTouchableProps) => {
       {isLoading ? (
         <LoadingIcon
           withMessage
-          layout="horizontal"
+          layout="absolute"
           loadingCpn={
             <ActivityIndicator color={(tintColor as string) ?? theme.white} />
           }
-          textWaitingStyle={{
-            color: theme.white,
+          textWaiting={{
+            style: {
+              color: theme.white,
+            },
           }}
         />
       ) : (

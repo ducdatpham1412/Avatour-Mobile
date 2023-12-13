@@ -81,8 +81,6 @@ const Images = {
     // discovery
     defaultImage: require('./img_default_image.png'),
     defaultAvatar: require('./img_default_avatar.png'),
-    loadingTravel: require('./img_loading_travel.json'),
-    congratulation: require('./img_congratulation.json'),
     travelCamping: require('./img_travel_camping.png'),
     travelVolunteer: require('./img_travel_volunteer.png'),
     travelTeamBuilding: require('./img_travel_teambuilding.png'),
@@ -95,6 +93,10 @@ const Images = {
     avatar02: require('./img_avatar02.png'),
     avatar03: require('./img_avatar03.png'),
     avatar04: require('./img_avatar04.png'),
+    // Lottie json
+    loadingTravel: require('./img_loading_travel.json'),
+    congratulation: require('./img_congratulation.json'),
+    creating: require('./img_creating.json'),
   },
 };
 

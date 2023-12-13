@@ -11,20 +11,30 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import {I18Normalize} from 'utility/I18Next';
 import {moderateScale} from 'utility/scale';
+
+type TextWaiting = {
+  i18nText?: I18Normalize;
+  style?: StyleProp<TextStyle>;
+  appearDuration?: number;
+};
 
 interface Props {
   containerStyle?: StyleProp<ViewStyle>;
   size?: number;
   withMessage?: boolean;
+  loadingCpn?: ReactNode;
+  textWaiting?: TextWaiting;
 }
 
 type LoadingIconProps = {
   size?: number;
-  layout?: 'horizontal' | 'vertical';
   loadingCpn?: ReactNode;
   withMessage?: boolean;
-  textWaitingStyle?: StyleProp<TextStyle>;
+  // layout and textWaitingStyle is only used for loading withMessage = true
+  layout?: 'horizontal' | 'vertical' | 'absolute';
+  textWaiting?: TextWaiting;
 };
 
 type ThreeDotProps = {
@@ -76,31 +86,35 @@ const ThreeDot = ({style}: ThreeDotProps) => {
 
 const LoadingWithMessage = ({
   size = 100,
-  layout,
+  layout = 'absolute',
   loadingCpn,
-  textWaitingStyle,
+  textWaiting,
 }: Pick<
   LoadingIconProps,
-  'size' | 'layout' | 'loadingCpn' | 'textWaitingStyle'
+  'size' | 'layout' | 'loadingCpn' | 'textWaiting'
 >) => {
   const timeOut = useRef<NodeJS.Timeout>();
   const aim = useSharedValue(0);
   const opacityWaiting = useSharedValue(1);
 
   const loadingIconStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(aim.value, [0, 1], [1, 0]);
-    return {
-      opacity,
-    };
-  }, []);
+    if (layout === 'absolute') {
+      const opacity = interpolate(aim.value, [0, 1], [1, 0]);
+      return {
+        opacity,
+      };
+    }
 
-  const textWaiting = useAnimatedStyle(() => {
+    return {};
+  }, [layout]);
+
+  const waitingBox = useAnimatedStyle(() => {
     const opacity = interpolate(aim.value, [0, 1], [0, 1]);
     return {
       opacity,
-      position: 'absolute',
+      position: layout === 'absolute' ? 'absolute' : 'relative',
     };
-  }, []);
+  }, [layout]);
 
   const waiting = useAnimatedStyle(() => {
     return {
@@ -126,10 +140,10 @@ const LoadingWithMessage = ({
           );
         },
       );
-    }, 5000);
+    }, textWaiting?.appearDuration ?? 5000);
 
     return () => clearTimeout(timeOut.current);
-  }, [aim, opacityWaiting]);
+  }, [aim, opacityWaiting, textWaiting?.appearDuration]);
 
   return (
     <View
@@ -154,13 +168,13 @@ const LoadingWithMessage = ({
         )}
       </Animated.View>
 
-      <Animated.View style={textWaiting}>
+      <Animated.View style={waitingBox}>
         <Animated.View style={waiting}>
           <StyleText
-            i18Text="alert.waitingMinute"
-            customStyle={[$textWaiting, textWaitingStyle]}
+            i18Text={textWaiting?.i18nText ?? 'alert.waitingMinute'}
+            customStyle={[$textWaiting, textWaiting?.style]}
           />
-          <ThreeDot style={textWaitingStyle} />
+          <ThreeDot style={textWaiting?.style} />
         </Animated.View>
       </Animated.View>
     </View>
@@ -170,19 +184,21 @@ const LoadingWithMessage = ({
 export const LoadingIcon = ({
   size = 100,
   withMessage = false,
-  layout,
   loadingCpn,
-  textWaitingStyle,
+  layout,
+  textWaiting,
 }: LoadingIconProps) => {
   if (!withMessage) {
     return (
-      <LottieView
-        source={Images.images.loadingTravel}
-        style={{width: moderateScale(size), height: moderateScale(size)}}
-        autoPlay
-        loop
-        speed={0.65}
-      />
+      loadingCpn ?? (
+        <LottieView
+          source={Images.images.loadingTravel}
+          style={{width: moderateScale(size), height: moderateScale(size)}}
+          autoPlay
+          loop
+          speed={0.65}
+        />
+      )
     );
   }
 
@@ -191,22 +207,20 @@ export const LoadingIcon = ({
       size={size}
       layout={layout}
       loadingCpn={loadingCpn}
-      textWaitingStyle={textWaitingStyle}
+      textWaiting={textWaiting}
     />
   );
 };
 
 const LoadingScreen = (props: Props) => {
-  const {containerStyle, size = 150, withMessage} = props;
+  const {
+    containerStyle,
+    size = 150,
+    withMessage,
+    loadingCpn,
+    textWaiting,
+  } = props;
   const theme = useTheme();
-
-  const icon = () => {
-    if (!withMessage) {
-      return <LoadingIcon size={size} withMessage={false} layout="vertical" />;
-    }
-
-    return <LoadingIcon size={size} withMessage layout="vertical" />;
-  };
 
   return (
     <View
@@ -217,7 +231,16 @@ const LoadingScreen = (props: Props) => {
         },
         containerStyle,
       ]}>
-      {icon()}
+      <LoadingIcon
+        size={size}
+        withMessage={withMessage}
+        layout="vertical"
+        loadingCpn={loadingCpn}
+        textWaiting={{
+          appearDuration: 3000,
+          ...textWaiting,
+        }}
+      />
     </View>
   );
 };

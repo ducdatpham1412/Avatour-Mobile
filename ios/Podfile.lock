@@ -994,7 +994,7 @@ PODS:
     - React-Core
   - react-native-camera/RN (4.2.1):
     - React-Core
-  - react-native-cameraroll (5.7.2):
+  - react-native-cameraroll (7.2.0):
     - React-Core
   - react-native-image-editor (2.3.0):
     - React
@@ -1209,7 +1209,9 @@ PODS:
     - FirebaseCoreExtension (= 10.19.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.9.0):
+  - RNGestureHandler (2.14.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - RNGoogleSignin (9.0.2):
     - GoogleSignIn (~> 6.2)
@@ -1608,7 +1610,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 61ea9cee50694d54fe13ce17af91216828d68a62
   react-native-blur: 50c9feabacbc5f49b61337ebc32192c6be7ec3c3
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
-  react-native-cameraroll: 134805127580aed23403b8c2cb1548920dd77b3a
+  react-native-cameraroll: 2a198b0eb86c7ccf3303fb57702b2465cc292c94
   react-native-image-editor: 9361a215c3991cafbe5e7f28cbbad6e72c9c2705
   react-native-pager-view: b58cb9e9f42f64e50cab3040815772c1d119a2e2
   react-native-pinchable: b4381b0807d15c12b14bfacd927128f52d96f0f1
@@ -1646,7 +1648,7 @@ SPEC CHECKSUMS:
   RNFBAuth: e7f1279c41f7fafe4d7edbb4a15769e179bf940a
   RNFBDynamicLinks: 328e85d2e230e61c5756dd4358ee273212c23a50
   RNFBMessaging: 9d734bb8f1f19b3fbd0549f9ab2895b45b43203e
-  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
+  RNGestureHandler: a426f2b9134a10ac56ff78593fb068541e68f0e7
   RNGoogleSignin: 22e468a9474dbcb8618d8847205ad4f0b2575d13
   RNIap: b9998eadce3a57cc11865b192667265f90be0797
   RNImageCropPicker: 14fe1c29298fb4018f3186f455c475ab107da332

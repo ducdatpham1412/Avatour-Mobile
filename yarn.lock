@@ -2028,10 +2028,10 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@react-native-camera-roll/camera-roll@^5.7.2":
-  version "5.7.2"
-  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.7.2.tgz#db11525ae26c8a61630c424aebd323a7c784a921"
-  integrity sha512-s8VAUG1Kvi+tEJkLHObmOJdXAL/uclnXJ/IdnJtx2fCKiWA3Ho0ln9gDQqCYHHHHu+sXk7wovsH/I2/AYy0brg==
+"@react-native-camera-roll/camera-roll@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-7.2.0.tgz#e1de34175619048019f766858d3563608c2b3ef8"
+  integrity sha512-7y1lW+b9lpXsqUDCi4Ow0XozVe8OLqN/Pfq6lJpAxbgZ0TEVpVKniQj2ZeLMWsA28eae7JMqGqqj4e9uVp8eOw==
 
 "@react-native-clipboard/clipboard@^1.11.2":
   version "1.11.2"
@@ -6806,10 +6806,10 @@ react-native-draggable-flatlist@^4.0.1:
   dependencies:
     "@babel/preset-typescript" "^7.17.12"
 
-react-native-gesture-handler@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.9.0.tgz#2f63812e523c646f25b9ad660fc6f75948e51241"
-  integrity sha512-a0BcH3Qb1tgVqUutc6d3VuWQkI1AM3+fJx8dkxzZs9t06qA27QgURYFoklpabuWpsUTzuKRpxleykp25E8m7tg==
+react-native-gesture-handler@^2.14.0:
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.14.0.tgz#d6aec0d8b2e55c67557fd6107e828c0a1a248be8"
+  integrity sha512-cOmdaqbpzjWrOLUpX3hdSjsMby5wq3PIEdMq7okJeg9DmCzanysHSrktw1cXWNc/B5MAgxAn9J7Km0/4UIqKAQ==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"

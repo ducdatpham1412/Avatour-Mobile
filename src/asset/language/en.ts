@@ -405,9 +405,6 @@ const profile = {
     rating: 'Rating',
     seeRating: 'View ratings',
     pasteLink: 'Paste link here',
-    whereAreYouNow: "Where're you now?",
-    willDebutSearchOnGoogleMap:
-      "Doffy're developing searching on Google map\nLet's wait for us",
     nice: 'Nice',
     cute: 'Cute',
     wondering: 'Wondering',
@@ -655,6 +652,7 @@ To be able to delete, please follow these two steps:
   cameraHadBeenDisable:
     'Camera had been disable\nGo to setting and open camera access',
   openSetting: 'Open setting',
+  avatourHandling: 'Avatour is handling',
   waitingMinute: 'Wait a minute',
 };
 
