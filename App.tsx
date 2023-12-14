@@ -20,12 +20,12 @@ import {
 } from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
-  initialWindowMetrics,
   SafeAreaProvider,
+  initialWindowMetrics,
 } from 'react-native-safe-area-context';
 import {Provider as ReduxProvider} from 'react-redux';
-import {LanguageProvider} from 'utility/format';
 import I18Next from 'utility/I18Next';
+import {LanguageProvider} from 'utility/format';
 
 if (__DEV__) {
   LogBox.ignoreLogs([

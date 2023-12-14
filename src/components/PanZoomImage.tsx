@@ -1,4 +1,3 @@
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import {Metrics} from 'asset/metrics';
 import {useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
@@ -21,19 +20,19 @@ interface PanImageProps {
 const onSaveToLibrary = async (uri: string) => {
   try {
     if (isIOS) {
-      await CameraRoll.save(uri, {
-        type: 'photo',
-      });
+      //   await CameraRoll.save(uri, {
+      //     type: 'photo',
+      //   });
     } else {
       await checkSaveImage();
       const res = await RNFetchBlob.config({
         fileCache: true,
         appendExt: 'png',
       }).fetch('GET', uri);
-      await CameraRoll.save(`file://${res.data}`, {
-        type: 'photo',
-        album: 'Avatour',
-      });
+      //   await CameraRoll.save(`file://${res.data}`, {
+      //     type: 'photo',
+      //     album: 'Avatour',
+      //   });
     }
   } catch (err) {
     ModalAlert.error({

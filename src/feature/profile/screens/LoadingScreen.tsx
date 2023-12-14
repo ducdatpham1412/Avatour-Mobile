@@ -93,7 +93,6 @@ const LoadingWithMessage = ({
   LoadingIconProps,
   'size' | 'layout' | 'loadingCpn' | 'textWaiting'
 >) => {
-  const timeOut = useRef<NodeJS.Timeout>();
   const aim = useSharedValue(0);
   const opacityWaiting = useSharedValue(1);
 
@@ -125,7 +124,7 @@ const LoadingWithMessage = ({
   }, []);
 
   useEffect(() => {
-    timeOut.current = setTimeout(() => {
+    const timeout = setTimeout(() => {
       aim.value = withTiming(
         1,
         {
@@ -142,7 +141,7 @@ const LoadingWithMessage = ({
       );
     }, textWaiting?.appearDuration ?? 5000);
 
-    return () => clearTimeout(timeOut.current);
+    return () => clearTimeout(timeout);
   }, [aim, opacityWaiting, textWaiting?.appearDuration]);
 
   return (

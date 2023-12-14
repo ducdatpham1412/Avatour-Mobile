@@ -5,11 +5,19 @@ import {StyleImage, StyleTouchable} from 'components/base';
 import {ButtonX} from 'components/common';
 import {useTheme} from 'hook';
 import React, {ElementRef, useEffect, useRef, useState} from 'react';
-import {Animated, Image, ImageStyle, View, ViewStyle} from 'react-native';
-import {ScaledSheet, scale} from 'react-native-size-matters';
+import {
+  Animated,
+  Image,
+  ImageStyle,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
+import {scale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAnimatedValue} from 'utility/animation';
+import {moderateScale} from 'utility/scale';
 
 interface Props {
   images: Array<string>;
@@ -147,7 +155,7 @@ const ScrollCropImages = (props: Props) => {
             />
             {images.length > 1 && !!enableRemoveImage && (
               <ButtonX
-                containerStyle={{backgroundColor: theme.white_opacity(0.6)}}
+                containerStyle={{backgroundColor: theme.white_opacity(0.8)}}
                 onPress={() => onRemoveImage?.(url)}
                 size={17}
               />
@@ -163,15 +171,15 @@ const ScrollCropImages = (props: Props) => {
       </TabViewDynamic>
 
       {numberTabs >= 2 && (
-        <View style={[styles.indicatorView, {width: indicatorWidth}]}>
+        <View style={[$indicator, {width: indicatorWidth}]}>
           {Array(numberTabs)
             .fill(0)
             .map((_, ind) => (
-              <View key={ind} style={styles.afterBox} />
+              <View key={ind} style={$after} />
             ))}
           <Animated.View
             style={[
-              styles.indicator,
+              $indicatorBox,
               {transform: [{translateX: translateXIndicator}]},
             ]}
           />
@@ -179,14 +187,11 @@ const ScrollCropImages = (props: Props) => {
       )}
 
       {havingZoomButton && (
-        <StyleTouchable
-          style={styles.zoomBox}
-          onPress={onChangeTypeZoom}
-          hitSlop={10}>
+        <StyleTouchable style={$zoom} onPress={onChangeTypeZoom} hitSlop={10}>
           {typeZoom === 'square' ? (
-            <MaterialIcons name="zoom-out-map" style={styles.iconZoom} />
+            <MaterialIcons name="zoom-out-map" style={$iconZoom} />
           ) : (
-            <AntDesign name="minussquareo" style={styles.iconZoom} />
+            <AntDesign name="minussquareo" style={$iconZoom} />
           )}
         </StyleTouchable>
       )}
@@ -206,43 +211,35 @@ const $image: ImageStyle = {
   width: '100%',
   height: '100%',
 };
-
-const styles = ScaledSheet.create({
-  indicatorView: {
-    position: 'absolute',
-    height: '2.5@ms',
-    alignSelf: 'center',
-    bottom: '2@ms',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  afterBox: {
-    width: indicatorPointWidth,
-    height: '100%',
-    backgroundColor: Theme.common.grayLight,
-    borderRadius: 10,
-  },
-  indicator: {
-    width: indicatorPointWidth,
-    height: '100%',
-    borderRadius: 10,
-    position: 'absolute',
-    backgroundColor: Theme.newTheme.orange,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  // zoom box
-  zoomBox: {
-    position: 'absolute',
-    right: '10@s',
-    bottom: '10@s',
-  },
-  iconZoom: {
-    fontSize: '20@ms',
-    color: Theme.common.white,
-  },
-});
+const $indicator: ViewStyle = {
+  position: 'absolute',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignSelf: 'center',
+  height: moderateScale(2.5),
+  bottom: moderateScale(2),
+};
+const $after: ViewStyle = {
+  width: indicatorPointWidth,
+  height: '100%',
+  backgroundColor: Theme.common.grayLight,
+  borderRadius: moderateScale(12),
+};
+const $indicatorBox: ViewStyle = {
+  width: indicatorPointWidth,
+  height: '100%',
+  borderRadius: 10,
+  position: 'absolute',
+  backgroundColor: Theme.newTheme.orange,
+};
+const $zoom: ViewStyle = {
+  position: 'absolute',
+  right: moderateScale(12),
+  bottom: moderateScale(12),
+};
+const $iconZoom: TextStyle = {
+  fontSize: moderateScale(20),
+  color: Theme.common.white,
+};
 
 export default ScrollCropImages;

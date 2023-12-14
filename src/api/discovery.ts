@@ -31,7 +31,9 @@ export const apiCreateSale = (
   });
   payload.append('prices', JSON.stringify(body.prices));
 
-  return request.post('profile/sales', payload, {timeout: 45000});
+  return request.post('profile/sales', payload, {
+    timeout: Math.max(body.images.length * 15000, 45000),
+  });
 };
 
 export const apiEditSale = (body: TypeEditSale) => {

@@ -644,6 +644,7 @@ To be able to delete, please follow these two steps:
   locationHadBeenAdded:
     '<b>{{value}}</b> is already in the schedule\nDo you want to add more?',
   loginToExplore: 'Please log in to continue experiencing Avatour',
+  onlyChooseMaxImage: 'You can select up to 10 photos',
 
   // PERMISSION
   permissionCamera: 'Access camera',

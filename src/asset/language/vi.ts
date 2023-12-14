@@ -651,6 +651,7 @@ const alert = {
   locationHadBeenAdded:
     '<b>{{value}}</b> đã có trong lịch trình\nBạn vẫn muốn thêm nữa chứ?',
   loginToExplore: 'Bạn hãy đăng nhập để tiếp tục trải nghiệm Avatour nhé',
+  onlyChooseMaxImage: 'Bạn có thể chọn tối đa 10 ảnh',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

@@ -175,7 +175,6 @@ dependencies {
 
     // Dependencies of DEV
     implementation project(':react-native-vector-icons')
-    implementation project(':@react-native-camera-roll_camera-roll')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

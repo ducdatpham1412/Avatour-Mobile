@@ -13,6 +13,7 @@ declare module 'react-native-vector-icons/EvilIcons';
 declare module 'react-native-vector-icons/MaterialCommunityIcons';
 declare module 'react-native-vector-icons/Octicons';
 declare module 'react-native-vector-icons/FontAwesome5';
+declare module 'react-native-vector-icons/FontAwesome6';
 declare module 'react-native-vector-icons/Fontisto';
 declare module 'react-native-double-click';
 declare module 'react-fast-compare';
