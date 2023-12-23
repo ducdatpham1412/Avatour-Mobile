@@ -572,6 +572,9 @@ const notification = {
   successOrder: 'Đơn hàng thành công',
   goToConfirm: 'Đi tới xác nhận',
   haveNewOrder: 'Bạn có đơn hàng mới từ Avatour',
+  newJoinWithYou:
+    'Hey, một người bạn vừa tham gia mua chung cùng bạn tại {{product}}. Check out ngay',
+  waitingYouCompleteOrder: 'Chờ bạn hoàn thành đơn hàng',
 };
 
 const alert = {

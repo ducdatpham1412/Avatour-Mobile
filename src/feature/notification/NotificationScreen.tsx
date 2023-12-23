@@ -93,6 +93,15 @@ const NotificationUser = () => {
       });
       return;
     }
+
+    if (item.type === NOTIFICATION.newJoinWithYou) {
+      navigate(ROOT_SCREEN.detailMeJoin, {
+        estimateId: item.data.id,
+        initValue: item.data,
+        mode: 'see-detail',
+      });
+      return;
+    }
   }, []);
 
   const renderItem = useCallback((item: TypeNotification) => {
