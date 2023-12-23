@@ -11,6 +11,7 @@ import {
 import Images from 'asset/img/images';
 import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
+import {TypeItemProgress} from 'components';
 import {push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {checkAuthenticated} from 'navigation/screen/AppModal';
@@ -558,4 +559,109 @@ export const renderDeepLink = (params: Pick<ParseURL, 'event' | 'params'>) => {
     }
   });
   return res;
+};
+
+/**
+ * Detect progress order
+ */
+type ProgressOrderParams = {
+  side: 'consumer' | 'shop';
+  currentStatus: number;
+  theme: TypeTheme;
+};
+
+type ProgressOrderResponse = {
+  progress: TypeItemProgress[];
+  indexFocusing: number;
+};
+
+export const detectOrderProgress = ({
+  side,
+  currentStatus,
+  theme,
+}: ProgressOrderParams): ProgressOrderResponse => {
+  const isAdminConfirmed = currentStatus === JOIN_STATUS.adminConfirm;
+  const isOvertime = currentStatus === JOIN_STATUS.overtime;
+  const isRejected = currentStatus === JOIN_STATUS.supplierRejected;
+  const isUserConfirmed = currentStatus === JOIN_STATUS.consumerConfirmed;
+  const isConfirmedBought = currentStatus === JOIN_STATUS.supplierConfirmBought;
+
+  let progress: TypeItemProgress[] = [];
+
+  if (side === 'consumer') {
+    let textApproved: I18Normalize = 'notification.approved';
+    if (isAdminConfirmed) {
+      textApproved = 'notification.waitingConfirmFromShop';
+    } else if (isRejected) {
+      textApproved = 'discovery.shopNotReceiveOrder';
+    }
+
+    progress = [
+      {
+        text: textApproved,
+        focusColor: isRejected ? theme.red : theme.blue,
+      },
+      {
+        text: isOvertime
+          ? 'discovery.arrivalTimePassed'
+          : 'notification.checkInAtShop',
+        focusColor: isOvertime ? theme.red : theme.blue,
+      },
+      {
+        text: isConfirmedBought
+          ? 'notification.successOrder'
+          : 'profile.waitingConfirm',
+        focusColor: isConfirmedBought ? theme.green : theme.blue,
+      },
+    ];
+  } else {
+    let textApproved: I18Normalize = 'notification.approved';
+    if (isAdminConfirmed) {
+      textApproved = 'notification.waitingConfirmFromYou';
+    } else if (isRejected) {
+      textApproved = 'discovery.notReceiveThisOrder';
+    }
+
+    progress = [
+      {
+        text: textApproved,
+        focusColor: isRejected ? theme.red : theme.blue,
+      },
+      {
+        text: isOvertime
+          ? 'discovery.arrivalTimePassed'
+          : 'notification.userComeToYourShop',
+        focusColor: isOvertime ? theme.red : theme.blue,
+      },
+      {
+        text: isConfirmedBought
+          ? 'notification.successOrder'
+          : 'notification.waitingYouCompleteOrder',
+        focusColor: isConfirmedBought ? theme.green : theme.blue,
+      },
+    ];
+  }
+
+  /**
+     Index focusing status check:
+
+     adminConfirm           -> 0
+     supplierConfirm        -> 1
+     supplierRejected      -> 0
+     overtime              -> 1
+     consumerConfirmed      -> 2
+     supplierConfirmBought  -> 2
+     */
+
+  let indexFocusing = 0;
+  if (currentStatus === JOIN_STATUS.supplierConfirm || isOvertime) {
+    indexFocusing = 1;
+  } else if (isUserConfirmed || isConfirmedBought) {
+    indexFocusing = 2;
+  }
+
+  return {
+    progress,
+    indexFocusing,
+  };
 };

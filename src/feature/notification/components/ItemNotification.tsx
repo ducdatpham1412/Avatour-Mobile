@@ -24,7 +24,7 @@ import React, {ReactNode, memo} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
-import {I18Normalize} from 'utility/I18Next';
+import {detectOrderProgress} from 'utility/assistant';
 import {formatFromNow} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
@@ -117,38 +117,16 @@ const renderContent = (
       product: notification?.data?.sale?.name,
     });
 
-    const isOvertime = status === JOIN_STATUS.overtime;
-    const isRejected = status === JOIN_STATUS.supplierRejected;
-
-    let textApproved: I18Normalize = 'notification.approved';
-    if (status === JOIN_STATUS.adminConfirm) {
-      textApproved = 'notification.waitingConfirmFromShop';
-    } else if (isRejected) {
-      textApproved = 'discovery.shopNotReceiveOrder';
-    }
+    const progressOrder = detectOrderProgress({
+      side: 'consumer',
+      currentStatus: status,
+      theme,
+    });
 
     image = (
       <Progress
-        progress={[
-          {
-            text: textApproved,
-            focusColor: isRejected ? theme.red : theme.blue,
-          },
-          {
-            text: isOvertime
-              ? 'discovery.arrivalTimePassed'
-              : 'notification.checkInAtShop',
-            focusColor: isOvertime ? theme.red : theme.blue,
-          },
-          {text: 'notification.successOrder', focusColor: theme.green},
-        ]}
-        indexFocusing={
-          status === JOIN_STATUS.consumerConfirmed
-            ? 1
-            : status === JOIN_STATUS.supplierConfirmBought
-            ? 2
-            : 0
-        }
+        progress={progressOrder.progress}
+        indexFocusing={progressOrder.indexFocusing}
         containerStyle={$progress}
       />
     );
@@ -166,42 +144,21 @@ const renderContent = (
       product: notification.data?.sale?.name,
     });
 
-    const isOvertime = status === JOIN_STATUS.overtime;
-    const isRejected = status === JOIN_STATUS.supplierRejected;
-
-    let textApproved: I18Normalize = 'notification.approved';
-    if (status === JOIN_STATUS.adminConfirm) {
-      textApproved = 'notification.waitingConfirmFromYou';
-    } else if (isRejected) {
-      textApproved = 'discovery.notReceiveThisOrder';
-    }
+    const progressOrder = detectOrderProgress({
+      side: 'shop',
+      currentStatus: status,
+      theme,
+    });
 
     image = (
       <>
         <Progress
-          progress={[
-            {
-              text: textApproved,
-              focusColor: isRejected ? theme.red : theme.blue,
-            },
-            {
-              text: isOvertime
-                ? 'discovery.arrivalTimePassed'
-                : 'notification.userComeToYourShop',
-              focusColor: isOvertime ? theme.red : theme.blue,
-            },
-            {text: 'notification.successOrder', focusColor: theme.green},
-          ]}
-          indexFocusing={
-            status === JOIN_STATUS.consumerConfirmed
-              ? 1
-              : status === JOIN_STATUS.supplierConfirmBought
-              ? 2
-              : 0
-          }
+          progress={progressOrder.progress}
+          indexFocusing={progressOrder.indexFocusing}
           containerStyle={$progress}
         />
-        {status === JOIN_STATUS.adminConfirm && (
+        {(status === JOIN_STATUS.adminConfirm ||
+          status === JOIN_STATUS.consumerConfirmed) && (
           <SquareButton
             title="notification.goToConfirm"
             containerStyle={[$button, {backgroundColor: theme.p_600}]}
@@ -211,6 +168,18 @@ const renderContent = (
         )}
       </>
     );
+  } else if (notification.type === NOTIFICATION.newJoinWithYou) {
+    color = theme.greenA20;
+    icon = (
+      <StyleIcon
+        size={24}
+        source={Images.icons.tourTabBar}
+        tintColor={theme.green}
+      />
+    );
+    text = t('notification.newJoinWithYou', {
+      product: notification.data.sale?.name,
+    });
   }
 
   const notRead = notification.status === STATUS_NOTIFICATION.notRead;

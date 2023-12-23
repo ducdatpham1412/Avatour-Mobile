@@ -7,7 +7,7 @@ export {default as ItemReview} from './ItemReview';
 export {default as ItemSale} from './ItemSale';
 export {default as ItemTour} from './ItemTour';
 export {default as MapTour} from './MapTour';
-export {default as Progress} from './Progress';
+export {default as Progress, type TypeItemProgress} from './Progress';
 export {default as Separator} from './Separator';
 export {default as StyleTabView} from './StyleTabView';
 export {default as TabView, type TabViewProps} from './TabView';

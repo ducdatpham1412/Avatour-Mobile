@@ -189,6 +189,10 @@ type TypeNotification = {
       data: TypeJoinEstimate;
     }
   | {
+      type: EnumNotification['newJoinWithYou'];
+      data: TypeJoinEstimate;
+    }
+  | {
       type: EnumNotification['request'];
       data: TypeGetRequestResponse;
     }

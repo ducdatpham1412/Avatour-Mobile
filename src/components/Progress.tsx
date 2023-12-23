@@ -6,11 +6,13 @@ import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, verticalScale} from 'utility/scale';
 import {StyleText} from './base';
 
+export type TypeItemProgress = {
+  text: I18Normalize;
+  focusColor?: string;
+};
+
 interface Props {
-  progress: {
-    text: I18Normalize;
-    focusColor?: string;
-  }[];
+  progress: TypeItemProgress[];
   indexFocusing: number;
   containerStyle?: StyleProp<ViewStyle>;
 }
