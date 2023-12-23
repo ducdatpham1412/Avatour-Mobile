@@ -21,6 +21,8 @@
 		86F3C625FEA24A5E93AAE800 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CDBC8B73726E4DFB8E6BDBD0 /* OpenSans-Regular.ttf */; };
 		CC515653979142639B0E108A /* AvenirLTStd-Roman.otf in Resources */ = {isa = PBXBuildFile; fileRef = E2F4DEC21D454EB28B3D8D81 /* AvenirLTStd-Roman.otf */; };
 		CE660D1529B25C7C00FEFF0E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE660D1429B25C7B00FEFF0E /* GoogleService-Info.plist */; };
+		CEF726FA2B29BCDB00EB62B3 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF726F92B29BCDB00EB62B3 /* Core.swift */; };
+		CEF726FC2B29BE2E00EB62B3 /* Core.m in Sources */ = {isa = PBXBuildFile; fileRef = CEF726FB2B29BE2E00EB62B3 /* Core.m */; };
 		DC3298BEE5F94268999593DD /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D7EA6D61AE64761BDAD5EE6 /* OpenSans-Semibold.ttf */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +59,9 @@
 		CDBC8B73726E4DFB8E6BDBD0 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../src/asset/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		CE660D1429B25C7B00FEFF0E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CECF2C432A580715008E0490 /* avatour.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = avatour.entitlements; path = avatour/avatour.entitlements; sourceTree = "<group>"; };
+		CEF726F82B29BCDA00EB62B3 /* bridge-header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bridge-header.h"; sourceTree = "<group>"; };
+		CEF726F92B29BCDB00EB62B3 /* Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Core.swift; path = avatour/Core.swift; sourceTree = "<group>"; };
+		CEF726FB2B29BE2E00EB62B3 /* Core.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Core.m; path = avatour/Core.m; sourceTree = "<group>"; };
 		CFB25FF6AAB24C95AFF4B4D7 /* GT Super Display Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "GT Super Display Regular.ttf"; path = "../src/asset/fonts/GT Super Display Regular.ttf"; sourceTree = "<group>"; };
 		E2F4DEC21D454EB28B3D8D81 /* AvenirLTStd-Roman.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Roman.otf"; path = "../src/asset/fonts/AvenirLTStd-Roman.otf"; sourceTree = "<group>"; };
 		EB552837CFE44B33A548C0A2 /* AvenirLTStd-Book.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Book.otf"; path = "../src/asset/fonts/AvenirLTStd-Book.otf"; sourceTree = "<group>"; };
@@ -110,6 +115,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				CEF726F92B29BCDB00EB62B3 /* Core.swift */,
+				CEF726F82B29BCDA00EB62B3 /* bridge-header.h */,
+				CEF726FB2B29BE2E00EB62B3 /* Core.m */,
 			);
 			name = avatour;
 			sourceTree = "<group>";
@@ -242,7 +250,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1420;
 					};
 				};
 			};
@@ -468,7 +476,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEF726FA2B29BCDB00EB62B3 /* Core.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				CEF726FC2B29BE2E00EB62B3 /* Core.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -488,6 +498,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-avatour-avatourTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -515,6 +526,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-avatour-avatourTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = avatourTests/Info.plist;
@@ -563,6 +575,7 @@
 				PRODUCT_NAME = avatour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Wallacy Crypto Wallet Dev";
+				SWIFT_OBJC_BRIDGING_HEADER = "bridge-header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -596,6 +609,7 @@
 				PRODUCT_NAME = avatour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Avatour App Store";
+				SWIFT_OBJC_BRIDGING_HEADER = "bridge-header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -606,7 +620,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -658,6 +672,15 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -678,9 +701,13 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -689,7 +716,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -737,6 +764,15 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -756,9 +792,13 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

@@ -1,7 +1,7 @@
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import I18Next from 'utility/I18Next';
+import {Core} from './modules';
 import {checkCamera, checkPhoto} from './permission/permission';
 
 const MAX_WIDTH = 1500;
@@ -21,11 +21,6 @@ export interface ImagePickerParamsType {
 //   includeBase64?: boolean;
 //   quality?: PhotoQuality;
 // }
-
-interface ImageReadLibraryType {
-  first: number;
-  after: string | undefined;
-}
 
 const ImageUploader = {
   pickCamera: async (params?: ImagePickerParamsType) => {
@@ -110,15 +105,11 @@ const ImageUploader = {
     return `data:image/png;base64,${base64Data}`;
   },
 
-  readImageFromLibrary: async (params: ImageReadLibraryType) => {
+  readImageFromLibrary: async () => {
     await checkPhoto();
 
-    const res = await CameraRoll.getPhotos({
-      first: params.first,
-      after: params?.after,
-      assetType: 'Photos',
-      include: ['filename', 'fileSize', 'imageSize', 'orientation'],
-    });
+    const res = await Core.getPhotos();
+
     return res;
   },
 };

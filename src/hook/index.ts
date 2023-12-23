@@ -4,7 +4,7 @@ export {emitAppEvent, default as useAppEvent} from './useAppEvent';
 export {default as useCountdown} from './useCountdown';
 export {default as useEstimatesAndJoinings} from './useEstimatesAndJoinings';
 export {default as useInitApp} from './useInitApp';
-export {default as useLibraryImages} from './useLibraryImages';
+export {default as useLibrary} from './useLibrary';
 export {default as useLoading} from './useLoading';
 export {
   showLocalNotification,

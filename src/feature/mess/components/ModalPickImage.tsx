@@ -1,28 +1,42 @@
-import {FONT_SIZE} from 'asset';
+import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
 import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
-import StyleList from 'components/base/StyleList';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {StyleProp, TextStyle, View, ViewStyle} from 'react-native';
-import {ScaledSheet, verticalScale} from 'react-native-size-matters';
-import {borderWidthTiny, isIOS, logger} from 'utility/assistant';
-import ImageUploader from 'utility/ImageUploader';
+import {
+  StyleImage,
+  StyleList,
+  StyleText,
+  StyleTouchable,
+} from 'components/base';
+import {useLibrary, useSafeArea} from 'hook';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+import {
+  FlatList,
+  ImageStyle,
+  StyleProp,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {moderateScale} from 'utility/scale';
-
-type StatusLibrary = {
-  endCursor: string | undefined;
-  hasNext: boolean;
-};
 
 interface Props {
   images: LibraryImage[];
-  onChooseImage(image: LibraryImage): void;
+  onChooseImage(url: LibraryImage): void;
   containerStyle?: StyleProp<ViewStyle>;
   numberColumns?: number;
   initIndexImage?: number;
   urlFocusing?: string;
+}
+
+interface Refs {
+  scrollToTop: () => void;
 }
 
 interface RenderImageParams {
@@ -33,8 +47,6 @@ interface RenderImageParams {
   isFocusing: boolean;
 }
 
-const firstLoad = 40;
-
 const renderImage = (params: RenderImageParams) => {
   const {item, images, onChooseImage, numberColumns, isFocusing} = params;
   const isChosen = !!images.find(img => img.url === item.url);
@@ -44,26 +56,32 @@ const renderImage = (params: RenderImageParams) => {
   return (
     <StyleTouchable
       onPress={() => onChooseImage(item)}
-      customStyle={[styles.imageBox, {width: size, height: size}]}>
+      customStyle={[$imageBox, {width: size, height: size}]}>
       <StyleImage
         source={{uri: item.url}}
-        style={styles.image}
+        style={$image}
         defaultSource={Images.images.defaultImage}
       />
 
       {isChosen && (
         <>
-          {isFocusing && <View style={styles.layoutChosen} />}
+          {isFocusing && <View style={$chosen} />}
           <View
             style={[
               $indexBox,
               {
                 backgroundColor: isFocusing
                   ? Theme.newTheme.red
-                  : Theme.newTheme.blue,
+                  : Theme.newTheme.white,
               },
             ]}>
-            <StyleText originValue={index} customStyle={$textIndex} />
+            <StyleText
+              originValue={index}
+              customStyle={[
+                $textIndex,
+                {color: isFocusing ? Theme.common.white : Theme.common.black},
+              ]}
+            />
           </View>
         </>
       )}
@@ -71,101 +89,45 @@ const renderImage = (params: RenderImageParams) => {
   );
 };
 
-const defaultStatusLibrary: StatusLibrary = {
-  endCursor: undefined,
-  hasNext: true,
-};
-
-const ModalPickImage = (props: Props) => {
+const ModalPickImage = (props: Props, ref: ForwardedRef<Refs>) => {
   const {
     images,
     onChooseImage,
     containerStyle,
     numberColumns = 4,
-    initIndexImage,
+    initIndexImage = 0,
     urlFocusing,
   } = props;
 
-  const loading = useRef(false);
+  const {paddingBottom} = useSafeArea();
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [libraryImages, setLibraryImages] = useState<Array<LibraryImage>>([]);
-  const [hadSetIndexImage, setHadSetIndexImage] = useState(false);
+  const hadChoseImg = useRef(false);
+  const listRef = useRef<FlatList>(null);
 
-  const [pageIndex, setPageIndex] = useState(1);
-  const statusLibrary = useRef<StatusLibrary>(defaultStatusLibrary);
+  const [{list, loading, validating, loadingMore}, {onRefresh, onLoadMore}] =
+    useLibrary();
 
-  const getData = useCallback(async () => {
-    if (loading.current) {
-      return;
-    }
-
-    try {
-      loading.current = true;
-      const res = await ImageUploader.readImageFromLibrary({
-        first: firstLoad,
-        after: statusLibrary.current.endCursor,
-      });
-
-      // check have next page
-      const endCursor = res.page_info.end_cursor;
-      const haveNextPage = res.page_info.has_next_page;
-      statusLibrary.current = {
-        endCursor,
-        hasNext: haveNextPage,
-      };
-
-      // set to state libraryImages
-      const moreImages: LibraryImage[] = res.edges.map(item => {
-        const url = isIOS
-          ? item.node.image.uri.concat(`/${item.node.image.filename}`)
-          : item.node.image.uri;
-        return {
-          url,
-          width: item.node.image.width,
-          height: item.node.image.height,
-        };
-      });
-      const temp = libraryImages.concat(moreImages);
-      if (!hadSetIndexImage && initIndexImage !== undefined) {
-        onChooseImage(temp[initIndexImage]);
-        setHadSetIndexImage(true);
-      }
-      setLibraryImages(temp);
-    } catch (err) {
-      logger('Loading image from library error: ', err);
-    } finally {
-      setLoadingMore(false);
-      setRefreshing(false);
-      loading.current = false;
-    }
-  }, [pageIndex]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      scrollToTop: () =>
+        listRef.current?.scrollToOffset({offset: 0, animated: true}),
+    }),
+    [],
+  );
 
   useEffect(() => {
-    if (statusLibrary.current.hasNext) {
-      getData();
+    if (!hadChoseImg.current && list[initIndexImage]) {
+      onChooseImage(list[initIndexImage]);
+      hadChoseImg.current = true;
     }
-  }, [pageIndex]);
-
-  const onLoadMore = () => {
-    if (statusLibrary.current.hasNext) {
-      setLoadingMore(true);
-      setPageIndex(pageIndex + 1);
-    }
-  };
-
-  const onRefresh = () => {
-    statusLibrary.current = defaultStatusLibrary;
-    setRefreshing(true);
-    setPageIndex(1);
-    getData();
-  };
+  }, [list, initIndexImage]);
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[$container, containerStyle]}>
       <StyleList
-        data={libraryImages}
+        ref={listRef}
+        data={list}
         renderItem={({item}) =>
           renderImage({
             item,
@@ -176,42 +138,32 @@ const ModalPickImage = (props: Props) => {
           })
         }
         numColumns={numberColumns}
-        contentContainerStyle={styles.contentContainer}
-        refreshing={refreshing}
+        contentContainerStyle={{paddingBottom}}
+        initLoading={loading}
+        refreshing={validating}
         onRefresh={onRefresh}
         loadingMore={loadingMore}
         onLoadMore={onLoadMore}
         ListEmptyComponent={null}
+        maxToRenderPerBatch={40}
       />
     </View>
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    width: '100%',
-    height: Metrics.height / 2,
-  },
-  imageBox: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: borderWidthTiny,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  layoutChosen: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundColor: Theme.newTheme.black_opacity(0.4),
-  },
-  contentContainer: {
-    paddingBottom: Metrics.safeBottomPadding + verticalScale(10),
-  },
-});
-
+const $container: ViewStyle = {
+  width: '100%',
+  height: Metrics.height / 2,
+};
+const $imageBox: ViewStyle = {
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: moderateScale(0.5),
+};
+const $image: ImageStyle = {
+  width: '100%',
+  height: '100%',
+};
 const $indexBox: ViewStyle = {
   position: 'absolute',
   top: moderateScale(5),
@@ -225,8 +177,14 @@ const $indexBox: ViewStyle = {
   borderRadius: 20,
 };
 const $textIndex: TextStyle = {
-  color: Theme.newTheme.white,
   fontSize: FONT_SIZE.f3,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $chosen: ViewStyle = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  backgroundColor: Theme.newTheme.black_opacity(0.4),
 };
 
-export default ModalPickImage;
+export default forwardRef(ModalPickImage);

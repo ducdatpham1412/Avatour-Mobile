@@ -26,6 +26,7 @@ import {Avatar} from 'components/common';
 import {UpdatePriceStatus} from 'feature/common/components';
 import {useDetailSale} from 'feature/common/hooks';
 import {useSafeArea, useTheme} from 'hook';
+import LottieView from 'lottie-react-native';
 import {goBack} from 'navigation/NavigationService';
 import HeaderLeftIcon from 'navigation/components/HeaderLeftIcon';
 import {AppParamsList} from 'navigation/config';
@@ -35,12 +36,14 @@ import React, {useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {I18Normalize} from 'utility/I18Next';
 import {$styleTopShadow} from 'utility/assistant';
 import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {PricesEdit, ScrollCropImages, TitleAndInput} from './components';
 import ButtonIconTitle from './components/ButtonIconTitle';
 import {UseCreateSaleParams, useCreateSale} from './hooks';
+import {LoadingScreen} from './screens';
 
 interface Props {
   route: {
@@ -277,67 +280,92 @@ const CreateSale = ({route}: Props) => {
   };
 
   return (
-    <StyleContainer
-      headerProps={{
-        LeftComponent: headerLeft(),
-        title: 'common.null',
-        containerStyle: $headerContainer,
-        onGoBack,
-      }}
-      scrollEnabled
-      customStyle={[$container, {paddingBottom}]}
-      BottomComponent={bottomComponent()}
-      backgroundColor={theme.white}>
-      <ScrollCropImages
-        images={images}
-        width={width}
-        height={width * ratioImageSale}
-        enableRemoveImage={false}
-      />
-      <View style={$body}>
-        <TitleAndInput
-          containerStyle={$inputName}
-          title="profile.groupBuyingName"
-          textInputProps={{
-            placeholder: t('profile.foodName'),
-            onChangeText: text => setName(text),
-            maxLength: 40,
-            defaultValue: name,
-          }}
+    <>
+      <StyleContainer
+        headerProps={{
+          LeftComponent: headerLeft(),
+          title: 'common.null',
+          containerStyle: $headerContainer,
+          onGoBack,
+        }}
+        scrollEnabled
+        customStyle={[$container, {paddingBottom}]}
+        BottomComponent={bottomComponent()}
+        backgroundColor={theme.white}>
+        <ScrollCropImages
+          images={images}
+          width={width}
+          height={width * ratioImageSale}
+          enableRemoveImage={false}
         />
-        {renderInfoBox()}
+        <View style={$body}>
+          <TitleAndInput
+            containerStyle={$inputName}
+            title="profile.groupBuyingName"
+            textInputProps={{
+              placeholder: t('profile.foodName'),
+              onChangeText: text => setName(text),
+              maxLength: 40,
+              defaultValue: name,
+            }}
+          />
+          {renderInfoBox()}
 
-        <View style={$priceView}>
-          <View style={$titleView}>
-            <IconPrice tintColor={theme.black} size={18} />
-            <StyleText
-              i18Text="discovery.salePriceAndExplain"
-              customStyle={[$textTitle, {color: theme.black}]}
-            />
+          <View style={$priceView}>
+            <View style={$titleView}>
+              <IconPrice tintColor={theme.black} size={18} />
+              <StyleText
+                i18Text="discovery.salePriceAndExplain"
+                customStyle={[$textTitle, {color: theme.black}]}
+              />
+            </View>
+
+            {renderPrices()}
           </View>
 
-          {renderPrices()}
+          <TitleAndInput
+            title="profile.description"
+            mandatory={false}
+            containerStyle={$description}>
+            <StyleTouchable
+              customStyle={[
+                $inputDescriptionBox,
+                {borderColor: theme.gray_300},
+              ]}
+              onPress={() => inputDescriptionRef.current?.focus()}>
+              <AppInput
+                ref={inputDescriptionRef}
+                onChangeText={setContent}
+                multiline
+                placeholder={t('common.writeSomething')}
+                defaultValue={initValue.current.content}
+                editable={!disableEditCaption}
+              />
+            </StyleTouchable>
+          </TitleAndInput>
         </View>
+      </StyleContainer>
 
-        <TitleAndInput
-          title="profile.description"
-          mandatory={false}
-          containerStyle={$description}>
-          <StyleTouchable
-            customStyle={[$inputDescriptionBox, {borderColor: theme.gray_300}]}
-            onPress={() => inputDescriptionRef.current?.focus()}>
-            <AppInput
-              ref={inputDescriptionRef}
-              onChangeText={setContent}
-              multiline
-              placeholder={t('common.writeSomething')}
-              defaultValue={initValue.current.content}
-              editable={!disableEditCaption}
+      {loadingCreate && (
+        <LoadingScreen
+          loadingCpn={
+            <LottieView
+              source={Images.images.creating}
+              autoPlay
+              loop
+              style={{width: 300, height: 300}}
             />
-          </StyleTouchable>
-        </TitleAndInput>
-      </View>
-    </StyleContainer>
+          }
+          withMessage
+          textWaiting={{
+            i18nText: `${t('alert.avatourHandling')}. ${t(
+              'alert.waitingMinute',
+            )}` as I18Normalize,
+          }}
+          containerStyle={{backgroundColor: theme.white}}
+        />
+      )}
+    </>
   );
 };
 

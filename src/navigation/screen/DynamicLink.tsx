@@ -2,7 +2,6 @@ import dynamicLink, {
   FirebaseDynamicLinksTypes,
 } from '@react-native-firebase/dynamic-links';
 import FindmeStore from 'app-redux/store';
-import {TYPE_DYNAMIC_LINK} from 'asset/enum';
 import ROOT_SCREEN, {LOGIN_ROUTE} from 'navigation/config/routes';
 import {navigate} from 'navigation/NavigationService';
 import {useEffect} from 'react';
@@ -14,7 +13,7 @@ const handleDynamicLink = (link: FirebaseDynamicLinksTypes.DynamicLink) => {
   const type = Number(arrayParams[0].split('=')[1]);
   const action = arrayParams[1].split('=')[1];
 
-  if (type === TYPE_DYNAMIC_LINK.post) {
+  if (type === 1) {
     const isModeExp = FindmeStore.getState().accountSlice.modeExp;
     const {token} = FindmeStore.getState().logicSlice;
     const isInApp = isModeExp || token;

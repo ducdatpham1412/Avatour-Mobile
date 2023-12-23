@@ -382,9 +382,6 @@ const profile = {
     rating: 'Đánh giá',
     seeRating: 'Xem đánh giá',
     pasteLink: 'Dán đường dẫn URL',
-    whereAreYouNow: 'Bạn đang ở đâu?',
-    willDebutSearchOnGoogleMap:
-      'Doffy đang phát triển tính năng tìm địa chỉ trên Google map\nBạn đợi xíu nha',
     nice: 'Tốt',
     cute: 'Cute',
     wondering: 'Phân vân',
@@ -654,6 +651,7 @@ const alert = {
   locationHadBeenAdded:
     '<b>{{value}}</b> đã có trong lịch trình\nBạn vẫn muốn thêm nữa chứ?',
   loginToExplore: 'Bạn hãy đăng nhập để tiếp tục trải nghiệm Avatour nhé',
+  onlyChooseMaxImage: 'Bạn có thể chọn tối đa 10 ảnh',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',
@@ -662,6 +660,7 @@ const alert = {
   cameraHadBeenDisable:
     'Đang không có quyền truy cập camera\nĐi tới cài đặt và mở quyền truy cập',
   openSetting: 'Mở cài đặt',
+  avatourHandling: 'Avatour đang xử lý',
   waitingMinute: 'Bạn đợi chút nhé',
 };
 

@@ -38,6 +38,12 @@ if [ ./react-native-tab-view ]; then
 fi
 
 
+# React native vector icon
+if [ ./react-native-vector-icons ]; then
+    cp ./react-native-vector-icons/fonts.gradle ../node_modules/react-native-vector-icons/fonts.gradle;
+fi
+
+
 # For create chosen env
 if [ ! -f ../src/asset/env/env.chosen.ts ]; then
     echo 'Config env 👷'

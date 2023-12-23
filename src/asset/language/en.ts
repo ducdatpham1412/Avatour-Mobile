@@ -405,9 +405,6 @@ const profile = {
     rating: 'Rating',
     seeRating: 'View ratings',
     pasteLink: 'Paste link here',
-    whereAreYouNow: "Where're you now?",
-    willDebutSearchOnGoogleMap:
-      "Doffy're developing searching on Google map\nLet's wait for us",
     nice: 'Nice',
     cute: 'Cute',
     wondering: 'Wondering',
@@ -647,6 +644,7 @@ To be able to delete, please follow these two steps:
   locationHadBeenAdded:
     '<b>{{value}}</b> is already in the schedule\nDo you want to add more?',
   loginToExplore: 'Please log in to continue experiencing Avatour',
+  onlyChooseMaxImage: 'You can select up to 10 photos',
 
   // PERMISSION
   permissionCamera: 'Access camera',
@@ -655,6 +653,7 @@ To be able to delete, please follow these two steps:
   cameraHadBeenDisable:
     'Camera had been disable\nGo to setting and open camera access',
   openSetting: 'Open setting',
+  avatourHandling: 'Avatour is handling',
   waitingMinute: 'Wait a minute',
 };
 
