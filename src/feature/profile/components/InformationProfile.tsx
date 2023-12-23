@@ -1,9 +1,14 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT, STATUS} from 'asset/enum';
 import {IconClock, IconLocation, IconPrice} from 'asset/icons';
-import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
+import {
+  Metrics,
+  horizontalMargin,
+  horizontalPadding,
+  verticalMargin,
+} from 'asset/metrics';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM, ratioAvatar} from 'asset/standardValue';
-import {ScrollCropImages} from 'components';
+import {ScrollCropImages, Stars, TextReadMore} from 'components';
 import {SquareButton, StyleText, StyleTouchable} from 'components/base';
 import dayjs from 'dayjs';
 import {useTheme} from 'hook';
@@ -14,7 +19,6 @@ import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {LayoutChangeEvent, TextStyle, View, ViewStyle} from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {seeDetailImage} from 'utility/assistant';
 import Authentication from 'utility/authentication';
@@ -48,14 +52,12 @@ const onNavigateFollow = (
 };
 
 const ButtonOtherProfile = ({profile}: ComponentProps) => {
-  //   const theme = useTheme();
+  const theme = useTheme();
   const [{isFollowing, isBlocked, loadingFollow}, {follow, block, report}] =
     useOtherProfile(profile.id, {
       initValue: profile,
     });
-  //   const haveCheckIn =
-  //     data?.account_type === ACCOUNT.shop ||
-  //     data?.account_type === ACCOUNT.location;
+  const haveCheckIn = profile.account_type === ACCOUNT.location;
 
   const onShowModalOptions = async () => {
     if (isFollowing) {
@@ -118,14 +120,12 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
         loading={loadingFollow}
         onPress={onShowModalOptions}
       />
-      {/* TODO: Check to display button Check-in */}
-      {/* {haveCheckIn && (
+      {haveCheckIn && (
         <SquareButton
           containerStyle={[
             $buttonTouch,
             {
               backgroundColor: theme.p_600,
-              marginLeft: scale(8),
             },
           ]}
           titleStyle={[$textButton, {color: theme.white, fontWeight: 'bold'}]}
@@ -133,8 +133,18 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
           icon={
             <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
           }
+          onPress={() => {
+            navigate(PROFILE_ROUTE.createPostPickImg, {
+              mode: 'check-in',
+              user: {
+                id: profile.id,
+                name: profile.name,
+                avatar: profile.avatar,
+              },
+            });
+          }}
         />
-      )} */}
+      )}
     </View>
   );
 };
@@ -165,7 +175,6 @@ const Button = ({profile}: ComponentProps) => {
             $buttonTouch,
             {
               backgroundColor: isShopAccount ? theme.gray_100 : theme.p_600,
-              marginLeft: scale(8),
             },
           ]}
           titleStyle={[
@@ -196,7 +205,6 @@ const Button = ({profile}: ComponentProps) => {
               $buttonTouch,
               {
                 backgroundColor: theme.p_600,
-                marginLeft: scale(8),
               },
             ]}
             titleStyle={[$textButton, {color: theme.white, fontWeight: 'bold'}]}
@@ -257,7 +265,6 @@ const OpenStatus = ({profile}: ComponentProps) => {
 
 const InformationSupplier = ({profile}: ComponentProps) => {
   const theme = useTheme();
-  const arrayStars = Array(Math.floor(5)).fill(0);
 
   const renderPx = () => {
     if (!profile.min_cost && !profile.max_cost) {
@@ -311,25 +318,17 @@ const InformationSupplier = ({profile}: ComponentProps) => {
         />
       </View>
 
-      {/* TODO: Check see more text here */}
       {!!profile.description && (
-        <StyleText
-          originValue={profile.description}
-          customStyle={[$textDescription, {color: theme.gray_600}]}
+        <TextReadMore
+          value={profile.description}
+          containerStyle={$textDescription}
+          textStyle={{color: theme.gray_600}}
+          minRows={5}
         />
       )}
 
       <View style={$starBox}>
-        {arrayStars.map((_, index) => {
-          const isStar = index + 1 <= profile?.average_stars;
-          return (
-            <AntDesign
-              key={index}
-              name={isStar ? 'star' : 'staro'}
-              style={[$iconStar, {color: theme.orange}]}
-            />
-          );
-        })}
+        <Stars value={profile?.average_stars} />
         {profile?.average_stars ? (
           <StyleText
             originValue={`${profile.average_stars} / 5`}
@@ -399,9 +398,10 @@ const InformationUser = ({profile}: ComponentProps) => {
         <StyleText customStyle={$textName} originValue={profile?.name} />
       )}
       {!!profile.description && (
-        <StyleText
-          originValue={profile.description}
-          customStyle={[$textDescription, {color: theme.gray_600}]}
+        <TextReadMore
+          value={profile.description}
+          containerStyle={$textDescription}
+          textStyle={{color: theme.gray_600}}
         />
       )}
       <View style={$followBox}>
@@ -452,10 +452,7 @@ const InformationModeExp = () => {
         />
         <SquareButton
           title="profile.createTour"
-          containerStyle={[
-            $buttonTouch,
-            {backgroundColor: theme.p_600, marginLeft: scale(8)},
-          ]}
+          containerStyle={[$buttonTouch, {backgroundColor: theme.p_600}]}
           titleStyle={[
             $textButton,
             {
@@ -548,6 +545,7 @@ const $textNumberStar: TextStyle = {
 const $buttonView: ViewStyle = {
   marginTop: verticalMargin,
   flexDirection: 'row',
+  gap: scale(8),
 };
 const $buttonTouch: ViewStyle = {
   flex: 1,
@@ -572,10 +570,7 @@ const $starBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'flex-end',
   marginTop: verticalMargin,
-};
-const $iconStar: TextStyle = {
-  fontSize: moderateScale(17),
-  marginRight: scale(4),
+  gap: horizontalMargin,
 };
 const $openClose: TextStyle = {
   marginTop: verticalMargin,

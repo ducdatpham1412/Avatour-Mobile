@@ -166,7 +166,7 @@ export const $styleAllShadow: ViewStyle = {
   shadowColor: Theme.newTheme.gray_600,
 };
 
-export const chooseIconFeeling = (feeling: number) => {
+export const renderIconFeeling = (feeling: number) => {
   switch (feeling) {
     case FEELING.nice:
       return Images.icons.nice;

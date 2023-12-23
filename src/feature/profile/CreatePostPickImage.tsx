@@ -3,6 +3,7 @@ import {Metrics} from 'asset/metrics';
 import {
   FONT_SIZE,
   FONT_WEIGHT_MEDIUM,
+  ratioImageCheckIn,
   ratioImageSale,
 } from 'asset/standardValue';
 import {ScrollCropImages} from 'components';
@@ -12,9 +13,9 @@ import ModalPickImage from 'feature/mess/components/ModalPickImage';
 import {useLoading, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
-import {PROFILE_ROUTE} from 'navigation/config/routes';
+import ROOT_SCREEN, {PROFILE_ROUTE} from 'navigation/config/routes';
 import {ToolTip} from 'navigation/screen/modals';
-import React, {ElementRef, useRef, useState} from 'react';
+import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -25,34 +26,43 @@ import ImageUploader from 'utility/ImageUploader';
 import {borderWidthTiny, logger} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
-interface Props {
-  route: {
-    params: AppParamsList[PROFILE_ROUTE.createPostPickImg];
-  };
-}
-
 const {width} = Metrics;
 
-const CreatePostPickImage = ({route}: Props) => {
-  const isCreateSale = route.params?.mode === 'sale';
+const CreatePostPickImage = ({
+  route,
+}: RouteParams<AppParamsList[PROFILE_ROUTE.createPostPickImg]>) => {
+  const saleMode = route.params?.mode === 'sale';
+
   const theme = useTheme();
   const {top} = useSafeAreaInsets();
   const {t} = useTranslation();
 
   const {loading, setLoading} = useLoading();
+  const {loading: loadingInit, setLoading: setLoadingInit} = useLoading(true);
 
   const tabPickRef = useRef<StyleTabView>(null);
   const modalPickImgRef = useRef<ElementRef<typeof ModalPickImage>>(null);
   const cropperParams = useRef<Array<{url: string; value: ZoomImageParams}>>(
     [],
   );
-  const maxNumberImages = useRef(10);
+  const maxNumberImages = useRef(
+    saleMode ? 10 : route.params?.mode === 'check-in' ? 3 : 1,
+  );
+  const ratio = useRef(saleMode ? ratioImageSale : ratioImageCheckIn);
 
   const [images, setImages] = useState<LibraryImage[]>([]);
   const [imageFocusing, setImageFocusing] = useState('');
   const [video] = useState('');
   const [tabIndex, setTabIndex] = useState(0);
   const [indexImageFocus, setIndexImageFocus] = useState(0);
+
+  useEffect(() => {
+    const x = setTimeout(() => {
+      setLoadingInit(false);
+    }, 370);
+
+    return () => clearTimeout(x);
+  }, [setLoadingInit]);
 
   const onChooseImage = (img: LibraryImage) => {
     const findIndex = images.findIndex(item => item.url === img.url);
@@ -91,9 +101,11 @@ const CreatePostPickImage = ({route}: Props) => {
       tabPickRef.current?.navigateToIndex(0);
     }
 
-    if (images.length >= 10) {
+    if (images.length >= maxNumberImages.current) {
       ToolTip.show({
-        content: t('alert.onlyChooseMaxImage'),
+        content: t('alert.onlyChooseMaxImage', {
+          number: maxNumberImages.current,
+        }),
         button: {
           title: 'common.ok',
           onPress: () => ToolTip.hide(),
@@ -105,7 +117,7 @@ const CreatePostPickImage = ({route}: Props) => {
     try {
       const image = await ImageUploader.pickCamera({
         maxWidth: width,
-        maxHeight: width * ratioImageSale,
+        maxHeight: width * ratio.current,
       });
       const newListImages = images.concat({
         url: image.path ?? image.sourceURL,
@@ -152,7 +164,7 @@ const CreatePostPickImage = ({route}: Props) => {
 
           const size = {
             width: width * ratioRealImgWithScaleImg,
-            height: width * ratioImageSale * ratioRealImgWithScaleImg,
+            height: width * ratio.current * ratioRealImgWithScaleImg,
           };
 
           const croppedUrl = await ImageEditor.cropImage(img.url, {
@@ -172,19 +184,18 @@ const CreatePostPickImage = ({route}: Props) => {
           : [video];
 
       if (results.length) {
-        if (isCreateSale) {
+        if (saleMode) {
           navigate(PROFILE_ROUTE.createSale, {
             itemNew: {
               images: listImages,
               isVideo: tabIndex === 1,
             },
           });
-        } else {
-          navigate(PROFILE_ROUTE.createPostPreview, {
+        } else if (route.params.mode === 'check-in') {
+          navigate(ROOT_SCREEN.checkIn, {
             itemNew: {
               images: listImages,
-              isVideo: tabIndex === 1,
-              userReviewed: route.params?.userReviewed,
+              user: route.params.user,
             },
           });
         }
@@ -225,7 +236,7 @@ const CreatePostPickImage = ({route}: Props) => {
         images={images.map(item => item.url)}
         index={indexImageFocus}
         width={width}
-        height={width * ratioImageSale}
+        height={width * ratio.current}
         zoomEnable
         onChangeCropperParams={value => {
           const check = cropperParams.current.find(
@@ -276,10 +287,7 @@ const CreatePostPickImage = ({route}: Props) => {
             ]}
           />
         </StyleTouchable>
-        <StyleTouchable
-          customStyle={$touchCamera}
-          onPress={onChooseFromCamera}
-          hitSlop={15}>
+        <StyleTouchable customStyle={$touchCamera} onPress={onChooseFromCamera}>
           <FontAwesome
             name="camera"
             style={[
@@ -383,6 +391,7 @@ const CreatePostPickImage = ({route}: Props) => {
           numberColumns={4}
           containerStyle={$modalPickImage}
           urlFocusing={imageFocusing}
+          showContent={!loadingInit}
         />
         <View />
       </StyleTabView>
@@ -448,7 +457,7 @@ const $modalPickImage: ViewStyle = {
 const $index: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
-  gap: scale(20),
+  gap: scale(28),
 };
 const $textIndex: TextStyle = {
   fontSize: FONT_SIZE.f2,

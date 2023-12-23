@@ -4,7 +4,7 @@ import {StyleImage, StyleTouchable} from 'components/base';
 import {ButtonX} from 'components/common';
 import {useTheme} from 'hook';
 import React, {ElementRef, useEffect, useRef} from 'react';
-import {Animated, ImageStyle, View, ViewStyle} from 'react-native';
+import {Animated, ImageStyle, StyleProp, View, ViewStyle} from 'react-native';
 import {scale} from 'react-native-size-matters';
 import {useAnimatedValue} from 'utility/animation';
 import {moderateScale} from 'utility/scale';
@@ -21,8 +21,9 @@ interface Props {
     value: ZoomImageParams;
   }) => void;
   onRemoveImage?: (url: string) => void;
-  onPressImage?: (url: string) => void;
+  onPressImage?: (url: string, index: number) => void;
   enableRemoveImage?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 // type RenderImage = Props & {
@@ -101,6 +102,7 @@ const ScrollCropImages = (props: Props) => {
     onPressImage,
     onChangeCropperParams,
     enableRemoveImage = true,
+    containerStyle,
   } = props;
 
   const theme = useTheme();
@@ -145,7 +147,7 @@ const ScrollCropImages = (props: Props) => {
             ]}
             disable={!onPressImage}
             disableOpacity={1}
-            onPress={() => onPressImage?.(url)}>
+            onPress={() => onPressImage?.(url, idx)}>
             {zoomEnable ? (
               <EditZoomCropImage
                 source={{uri: url}}
@@ -260,7 +262,7 @@ const ScrollCropImages = (props: Props) => {
   };
 
   return (
-    <View style={[$container, {width, height}]}>
+    <View style={[$container, {width, height}, containerStyle]}>
       {tabImages()}
 
       {numberTabs >= 2 && (

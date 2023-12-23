@@ -1,3 +1,4 @@
+export {default as useCheckIn} from './useCheckIn';
 export {
   default as useCreateLocation,
   type ParamsCreateLocation,

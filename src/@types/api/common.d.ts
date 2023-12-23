@@ -1,13 +1,3 @@
-interface TemplateApiResponse<T> {
-  success: boolean;
-  data: T;
-}
-
-type PromiseApiResponse<T> = Promise<{
-  success: boolean;
-  data: T;
-}>;
-
 interface TypeGetPassportResponse {
   success: boolean;
   data: {
@@ -123,23 +113,6 @@ interface TypeResourceResponse {
       download_link: string;
     };
   };
-}
-
-interface TypeParamsPaging<T = any> {
-  params: {
-    page_index: number;
-    take: number;
-  } & T;
-  [key: string]: any;
-}
-
-interface TypePagingResponse<T = any> {
-  success: boolean;
-  totalPages: number;
-  totalItems: number;
-  take: number;
-  pageIndex: number;
-  data: T;
 }
 
 interface TypeReportUserRequest {

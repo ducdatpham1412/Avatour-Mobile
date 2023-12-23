@@ -12,5 +12,6 @@ export {
   default as useNotifications,
 } from './useNotifications';
 export {default as usePaging} from './usePaging';
+export {default as usePagingV2} from './usePagingV2';
 export {default as useSafeArea} from './useSafeArea';
 export {default as useTheme} from './useTheme';

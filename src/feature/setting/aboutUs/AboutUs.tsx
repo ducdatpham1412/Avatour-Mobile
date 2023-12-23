@@ -51,7 +51,8 @@ const AboutUs = () => {
         customStyle={$container}
         headerProps={{
           title: 'setting.aboutUs.headerTitle',
-        }}>
+        }}
+        backgroundColor={theme.background}>
         <TypeDetailSetting
           title="setting.aboutUs.privacyPolicy"
           onPress={onOpenPolicy}

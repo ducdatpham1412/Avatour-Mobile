@@ -1,8 +1,8 @@
 import {apiGetListTours} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import {APP_EVENT, REACT} from 'asset/enum';
-import {safePaddingNotZero} from 'asset/metrics';
-import {ItemTour, Separator} from 'components';
+import {safePaddingNotZero, verticalMargin} from 'asset/metrics';
+import {ItemTour} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
@@ -10,7 +10,7 @@ import {ViewStyle} from 'react-native';
 import {onReactPost} from 'utility/assistant';
 
 const MyTours = () => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const {id: myId} = useAppSelector(
     state => state.accountSlice.passport.profile,
   );
@@ -55,9 +55,8 @@ const MyTours = () => {
       refreshing={refreshing}
       onRefresh={onRefresh}
       onLoadMore={onLoadMore}
-      contentContainerStyle={[$content, {paddingBottom: bottom}]}
+      contentContainerStyle={[$content, {paddingBottom}]}
       initLoading={initLoading}
-      ItemSeparatorComponent={Separator}
     />
   );
 };
@@ -66,6 +65,7 @@ const $content: ViewStyle = {
   paddingTop: safePaddingNotZero,
   alignItems: 'center',
   flexGrow: 1,
+  gap: 1.5 * verticalMargin,
 };
 
 export default MyTours;

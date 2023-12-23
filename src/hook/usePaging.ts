@@ -6,6 +6,15 @@ import {useUpdateEffect} from 'react-use';
 
 const {CancelToken} = axios;
 
+interface TypePagingResponse<T = any> {
+  success: boolean;
+  totalPages: number;
+  totalItems: number;
+  take: number;
+  pageIndex: number;
+  data: T;
+}
+
 /**
  * TODO: Move to useSWRInfinity instead of ahooks
  */

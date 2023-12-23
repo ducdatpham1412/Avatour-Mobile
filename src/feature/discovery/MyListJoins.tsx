@@ -3,7 +3,7 @@ import {LoadingScreen, Separator} from 'components';
 import {RefreshControl, StyleContainer, StyleList} from 'components/base';
 import {InputBox} from 'components/common';
 import {useDetailSale} from 'feature/common/hooks';
-import {useSafeArea} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect, useRef, useState} from 'react';
@@ -20,6 +20,8 @@ const MyListJoins = ({
   },
 }: RouteParams<AppParamsList[ROOT_SCREEN.myListJoins]>) => {
   const {paddingBottom} = useSafeArea();
+  const theme = useTheme();
+
   const [{data: sale}] = useDetailSale(saleId, {revalidateAll: false});
   const [
     {data: savedData, loading, validating, loadingConfirmBought},
@@ -67,7 +69,7 @@ const MyListJoins = ({
         }}
         layOut="view">
         <InputBox
-          style={$input}
+          style={[$input, {backgroundColor: theme.background}]}
           i18Placeholder="discovery.searchNameOrTransactionHash"
           onChangeText={text => {
             clearTimeout(timeOut.current);
@@ -95,6 +97,7 @@ const MyListJoins = ({
               onPressMode="see-detail"
               mode="supplier"
               onConfirmBought={() => onConfirmBought(item.id)}
+              containerStyle={{backgroundColor: theme.background}}
             />
           )}
           keyExtractor={item => String(item.id)}

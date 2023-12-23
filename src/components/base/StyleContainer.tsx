@@ -1,17 +1,17 @@
-import {horizontalPadding} from 'asset/metrics';
+import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
 import {ErrorScreen} from 'feature/common';
 import {LoadingScreen} from 'feature/profile/screens';
-import {useTheme} from 'hook';
+import {useSafeArea, useTheme} from 'hook';
 import StyleHeader, {StyleHeaderProps} from 'navigation/components/StyleHeader';
-import React, {ReactNode, forwardRef} from 'react';
+import React, {ReactNode, forwardRef, isValidElement} from 'react';
 import {StyleProp, View, ViewStyle} from 'react-native';
 import {
   KeyboardAwareScrollView,
   KeyboardAwareScrollViewProps,
 } from 'react-native-keyboard-aware-scroll-view';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {verticalScale} from 'react-native-size-matters';
-import {isIOS} from 'utility/assistant';
+import {$styleTopShadow, isIOS} from 'utility/assistant';
+import {StyleButton, StyleButtonProps} from '.';
 
 interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   children?: ReactNode;
@@ -21,7 +21,7 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
   isEffectTabBar?: boolean;
   headerProps?: StyleHeaderProps;
   TopComponent?: ReactNode;
-  BottomComponent?: ReactNode;
+  BottomComponent?: StyleButtonProps | ReactNode;
   backgroundColor?: string;
   initLoading?: boolean;
   error?: Error;
@@ -45,7 +45,9 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     layOut = 'scroll',
   } = props;
   const theme = useTheme();
-  const {top} = useSafeAreaInsets();
+  const {top, bottom} = useSafeArea();
+
+  const themeBackground = backgroundColor ?? theme.white;
 
   const renderContent = () => {
     if (initLoading) {
@@ -67,13 +69,41 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     return children;
   };
 
+  const renderBottom = () => {
+    if (!BottomComponent) {
+      return null;
+    }
+
+    if (isValidElement(BottomComponent)) {
+      return BottomComponent;
+    }
+
+    return (
+      <View
+        style={[
+          $button,
+          $styleTopShadow,
+          {
+            marginBottom: bottom,
+            backgroundColor: themeBackground,
+            shadowColor: theme.black,
+          },
+        ]}>
+        <StyleButton
+          containerStyle={$postBox}
+          {...(BottomComponent as StyleButtonProps)}
+        />
+      </View>
+    );
+  };
+
   return (
     <View
       style={[
         {
           flex: 1,
           paddingTop: top,
-          backgroundColor: backgroundColor ?? theme.background,
+          backgroundColor: themeBackground,
         },
         containerStyle,
       ]}>
@@ -81,7 +111,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
         <StyleHeader
           {...headerProps}
           containerStyle={[
-            {backgroundColor: backgroundColor ?? theme.background},
+            {backgroundColor: themeBackground},
             headerProps?.containerStyle,
           ]}
         />
@@ -103,7 +133,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
       ) : (
         <View style={[$body, customStyle]}>{renderContent()}</View>
       )}
-      {BottomComponent}
+      {renderBottom()}
     </View>
   );
 };
@@ -116,6 +146,15 @@ const $contentContainer: ViewStyle = {
 const $body: ViewStyle = {
   flex: 1,
   paddingHorizontal: horizontalPadding,
+};
+const $button: ViewStyle = {
+  width: '100%',
+  paddingTop: safePaddingNotZero,
+  paddingHorizontal: horizontalPadding,
+};
+const $postBox: ViewStyle = {
+  width: '100%',
+  alignItems: 'center',
 };
 
 export default forwardRef(StyleContainer);

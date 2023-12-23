@@ -8,7 +8,7 @@ import {moderateScale, scale} from 'utility/scale';
 import {StyleText} from '.';
 import StyleTouchable from './StyleTouchable';
 
-interface StyleTouchableProps {
+export interface StyleButtonProps {
   title: I18Normalize;
   containerStyle?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
@@ -17,7 +17,7 @@ interface StyleTouchableProps {
   isLoading?: boolean;
 }
 
-const StyleButton = (props: StyleTouchableProps) => {
+const StyleButton = (props: StyleButtonProps) => {
   const {title, containerStyle, titleStyle, disable, onPress, isLoading} =
     props;
   const theme = useTheme();

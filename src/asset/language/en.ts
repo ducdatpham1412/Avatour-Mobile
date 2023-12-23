@@ -400,9 +400,12 @@ const profile = {
     pickImage: 'Pick images',
     addLink: 'Add link',
     feeling: 'Feeling',
+    deleteFeeling: 'Delete feeling',
     checkIn: 'Check in',
+    checkInSuccess: 'Check in successfully',
     topic: 'Topic',
     rating: 'Rating',
+    deleteRating: 'Delete rating',
     seeRating: 'View ratings',
     pasteLink: 'Paste link here',
     nice: 'Nice',
@@ -647,7 +650,7 @@ To be able to delete, please follow these two steps:
   locationHadBeenAdded:
     '<b>{{value}}</b> is already in the schedule\nDo you want to add more?',
   loginToExplore: 'Please log in to continue experiencing Avatour',
-  onlyChooseMaxImage: 'You can select up to 10 photos',
+  onlyChooseMaxImage: 'You can select up to {{number}} photos',
 
   // PERMISSION
   permissionCamera: 'Access camera',

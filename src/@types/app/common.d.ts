@@ -22,3 +22,24 @@ type ZoomImageParams = {
   translateX: number;
   translateY: number;
 };
+interface TypeParamsPaging<T = any> {
+  params: {
+    page_index: number;
+    take: number;
+  } & T;
+  [key: string]: any;
+}
+
+type PagingResponse<T = any> = Promise<{
+  success: boolean;
+  totalPages: number;
+  totalItems: number;
+  take: number;
+  pageIndex: number;
+  data: T;
+}>;
+
+type ApiResponse<T> = Promise<{
+  success: boolean;
+  data: T;
+}>;

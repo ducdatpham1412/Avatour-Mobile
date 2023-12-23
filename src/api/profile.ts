@@ -26,7 +26,7 @@ export const apiUnLikePost = (params: TypeReactRequest) => {
 
 export const apiGetListGroupBuying = ({
   params,
-}: TypeParamsPaging<{userId: number}>) => {
+}: TypeParamsPaging<{userId: number}>): PagingResponse<TypeGroupBuying> => {
   return request.get('/profile/sales', {
     params: {
       user_id: params.userId,
@@ -37,11 +37,15 @@ export const apiGetListGroupBuying = ({
   });
 };
 
-export const apiGetListReviewAboutUser = ({params}: TypeParamsPaging) => {
-  return request.get(`/profile/list-posts-review-user/${params.userId}`, {
+export const apiGetListCheckIn = ({
+  params,
+}: TypeParamsPaging<GetCheckInParams>): PagingResponse<TypeCheckIn[]> => {
+  return request.get('/profile/check-in', {
     params: {
+      user_id: params.user_id,
       page_index: params.page_index,
       take: params.take,
+      type: params.type,
     },
   });
 };
@@ -62,7 +66,7 @@ export const apiDeleteGroupBooking = (postId: string) => {
 
 export const apiGetProfile = (
   id: number,
-): PromiseApiResponse<TypeGetProfileResponse> => {
+): ApiResponse<TypeGetProfileResponse> => {
   return request.get(`/profile/${id}`);
 };
 
@@ -109,7 +113,9 @@ export const apiDeletePost = (idPost: string) => {
   return request.put(`/profile/delete-post/${idPost}`);
 };
 
-export const apiGetListSalesLiked = ({params}: TypeParamsPaging) => {
+export const apiGetListSalesLiked = ({
+  params,
+}: TypeParamsPaging): PagingResponse<TypeGroupBuying> => {
   return request.get('/profile/sales', {
     params: {
       page_index: params.page_index,
@@ -119,7 +125,9 @@ export const apiGetListSalesLiked = ({params}: TypeParamsPaging) => {
   });
 };
 
-export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
+export const apiGetListGBJoined = ({
+  params,
+}: TypeParamsPaging): PagingResponse<TypeGroupBuying> => {
   return request.get('/profile/sales', {
     params: {
       page_index: params.page_index,
@@ -129,7 +137,9 @@ export const apiGetListGBJoined = ({params}: TypeParamsPaging) => {
   });
 };
 
-export const apiGetListFollow = ({params}: TypeParamsPaging) => {
+export const apiGetListFollow = ({
+  params,
+}: TypeParamsPaging): PagingResponse<TypeGroupBuying> => {
   return request.get(`/profile/follow/${params.userId}`, {
     params: {
       page_index: params.page_index,
