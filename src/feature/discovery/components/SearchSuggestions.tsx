@@ -6,7 +6,7 @@ import {useTheme} from 'hook';
 import React from 'react';
 import {ScrollView, TextStyle, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {borderWidthTiny} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 
@@ -38,8 +38,8 @@ const SearchSuggestions = (props: Props) => {
             key={item?.id}
             customStyle={$itemSearchBox}
             onPress={() => onSearch(item?.name)}>
-            <Ionicons
-              name="ios-location-outline"
+            <FontAwesome
+              name="location-arrow"
               style={[$iconLocation, {color: theme.gray_500}]}
             />
             <StyleText originValue={item?.name} customStyle={$textSearch} />

@@ -573,7 +573,7 @@ const notification = {
   goToConfirm: 'Đi tới xác nhận',
   haveNewOrder: 'Bạn có đơn hàng mới từ Avatour',
   newJoinWithYou:
-    'Hey, một người bạn vừa tham gia mua chung cùng bạn tại {{product}}. Check out ngay',
+    'Hey, một người bạn vừa tham gia mua chung cùng bạn tại <b>{{product}}</b>. Hãy xem ngay',
   waitingYouCompleteOrder: 'Chờ bạn hoàn thành đơn hàng',
 };
 

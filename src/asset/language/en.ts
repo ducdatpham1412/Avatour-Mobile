@@ -570,7 +570,7 @@ const notification = {
   goToConfirm: 'Go to confirming',
   haveNewOrder: 'You have a new order from Avatour',
   newJoinWithYou:
-    'Hey, a friend just joined group buying with you at {{product}}. Check out now',
+    'Hey, a friend just joined group buying with you at <b>{{product}}</b>. Check out now',
   waitingYouCompleteOrder: 'Waiting for you to complete the order',
 };
 

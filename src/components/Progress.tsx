@@ -28,9 +28,9 @@ const Progress = ({progress, indexFocusing, containerStyle}: Props) => {
 
         let color = step.focusColor ?? theme.blue;
         if (index < indexFocusing) {
-          color = theme.gray_400;
+          color = theme.gray_300;
         } else if (index > indexFocusing) {
-          color = theme.gray_600;
+          color = theme.gray_400;
         }
 
         return (

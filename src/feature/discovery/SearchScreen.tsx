@@ -12,8 +12,8 @@ import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useUpdateEffect} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
@@ -74,7 +74,7 @@ const SearchScreen = ({
   const SearchBox = (
     <View style={[$searchView, {borderBottomColor: theme.gray_200}]}>
       <StyleTouchable customStyle={$backView} onPress={goBack}>
-        <Ionicons name="arrow-back" style={[$iconBack, {color: theme.black}]} />
+        <AntDesign name="arrowleft" style={[$iconBack, {color: theme.black}]} />
       </StyleTouchable>
       <AppInput
         ref={inputRef}
