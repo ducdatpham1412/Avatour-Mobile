@@ -26,6 +26,7 @@ interface Props {
   width: number;
   children: ReactNode;
   onScroll?: (translateX: number) => void;
+  panEnable?: boolean;
 }
 
 interface Refs {
@@ -33,7 +34,7 @@ interface Refs {
 }
 
 const TabViewDynamic = (
-  {width, children, onScroll}: Props,
+  {width, children, onScroll, panEnable = true}: Props,
   ref: ForwardedRef<Refs>,
 ) => {
   const numberTabs = Children.toArray(children).length;
@@ -72,6 +73,10 @@ const TabViewDynamic = (
     event: GestureResponderEvent,
     gestureState: PanResponderGestureState,
   ) => {
+    if (!panEnable) {
+      return false;
+    }
+
     const diffX = I18nManager.isRTL ? -gestureState.dx : gestureState.dx;
     const isMovingHorizon = isMovingHorizontally(event, gestureState);
     const check =

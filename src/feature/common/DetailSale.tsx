@@ -15,7 +15,12 @@ import {
   safePaddingNotZero,
   verticalMargin,
 } from 'asset/metrics';
-import {AppModalize, LoadingScreen, TextCountDown} from 'components';
+import {
+  AppModalize,
+  LoadingScreen,
+  ScrollCropImages,
+  TextCountDown,
+} from 'components';
 import {
   RefreshControl,
   StyleContainer,
@@ -25,7 +30,6 @@ import {
 } from 'components/base';
 import {Avatar, IconLiked, IconNotLiked} from 'components/common';
 import dayjs from 'dayjs';
-import {ScrollCropImages} from 'feature/profile/components';
 import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';

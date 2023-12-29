@@ -75,8 +75,6 @@ export const DYNAMIC_LINK_ANDROID = '';
 export const ANDROID_APP_LINK =
   'https://play.google.com/store/apps/details?id=com.doffy.android.production';
 
-export const MAX_NUMBER_IMAGES_POST = 10;
-
 export const NUMBER_STARS = [0, 1, 2, 3, 4];
 
 export const LIST_FEELINGS: Array<{

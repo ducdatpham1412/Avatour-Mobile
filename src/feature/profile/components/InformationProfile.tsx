@@ -3,6 +3,7 @@ import {ACCOUNT, STATUS} from 'asset/enum';
 import {IconClock, IconLocation, IconPrice} from 'asset/icons';
 import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM, ratioAvatar} from 'asset/standardValue';
+import {ScrollCropImages} from 'components';
 import {SquareButton, StyleText, StyleTouchable} from 'components/base';
 import dayjs from 'dayjs';
 import {useTheme} from 'hook';
@@ -20,7 +21,6 @@ import Authentication from 'utility/authentication';
 import {formatHours, formatLocaleNumber, formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {useOtherProfile} from '../hooks';
-import ScrollCropImages from './ScrollCropImages';
 
 interface Props {
   profile: TypeGetProfileResponse;
