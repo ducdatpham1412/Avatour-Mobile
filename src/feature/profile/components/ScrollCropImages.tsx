@@ -13,6 +13,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {scale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -30,6 +31,7 @@ interface Props {
   onChangeCropperParams?: (params: {url: string; value: any}) => void;
   onChangeCropperSize?: (params: {width: number; height: number}) => void;
   onRemoveImage?: (url: string) => void;
+  onPressImage?: (url: string) => void;
   enableRemoveImage?: boolean;
 }
 
@@ -48,6 +50,7 @@ const ScrollCropImages = (props: Props) => {
     imageFocusing,
     havingZoomButton,
     onRemoveImage,
+    onPressImage,
     enableRemoveImage = true,
   } = props;
 
@@ -138,16 +141,17 @@ const ScrollCropImages = (props: Props) => {
             translateXIndicator.setValue(newTranslateX);
           }
         }}>
-        {images.map((url, index) => (
-          <View
-            key={index}
+        {images.map((url, idx) => (
+          <TouchableWithoutFeedback
+            key={idx}
             style={[
               $imageBox,
               {
                 width,
                 height,
               },
-            ]}>
+            ]}
+            onPress={() => onPressImage?.(url)}>
             <StyleImage
               source={{uri: url}}
               customStyle={$image}
@@ -166,7 +170,7 @@ const ScrollCropImages = (props: Props) => {
               url={url}
               onChangeCropperParams={onChangeCropperParams}
             /> */}
-          </View>
+          </TouchableWithoutFeedback>
         ))}
       </TabViewDynamic>
 
