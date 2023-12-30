@@ -3,27 +3,20 @@ import {Metrics} from 'asset/metrics';
 import {
   FONT_SIZE,
   FONT_WEIGHT_MEDIUM,
-  MAX_NUMBER_IMAGES_POST,
   ratioImageSale,
 } from 'asset/standardValue';
+import {ScrollCropImages} from 'components';
 import StyleTabView from 'components/StyleTabView';
-import {StyleImage, StyleText, StyleTouchable} from 'components/base';
+import {StyleText, StyleTouchable} from 'components/base';
 import ModalPickImage from 'feature/mess/components/ModalPickImage';
-import {useTheme} from 'hook';
+import {useLoading, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
 import {PROFILE_ROUTE} from 'navigation/config/routes';
 import {ToolTip} from 'navigation/screen/modals';
 import React, {ElementRef, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  ActivityIndicator,
-  ImageStyle,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
-import {ICropperParams} from 'react-native-image-zoom-and-crop';
+import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -31,7 +24,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ImageUploader from 'utility/ImageUploader';
 import {borderWidthTiny, logger} from 'utility/assistant';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import ScrollCropImages from './components/ScrollCropImages';
 
 interface Props {
   route: {
@@ -39,11 +31,7 @@ interface Props {
   };
 }
 
-const {width, height} = Metrics;
-const containerPreviewImage = {
-  width,
-  height: width / height > 0.6 ? width * 0.6 : width,
-};
+const {width} = Metrics;
 
 const CreatePostPickImage = ({route}: Props) => {
   const isCreateSale = route.params?.mode === 'sale';
@@ -51,29 +39,26 @@ const CreatePostPickImage = ({route}: Props) => {
   const {top} = useSafeAreaInsets();
   const {t} = useTranslation();
 
+  const {loading, setLoading} = useLoading();
+
   const tabPickRef = useRef<StyleTabView>(null);
   const modalPickImgRef = useRef<ElementRef<typeof ModalPickImage>>(null);
+  const cropperParams = useRef<Array<{url: string; value: ZoomImageParams}>>(
+    [],
+  );
+  const maxNumberImages = useRef(10);
 
   const [images, setImages] = useState<LibraryImage[]>([]);
   const [imageFocusing, setImageFocusing] = useState('');
-  const [renderingBase64, setRenderingBase64] = useState(false);
-  const [video, setVideo] = useState('');
+  const [video] = useState('');
   const [tabIndex, setTabIndex] = useState(0);
   const [indexImageFocus, setIndexImageFocus] = useState(0);
-
-  const cropSize = useRef({
-    width,
-    height: width * ratioImageSale,
-  });
-  const cropperParams = useRef<
-    Array<{url: string; value: ICropperParams | null}>
-  >([]);
 
   const onChooseImage = (img: LibraryImage) => {
     const findIndex = images.findIndex(item => item.url === img.url);
     const included = findIndex >= 0;
 
-    if (images.length === MAX_NUMBER_IMAGES_POST && !included) {
+    if (images.length === maxNumberImages.current && !included) {
       return;
     }
 
@@ -97,10 +82,6 @@ const CreatePostPickImage = ({route}: Props) => {
       const lastIndex = images.length;
       setImageFocusing(img.url);
       setImages(images.concat(img));
-      cropperParams.current = cropperParams.current.concat({
-        url: img.url,
-        value: null,
-      });
       setIndexImageFocus(lastIndex);
     }
   };
@@ -140,71 +121,68 @@ const CreatePostPickImage = ({route}: Props) => {
 
   const onNavigatePreview = async () => {
     try {
-      setRenderingBase64(true);
-      const results = await Promise.all(
+      setLoading(true);
+      const results = await Promise.allSettled(
         images.map(async img => {
-          // const cropperCheck = cropperParams.find(item => item.url === url);
-          // if (cropperCheck?.value) {
-          //   const temp = await ImageZoomAndCrop.crop({
-          //     ...cropperCheck.value,
-          //     imageUri: url,
-          //     cropSize,
-          //     cropAreaSize: cropSize,
-          //   });
-          //   return temp ?? '';
-          // }
+          const cropperValue = cropperParams.current.find(
+            c => c.url === img.url,
+          );
 
-          // const croppedUrl = await ImageZoomAndCrop.crop({
-          //   cropSize: {
-          //     width: img.width,
-          //     height: img.height,
-          //   },
-          //   cropAreaSize: {
-          //     width: img.width,
-          //     height: img.height,
-          //   },
-          //   imageUri: img.url,
-          //   positionX: 0,
-          //   positionY: 0,
-          //   scale: 1,
-          //   srcSize: {
-          //     width: img.width,
-          //     height: img.height,
-          //   },
-          //   fittedSize: {
-          //     width: 100,
-          //     height: 70,
-          //   },
-          // }).catch(err => {
-          //   console.log('crop error: ', err);
-          // });
+          if (!cropperValue) {
+            throw new Error('Not found image');
+          }
+
+          const imageHeight = (img.height / img.width) * width;
+          const scaleWidth = width * cropperValue.value.scale;
+          const scaleHeight = imageHeight * cropperValue.value.scale;
+
+          const centerPos = {
+            translateX: cropperValue.value.translateX + width / 2,
+            translateY: cropperValue.value.translateY + imageHeight / 2,
+          };
+          const tsXScale = centerPos.translateX - scaleWidth / 2;
+          const tsYScale = centerPos.translateY - scaleHeight / 2;
+
+          const ratioRealImgWithScaleImg = img.width / scaleWidth;
+
+          const offset = {
+            x: -tsXScale * ratioRealImgWithScaleImg,
+            y: -tsYScale * ratioRealImgWithScaleImg,
+          };
+
+          const size = {
+            width: width * ratioRealImgWithScaleImg,
+            height: width * ratioImageSale * ratioRealImgWithScaleImg,
+          };
 
           const croppedUrl = await ImageEditor.cropImage(img.url, {
-            offset: {
-              x: 0,
-              y: 0,
-            },
-            size: {
-              width: img.width,
-              height: img.height,
-            },
+            offset: offset,
+            size,
+            resizeMode: 'contain',
           });
           return croppedUrl;
         }),
       );
 
+      const listImages =
+        tabIndex === 0
+          ? results
+              .filter(r => r.status === 'fulfilled')
+              .map(r => (r as PromiseFulfilledResult<string>).value)
+          : [video];
+
       if (results.length) {
         if (isCreateSale) {
           navigate(PROFILE_ROUTE.createSale, {
             itemNew: {
-              images: tabIndex === 0 ? results : [video],
+              images: listImages,
               isVideo: tabIndex === 1,
             },
           });
         } else {
           navigate(PROFILE_ROUTE.createPostPreview, {
             itemNew: {
-              images: tabIndex === 0 ? results : [video],
+              images: listImages,
               isVideo: tabIndex === 1,
               userReviewed: route.params?.userReviewed,
             },
@@ -214,32 +192,9 @@ const CreatePostPickImage = ({route}: Props) => {
     } catch (err) {
       logger('Error render base64: ', err);
     } finally {
-      setRenderingBase64(false);
+      setLoading(false);
     }
   };
-
-  //   const onChooseVideo = async () => {
-  //     if (tabIndex === 0) {
-  //       if (!video) {
-  //         try {
-  //           const res = await ImageUploader.pickVideo();
-  //           tabPickRef.current?.navigateToIndex(1);
-  //           setVideo(res);
-  //         } catch (err) {
-  //           logger(err);
-  //         }
-  //       } else {
-  //         tabPickRef.current?.navigateToIndex(1);
-  //       }
-  //     } else {
-  //       try {
-  //         const res = await ImageUploader.pickVideo();
-  //         setVideo(res);
-  //       } catch (err) {
-  //         logger(err);
-  //       }
-  //     }
-  //   };
 
   /**
    * Render views
@@ -265,72 +220,36 @@ const CreatePostPickImage = ({route}: Props) => {
       return null;
     }
 
-    if (isCreateSale) {
-      return (
-        <ScrollCropImages
-          images={images.map(item => item.url)}
-          imageFocusing={imageFocusing}
-          index={indexImageFocus}
-          width={width}
-          height={width * ratioImageSale}
-          onChangeCropperParams={value => {
-            cropperParams.current = cropperParams.current.map(item => {
-              if (item.url !== value.url) {
-                return item;
-              }
-              return value;
-            });
-          }}
-          initRatio={isCreateSale ? ratioImageSale : 1}
-          onChangeCropperSize={value => (cropSize.current = value)}
-          havingZoomButton={!isCreateSale}
-          onRemoveImage={url => {
-            const findImage = images.find(item => item.url === url);
-            if (findImage) {
-              onChooseImage(findImage);
-            }
-          }}
-        />
-      );
-    }
-
     return (
-      <View
-        style={{
-          width: containerPreviewImage.width,
-          height: containerPreviewImage.height,
-          alignItems: 'center',
-        }}>
-        <StyleImage
-          source={{uri: images[0].url}}
-          customStyle={$imageBehind}
-          blurRadius={10}
-        />
-        <ScrollCropImages
-          images={images.map(item => item.url)}
-          imageFocusing={imageFocusing}
-          index={indexImageFocus}
-          width={containerPreviewImage.height}
-          height={containerPreviewImage.height}
-          onChangeCropperParams={value => {
+      <ScrollCropImages
+        images={images.map(item => item.url)}
+        index={indexImageFocus}
+        width={width}
+        height={width * ratioImageSale}
+        zoomEnable
+        onChangeCropperParams={value => {
+          const check = cropperParams.current.find(
+            item => item.url === value.url,
+          );
+
+          if (check) {
             cropperParams.current = cropperParams.current.map(item => {
               if (item.url !== value.url) {
                 return item;
               }
               return value;
             });
-          }}
-          initRatio={isCreateSale ? ratioImageSale : 1}
-          onChangeCropperSize={value => (cropSize.current = value)}
-          havingZoomButton={!isCreateSale}
-          onRemoveImage={url => {
-            const findImage = images.find(item => item.url === url);
-            if (findImage) {
-              onChooseImage(findImage);
-            }
-          }}
-        />
-      </View>
+          } else {
+            cropperParams.current = cropperParams.current.concat(value);
+          }
+        }}
+        onRemoveImage={url => {
+          const findImage = images.find(item => item.url === url);
+          if (findImage) {
+            onChooseImage(findImage);
+          }
+        }}
+      />
     );
   };
 
@@ -373,10 +292,34 @@ const CreatePostPickImage = ({route}: Props) => {
         </StyleTouchable>
 
         {tabIndex === 0 && (
-          <StyleText
-            originValue={`${images.length}`}
-            customStyle={[$textIndex, {color: theme.black}]}
-          />
+          <View style={$index}>
+            <StyleTouchable
+              onPress={() => {
+                if (indexImageFocus > 0) {
+                  setIndexImageFocus(pre => pre - 1);
+                }
+              }}>
+              <AntDesign
+                name="arrowleft"
+                style={[$iconDirection, {color: theme.black}]}
+              />
+            </StyleTouchable>
+            <StyleText
+              originValue={`${images.length}/${maxNumberImages.current}`}
+              customStyle={[$textIndex, {color: theme.black}]}
+            />
+            <StyleTouchable
+              onPress={() => {
+                if (indexImageFocus < images.length - 1) {
+                  setIndexImageFocus(pre => pre + 1);
+                }
+              }}>
+              <AntDesign
+                name="arrowright"
+                style={[$iconDirection, {color: theme.black}]}
+              />
+            </StyleTouchable>
+          </View>
         )}
 
         {/* <StyleTouchable
@@ -407,7 +350,7 @@ const CreatePostPickImage = ({route}: Props) => {
           i18Text="profile.post.pickImage"
           customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
         />
-        {renderingBase64 ? (
+        {loading ? (
           <ActivityIndicator
             color={theme.p_800}
             size="small"
@@ -473,11 +416,6 @@ const $textNext: TextStyle = {
   fontSize: FONT_SIZE.f1,
   fontWeight: 'bold',
 };
-const $video: ViewStyle = {
-  width,
-  minHeight: width,
-  maxHeight: '80%',
-};
 const $toolView: ViewStyle = {
   width: '100%',
   height: moderateScale(35),
@@ -493,11 +431,6 @@ const $touchImage: ViewStyle = {
 const $iconImage: TextStyle = {
   fontSize: moderateScale(16.5),
 };
-const $imageBehind: ImageStyle = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
-};
 const $touchCamera: ViewStyle = {
   position: 'absolute',
   right: scale(20),
@@ -505,16 +438,24 @@ const $touchCamera: ViewStyle = {
 const $iconCamera: TextStyle = {
   fontSize: moderateScale(16.5),
 };
-const $textIndex: TextStyle = {
-  fontSize: FONT_SIZE.f2,
-  fontWeight: FONT_WEIGHT_MEDIUM,
-};
 const $tabView: ViewStyle = {
   flex: 1,
 };
 const $modalPickImage: ViewStyle = {
   height: undefined,
   flex: 1,
+};
+const $index: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: scale(20),
+};
+const $textIndex: TextStyle = {
+  fontSize: FONT_SIZE.f2,
+  fontWeight: FONT_WEIGHT_MEDIUM,
+};
+const $iconDirection: TextStyle = {
+  fontSize: moderateScale(19),
 };
 
 export default CreatePostPickImage;

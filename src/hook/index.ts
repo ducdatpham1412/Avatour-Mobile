@@ -3,6 +3,7 @@ export {defaultSWRConfig, default as useApi, useApiImmutable} from './useApi';
 export {emitAppEvent, default as useAppEvent} from './useAppEvent';
 export {default as useCountdown} from './useCountdown';
 export {default as useEstimatesAndJoinings} from './useEstimatesAndJoinings';
+export {default as useImageSize} from './useImageSize';
 export {default as useInitApp} from './useInitApp';
 export {default as useLibrary} from './useLibrary';
 export {default as useLoading} from './useLoading';

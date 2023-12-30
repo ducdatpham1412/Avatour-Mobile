@@ -16,3 +16,9 @@ type TypeObjectAny = {
 type TypeNotificationData = {
   link: string;
 };
+
+type ZoomImageParams = {
+  scale: number;
+  translateX: number;
+  translateY: number;
+};

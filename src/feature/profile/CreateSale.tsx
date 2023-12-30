@@ -14,6 +14,7 @@ import {
   FONT_WEIGHT_MEDIUM,
   ratioImageSale,
 } from 'asset/standardValue';
+import {ScrollCropImages} from 'components';
 import {
   AppInput,
   StyleButton,
@@ -37,10 +38,10 @@ import isEqual from 'react-fast-compare';
 import {useTranslation} from 'react-i18next';
 import {StyleProp, TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
-import {$styleTopShadow} from 'utility/assistant';
+import {$styleTopShadow, seeDetailImage} from 'utility/assistant';
 import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {PricesEdit, ScrollCropImages, TitleAndInput} from './components';
+import {PricesEdit, TitleAndInput} from './components';
 import ButtonIconTitle from './components/ButtonIconTitle';
 import {UseCreateSaleParams, useCreateSale} from './hooks';
 import {LoadingScreen} from './screens';
@@ -297,6 +298,13 @@ const CreateSale = ({route}: Props) => {
           width={width}
           height={width * ratioImageSale}
           enableRemoveImage={false}
+          onPressImage={url => {
+            const initIndex = images.findIndex(img => img === url);
+            seeDetailImage({
+              images,
+              initIndex: initIndex < 0 ? 0 : initIndex,
+            });
+          }}
         />
         <View style={$body}>
           <TitleAndInput
