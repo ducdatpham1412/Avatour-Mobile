@@ -17,10 +17,6 @@ type TypeCreateSale = {
   prices: Array<TypePrice>;
 };
 
-type TypeCreateSaleResponse = TemplateApiResponse<{
-  id: number;
-}>;
-
 type TypeEditSale = {
   post_id: number;
   data: {
@@ -195,8 +191,6 @@ type TypeEditTour = Partial<
     schedule: number[][];
   }
 >;
-
-type TypeSearchResponse = TemplateApiResponse<Tour[]>;
 
 type TypeJoinResult = {
   today: TypeJoinEstimate[];

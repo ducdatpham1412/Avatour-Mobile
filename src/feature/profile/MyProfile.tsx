@@ -20,7 +20,7 @@ import {
   IconTabBarProfile,
   InformationProfile,
 } from './components';
-import {ListFavorites, ListSales, MyTours} from './screens';
+import {ListCheckIn, ListFavorites, ListSales, MyTours} from './screens';
 
 type TypeRouteParams = RouteParams<AppParamsList[PROFILE_ROUTE.myProfile]>;
 
@@ -84,7 +84,9 @@ const TabViewUser = ({tabViewHeight, profile, routeParams}: TabViewProps) => {
   };
 
   const review = () => {
-    return <View />;
+    return (
+      <ListCheckIn userId={profile.id} accountType={profile.account_type} />
+    );
   };
 
   useEffect(() => {
@@ -183,7 +185,8 @@ const MyProfile = ({route}: TypeRouteParams) => {
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={refresh} />
           }
-          stickyHeaderIndices={[1]}>
+          stickyHeaderIndices={[1]}
+          showsVerticalScrollIndicator={false}>
           <InformationProfile profile={profile} />
           {renderTabView()}
         </ScrollView>

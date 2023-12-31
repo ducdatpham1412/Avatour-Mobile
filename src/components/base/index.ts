@@ -3,7 +3,7 @@ export {default as ModalEdit} from './ModalEdit';
 export {default as RefreshControl} from './RefreshControl';
 export {default as SafeView} from './SafeView';
 export {default as SquareButton} from './SquareButton';
-export {default as StyleButton} from './StyleButton';
+export {default as StyleButton, type StyleButtonProps} from './StyleButton';
 export {default as StyleContainer} from './StyleContainer';
 export {default as StyleIcon} from './StyleIcon';
 export {default as StyleImage} from './StyleImage';

@@ -32,6 +32,7 @@ interface Props {
   containerStyle?: StyleProp<ViewStyle>;
   numberColumns?: number;
   initIndexImage?: number;
+  showContent?: boolean;
   urlFocusing?: string;
 }
 
@@ -97,6 +98,7 @@ const ModalPickImage = (props: Props, ref: ForwardedRef<Refs>) => {
     numberColumns = 4,
     initIndexImage = 0,
     urlFocusing,
+    showContent = true,
   } = props;
 
   const {paddingBottom} = useSafeArea();
@@ -139,7 +141,7 @@ const ModalPickImage = (props: Props, ref: ForwardedRef<Refs>) => {
         }
         numColumns={numberColumns}
         contentContainerStyle={{paddingBottom}}
-        initLoading={loading}
+        initLoading={loading || !showContent}
         refreshing={validating}
         onRefresh={onRefresh}
         loadingMore={loadingMore}

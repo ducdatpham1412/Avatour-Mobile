@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
-const useLoading = () => {
-  const [loading, setLoading] = useState(false);
+const useLoading = (init?: boolean) => {
+  const [loading, setLoading] = useState(init ?? false);
   return {loading, setLoading};
 };
 

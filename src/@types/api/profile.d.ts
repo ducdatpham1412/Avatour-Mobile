@@ -97,3 +97,27 @@ interface TypeFollow {
   description: string;
   relationship: number;
 }
+
+interface TypeCheckIn {
+  id: number;
+  content: string;
+  images: string[];
+  stars: number | null;
+  feeling: number | null;
+  created: string;
+  user: {
+    id: number;
+    name: string;
+    avatar: string;
+  };
+  creator: {
+    id: number;
+    name: string;
+    avatar: string;
+  };
+}
+
+type GetCheckInParams = {
+  user_id: number;
+  type: 'check-in' | 'my-check-in';
+};

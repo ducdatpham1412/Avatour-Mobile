@@ -45,6 +45,7 @@ const SettingScreen = () => {
   return (
     <StyleContainer
       customStyle={$container}
+      backgroundColor={theme.background}
       headerProps={{
         title: 'setting.title',
       }}>

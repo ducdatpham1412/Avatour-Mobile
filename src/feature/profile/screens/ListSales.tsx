@@ -1,7 +1,11 @@
 import {apiGetListGroupBuying} from 'api/profile';
-import {ACCOUNT, APP_EVENT, STATUS, REACT} from 'asset/enum';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
-import {ItemSale, Separator} from 'components';
+import {ACCOUNT, APP_EVENT, REACT, STATUS} from 'asset/enum';
+import {
+  horizontalPadding,
+  safePaddingNotZero,
+  verticalMargin,
+} from 'asset/metrics';
+import {ItemSale} from 'components';
 import {StyleList} from 'components/base';
 import {useAppEvent, usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
@@ -97,7 +101,6 @@ const ListSalesSupplier = ({userId}: Props) => {
       initialNumToRender={6}
       initLoading={initLoading}
       columnWrapperStyle={{justifyContent: 'space-between'}}
-      ItemSeparatorComponent={Separator}
     />
   );
 };
@@ -122,6 +125,7 @@ const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingHorizontal: horizontalPadding,
   paddingTop: safePaddingNotZero,
+  gap: verticalMargin,
 };
 
 export default ListSales;

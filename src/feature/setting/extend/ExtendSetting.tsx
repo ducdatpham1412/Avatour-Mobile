@@ -32,6 +32,7 @@ const ExtendSetting = () => {
   return (
     <StyleContainer
       customStyle={styles.container}
+      backgroundColor={theme.background}
       headerProps={{
         title: 'setting.extendSetting.headerTitle',
       }}>

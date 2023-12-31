@@ -1185,6 +1185,7 @@ const DetailMeJoin = ({
         headerProps={{
           title: data?.sale?.name as I18Normalize,
         }}
+        backgroundColor={theme.background}
         scrollEnabled
         initLoading={loading}
         refreshControl={

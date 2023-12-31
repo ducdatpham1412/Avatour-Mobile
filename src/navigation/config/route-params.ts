@@ -21,6 +21,12 @@ export type AllRoutes =
   | REPUTATION_ROUTE
   | ORDER_ROUTE;
 
+type UserCheckIn = {
+  id: number;
+  name: string;
+  avatar: string;
+};
+
 export type AppParamsList = {
   [key: string]: any;
   [ROOT_SCREEN.otherProfile]: {
@@ -47,14 +53,14 @@ export type AppParamsList = {
     idUser: number;
     nameUser?: string;
   };
-  [PROFILE_ROUTE.createPostPickImg]: {
-    userReviewed?: {
-      id: number;
-      name: string;
-      avatar: string;
-    };
-    mode: 'sale' | 'review';
-  };
+  [PROFILE_ROUTE.createPostPickImg]:
+    | {
+        mode: 'check-in';
+        user: UserCheckIn;
+      }
+    | {
+        mode: 'sale';
+      };
   [PROFILE_ROUTE.createSale]: {
     itemNew?: {
       images: Array<string>;
@@ -154,6 +160,12 @@ export type AppParamsList = {
   };
   [ROOT_SCREEN.myListJoins]: {
     saleId: number;
+  };
+  [ROOT_SCREEN.checkIn]: {
+    itemNew?: {
+      user: UserCheckIn;
+      images: string[];
+    };
   };
 };
 

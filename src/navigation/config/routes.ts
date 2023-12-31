@@ -32,6 +32,7 @@ enum ROOT_SCREEN {
   editSalePrice = '@ROOT_SCREEN/editSalePrice',
   createLocation = '@ROOT_SCREEN/createLocation',
   svgIcons = '@ROOT_SCREEN/svgIcon',
+  checkIn = '@ROOT_SCREEN/checkIn',
 }
 /**
  * ||

@@ -41,6 +41,9 @@ if (__DEV__) {
   DevSettings.addMenuItem('Debug with Chrome', () => {
     NativeModules.DevSettings.setIsDebuggingRemotely(true);
   });
+  DevSettings.addMenuItem('Disable Debug', () => {
+    NativeModules.DevSettings.setIsDebuggingRemotely(false);
+  });
 }
 
 const trackActiveRoute = (

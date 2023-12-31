@@ -298,11 +298,10 @@ const CreateSale = ({route}: Props) => {
           width={width}
           height={width * ratioImageSale}
           enableRemoveImage={false}
-          onPressImage={url => {
-            const initIndex = images.findIndex(img => img === url);
+          onPressImage={(_, index) => {
             seeDetailImage({
               images,
-              initIndex: initIndex < 0 ? 0 : initIndex,
+              initIndex: index,
             });
           }}
         />

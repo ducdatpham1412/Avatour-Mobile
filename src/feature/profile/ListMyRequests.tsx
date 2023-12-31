@@ -6,6 +6,10 @@ import React from 'react';
 import {ItemRequest} from './components';
 import {useMyRequests} from './hooks';
 
+const renderItem = ({item}: {item: TypeGetRequestResponse}) => {
+  return <ItemRequest item={item} />;
+};
+
 const ListMyRequests = () => {
   const {paddingBottom} = useSafeArea();
   const [{data, initLoading, validating}, {mutate}] = useMyRequests();
@@ -18,7 +22,7 @@ const ListMyRequests = () => {
       layOut="view">
       <StyleList
         data={data}
-        renderItem={({item}) => <ItemRequest item={item} />}
+        renderItem={renderItem}
         keyExtractor={item => String(item?.id)}
         initLoading={initLoading}
         refreshing={validating}

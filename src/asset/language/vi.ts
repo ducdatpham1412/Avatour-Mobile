@@ -377,9 +377,12 @@ const profile = {
     pickImage: 'Chọn ảnh',
     addLink: 'Thêm link',
     feeling: 'Cảm xúc',
+    deleteFeeling: 'Xoá cảm xúc',
     checkIn: 'Check in',
+    checkInSuccess: 'Check in thành công',
     topic: 'Chủ đề',
     rating: 'Đánh giá',
+    deleteRating: 'Xoá đánh giá',
     seeRating: 'Xem đánh giá',
     pasteLink: 'Dán đường dẫn URL',
     nice: 'Tốt',
@@ -654,7 +657,7 @@ const alert = {
   locationHadBeenAdded:
     '<b>{{value}}</b> đã có trong lịch trình\nBạn vẫn muốn thêm nữa chứ?',
   loginToExplore: 'Bạn hãy đăng nhập để tiếp tục trải nghiệm Avatour nhé',
-  onlyChooseMaxImage: 'Bạn có thể chọn tối đa 10 ảnh',
+  onlyChooseMaxImage: 'Bạn có thể chọn tối đa {{number}} ảnh',
 
   // PERMISSION
   permissionCamera: 'Cho phép Doffy truy cập vào máy ảnh',

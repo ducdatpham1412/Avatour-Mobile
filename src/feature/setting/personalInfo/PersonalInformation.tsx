@@ -2,6 +2,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {apiChangeInformation} from 'api/setting';
 import {updatePassport} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
+import {LoadingScreen} from 'components';
 import {StyleContainer} from 'components/base';
 import {useLoading, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
@@ -33,7 +34,6 @@ import {
 import {moderateScale, scale} from 'utility/scale';
 import {validateIsEmail, validateIsPhone} from 'utility/validate';
 import ItemInfo from './ItemInfo';
-import {LoadingScreen} from 'components';
 
 const PersonalInformation = () => {
   const {t} = useTranslation();
@@ -165,7 +165,8 @@ const PersonalInformation = () => {
     <>
       <StyleContainer
         headerProps={{title: 'setting.personalInfo.headerTitle'}}
-        customStyle={$container}>
+        customStyle={$container}
+        backgroundColor={theme.background}>
         <ItemInfo
           value={email}
           icon={<Entypo name="email" style={[$icon, {color: theme.blue}]} />}

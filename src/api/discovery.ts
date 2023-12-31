@@ -2,7 +2,7 @@ import request from './request';
 
 export const apiJoinSale = (
   params: TypeJoinRequest,
-): PromiseApiResponse<TypeJoinEstimate> => {
+): ApiResponse<TypeJoinEstimate> => {
   return request.post(`/profile/sales/join/${params.saleId}`, {
     amount: params.amount,
     time_will_buy: params.time_will_buy,
@@ -16,7 +16,7 @@ export const apiDeleteEstimate = (joinEstimateId: number) => {
 
 export const apiCreateSale = (
   body: TypeCreateSale,
-): Promise<TypeCreateSaleResponse> => {
+): ApiResponse<{id: number}> => {
   const payload = new FormData();
 
   payload.append('name', body.name);
@@ -74,7 +74,7 @@ export const apiGetListComments = ({params}: TypeParamsPaging) => {
 
 export const apiSearch = ({
   params,
-}: TypeParamsPaging<TypeSearchRequest>): Promise<TypeSearchResponse> => {
+}: TypeParamsPaging<TypeSearchRequest>): ApiResponse<Tour[]> => {
   return request.get('/common/search', {
     params,
   });
@@ -109,13 +109,13 @@ export const apiEditTour = (tourId: number, body: TypeEditTour) => {
 
 export const apiCreateTour = (
   body: TypeCreateTour,
-): PromiseApiResponse<TypeCreateTourResponse> => {
+): ApiResponse<TypeCreateTourResponse> => {
   return request.post('/common/tours', body);
 };
 
 export const apiScanJoinResult = (
   shopId: number,
-): PromiseApiResponse<TypeJoinResult> => {
+): ApiResponse<TypeJoinResult> => {
   return request.post('/common/scan', {
     type: 'get-money-sale',
     shop_id: shopId,

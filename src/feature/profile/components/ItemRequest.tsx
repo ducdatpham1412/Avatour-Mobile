@@ -51,7 +51,7 @@ const ItemRequest = ({item}: Props) => {
   const renderData = () => {
     if (item.type === TYPE_AUTH_REQUEST.update_bank) {
       return (
-        <View style={[$upgradeAccount, {backgroundColor: theme.gray_50}]}>
+        <View style={[$upgradeAccount, {backgroundColor: theme.white}]}>
           <StyleText
             originValue={`${t('profile.bankName')}: ${item.data.bank_code}`}
           />
@@ -67,7 +67,7 @@ const ItemRequest = ({item}: Props) => {
     if (item.type === TYPE_AUTH_REQUEST.update_price) {
       return (
         <StyleTouchable
-          customStyle={[$upgradeAccount, {backgroundColor: theme.gray_50}]}
+          customStyle={[$upgradeAccount, {backgroundColor: theme.white}]}
           onPress={() => {
             if (item.data.sale.id) {
               push(ROOT_SCREEN.detailSale, {
@@ -103,7 +103,7 @@ const ItemRequest = ({item}: Props) => {
       return (
         <View style={$data}>
           <StyleTouchable
-            customStyle={[$suggestLocation, {backgroundColor: theme.gray_50}]}
+            customStyle={[$suggestLocation, {backgroundColor: theme.white}]}
             onPress={() => onGoToProfile(item.data.id)}>
             <Avatar source={{uri: item.data.avatar}} size={35} />
             <View style={$name}>
@@ -127,7 +127,7 @@ const ItemRequest = ({item}: Props) => {
 
     if (item.type === TYPE_AUTH_REQUEST.upgrade_to_shop) {
       return (
-        <View style={[$upgradeAccount, {backgroundColor: theme.gray_100}]}>
+        <View style={[$upgradeAccount, {backgroundColor: theme.white}]}>
           <StyleText
             originValue={`${t('discovery.name')}: ${item.data.name}`}
           />
@@ -197,6 +197,7 @@ const ItemRequest = ({item}: Props) => {
         </View>,
       ]}
       titleBoxFlex={0.3}
+      containerStyle={{backgroundColor: theme.background}}
     />
   );
 };

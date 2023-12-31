@@ -1,7 +1,11 @@
 import {apiGetListTours} from 'api/discovery';
 import {REACT} from 'asset/enum';
-import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
-import {ItemTour, Separator} from 'components';
+import {
+  horizontalPadding,
+  safePaddingNotZero,
+  verticalMargin,
+} from 'asset/metrics';
+import {ItemTour} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging, useSafeArea} from 'hook';
 import React, {useCallback} from 'react';
@@ -48,16 +52,12 @@ const ListTours = ({userId}: Props) => {
       data={list}
       renderItem={renderItem}
       keyExtractor={item => String(item?.id)}
-      contentContainerStyle={[
-        $contentContainer,
-        {paddingBottom, paddingTop: safePaddingNotZero},
-      ]}
+      contentContainerStyle={[$contentContainer, {paddingBottom}]}
       refreshing={refreshing}
       onRefresh={onRefresh}
       loadingMore={loadingMore}
       onLoadMore={onLoadMore}
       initLoading={initLoading}
-      ItemSeparatorComponent={Separator}
     />
   );
 };
@@ -65,6 +65,8 @@ const ListTours = ({userId}: Props) => {
 const $contentContainer: ViewStyle = {
   flexGrow: 1,
   paddingHorizontal: horizontalPadding,
+  gap: 1.5 * verticalMargin,
+  paddingTop: safePaddingNotZero,
 };
 
 export default ListTours;

@@ -22,6 +22,7 @@ import SearchScreen from 'feature/discovery/SearchScreen';
 import {SendOTP} from 'feature/login';
 import {ChatDetail, ChatDetailSetting, MessScreen} from 'feature/mess';
 import {
+  CheckIn,
   CreateLocation,
   CreatePostPickImage,
   CreateSale,
@@ -228,6 +229,13 @@ const RootScreen = () => {
       <Stack.Screen
         name={ROOT_SCREEN.detailTour}
         component={DetailTour}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ROOT_SCREEN.checkIn}
+        component={CheckIn}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}

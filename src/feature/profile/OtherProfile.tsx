@@ -27,7 +27,7 @@ import {$styleTopShadow, borderWidthTiny} from 'utility/assistant';
 import {scale, verticalScale} from 'utility/scale';
 import {IconTabBarProfile, InformationProfile} from './components';
 import {useMyLocations, useMyRequests, useOtherProfile} from './hooks';
-import {ListReviews, ListSales, ListTours} from './screens';
+import {ListCheckIn, ListSales, ListTours} from './screens';
 
 type Props = RouteParams<AppParamsList[ROOT_SCREEN.otherProfile]>;
 
@@ -287,9 +287,7 @@ const OtherProfile = ({
 
   const listReviews = () => {
     if (data) {
-      return (
-        <ListReviews userId={data?.id} account_type={data?.account_type} />
-      );
+      return <ListCheckIn userId={data?.id} accountType={data?.account_type} />;
     }
     return null;
   };
