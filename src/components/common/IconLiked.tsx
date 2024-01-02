@@ -1,19 +1,19 @@
 import {StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React, {useEffect, useRef} from 'react';
-import {Animated, StyleProp, TextStyle, ViewStyle} from 'react-native';
+import {Animated, StyleProp, ViewStyle} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 interface Props {
   onPress(): void;
-  customStyle?: StyleProp<TextStyle>;
   touchableStyle?: StyleProp<ViewStyle>;
+  size?: number;
 }
 
 const AnimatedTouch = Animated.createAnimatedComponent(StyleTouchable);
 
-const IconLiked = ({onPress, customStyle, touchableStyle}: Props) => {
+const IconLiked = ({onPress, touchableStyle, size = 40}: Props) => {
   const theme = useTheme();
   const aim = useRef(new Animated.Value(2)).current;
 
@@ -31,14 +31,10 @@ const IconLiked = ({onPress, customStyle, touchableStyle}: Props) => {
       hitSlop={moderateScale(10)}>
       <AntDesign
         name="heart"
-        style={[$icon, {color: theme.pink}, customStyle]}
+        style={[{color: theme.pink, fontSize: moderateScale(size)}]}
       />
     </AnimatedTouch>
   );
-};
-
-const $icon: TextStyle = {
-  fontSize: moderateScale(40),
 };
 
 export default IconLiked;

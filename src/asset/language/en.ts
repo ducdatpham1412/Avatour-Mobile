@@ -42,6 +42,7 @@ const common = {
   cancelSuggest: 'Cancel suggestion',
   create: 'Create',
   update: 'Update',
+  you: 'You',
 };
 
 const login = {
@@ -467,6 +468,7 @@ const profile = {
   upgradeToShop: 'Upgrade to shop',
   created: 'Date created',
   createTour: 'Create tour',
+  createTourFromThis: 'Create tour from this one',
   createTourSuccess: 'Congratulations on creating a successful tour!',
   wantToShareTour:
     'Want to share the tour you just created with the community?',

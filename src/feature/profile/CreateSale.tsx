@@ -53,6 +53,7 @@ interface Props {
 }
 
 const {width} = Metrics;
+const imgWidth = width * 0.6;
 
 const CreateSale = ({route}: Props) => {
   const {t} = useTranslation();
@@ -295,8 +296,8 @@ const CreateSale = ({route}: Props) => {
         backgroundColor={theme.white}>
         <ScrollCropImages
           images={images}
-          width={width}
-          height={width * ratioImageSale}
+          width={imgWidth}
+          height={imgWidth * ratioImageSale}
           enableRemoveImage={false}
           onPressImage={(_, index) => {
             seeDetailImage({
@@ -304,6 +305,7 @@ const CreateSale = ({route}: Props) => {
               initIndex: index,
             });
           }}
+          containerStyle={$imgView}
         />
         <View style={$body}>
           <TitleAndInput
@@ -381,6 +383,11 @@ const $container: ViewStyle = {
 };
 const $body: ViewStyle = {
   paddingHorizontal: horizontalPadding,
+};
+const $imgView: ViewStyle = {
+  alignSelf: 'center',
+  borderRadius: BORDER_RADIUS.f2,
+  marginTop: verticalScale(8),
 };
 const $headerContainer: ViewStyle = {
   paddingBottom: verticalScale(20),

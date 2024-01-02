@@ -5,10 +5,10 @@ import Authentication from 'utility/authentication';
 import {
   ModalActionSheet,
   ModalAlert,
-  ModalCommentLike,
   ModalDatePicker,
   ModalDateRangePicker,
   ModalInputEdit,
+  ModalLikeComment,
   ModalScanQr,
   ModalTimePicker,
   Toast,
@@ -54,7 +54,7 @@ const AppModal = () => {
       <ModalInputEdit />
       <ModalDateRangePicker />
       <ModalDatePicker />
-      <ModalCommentLike />
+      <ModalLikeComment />
       <ModalScanQr />
       <ModalActionSheet />
       <ModalAlert />

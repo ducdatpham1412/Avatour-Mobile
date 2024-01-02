@@ -1,20 +1,17 @@
 import {Metrics} from 'asset/metrics';
-import {useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
-import {ImageStyle, TextStyle, View, ViewStyle} from 'react-native';
+import {ImageStyle, View, ViewStyle} from 'react-native';
 import Pinchable from 'react-native-pinchable';
-import {verticalScale} from 'react-native-size-matters';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import RNFetchBlob from 'rn-fetch-blob';
 import {isIOS} from 'utility/assistant';
 import {checkSaveImage} from 'utility/permission/permission';
-import {moderateScale, scale} from 'utility/scale';
 import AutoHeightImage from './AutoHeightImage';
 import {StyleTouchable} from './base';
 
 interface PanImageProps {
   uri: string;
+  onPressBackground?: () => void;
 }
 
 const onSaveToLibrary = async (uri: string) => {
@@ -41,30 +38,24 @@ const onSaveToLibrary = async (uri: string) => {
   }
 };
 
-const PanZoomImage = ({uri}: PanImageProps) => {
-  const theme = useTheme();
-
+const PanZoomImage = ({uri, onPressBackground}: PanImageProps) => {
   return (
     <View style={$container}>
-      <Pinchable miminimumZoomScale={0.3}>
-        <AutoHeightImage
-          uri={uri}
-          customStyle={$image}
-          defaultImageSource="image"
-        />
-      </Pinchable>
+      <StyleTouchable
+        style={$background}
+        onPress={onPressBackground}
+        activeOpacity={1}
+      />
 
-      {false && (
-        <StyleTouchable
-          customStyle={[$saveTouch, {backgroundColor: theme.background}]}
-          hitSlop={15}
-          onPress={() => onSaveToLibrary(uri)}>
-          <AntDesign
-            name="arrowdown"
-            style={[$iconSave, {color: theme.black}]}
+      <View style={$imgBox}>
+        <Pinchable miminimumZoomScale={0.1}>
+          <AutoHeightImage
+            uri={uri}
+            customStyle={$image}
+            defaultImageSource="image"
           />
-        </StyleTouchable>
-      )}
+        </Pinchable>
+      </View>
     </View>
   );
 };
@@ -74,18 +65,17 @@ const $container: ViewStyle = {
   height: Metrics.height,
   justifyContent: 'center',
 };
+const $imgBox: ViewStyle = {
+  position: 'absolute',
+  width: '100%',
+};
 const $image: ImageStyle = {
   width: '100%',
 };
-const $saveTouch: ViewStyle = {
+const $background: ViewStyle = {
   position: 'absolute',
-  padding: scale(4),
-  borderRadius: moderateScale(20),
-  right: scale(20),
-  bottom: Metrics.safeBottomPadding + verticalScale(20),
-};
-const $iconSave: TextStyle = {
-  fontSize: moderateScale(16),
+  width: '100%',
+  height: '100%',
 };
 
 export default PanZoomImage;

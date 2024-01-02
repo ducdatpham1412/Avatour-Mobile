@@ -8,6 +8,7 @@ export {
   type UseCreateSaleParams,
 } from './useCreateSale';
 export {default as useCreateTour, type ParamsCreateTour} from './useCreateTour';
+export {default as useLikes} from './useLikes';
 export {default as useMyLocations} from './useMyLocations';
 export {default as useMyRequests} from './useMyRequests';
 export {default as useOtherProfile} from './useOtherProfile';

@@ -5,7 +5,7 @@ import {
   FONT_WEIGHT_MEDIUM,
   ratioImageSale,
 } from 'asset';
-import {ERROR_MESSAGE, STATUS} from 'asset/enum';
+import {ERROR_MESSAGE, REACT, STATUS} from 'asset/enum';
 import {IconPrice} from 'asset/icons';
 import Images from 'asset/img/images';
 import {
@@ -34,7 +34,11 @@ import {useEstimatesAndJoinings, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate, push} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {checkAuthenticated} from 'navigation/screen/AppModal';
-import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
+import {
+  ModalActionSheet,
+  ModalAlert,
+  ModalLikeComment,
+} from 'navigation/screen/modals';
 import React, {ElementRef, ReactNode, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
@@ -53,6 +57,8 @@ import {
   borderWidthTiny,
   calculatePriceDeposit,
   onGoToProfile,
+  onReactPost,
+  seeDetailImage,
 } from 'utility/assistant';
 import {formatMoney, formatddddDDMMYYYY} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
@@ -69,6 +75,7 @@ interface ButtonReactionProps {
   title: I18Normalize;
   titleParams?: Record<string, any>;
   onPress: () => void;
+  onPressTitle?: () => void;
 }
 
 const {width} = Metrics;
@@ -79,6 +86,7 @@ const ButtonReaction = ({
   title,
   titleParams,
   onPress,
+  onPressTitle,
 }: ButtonReactionProps) => {
   const theme = useTheme();
   const renderContent = () => {
@@ -108,7 +116,7 @@ const ButtonReaction = ({
         i18Text={title}
         i18Params={titleParams}
         customStyle={[$textReaction, {color: theme.black}]}
-        onPress={onPress}
+        onPress={onPressTitle}
         numberOfLines={1}
       />
     </View>
@@ -127,9 +135,11 @@ const DetailSale = ({
   const {bottom, paddingBottom} = useSafeArea();
   const {t} = useTranslation();
 
+  const modalLikedRef = useRef<ElementRef<typeof ModalLikeComment>>(null);
+
   const [
     {data, initLoading, loadingJoin, refreshing, loadingDelete},
-    {onReaction, mutate, onJoin, deleteSale},
+    {mutate, onJoin, deleteSale},
   ] = useDetailSale(saleId, {
     revalidateAll: true,
   });
@@ -251,6 +261,15 @@ const DetailSale = ({
     }
   };
 
+  const onReaction = () => {
+    if (data) {
+      onReactPost(data.id, {
+        type: REACT.sale,
+        mutate,
+      });
+    }
+  };
+
   /**
    * Render
    */
@@ -350,6 +369,12 @@ const DetailSale = ({
         <View style={$reactionView}>
           <ButtonReaction
             onPress={onReaction}
+            onPressTitle={() => {
+              modalLikedRef.current?.show({
+                postId: saleId,
+                type: 'sale',
+              });
+            }}
             title={
               data?.total_likes ? 'discovery.numberLike' : 'discovery.like'
             }
@@ -357,12 +382,9 @@ const DetailSale = ({
               value: data?.total_likes,
             }}>
             {data?.is_liked ? (
-              <IconLiked customStyle={$likeIcon} onPress={onReaction} />
+              <IconLiked size={25} onPress={onReaction} />
             ) : (
-              <IconNotLiked
-                customStyle={[$likeIcon, {color: theme.gray_800}]}
-                onPress={onReaction}
-              />
+              <IconNotLiked size={25} onPress={onReaction} />
             )}
           </ButtonReaction>
 
@@ -643,6 +665,14 @@ const DetailSale = ({
           width={width}
           height={width * ratioImageSale}
           enableRemoveImage={false}
+          onPressImage={(_, index) => {
+            if (data?.images) {
+              seeDetailImage({
+                images: data?.images,
+                initIndex: index,
+              });
+            }
+          }}
         />
         {renderInformation()}
         {renderReaction()}
@@ -654,6 +684,8 @@ const DetailSale = ({
         onConfirm={onConfirmJoin}
         loadingJoin={loadingJoin}
       />
+      <ModalLikeComment ref={modalLikedRef} />
+
       {isMySale && (
         <ModalStillHavePeopleJoin ref={modalStillHavePeopleJoin} sale={data} />
       )}
@@ -754,9 +786,6 @@ const $reaction: ViewStyle = {
   borderRadius: 60,
   alignItems: 'center',
   justifyContent: 'center',
-};
-const $likeIcon: TextStyle = {
-  fontSize: moderateScale(25),
 };
 const $textReaction: TextStyle = {
   marginTop: verticalScale(10),

@@ -12,7 +12,6 @@ export {default as ScaleSelectList} from './ScaleSelectList';
 export {default as ScrollCropImages} from './ScrollCropImages';
 export {default as Separator} from './Separator';
 export {default as Stars} from './Stars';
-export {default as StyleTabView} from './StyleTabView';
 export {default as TabView, type TabViewProps} from './TabView';
 export {default as TabViewDynamic} from './TabViewDynamic';
 export {default as TextCountDown} from './TextCountDown';
