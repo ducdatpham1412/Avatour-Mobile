@@ -1,6 +1,6 @@
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import {APP_EVENT, STATUS} from 'asset/enum';
+import {APP_EVENT, REACT, STATUS} from 'asset/enum';
 import {IconTour} from 'asset/icons';
 import Images from 'asset/img/images';
 import {horizontalPadding, safePaddingNotZero} from 'asset/metrics';
@@ -11,16 +11,26 @@ import {
   StyleText,
   StyleTouchable,
 } from 'components/base';
-import {Avatar, IndicatorModal} from 'components/common';
+import {
+  Avatar,
+  IconLiked,
+  IconNotLiked,
+  IndicatorModal,
+} from 'components/common';
 import {emitAppEvent, useAppEvent, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
-import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
+import {
+  ModalActionSheet,
+  ModalAlert,
+  ModalLikeComment,
+} from 'navigation/screen/modals';
 import React, {ElementRef, useRef} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
 import {
+  Gesture,
+  GestureDetector,
   GestureEventPayload,
-  PanGestureHandler,
   PanGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
 import Animated, {
@@ -28,7 +38,6 @@ import Animated, {
   Extrapolation,
   SharedValue,
   interpolate,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -37,6 +46,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   $styleDropShadow,
   onGoToProfile,
+  onReactPost,
   updateStatusLocationInSchedule,
 } from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
@@ -75,20 +85,24 @@ const move = (value: number, params?: Move) => {
 
 export const checkOnEnd = (
   shareValue: SharedValue<number>,
+  saved: SharedValue<number>,
   event: Readonly<GestureEventPayload & PanGestureHandlerEventPayload>,
 ) => {
   'worklet';
   if (shareValue.value < levelModalScheduleHeight.medium) {
     if (event.velocityY < -4800) {
       shareValue.value = move(levelModalScheduleHeight.high);
+      saved.value = levelModalScheduleHeight.high;
       return;
     }
     if (event.velocityY < -1300) {
       shareValue.value = move(levelModalScheduleHeight.medium);
+      saved.value = levelModalScheduleHeight.medium;
       return;
     }
     if (event.velocityY > 1300) {
       shareValue.value = move(levelModalScheduleHeight.low);
+      saved.value = levelModalScheduleHeight.low;
       return;
     }
   }
@@ -96,14 +110,17 @@ export const checkOnEnd = (
   if (shareValue.value >= levelModalScheduleHeight.medium) {
     if (event.velocityY > 4800) {
       shareValue.value = move(levelModalScheduleHeight.low);
+      saved.value = levelModalScheduleHeight.low;
       return;
     }
     if (event.velocityY > 1300) {
       shareValue.value = move(levelModalScheduleHeight.medium);
+      saved.value = levelModalScheduleHeight.medium;
       return;
     }
     if (event.velocityY < -1300) {
       shareValue.value = move(levelModalScheduleHeight.high);
+      saved.value = levelModalScheduleHeight.high;
       return;
     }
   }
@@ -113,6 +130,7 @@ export const checkOnEnd = (
    */
   if (shareValue.value < levelModalScheduleHeight.middleLow) {
     shareValue.value = move(levelModalScheduleHeight.low);
+    saved.value = levelModalScheduleHeight.low;
     return;
   }
   if (
@@ -120,10 +138,12 @@ export const checkOnEnd = (
     shareValue.value <= levelModalScheduleHeight.middleMedium
   ) {
     shareValue.value = move(levelModalScheduleHeight.medium);
+    saved.value = levelModalScheduleHeight.medium;
     return;
   }
   if (shareValue.value > levelModalScheduleHeight.middleMedium) {
     shareValue.value = move(levelModalScheduleHeight.high);
+    saved.value = levelModalScheduleHeight.high;
     return;
   }
 };
@@ -209,6 +229,7 @@ const DetailTour = ({
   );
 
   const searchRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const modalLiked = useRef<ElementRef<typeof ModalLikeComment>>(null);
 
   const [
     {data, loading, loadingDeleteTour, loadingPrivateTour},
@@ -216,8 +237,6 @@ const DetailTour = ({
   ] = useDetailTour(tourId, {
     revalidateAll: true,
   });
-
-  const isMyTour = data?.creator === myId;
 
   useAppEvent(APP_EVENT.suggestLocation, e => {
     mutate(
@@ -239,29 +258,27 @@ const DetailTour = ({
   });
 
   const aim = useSharedValue(levelModalScheduleHeight.high);
+  const savedAim = useSharedValue(levelModalScheduleHeight.high);
   const modalStyle = useAnimatedStyle(() => {
     return {
       height: aim.value,
     };
   });
 
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (_, ctx: CTX) => {
-      ctx.height = aim.value;
-    },
-    onActive: (event, ctx) => {
-      const newHeight = ctx.height - event.translationY;
+  const panGesture = Gesture.Pan()
+    .onUpdate(e => {
+      const newHeight = savedAim.value - e.translationY;
       if (
         newHeight >= levelModalScheduleHeight.low &&
         newHeight <= levelModalScheduleHeight.high
       ) {
         aim.value = newHeight;
       }
-    },
-    onEnd: (event, _) => {
-      checkOnEnd(aim, event);
-    },
-  });
+    })
+    .onEnd(e => {
+      savedAim.value = aim.value;
+      checkOnEnd(aim, savedAim, e);
+    });
 
   const onChangeModalHeight = (value: number) => {
     if (aim.value !== value) {
@@ -272,6 +289,8 @@ const DetailTour = ({
   };
 
   const onPressMore = () => {
+    const isMyTour = data?.creator === myId;
+
     if (isMyTour) {
       ModalActionSheet.show({
         options: [
@@ -326,9 +345,23 @@ const DetailTour = ({
             : null,
         ],
       });
-    } else if (data) {
+      return;
+    }
+
+    if (data) {
       ModalActionSheet.show({
         options: [
+          {
+            title: 'profile.createTourFromThis',
+            onPress: () => {
+              navigate(PROFILE_ROUTE.createTour, {
+                itemTour: {
+                  ...data,
+                  id: 'create-new',
+                },
+              });
+            },
+          },
           {
             title: 'profile.report',
             onPress: () =>
@@ -338,6 +371,15 @@ const DetailTour = ({
               }),
           },
         ],
+      });
+    }
+  };
+
+  const onReactTour = () => {
+    if (data) {
+      onReactPost(data.id, {
+        type: REACT.tour,
+        mutate,
       });
     }
   };
@@ -360,41 +402,55 @@ const DetailTour = ({
       <>
         <Animated.View
           style={[$body, {backgroundColor: theme.background}, modalStyle]}>
-          <PanGestureHandler onGestureEvent={gestureHandler}>
+          <GestureDetector gesture={panGesture}>
             <Animated.View style={[$gesture, {backgroundColor: theme.white}]}>
-              <View style={$avatar}>
-                <StyleTouchable
-                  customStyle={$nameAvatar}
-                  onPress={() => {
-                    if (data) {
-                      onGoToProfile(data?.creator);
-                    }
-                  }}>
-                  <Avatar source={{uri: data?.creator_avatar}} size={25} />
-                  <StyleText
-                    originValue={data?.creator_name}
-                    customStyle={$name}
-                  />
-                </StyleTouchable>
-                <StyleTouchable
-                  onPress={() => {
-                    navigate(PROFILE_ROUTE.createTour, {
-                      itemTour: isMyTour ? data : {...data, id: 'create-new'},
-                    });
-                  }}>
-                  <StyleText
-                    i18Text={isMyTour ? 'common.edit' : 'profile.createTour'}
-                    customStyle={[$textEdit, {color: theme.blue}]}
-                  />
-                </StyleTouchable>
-              </View>
+              <View style={$header}>
+                <View style={$info}>
+                  <StyleTouchable
+                    customStyle={$nameAvatar}
+                    onPress={() => {
+                      if (data) {
+                        onGoToProfile(data?.creator);
+                      }
+                    }}>
+                    <Avatar source={{uri: data?.creator_avatar}} size={25} />
+                    <StyleText
+                      originValue={data?.creator_name}
+                      customStyle={$name}
+                    />
+                  </StyleTouchable>
 
-              <View style={$tourName}>
-                <IconTour size={20} tintColor={theme.black} />
-                <StyleText
-                  originValue={data?.name}
-                  customStyle={$tourNameText}
-                />
+                  <View style={$tourName}>
+                    <IconTour size={20} tintColor={theme.black} />
+                    <StyleText
+                      originValue={data?.name}
+                      customStyle={$tourNameText}
+                    />
+                  </View>
+                </View>
+
+                <View style={$reaction}>
+                  {data?.is_liked ? (
+                    <IconLiked onPress={onReactTour} size={25} />
+                  ) : (
+                    <IconNotLiked onPress={onReactTour} size={25} />
+                  )}
+                  {!!data?.total_likes && (
+                    <StyleText
+                      i18Text="discovery.numberLike"
+                      i18Params={{
+                        value: data?.total_likes ?? 0,
+                      }}
+                      customStyle={$textReaction}
+                      onPress={() =>
+                        modalLiked.current?.show({
+                          postId: data?.id,
+                          type: 'tour',
+                        })
+                      }
+                    />
+                  )}
+                </View>
               </View>
 
               <ToolSearch
@@ -411,7 +467,7 @@ const DetailTour = ({
                 haveBorder={false}
               />
             </Animated.View>
-          </PanGestureHandler>
+          </GestureDetector>
 
           <IndicatorModal />
 
@@ -443,6 +499,8 @@ const DetailTour = ({
         {data?.status === STATUS.draft && (
           <ButtonPublicTour aim={aim} tourId={tourId} />
         )}
+
+        <ModalLikeComment ref={modalLiked} />
 
         <ModalSearchFilter
           ref={searchRef}
@@ -518,11 +576,21 @@ const $gesture: AnimatedStyle<ViewStyle> = {
   width: '100%',
   paddingVertical: verticalScale(12),
 };
-const $avatar: ViewStyle = {
+const $header: ViewStyle = {
+  width: '100%',
   flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
   paddingHorizontal: horizontalPadding,
+};
+const $info: ViewStyle = {
+  flex: 1,
+};
+const $reaction: ViewStyle = {
+  alignItems: 'center',
+};
+const $textReaction: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  textDecorationLine: 'underline',
+  marginTop: verticalScale(6),
 };
 const $nameAvatar: ViewStyle = {
   flexDirection: 'row',
@@ -538,7 +606,6 @@ const $tourName: ViewStyle = {
   marginTop: verticalScale(12),
   flexDirection: 'row',
   alignItems: 'center',
-  paddingHorizontal: horizontalPadding,
 };
 const $tourNameText: TextStyle = {
   fontSize: FONT_SIZE.f1,
@@ -562,9 +629,6 @@ const $iconMore: ViewStyle = {
   right: horizontalPadding,
   padding: moderateScale(5),
   borderRadius: 50,
-};
-const $textEdit: TextStyle = {
-  fontWeight: 'bold',
 };
 const $tabBox: ViewStyle = {
   width: '100%',

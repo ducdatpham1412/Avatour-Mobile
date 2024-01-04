@@ -36,7 +36,7 @@ export const DEFAULT_IMAGE_BACKGROUND =
 
 export const TIMING_BUBBLE_FLY = 40000;
 
-export const SUPPORT_URL = 'https://www.avatour.life/about-us/support';
+export const SUPPORT_URL = 'https://www.avatour.life';
 export const PRIVACY_URL = 'https://www.avatour.life/about-us/policy';
 export const TERMS_URL = 'https://www.avatour.life/about-us/terms';
 export const FEEDBACK_URL =

@@ -12,7 +12,7 @@ import {scale} from 'utility/scale';
 const iconKeys = Object.keys(icons);
 
 const ListSvgIcons = () => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
 
   const renderIcon = useCallback(
     (name: string, Icon: FunctionComponent<icons.IconSvgProps>) => {
@@ -34,7 +34,6 @@ const ListSvgIcons = () => {
       layOut="view"
       customStyle={{
         paddingHorizontal: horizontalPadding,
-        paddingBottom: bottom,
       }}
       headerProps={{
         title: 'Icons' as I18Normalize,
@@ -44,6 +43,7 @@ const ListSvgIcons = () => {
         renderItem={({item}) => renderIcon(item, (icons as any)[item])}
         keyExtractor={item => String(item)}
         numColumns={3}
+        contentContainerStyle={{paddingBottom}}
       />
     </StyleContainer>
   );

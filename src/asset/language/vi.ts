@@ -42,6 +42,7 @@ const common = {
   cancelSuggest: 'Huỷ đề xuất',
   create: 'Tạo',
   update: 'Cập nhật',
+  you: 'Bạn',
 };
 
 const login = {
@@ -444,6 +445,7 @@ const profile = {
   upgradeToShop: 'Chuyển sang tài khoản cửa hàng',
   created: 'Ngày tạo',
   createTour: 'Tạo tour',
+  createTourFromThis: 'Tạo tour mới từ tour này',
   createTourSuccess: 'Chúc mừng bạn tạo tour thành công!',
   createSaleSuccess: 'Tạo đơn mua chung thành công',
   wantToShareTour: 'Bạn muốn chia sẻ tour mình vừa tạo với cộng đồng chứ?',

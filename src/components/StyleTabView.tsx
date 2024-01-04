@@ -43,6 +43,9 @@ interface States {
 
 const {width: screenWidth} = Metrics;
 
+/**
+ * @deprecated
+ */
 class StyleTabView extends Component<TabViewProps, States> {
   panX = new Animated.Value(-(this.props.initIndex || 0) * screenWidth);
 

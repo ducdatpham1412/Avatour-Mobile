@@ -4,11 +4,11 @@ export {
   type TypeShowModalAddLocation,
 } from './ModalAddLocation';
 export {default as ModalAlert} from './ModalAlert';
-export {default as ModalCommentLike} from './ModalCommentLike';
 export {default as ModalCongratulation} from './ModalCongratulation';
 export {default as ModalDatePicker} from './ModalDatePicker';
 export {default as ModalDateRangePicker} from './ModalDateRangePicker';
 export {default as ModalInputEdit} from './ModalInputEdit';
+export {default as ModalLikeComment} from './ModalLikeComment';
 export {default as ModalProfile} from './ModalProfile';
 export {default as ModalScanQr} from './ModalScanQr';
 export {default as ModalTimePicker, type TimeValue} from './ModalTimePicker';

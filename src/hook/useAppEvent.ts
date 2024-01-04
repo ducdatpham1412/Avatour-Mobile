@@ -6,29 +6,17 @@ import {NativeAppEventEmitter} from 'react-native';
 const useAppEvent = <T extends APP_EVENT>(
   name: T,
   callBack?: (
-    data: T extends keyof AppEventList ? AppEventList[T] : undefined,
+    e: T extends keyof AppEventList ? AppEventList[T] : undefined,
   ) => void,
 ) => {
   useEffect(() => {
-    const appEvent = NativeAppEventEmitter.addListener(name, data =>
-      callBack?.(data),
+    const appEvent = NativeAppEventEmitter.addListener(name, e =>
+      callBack?.(e),
     );
     return () => {
       appEvent.remove();
     };
-  }, []);
-
-  const emit = (
-    params: T extends keyof AppEventList ? AppEventList[T] : undefined,
-  ) => {
-    if (params) {
-      NativeAppEventEmitter.emit(name, params);
-    }
-  };
-
-  return {
-    emit,
-  };
+  }, [name]);
 };
 
 export const emitAppEvent = <T extends APP_EVENT>(

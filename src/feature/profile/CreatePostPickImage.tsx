@@ -7,7 +7,6 @@ import {
   ratioImageSale,
 } from 'asset/standardValue';
 import {ScrollCropImages} from 'components';
-import StyleTabView from 'components/StyleTabView';
 import {StyleText, StyleTouchable} from 'components/base';
 import ModalPickImage from 'feature/mess/components/ModalPickImage';
 import {useLoading, useTheme} from 'hook';
@@ -40,7 +39,6 @@ const CreatePostPickImage = ({
   const {loading, setLoading} = useLoading();
   const {loading: loadingInit, setLoading: setLoadingInit} = useLoading(true);
 
-  const tabPickRef = useRef<StyleTabView>(null);
   const modalPickImgRef = useRef<ElementRef<typeof ModalPickImage>>(null);
   const cropperParams = useRef<Array<{url: string; value: ZoomImageParams}>>(
     [],
@@ -53,7 +51,7 @@ const CreatePostPickImage = ({
   const [images, setImages] = useState<LibraryImage[]>([]);
   const [imageFocusing, setImageFocusing] = useState('');
   const [video] = useState('');
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex] = useState(0);
   const [indexImageFocus, setIndexImageFocus] = useState(0);
 
   useEffect(() => {
@@ -97,10 +95,6 @@ const CreatePostPickImage = ({
   };
 
   const onChooseFromCamera = async () => {
-    if (tabIndex === 1) {
-      tabPickRef.current?.navigateToIndex(0);
-    }
-
     if (images.length >= maxNumberImages.current) {
       ToolTip.show({
         content: t('alert.onlyChooseMaxImage', {
@@ -304,7 +298,9 @@ const CreatePostPickImage = ({
             <StyleTouchable
               onPress={() => {
                 if (indexImageFocus > 0) {
-                  setIndexImageFocus(pre => pre - 1);
+                  const newIndex = indexImageFocus - 1;
+                  setIndexImageFocus(newIndex);
+                  setImageFocusing(images[newIndex].url);
                 }
               }}>
               <AntDesign
@@ -319,7 +315,9 @@ const CreatePostPickImage = ({
             <StyleTouchable
               onPress={() => {
                 if (indexImageFocus < images.length - 1) {
-                  setIndexImageFocus(pre => pre + 1);
+                  const newIndex = indexImageFocus + 1;
+                  setIndexImageFocus(newIndex);
+                  setImageFocusing(images[newIndex].url);
                 }
               }}>
               <AntDesign
@@ -377,24 +375,15 @@ const CreatePostPickImage = ({
       {renderImages()}
       {renderTool()}
 
-      <StyleTabView
-        ref={tabPickRef}
-        containerStyle={$tabView}
-        onChangeTabIndex={index => {
-          setTabIndex(index);
-        }}
-        enableScroll={false}>
-        <ModalPickImage
-          ref={modalPickImgRef}
-          images={images}
-          onChooseImage={onChooseImage}
-          numberColumns={4}
-          containerStyle={$modalPickImage}
-          urlFocusing={imageFocusing}
-          showContent={!loadingInit}
-        />
-        <View />
-      </StyleTabView>
+      <ModalPickImage
+        ref={modalPickImgRef}
+        images={images}
+        onChooseImage={onChooseImage}
+        numberColumns={4}
+        containerStyle={[$modalPickImage, {backgroundColor: theme.black}]}
+        urlFocusing={imageFocusing}
+        showContent={!loadingInit}
+      />
     </View>
   );
 };
@@ -446,9 +435,6 @@ const $touchCamera: ViewStyle = {
 };
 const $iconCamera: TextStyle = {
   fontSize: moderateScale(16.5),
-};
-const $tabView: ViewStyle = {
-  flex: 1,
 };
 const $modalPickImage: ViewStyle = {
   height: undefined,

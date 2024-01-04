@@ -1,17 +1,21 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import {apiLikePost, apiUnLikePost} from 'api/profile';
+import {updateResource} from 'app-redux';
 import Store from 'app-redux/store';
 import {
+  APP_EVENT,
   FEELING,
   GENDER_TYPE,
   JOIN_STATUS,
   LANGUAGE_TYPE,
+  REACT,
   TYPE_COLOR,
 } from 'asset/enum';
 import Images from 'asset/img/images';
 import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
 import {TypeItemProgress} from 'components';
+import {emitAppEvent} from 'hook';
 import {push, showSwipeImages} from 'navigation/NavigationService';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {checkAuthenticated} from 'navigation/screen/AppModal';
@@ -19,6 +23,7 @@ import {ModalAlert, Toast} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction} from 'react';
 import {Platform, ViewStyle} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
+import {KeyedMutator} from 'swr';
 import {I18Normalize} from './I18Next';
 import {impactLight} from './haptic';
 
@@ -245,15 +250,17 @@ export const calculateTotalJoins = (group: TypeGroupJoin) => {
 
 type TypeReactPost<T> = {
   type: number;
-  setList: Dispatch<SetStateAction<T[]>>;
+  setList?: Dispatch<SetStateAction<T[]>>;
+  mutate?: KeyedMutator<T>;
 };
 
 export const onReactPost = <T extends TypeGroupBuying | Tour | TourDetail>(
   postId: number,
-  {type, setList}: TypeReactPost<T>,
+  {type, setList, mutate}: TypeReactPost<T>,
 ) => {
   const onAuthenticated = async () => {
     let currentData: T[] = [];
+    let currentObject: T = {} as T;
     let currentIsLiked: boolean | undefined;
 
     let resolve: any;
@@ -262,7 +269,7 @@ export const onReactPost = <T extends TypeGroupBuying | Tour | TourDetail>(
     });
 
     try {
-      setList(pre => {
+      setList?.(pre => {
         currentData = copyObject(pre);
         return pre.map(item => {
           if (item?.id !== postId) {
@@ -278,6 +285,24 @@ export const onReactPost = <T extends TypeGroupBuying | Tour | TourDetail>(
         });
       });
 
+      await mutate?.(
+        pre => {
+          if (pre) {
+            currentObject = copyObject(pre);
+            currentIsLiked = pre.is_liked;
+            resolve?.('');
+            return {
+              ...pre,
+              is_liked: !currentIsLiked,
+              total_likes: pre.total_likes + (currentIsLiked ? -1 : 1),
+            };
+          }
+        },
+        {
+          revalidate: false,
+        },
+      );
+
       await promise;
 
       if (!currentIsLiked) {
@@ -292,11 +317,44 @@ export const onReactPost = <T extends TypeGroupBuying | Tour | TourDetail>(
           reactedId: postId,
         });
       }
+
+      if (type === REACT.tour) {
+        const favoriteTours =
+          Store.getState().logicSlice.resource.favorite_tours;
+        const findTour = favoriteTours.find(tour => tour.id === postId);
+        if (findTour) {
+          updateResource({
+            favorite_tours: favoriteTours.map(tour => {
+              if (tour.id !== postId) {
+                return tour;
+              }
+              return {
+                ...tour,
+                is_liked: !currentIsLiked,
+                total_likes: currentIsLiked
+                  ? tour.total_likes - 1
+                  : tour.total_likes + 1,
+              };
+            }),
+          });
+        }
+
+        emitAppEvent(APP_EVENT.reactTour, {
+          tourId: postId,
+          type: currentIsLiked ? 'dislike' : 'like',
+        });
+      } else if (type === REACT.sale) {
+        emitAppEvent(APP_EVENT.reactSale, {
+          saleId: postId,
+          type: currentIsLiked ? 'dislike' : 'like',
+        });
+      }
     } catch (err) {
       ModalAlert.error({
         content: err,
       });
-      setList(currentData);
+      setList?.(currentData);
+      mutate?.(currentObject, {revalidate: false});
     }
   };
 

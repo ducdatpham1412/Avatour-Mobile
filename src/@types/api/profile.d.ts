@@ -121,3 +121,16 @@ type GetCheckInParams = {
   user_id: number;
   type: 'check-in' | 'my-check-in';
 };
+
+type TypeUserLike = {
+  id: number;
+  created: string;
+  creator: {
+    id: number;
+    name: string;
+    avatar: string;
+    description: string;
+    relationship: number;
+  };
+  status: number;
+};

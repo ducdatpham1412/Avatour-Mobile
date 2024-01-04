@@ -1,4 +1,5 @@
 import {apiRequestOTP} from 'api/authentication';
+import {BORDER_RADIUS} from 'asset';
 import {TYPE_OTP} from 'asset/enum';
 import Images from 'asset/img/images';
 import {
@@ -13,8 +14,8 @@ import {AppParamsList} from 'navigation/config';
 import {LOGIN_ROUTE} from 'navigation/config/routes';
 import {ModalAlert} from 'navigation/screen/modals';
 import React from 'react';
-import {View} from 'react-native';
-import {ScaledSheet} from 'react-native-size-matters';
+import {ImageStyle, View, ViewStyle} from 'react-native';
+import {scale, verticalScale} from 'utility/scale';
 
 const ConfirmOpenAccount = ({
   route,
@@ -46,7 +47,7 @@ const ConfirmOpenAccount = ({
 
   return (
     <StyleContainer
-      customStyle={styles.container}
+      customStyle={$container}
       headerProps={{
         title: 'setting.securityAndLogin.lockAccount',
       }}
@@ -54,16 +55,16 @@ const ConfirmOpenAccount = ({
       <StyleIcon
         source={Images.images.successful}
         size={100}
-        customStyle={styles.iconAlert}
+        customStyle={$iconAlert}
       />
 
-      <View style={[styles.alertView, {backgroundColor: theme.background}]}>
+      <View style={[$alertView, {backgroundColor: theme.background}]}>
         <StyleText i18Text="login.yourAccountIsBeingLock" mode="html" />
       </View>
 
       <StyleButton
         title="common.continue"
-        containerStyle={styles.buttonDelete}
+        containerStyle={$btnDelete}
         onPress={onOpenAccount}
         isLoading={loading}
       />
@@ -71,26 +72,21 @@ const ConfirmOpenAccount = ({
   );
 };
 
-const styles = ScaledSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  alertView: {
-    paddingHorizontal: '10@s',
-    paddingVertical: '30@vs',
-    borderRadius: '14@s',
-    marginTop: '40@vs',
-  },
-  textAlert: {
-    fontSize: '14@ms',
-  },
-  iconAlert: {
-    marginTop: '30@vs',
-  },
-  buttonDelete: {
-    marginTop: '60@vs',
-    paddingHorizontal: '40@s',
-  },
-});
+const $container: ViewStyle = {
+  alignItems: 'center',
+};
+const $alertView: ViewStyle = {
+  paddingHorizontal: scale(12),
+  paddingVertical: verticalScale(28),
+  borderRadius: BORDER_RADIUS.f3,
+  marginTop: verticalScale(40),
+};
+const $iconAlert: ImageStyle = {
+  marginTop: verticalScale(32),
+};
+const $btnDelete: ViewStyle = {
+  marginTop: verticalScale(60),
+  paddingHorizontal: scale(40),
+};
 
 export default ConfirmOpenAccount;

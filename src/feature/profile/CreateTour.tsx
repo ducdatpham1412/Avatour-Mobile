@@ -9,12 +9,13 @@ import {
 import {AppModalize, MapTour, TabView} from 'components';
 import {StyleButton, StyleText, StyleTouchable} from 'components/base';
 import {ButtonX, IndicatorModal, InputBox} from 'components/common';
-import {CTX, checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
+import {checkOnEnd, levelModalScheduleHeight} from 'feature/discovery';
 import {ModalSearchFilter, ToolSearch} from 'feature/discovery/components';
 import {DayScheduleCreateTour} from 'feature/discovery/screens';
 import {emitAppEvent, useAppEvent, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, PROFILE_ROUTE} from 'navigation/config';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {
   ModalAddLocation,
   ModalAlert,
@@ -30,13 +31,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import isEqual from 'react-fast-compare';
 import {ActivityIndicator, TextStyle, View, ViewStyle} from 'react-native';
-import {PanGestureHandler} from 'react-native-gesture-handler';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   AnimatedStyle,
   Extrapolation,
   interpolate,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -50,10 +51,8 @@ import {
 import {impactLight, impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {defaultSearchParams} from 'utility/staticData';
-import {ParamsCreateTour, useCreateTour} from './hooks';
 import {checkStatusSchedule} from 'utility/validate';
-import isEqual from 'react-fast-compare';
-import {checkAuthenticated} from 'navigation/screen/AppModal';
+import {ParamsCreateTour, useCreateTour} from './hooks';
 
 type TypeContext = [
   {
@@ -122,6 +121,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
   const isCreateNew = useRef(tourId === 'create-new');
 
   const aim = useSharedValue(levelModalScheduleHeight.medium);
+  const savedAim = useSharedValue(levelModalScheduleHeight.medium);
 
   const modalStyle = useAnimatedStyle(() => ({
     height: aim.value,
@@ -171,23 +171,20 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
     };
   });
 
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (_, ctx: CTX) => {
-      ctx.height = aim.value;
-    },
-    onActive: (event, ctx) => {
-      const newHeight = ctx.height - event.translationY;
+  const panGesture = Gesture.Pan()
+    .onUpdate(e => {
+      const newHeight = savedAim.value - e.translationY;
       if (
         newHeight >= levelModalScheduleHeight.low &&
         newHeight <= levelModalScheduleHeight.high
       ) {
         aim.value = newHeight;
       }
-    },
-    onEnd: event => {
-      checkOnEnd(aim, event);
-    },
-  });
+    })
+    .onEnd(e => {
+      savedAim.value = aim.value;
+      checkOnEnd(aim, savedAim, e);
+    });
 
   const isLoading = loadingCreateTour || loadingEditTour;
 
@@ -387,7 +384,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
 
       <Animated.View
         style={[$body, {backgroundColor: theme.background}, modalStyle]}>
-        <PanGestureHandler onGestureEvent={gestureHandler}>
+        <GestureDetector gesture={panGesture}>
           <Animated.View style={[$gesture, {backgroundColor: theme.white}]}>
             <IndicatorModal />
 
@@ -420,7 +417,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
               haveBorder={false}
             />
           </Animated.View>
-        </PanGestureHandler>
+        </GestureDetector>
 
         <View style={$listView}>
           <TabView
