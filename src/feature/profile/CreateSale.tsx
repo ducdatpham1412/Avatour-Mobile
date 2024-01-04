@@ -362,7 +362,7 @@ const CreateSale = ({route}: Props) => {
               source={Images.images.creating}
               autoPlay
               loop
-              style={{width: 300, height: 300}}
+              style={$iconCreate}
             />
           }
           withMessage
@@ -456,6 +456,10 @@ const $button: ViewStyle = {
 const $postBox: ViewStyle = {
   width: '100%',
   alignItems: 'center',
+};
+const $iconCreate: ViewStyle = {
+  width: scale(300),
+  height: scale(300),
 };
 
 export default CreateSale;

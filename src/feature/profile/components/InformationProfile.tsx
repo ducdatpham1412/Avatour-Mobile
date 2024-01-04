@@ -24,7 +24,7 @@ import {seeDetailImage} from 'utility/assistant';
 import Authentication from 'utility/authentication';
 import {formatHours, formatLocaleNumber, formatMoney} from 'utility/format';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
-import {useOtherProfile} from '../hooks';
+import {CallBackCheckIn, useOtherProfile} from '../hooks';
 
 interface Props {
   profile: TypeGetProfileResponse;
@@ -134,6 +134,13 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
             <Entypo name="plus" style={[$iconPlus, {color: theme.white}]} />
           }
           onPress={() => {
+            const curRoute = getCurrentRoute();
+            CallBackCheckIn.set(() => {
+              navigate(curRoute.name, {
+                key: curRoute.key,
+                ...curRoute.params,
+              });
+            });
             navigate(PROFILE_ROUTE.createPostPickImg, {
               mode: 'check-in',
               user: {
@@ -141,6 +148,7 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
                 name: profile.name,
                 avatar: profile.avatar,
               },
+              joinId: null,
             });
           }}
         />
@@ -446,6 +454,7 @@ const InformationModeExp = () => {
             Authentication.open(() => {
               navigate(curRoute.name, {
                 key: curRoute.key,
+                ...curRoute.params,
               });
             });
           }}

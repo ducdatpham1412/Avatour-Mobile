@@ -15,6 +15,18 @@ type CheckInResponse = {
   id: number;
 };
 
+let callBack: (() => void) | undefined;
+
+export const CallBackCheckIn = {
+  set: (v: typeof callBack) => {
+    callBack = v;
+  },
+  call: () => {
+    callBack?.();
+    callBack = undefined;
+  },
+};
+
 const useCheckIn = (type: GetCheckInParams['type'], userId?: number) => {
   const [
     {data, loading, refreshing, loadingMore},

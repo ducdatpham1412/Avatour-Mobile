@@ -57,6 +57,7 @@ export type AppParamsList = {
     | {
         mode: 'check-in';
         user: UserCheckIn;
+        joinId: number | null;
       }
     | {
         mode: 'sale';
@@ -165,6 +166,7 @@ export type AppParamsList = {
     itemNew?: {
       user: UserCheckIn;
       images: string[];
+      joinId: number | null;
     };
   };
 };
@@ -198,6 +200,10 @@ export type AppEventList = {
   [APP_EVENT.suggestLocation]: {
     event: 'suggest' | 'delete-suggest';
     locationId: number;
+  };
+  [APP_EVENT.checkInSuccess]: {
+    userId: number;
+    joinId: number | null;
   };
 };
 

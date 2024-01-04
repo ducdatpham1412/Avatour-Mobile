@@ -222,6 +222,7 @@ export enum JOIN_STATUS {
   overtime = 3,
   consumerConfirmed = 4,
   supplierConfirmBought = 5,
+  checkedIn = 8,
 }
 
 export enum FONT_FAMILY {
@@ -306,6 +307,7 @@ export enum APP_EVENT {
   editTour = 'edit-tour',
   suggestLocation = 'suggest-location',
   refreshNotification = 'refresh-notification',
+  checkInSuccess = 'check-in-success',
 }
 
 export enum TYPE_AUTH_REQUEST {

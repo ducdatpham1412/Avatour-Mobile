@@ -13,14 +13,23 @@ import {
 import {Avatar, ButtonBottom} from 'components/common';
 import dayjs from 'dayjs';
 import {useSaleJoins} from 'feature/discovery/hooks';
+import {CallBackCheckIn} from 'feature/profile/hooks';
 import {
   emitAppEvent,
+  useAppEvent,
   useEstimatesAndJoinings,
   useSafeArea,
   useTheme,
 } from 'hook';
-import {goBack, navigate, push, replace} from 'navigation/NavigationService';
-import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
+import LottieView from 'lottie-react-native';
+import {
+  getCurrentRoute,
+  goBack,
+  navigate,
+  push,
+  replace,
+} from 'navigation/NavigationService';
+import {AppParamsList, PROFILE_ROUTE, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {ElementRef, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -31,6 +40,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import {KeyedMutator} from 'swr';
 import {I18Normalize} from 'utility/I18Next';
 import {takePriceRange} from 'utility/assistant';
 import {
@@ -57,6 +67,31 @@ interface ButtonConfirmArrivedProps {
 interface ButtonConfirmBoughtProps {
   estimate: TypeJoinEstimate;
 }
+
+interface BannerCheckInProps {
+  sale: TypeGroupBuying;
+  join: TypeJoinEstimate;
+  mutate: KeyedMutator<TypeJoinEstimate>;
+}
+
+const goToCheckIn = (sale: TypeGroupBuying, join: TypeJoinEstimate) => {
+  const curRoute = getCurrentRoute();
+  CallBackCheckIn.set(() => {
+    navigate(curRoute.name, {
+      key: curRoute.key,
+      ...curRoute.params,
+    });
+  });
+  navigate(PROFILE_ROUTE.createPostPickImg, {
+    mode: 'check-in',
+    user: {
+      id: sale?.creator,
+      name: sale?.creator_name,
+      avatar: sale?.creator_avatar,
+    },
+    joinId: join.id,
+  });
+};
 
 const CountDown = ({estimate}: CountDownProps) => {
   const theme = useTheme();
@@ -336,6 +371,53 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
   return null;
 };
 
+const BannerCheckIn = ({sale, join, mutate}: BannerCheckInProps) => {
+  const {t} = useTranslation();
+
+  useAppEvent(APP_EVENT.checkInSuccess, e => {
+    if (e.joinId === join.id) {
+      mutate(
+        pre => {
+          if (pre) {
+            return {
+              ...pre,
+              status: JOIN_STATUS.checkedIn,
+            };
+          }
+        },
+        {revalidate: false},
+      );
+    }
+  });
+
+  return (
+    <>
+      <LottieView
+        source={Images.images.checkIn}
+        autoPlay
+        loop
+        style={$iconCheckIn}
+      />
+      <StyleText style={$textCheckIn}>
+        <StyleText
+          i18Text="profile.goToCheckIn"
+          customStyle={[
+            $textCheckIn,
+            {textDecorationLine: 'underline', fontWeight: 'bold'},
+          ]}
+          onPress={() => {
+            goToCheckIn(sale, join);
+          }}
+        />
+        <StyleText
+          originValue={` ${t('profile.toSaveTheBestMoments')}`}
+          customStyle={$textCheckIn}
+        />
+      </StyleText>
+    </>
+  );
+};
+
 const DetailMeJoin = ({
   route: {params},
 }: RouteParams<AppParamsList[ROOT_SCREEN.detailMeJoin]>) => {
@@ -365,6 +447,9 @@ const DetailMeJoin = ({
     data?.status === JOIN_STATUS.active ||
     data?.status === JOIN_STATUS.adminConfirm;
   const isMySale = data?.sale?.creator === myId;
+  const canCheckIn =
+    data?.status === JOIN_STATUS.supplierConfirmBought &&
+    dayjs().diff(data?.time_will_buy, 'minutes') < 3 * 24 * 60 - 10; //10 minutes is time user do actions like select images and check-in
 
   /**
    * Functions
@@ -531,19 +616,42 @@ const DetailMeJoin = ({
       );
     }
 
-    if (data?.status === JOIN_STATUS.supplierConfirmBought) {
+    if (
+      data?.status === JOIN_STATUS.supplierConfirmBought ||
+      data?.status === JOIN_STATUS.checkedIn
+    ) {
       return (
-        <StyleText
-          i18Text="profile.joinedSuccess"
-          customStyle={[
-            $textAlert,
-            {
-              marginTop: verticalScale(12),
-              color: theme.green,
-              fontWeight: FONT_WEIGHT_MEDIUM,
-            },
-          ]}
-        />
+        <>
+          <StyleText
+            i18Text="profile.joinedSuccess"
+            customStyle={[
+              $textAlert,
+              {
+                marginTop: verticalScale(12),
+                color: theme.green,
+                fontWeight: FONT_WEIGHT_MEDIUM,
+              },
+            ]}
+          />
+          {canCheckIn && !!sale && (
+            <>
+              <BannerCheckIn sale={sale} join={data} mutate={mutate} />
+            </>
+          )}
+          {data?.status === JOIN_STATUS.checkedIn && (
+            <StyleText
+              i18Text="profile.checkIn"
+              customStyle={[
+                $textAlert,
+                {
+                  marginTop: verticalScale(4),
+                  color: theme.green,
+                  fontWeight: FONT_WEIGHT_MEDIUM,
+                },
+              ]}
+            />
+          )}
+        </>
       );
     }
 
@@ -762,6 +870,7 @@ const DetailMeJoin = ({
         JOIN_STATUS.overtime,
         JOIN_STATUS.consumerConfirmed,
         JOIN_STATUS.supplierConfirmBought,
+        JOIN_STATUS.checkedIn,
       ].includes(data.status)
     ) {
       return (
@@ -1087,7 +1196,7 @@ const DetailMeJoin = ({
   };
 
   const renderBottomComponent = () => {
-    if (loading || !data) {
+    if (loading || !data || !sale) {
       return null;
     }
 
@@ -1171,6 +1280,17 @@ const DetailMeJoin = ({
         <ButtonConfirmArrived
           estimate={data}
           isGoFromScan={mode === 'go-from-scan'}
+        />
+      );
+    }
+
+    if (canCheckIn) {
+      return (
+        <ButtonBottom
+          action={{
+            title: 'profile.checkIn',
+            onPress: () => goToCheckIn(sale, data),
+          }}
         />
       );
     }
@@ -1306,6 +1426,16 @@ const $amountAvatarMember: ViewStyle = {
 };
 const $textNormal: TextStyle = {
   fontWeight: 'normal',
+};
+const $iconCheckIn: ViewStyle = {
+  width: scale(200),
+  height: scale(200),
+  alignSelf: 'center',
+};
+const $textCheckIn: TextStyle = {
+  fontSize: FONT_SIZE.f3,
+  textAlign: 'center',
+  alignSelf: 'center',
 };
 
 export default DetailMeJoin;

@@ -435,6 +435,11 @@ export const renderJoinStatus = (
         text: 'profile.joinedSuccess',
         color: theme.green,
       };
+    case JOIN_STATUS.checkedIn:
+      return {
+        text: 'profile.joinedSuccess',
+        color: theme.green,
+      };
     default:
       return {
         text: 'common.null',
@@ -642,7 +647,9 @@ export const detectOrderProgress = ({
   const isOvertime = currentStatus === JOIN_STATUS.overtime;
   const isRejected = currentStatus === JOIN_STATUS.supplierRejected;
   const isUserConfirmed = currentStatus === JOIN_STATUS.consumerConfirmed;
-  const isConfirmedBought = currentStatus === JOIN_STATUS.supplierConfirmBought;
+  const isConfirmedBought =
+    currentStatus === JOIN_STATUS.supplierConfirmBought ||
+    currentStatus === JOIN_STATUS.checkedIn;
 
   let progress: TypeItemProgress[] = [];
 
@@ -709,6 +716,7 @@ export const detectOrderProgress = ({
      overtime              -> 1
      consumerConfirmed      -> 2
      supplierConfirmBought  -> 2
+     checked-in            -> 2
      */
 
   let indexFocusing = 0;

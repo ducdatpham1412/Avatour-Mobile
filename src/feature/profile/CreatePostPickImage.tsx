@@ -190,6 +190,7 @@ const CreatePostPickImage = ({
             itemNew: {
               images: listImages,
               user: route.params.user,
+              joinId: route.params.joinId,
             },
           });
         }

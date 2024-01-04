@@ -97,6 +97,7 @@ const Images = {
     loadingTravel: require('./img_loading_travel.json'),
     congratulation: require('./img_congratulation.json'),
     creating: require('./img_creating.json'),
+    checkIn: require('./img_check_in.json'),
   },
 };
 

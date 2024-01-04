@@ -1,4 +1,4 @@
-import {ACCOUNT} from 'asset/enum';
+import {ACCOUNT, APP_EVENT} from 'asset/enum';
 import {
   horizontalPadding,
   safePaddingNotZero,
@@ -6,7 +6,7 @@ import {
 } from 'asset/metrics';
 import {ItemCheckIn} from 'components';
 import {StyleList} from 'components/base';
-import {useSafeArea} from 'hook';
+import {useAppEvent, useSafeArea} from 'hook';
 import React, {useMemo} from 'react';
 import {ViewStyle} from 'react-native';
 import {useCheckIn} from '../hooks';
@@ -38,6 +38,12 @@ const ListCheckIn = ({userId, accountType}: Props) => {
       }, [] as TypeCheckIn[]),
     [data],
   );
+
+  useAppEvent(APP_EVENT.checkInSuccess, e => {
+    if (e.userId === userId) {
+      onRefresh();
+    }
+  });
 
   return (
     <StyleList
