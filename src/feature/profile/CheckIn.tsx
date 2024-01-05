@@ -4,7 +4,7 @@ import {
   FONT_WEIGHT_MEDIUM,
   ratioImageCheckIn,
 } from 'asset';
-import {FEELING} from 'asset/enum';
+import {APP_EVENT, FEELING} from 'asset/enum';
 import Images from 'asset/img/images';
 import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
 import {
@@ -13,11 +13,10 @@ import {
   ScrollCropImages,
   Stars,
 } from 'components';
-import {AppInput, StyleContainer, StyleIcon, StyleText} from 'components/base';
+import {StyleContainer, StyleIcon, StyleText} from 'components/base';
 import {Avatar} from 'components/common';
-import {useTheme} from 'hook';
+import {emitAppEvent, useTheme} from 'hook';
 import LottieView from 'lottie-react-native';
-import {navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {memo, useRef, useState} from 'react';
@@ -27,7 +26,8 @@ import {I18Normalize} from 'utility/I18Next';
 import {seeDetailImage} from 'utility/assistant';
 import {impactMedium} from 'utility/haptic';
 import {scale, verticalScale} from 'utility/scale';
-import {useCheckIn} from './hooks';
+import {TitleAndInput} from './components';
+import {CallBackCheckIn, useCheckIn} from './hooks';
 
 const {width} = Metrics;
 const imgWidth = width * 0.6;
@@ -98,14 +98,13 @@ const CheckIn = ({route}: RouteParams<AppParamsList[ROOT_SCREEN.checkIn]>) => {
           stars: stars || undefined,
         });
         await mutate();
+        emitAppEvent(APP_EVENT.checkInSuccess, {
+          userId: itemNew.user.id,
+          joinId: itemNew.joinId,
+        });
         ModalAlert.success({
           i18Content: 'profile.post.checkInSuccess',
-          onClose: () =>
-            // TODO: Check crash here
-            navigate(ROOT_SCREEN.otherProfile, {
-              id: itemNew.user.id,
-              tab: 'check-in',
-            }),
+          onClose: () => CallBackCheckIn.call(),
         });
       } catch (err) {
         ModalAlert.error({
@@ -133,16 +132,20 @@ const CheckIn = ({route}: RouteParams<AppParamsList[ROOT_SCREEN.checkIn]>) => {
         scrollEnabled>
         {!!itemNew?.images.length && <ListImages images={itemNew.images} />}
 
-        <AppInput
-          placeholder={t('common.writeSomething')}
-          style={[$input, {backgroundColor: theme.background}]}
-          multiline
-          onChangeText={v => {
-            content.current = v;
-            if (disable !== !v) {
-              setDisable(!v);
-            }
+        <TitleAndInput
+          title="common.writeSomething"
+          textInputProps={{
+            placeholder: t('common.yourFeeling'),
+            style: [$input, {backgroundColor: theme.background}],
+            multiline: true,
+            onChangeText: v => {
+              content.current = v;
+              if (disable !== !v) {
+                setDisable(!v);
+              }
+            },
           }}
+          containerStyle={$inputBox}
         />
 
         <View style={$stars}>
@@ -264,13 +267,16 @@ const $starsBox: ViewStyle = {
 const $reaction: ViewStyle = {
   paddingHorizontal: scale(8),
 };
+const $inputBox: ViewStyle = {
+  marginTop: verticalMargin,
+};
 const $input: TextStyle = {
   paddingTop: verticalScale(12),
   paddingBottom: verticalScale(12),
   paddingHorizontal: horizontalPadding,
-  marginTop: verticalMargin,
   borderRadius: BORDER_RADIUS.f2,
   height: verticalScale(80),
+  borderWidth: 0,
 };
 const $scrollCrop: ViewStyle = {
   borderRadius: BORDER_RADIUS.f2,
