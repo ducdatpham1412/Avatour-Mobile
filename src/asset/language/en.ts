@@ -150,7 +150,7 @@ const discovery = {
   deposit: 'Deposit',
   allDeposited: 'Total deposited',
   numberJoins: '{{value}} joins',
-  numberJoinsNow: '{{value}} joins currently',
+  numberJoinsNow: 'There are currently {{value}} joins in this group',
   seeMembers: 'View members',
   manageJoins: 'Orders management',
   whenYouComeGroupHave: 'When you join, this group will increase to 3 joins',

@@ -104,17 +104,14 @@ const GoToDeposit = ({
             contentStyle: {color: theme.red},
           },
           <>
-            <StyleText
-              i18Text="discovery.transactionContent"
-              customStyle={$textNotifyContent}>
-              <StyleText originValue=":" customStyle={$textNotifyContent} />
+            <StyleText i18Text="discovery.transactionContent">
+              <StyleText originValue=":" />
             </StyleText>
             <View
               style={[
                 $transactionContent,
                 {
-                  backgroundColor: theme.background,
-                  borderColor: theme.gray_300,
+                  backgroundColor: theme.white,
                 },
               ]}>
               <StyleText
@@ -136,7 +133,7 @@ const GoToDeposit = ({
             />
           </View>,
         ]}
-        containerStyle={$informationView}
+        containerStyle={[$informationView, {backgroundColor: theme.gray_100}]}
       />
 
       <View style={[$textEndView, {borderColor: theme.gray_600}]}>
@@ -157,11 +154,11 @@ const $textHash: TextStyle = {
   marginTop: verticalScale(4),
 };
 const $informationView: ViewStyle = {
-  marginTop: verticalScale(8),
+  marginTop: verticalMargin,
 };
 const $textEndView: ViewStyle = {
   width: '100%',
-  marginTop: verticalScale(8),
+  marginTop: verticalMargin,
   paddingHorizontal: scale(8),
   paddingVertical: verticalScale(4),
   borderWidth: borderWidthTiny,
@@ -181,7 +178,6 @@ const $transactionContent: ViewStyle = {
   paddingHorizontal: scale(8),
   paddingVertical: verticalScale(12),
   borderRadius: BORDER_RADIUS.f3,
-  borderWidth: borderWidthTiny,
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -189,14 +185,12 @@ const $transactionContent: ViewStyle = {
 const $textContent: TextStyle = {
   flex: 1,
   paddingRight: scale(4),
+  fontWeight: 'bold',
 };
 const $countdownView: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
   justifyContent: 'space-between',
-};
-const $textNotifyContent: TextStyle = {
-  fontWeight: FONT_WEIGHT_MEDIUM,
 };
 const $btnHome: ViewStyle = {
   width: '100%',

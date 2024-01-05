@@ -42,7 +42,11 @@ import {
 } from 'react-native';
 import {KeyedMutator} from 'swr';
 import {I18Normalize} from 'utility/I18Next';
-import {takePriceRange} from 'utility/assistant';
+import {
+  randomAvt,
+  renderListAvtInGroup,
+  takePriceRange,
+} from 'utility/assistant';
 import {
   checkIsToday,
   formatLocaleNumber,
@@ -52,7 +56,7 @@ import {
 import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {canSupplierConfirmBought} from 'utility/validate';
-import {ModalPeopleInGroup} from './components';
+import {ModalGroup} from './components';
 import {useDetailSale, useJoinEstimate} from './hooks';
 
 interface CountDownProps {
@@ -439,10 +443,10 @@ const DetailMeJoin = ({
   });
   const [{data: sale}] = useDetailSale(data?.sale.id, {revalidateAll: false});
 
-  const modalPeopleInGroup =
-    useRef<ElementRef<typeof ModalPeopleInGroup>>(null);
+  const modalGroup = useRef<ElementRef<typeof ModalGroup>>(null);
 
-  const maximumMember = sale?.prices[sale?.prices.length - 1].number_people;
+  const maximumMember =
+    sale?.prices[sale?.prices.length - 1].number_people ?? 0;
   const isEstimate =
     data?.status === JOIN_STATUS.active ||
     data?.status === JOIN_STATUS.adminConfirm;
@@ -953,195 +957,91 @@ const DetailMeJoin = ({
       return null;
     }
 
-    if (isEstimate) {
-      const renderMembers = (join: TypeJoinPersonal) => {
-        const isNewGroup = join.amount === join.group.total_members;
+    const renderPersonal = (join: TypeJoinPersonal, index: number) => {
+      const {listAvatars} = renderListAvtInGroup({
+        join,
+        indexInGroup: index,
+        isEstimate,
+        maxMembers: maximumMember,
+      });
 
-        if (isNewGroup) {
-          return (
-            <View style={$viewInfo}>
-              <View style={$infoGroup}>
-                <StyleText
-                  i18Text="discovery.newGroup"
-                  customStyle={{
-                    fontWeight: FONT_WEIGHT_MEDIUM,
-                  }}
-                />
-              </View>
-              <StyleTouchable
-                customStyle={$touchListMembers}
-                onPress={() => {
-                  modalPeopleInGroup.current?.show({
-                    groupId: null,
-                    initData: {
-                      id: null,
-                      name: t('discovery.estimate'),
-                      total_members: join.amount,
-                      created: data?.created,
-                      members: [join],
+      return (
+        <View style={$rowMembers}>
+          <View style={$membersBox}>
+            {listAvatars.map((avt, i) => {
+              if (avt === 'me') {
+                return (
+                  <Avatar
+                    key={i}
+                    source={{uri: avatar}}
+                    size={32}
+                    style={{
+                      borderWidth: moderateScale(2),
+                      borderColor: theme.orange,
+                    }}
+                  />
+                );
+              }
+
+              if (avt === 'other') {
+                return (
+                  <Avatar
+                    key={i}
+                    source={randomAvt()}
+                    size={32}
+                    style={{opacity: 0.7}}
+                  />
+                );
+              }
+
+              return (
+                <View
+                  key={i}
+                  style={[
+                    $avtNull,
+                    {
+                      borderColor: theme.gray_300,
                     },
-                  });
-                }}>
-                <View style={[$avatarMember, {borderColor: theme.gray_100}]}>
-                  <Avatar source={{uri: avatar}} size={30} />
-                  {join.amount > 1 && (
-                    <View
-                      style={[
-                        $amountAvatarMember,
-                        {
-                          backgroundColor: theme.gray_100,
-                        },
-                      ]}>
-                      <StyleText
-                        originValue={`x${join.amount}`}
-                        customStyle={{fontSize: moderateScale(9)}}
-                      />
-                    </View>
-                  )}
-                </View>
-              </StyleTouchable>
-            </View>
-          );
-        }
-
-        return (
-          <View style={$viewInfo}>
-            <View style={$infoGroup}>
-              <StyleText
-                i18Text="discovery.numberJoinsNow"
-                i18Params={{
-                  value: join.group.total_members - join.amount,
-                }}
-              />
-              <StyleText
-                i18Text="discovery.whenYouComeGroupHave"
-                i18Params={{
-                  value: join.group.total_members,
-                }}
-                customStyle={[$textWhenJoined, {color: theme.gray_600}]}
-              />
-            </View>
-            <View style={$touchListMembers}>
-              {[
-                Images.images.avatar01,
-                Images.images.avatar02,
-                Images.images.avatar03,
-              ].map((source, index) => (
-                <View
-                  key={index}
-                  style={[$avatarMember, {borderColor: theme.gray_100}]}>
-                  <Avatar source={source} size={30} />
-                </View>
-              ))}
-            </View>
+                  ]}
+                />
+              );
+            })}
           </View>
-        );
-      };
-
-      return (
-        <>
           <StyleText
-            originValue={`${t('discovery.appliedPrice')} (${t(
-              'discovery.estimate',
-            )})`}
-            customStyle={$textApplied}
-          />
-          {!isMySale && (
-            <StyleText
-              i18Text="discovery.beInGroupEstimate"
-              customStyle={$textClassified}
-            />
-          )}
-          {data?.list_personals?.map((join, index) => {
-            return (
-              <BoxInformation
-                key={index}
-                listInformation={[
-                  <View style={$groupDay}>
-                    <StyleText
-                      i18Text="discovery.groupDay"
-                      i18Params={{
-                        value: join.group.id
-                          ? `${join.group.name} (${t('discovery.estimate')})`
-                          : `(${t('discovery.estimate')})`,
-                      }}
-                      customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
-                    />
-                    <StyleText
-                      i18Text="discovery.maximumMembers"
-                      customStyle={$textMaximum}>
-                      <StyleText originValue={`: ${maximumMember}`} />
-                    </StyleText>
-                  </View>,
-                  renderMembers(join),
-                  {
-                    title: 'discovery.unitPrice',
-                    content: formatMoney(join.price / join.amount),
-                    contentStyle: $textNormal,
-                  },
-                  {
-                    title: 'discovery.amount',
-                    content: join.amount,
-                  },
-                  {
-                    title: 'discovery.price',
-                    content: formatMoney(join.price),
-                  },
-                ]}
-                containerStyle={$groupView}
-              />
-            );
-          })}
-        </>
-      );
-    }
-
-    const renderMembers = (join: TypeJoinPersonal) => {
-      return (
-        <View style={$viewInfo}>
-          <View style={$infoGroup}>
-            <StyleText
-              i18Text="discovery.numberJoinsNow"
-              i18Params={{
-                value: join.group.total_members,
-              }}
-            />
-          </View>
-          <StyleTouchable
-            customStyle={{alignItems: 'flex-end'}}
+            i18Text="discovery.groupDay"
+            i18Params={{
+              value: isEstimate
+                ? `(${t('discovery.estimate')})`
+                : join.group?.name,
+            }}
+            customStyle={[
+              $textGroupName,
+              {
+                color: theme.blue,
+              },
+            ]}
             onPress={() => {
-              modalPeopleInGroup.current?.show({
-                groupId: join.group.id,
+              modalGroup.current?.show({
+                join,
+                info: {
+                  maxMembers: maximumMember,
+                  isEstimate,
+                  indexGroup: index,
+                },
               });
-            }}>
-            <View style={$touchListMembers}>
-              {[
-                Images.images.avatar01,
-                Images.images.avatar02,
-                Images.images.avatar03,
-              ].map((source, index) => (
-                <View
-                  key={index}
-                  style={[$avatarMember, {borderColor: theme.gray_100}]}>
-                  <Avatar source={source} size={30} />
-                </View>
-              ))}
-            </View>
-            <StyleText
-              i18Text="discovery.seeMembers"
-              customStyle={[$textSeeMember, {color: theme.blue}]}
-            />
-          </StyleTouchable>
+            }}
+          />
         </View>
       );
     };
 
+    const textPx = isEstimate
+      ? `${t('discovery.appliedPrice')} (${t('discovery.estimate')})`
+      : t('discovery.appliedPrice');
+
     return (
       <>
-        <StyleText
-          i18Text="discovery.appliedPrice"
-          customStyle={$textApplied}
-        />
+        <StyleText originValue={textPx} customStyle={$textApplied} />
         {!isMySale && (
           <StyleText
             i18Text={
@@ -1150,47 +1050,12 @@ const DetailMeJoin = ({
             customStyle={$textClassified}
           />
         )}
-        {data?.list_personals?.map((join, index) => {
-          return (
-            <BoxInformation
-              key={index}
-              listInformation={[
-                <View style={$groupDay}>
-                  <StyleText
-                    i18Text="discovery.groupDay"
-                    i18Params={{
-                      value: isEstimate
-                        ? `(${t('discovery.estimate')})`
-                        : join.group.name,
-                    }}
-                    customStyle={{fontWeight: FONT_WEIGHT_MEDIUM}}
-                  />
-                  <StyleText
-                    i18Text="discovery.maximumMembers"
-                    customStyle={$textMaximum}>
-                    <StyleText originValue={`: ${maximumMember}`} />
-                  </StyleText>
-                </View>,
-                renderMembers(join),
-                {
-                  title: 'discovery.unitPrice',
-                  content: formatMoney(join.price / join.amount),
-                  contentStyle: $textNormal,
-                },
-                {
-                  title: 'discovery.amount',
-                  content: join.amount,
-                  contentStyle: $textNormal,
-                },
-                {
-                  title: 'discovery.price',
-                  content: formatMoney(join.price),
-                },
-              ]}
-              containerStyle={$groupView}
-            />
-          );
-        })}
+        <BoxInformation
+          listInformation={data.list_personals.map((j, i) =>
+            renderPersonal(j, i),
+          )}
+          containerStyle={$groupView}
+        />
       </>
     );
   };
@@ -1327,7 +1192,7 @@ const DetailMeJoin = ({
         {renderListPersonal()}
       </StyleContainer>
 
-      <ModalPeopleInGroup ref={modalPeopleInGroup} />
+      <ModalGroup ref={modalGroup} />
     </>
   );
 };
@@ -1382,48 +1247,6 @@ const $countdownView: ViewStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
 };
-const $viewInfo: ViewStyle = {
-  width: '100%',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-};
-const $groupDay: ViewStyle = {
-  width: '100%',
-};
-const $textMaximum: TextStyle = {
-  marginTop: verticalScale(4),
-};
-const $infoGroup: ViewStyle = {
-  flex: 1,
-  paddingRight: scale(4),
-};
-const $textWhenJoined: TextStyle = {
-  fontSize: FONT_SIZE.f4,
-};
-const $textSeeMember: TextStyle = {
-  fontSize: FONT_SIZE.f4,
-  textDecorationLine: 'underline',
-  fontWeight: FONT_WEIGHT_MEDIUM,
-};
-const $touchListMembers: ViewStyle = {
-  flexDirection: 'row',
-  alignItems: 'center',
-};
-const $avatarMember: ViewStyle = {
-  borderWidth: moderateScale(1),
-  borderRadius: 100,
-};
-const $amountAvatarMember: ViewStyle = {
-  position: 'absolute',
-  bottom: -moderateScale(5),
-  right: 0,
-  width: moderateScale(15),
-  height: moderateScale(15),
-  borderRadius: 30,
-  alignItems: 'center',
-  justifyContent: 'center',
-};
 const $textNormal: TextStyle = {
   fontWeight: 'normal',
 };
@@ -1436,6 +1259,27 @@ const $textCheckIn: TextStyle = {
   fontSize: FONT_SIZE.f3,
   textAlign: 'center',
   alignSelf: 'center',
+};
+const $avtNull: ViewStyle = {
+  width: moderateScale(32),
+  height: moderateScale(32),
+  borderRadius: 50,
+  borderWidth: moderateScale(1),
+};
+const $rowMembers: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+const $membersBox: ViewStyle = {
+  flex: 1,
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: scale(4),
+};
+const $textGroupName: TextStyle = {
+  fontWeight: FONT_WEIGHT_MEDIUM,
+  textDecorationLine: 'underline',
+  fontSize: FONT_SIZE.f3,
 };
 
 export default DetailMeJoin;
