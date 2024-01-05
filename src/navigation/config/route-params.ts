@@ -1,4 +1,4 @@
-import {APP_EVENT, SOCKET_EVENT} from 'asset/enum';
+import {APP_EVENT, SOCKET_EVENT, TYPE_EVENT_DL} from 'asset/enum';
 import {ParamsCreateTour} from 'feature/profile/hooks';
 import {I18Normalize} from 'utility/I18Next';
 import ROOT_SCREEN, {
@@ -215,6 +215,18 @@ export type SocketOnList = {
     join_id: number;
   };
   [SOCKET_EVENT.joinRejected]: {
+    join_id: number;
+  };
+};
+
+export type DeepLinkEvent = {
+  [TYPE_EVENT_DL.join_success]: {
+    join_id: number;
+  };
+  [TYPE_EVENT_DL.join_rejected]: {
+    join_id: number;
+  };
+  [TYPE_EVENT_DL.has_new_join]: {
     join_id: number;
   };
 };

@@ -50,7 +50,7 @@ import {
 } from 'feature/setting';
 import {useInitApp, useNotifications, useTheme} from 'hook';
 import {navigate} from 'navigation/NavigationService';
-import {AppParamsList} from 'navigation/config';
+import {AppParamsList, DeepLinkEvent} from 'navigation/config';
 import ROOT_SCREEN, {
   DISCOVERY_ROUTE,
   LOGIN_ROUTE,
@@ -66,7 +66,10 @@ import WebViewScreen from './WebViewScreen';
 
 const Stack = createStackNavigator<AppParamsList>();
 
-const handleEvent = (event: string, data: Record<string, any>) => {
+const handleEvent = <T extends TYPE_EVENT_DL>(
+  event: T,
+  data: T extends keyof DeepLinkEvent ? DeepLinkEvent[T] : undefined,
+) => {
   /**
    * @Tag Config handle notification
    */
@@ -104,7 +107,7 @@ const RootScreen = () => {
     }
     const parse = parseURL(link ?? '');
     if (parse) {
-      handleEvent(parse.event, parse.params);
+      handleEvent(parse.event as TYPE_EVENT_DL, parse.params as any);
       resetNotification();
     }
   }, [link, loading]);

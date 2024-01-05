@@ -123,17 +123,17 @@ export enum TYPE_COLOR {
   other = 8,
 }
 
-export const TYPE_EVENT_DL = {
-  message: 'message',
-  comment: 'comment',
-  follow: 'follow',
-  like_post: 'like-post',
-  friend_post_new: 'friend-post-new',
-  like_sale: 'like-sale',
-  join_success: 'join-success',
-  join_rejected: 'join-rejected',
-  has_new_join: 'has-new-join',
-};
+export enum TYPE_EVENT_DL {
+  message = 'message',
+  comment = 'comment',
+  follow = 'follow',
+  like_post = 'like-post',
+  friend_post_new = 'friend-post-new',
+  like_sale = 'like-sale',
+  join_success = 'join-success',
+  join_rejected = 'join-rejected',
+  has_new_join = 'has-new-join',
+}
 
 export enum TYPE_BUBBLE_PALACE_ACTION {
   null = -1,

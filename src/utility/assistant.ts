@@ -10,6 +10,7 @@ import {
   LANGUAGE_TYPE,
   REACT,
   TYPE_COLOR,
+  TYPE_EVENT_DL,
 } from 'asset/enum';
 import Images from 'asset/img/images';
 import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
@@ -17,6 +18,7 @@ import Theme, {TypeTheme} from 'asset/theme/Theme';
 import {TypeItemProgress} from 'components';
 import {emitAppEvent} from 'hook';
 import {push, showSwipeImages} from 'navigation/NavigationService';
+import {DeepLinkEvent} from 'navigation/config';
 import ROOT_SCREEN from 'navigation/config/routes';
 import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {ModalAlert, Toast} from 'navigation/screen/modals';
@@ -612,9 +614,12 @@ export const parseURL = (url: string): ParseURL | null => {
   };
 };
 
-export const renderDeepLink = (params: Pick<ParseURL, 'event' | 'params'>) => {
-  let res = `avatour://link.avatour.life/dl/${params.event}`;
-  Object.entries(params.params).forEach(([key, value], index) => {
+export const renderDeepLink = <T extends TYPE_EVENT_DL>(
+  event: T,
+  params: T extends keyof DeepLinkEvent ? DeepLinkEvent[T] : undefined,
+) => {
+  let res = `avatour://link.avatour.life/dl/${event}`;
+  Object.entries(params ?? {}).forEach(([key, value], index) => {
     if (index === 0) {
       res = `${res}?${key}=${value}`;
     } else {

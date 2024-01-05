@@ -40,11 +40,8 @@ const SocketUser = () => {
         title: t('profile.joinedSuccess'),
         content: t('profile.goToSeeJoins'),
         data: {
-          link: renderDeepLink({
-            event: TYPE_EVENT_DL.join_success,
-            params: {
-              join_id: e.join_id,
-            },
+          link: renderDeepLink(TYPE_EVENT_DL.join_success, {
+            join_id: e.join_id,
           }),
         },
       });
@@ -57,11 +54,8 @@ const SocketUser = () => {
         title: t('notification.title'),
         content: t('discovery.shopNotReceiveOrderNow'),
         data: {
-          link: renderDeepLink({
-            event: TYPE_EVENT_DL.join_rejected,
-            params: {
-              join_id: e.join_id,
-            },
+          link: renderDeepLink(TYPE_EVENT_DL.join_rejected, {
+            join_id: e.join_id,
           }),
         },
       });
@@ -73,11 +67,8 @@ const SocketUser = () => {
         title: t('notification.title'),
         content: t('notification.haveNewOrder'),
         data: {
-          link: renderDeepLink({
-            event: TYPE_EVENT_DL.has_new_join,
-            params: {
-              join_id: e.join_id,
-            },
+          link: renderDeepLink(TYPE_EVENT_DL.has_new_join, {
+            join_id: e.join_id,
           }),
         },
       });
