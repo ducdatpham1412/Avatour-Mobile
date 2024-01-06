@@ -429,27 +429,29 @@ const DetailTour = ({
                   </View>
                 </View>
 
-                <View style={$reaction}>
-                  {data?.is_liked ? (
-                    <IconLiked onPress={onReactTour} size={25} />
-                  ) : (
-                    <IconNotLiked onPress={onReactTour} size={25} />
-                  )}
-                  {!!data?.total_likes && (
-                    <StyleText
-                      i18Text="discovery.numberLike"
-                      i18Params={{
-                        value: data?.total_likes ?? 0,
-                      }}
-                      customStyle={$textReaction}
-                      onPress={() =>
-                        modalLiked.current?.show({
-                          postId: data?.id,
-                          type: 'tour',
-                        })
-                      }
-                    />
-                  )}
+                <View>
+                  <View style={$reaction}>
+                    {!!data?.total_likes && (
+                      <StyleText
+                        i18Text="discovery.numberLike"
+                        i18Params={{
+                          value: data?.total_likes ?? 0,
+                        }}
+                        customStyle={$textReaction}
+                        onPress={() =>
+                          modalLiked.current?.show({
+                            postId: data?.id,
+                            type: 'tour',
+                          })
+                        }
+                      />
+                    )}
+                    {data?.is_liked ? (
+                      <IconLiked onPress={onReactTour} size={30} />
+                    ) : (
+                      <IconNotLiked onPress={onReactTour} size={30} />
+                    )}
+                  </View>
                 </View>
               </View>
 
@@ -585,12 +587,13 @@ const $info: ViewStyle = {
   flex: 1,
 };
 const $reaction: ViewStyle = {
+  flexDirection: 'row',
   alignItems: 'center',
 };
 const $textReaction: TextStyle = {
   fontSize: FONT_SIZE.f3,
   textDecorationLine: 'underline',
-  marginTop: verticalScale(6),
+  marginRight: scale(8),
 };
 const $nameAvatar: ViewStyle = {
   flexDirection: 'row',
