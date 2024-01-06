@@ -606,6 +606,7 @@ const alert = {
   phoneExisted: 'Số điện thoại đã được một người khác sử dụng',
   beSureConfirmWhenInStore:
     'Hãy chắc chắn bạn ấn xác nhận chỉ khi đã đến thanh toán tại cửa hàng',
+  notTimeYet: 'Hiện tại chưa đến thời gian hẹn',
 
   // FOR SETTING
   nowPassError: 'Mật khẩu hiện tại không đúng',

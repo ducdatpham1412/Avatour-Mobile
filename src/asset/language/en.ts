@@ -599,6 +599,7 @@ const alert = {
   phoneExisted: 'This phone have been used by one other',
   beSureConfirmWhenInStore:
     "Make sure you press confirm only when you've arrived to pay at the store",
+  notTimeYet: 'The arrival time has not yet arrived',
 
   // FOR SETTING
   nowPassError: 'Current password not true',

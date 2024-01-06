@@ -280,7 +280,10 @@ export enum ERROR_MESSAGE {
   bought_group_buying = 'bought_group_buying',
   group_buying_out_of_date = 'group_buying_out_of_date',
   still_having_people_join = 'still_having_people_join',
+  not_time_yet = 'not_time_yet',
   still_having_location_draft = 'still_having_location_draft',
+  tour_name_must_be_less_than_70 = 'tour_name_must_be_less_than_70',
+  confirm_overtime = 'confirm_overtime',
 
   // chat
   not_have_permission_delete_message = 'not_have_permission_delete_message',

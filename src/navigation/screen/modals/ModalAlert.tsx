@@ -87,6 +87,8 @@ const detectError = (errMessage: string): I18Normalize => {
       return 'tour.tourStillHaveDraftLocation';
     case ERROR_MESSAGE.password_not_match:
       return 'alert.passNotMatch';
+    case ERROR_MESSAGE.not_time_yet:
+      return 'alert.notTimeYet';
     default:
       return errMessage as I18Normalize;
   }
