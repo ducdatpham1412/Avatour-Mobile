@@ -5,6 +5,7 @@ import useSWRMutation from 'swr/mutation';
 
 type CheckInRequest = {
   user_id: number;
+  join_id: number | null;
   content: string;
   images: string[];
   stars?: number;
@@ -46,6 +47,7 @@ const useCheckIn = (type: GetCheckInParams['type'], userId?: number) => {
       const payload = new FormData();
 
       payload.append('user_id', params.user_id);
+      payload.append('join_id', params.join_id);
       payload.append('content', params.content);
       if (params.images.length) {
         params.images.forEach(path => {

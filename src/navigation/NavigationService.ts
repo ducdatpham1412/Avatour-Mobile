@@ -15,7 +15,9 @@ export const navigationRef = createNavigationContainerRef();
 
 export const navigate = <T extends AllRoutes>(
   name: T,
-  params?: T extends keyof AppParamsList ? AppParamsList[T] : undefined,
+  params?: T extends keyof AppParamsList
+    ? AppParamsList[T] & {key?: any}
+    : undefined,
 ) => {
   if (navigationRef.isReady()) {
     (navigationRef.navigate as any)(name, params);

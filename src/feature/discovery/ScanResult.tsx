@@ -85,7 +85,7 @@ const JoinResult = ({shop_id}: Props) => {
             ]}
           />
           <BoxView
-            containerStyle={$also}
+            containerStyle={[$also, {backgroundColor: theme.gray_100}]}
             onPress={() =>
               navigate(ROOT_SCREEN.listJoining, {
                 list: data.next,

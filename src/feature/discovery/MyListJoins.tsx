@@ -97,7 +97,6 @@ const MyListJoins = ({
               onPressMode="see-detail"
               mode="supplier"
               onConfirmBought={() => onConfirmBought(item.id)}
-              containerStyle={{backgroundColor: theme.background}}
             />
           )}
           keyExtractor={item => String(item.id)}
