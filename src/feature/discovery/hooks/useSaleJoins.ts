@@ -29,7 +29,10 @@ const useSaleJoins = (saleId: number) => {
                 if (arg.list_join_id.includes(item.id)) {
                   return {
                     ...item,
-                    status: JOIN_STATUS.supplierConfirmBought,
+                    status:
+                      item.status === JOIN_STATUS.checkedIn
+                        ? JOIN_STATUS.checkedInAndConfirmedBought
+                        : JOIN_STATUS.supplierConfirmBought,
                   };
                 }
                 return item;

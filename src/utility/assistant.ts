@@ -432,12 +432,17 @@ export const renderJoinStatus = (
         text: 'profile.waitingConfirm',
         color: theme.p_800,
       };
+    case JOIN_STATUS.checkedIn:
+      return {
+        text: 'profile.waitingConfirm',
+        color: theme.p_800,
+      };
     case JOIN_STATUS.supplierConfirmBought:
       return {
         text: 'profile.joinedSuccess',
         color: theme.green,
       };
-    case JOIN_STATUS.checkedIn:
+    case JOIN_STATUS.checkedInAndConfirmedBought:
       return {
         text: 'profile.joinedSuccess',
         color: theme.green,
@@ -651,10 +656,12 @@ export const detectOrderProgress = ({
   const isAdminConfirmed = currentStatus === JOIN_STATUS.adminConfirm;
   const isOvertime = currentStatus === JOIN_STATUS.overtime;
   const isRejected = currentStatus === JOIN_STATUS.supplierRejected;
-  const isUserConfirmed = currentStatus === JOIN_STATUS.consumerConfirmed;
+  const isUserConfirmed =
+    currentStatus === JOIN_STATUS.consumerConfirmed ||
+    currentStatus === JOIN_STATUS.checkedIn;
   const isConfirmedBought =
     currentStatus === JOIN_STATUS.supplierConfirmBought ||
-    currentStatus === JOIN_STATUS.checkedIn;
+    currentStatus === JOIN_STATUS.checkedInAndConfirmedBought;
 
   let progress: TypeItemProgress[] = [];
 

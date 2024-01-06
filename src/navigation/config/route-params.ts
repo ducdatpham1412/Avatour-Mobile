@@ -205,6 +205,9 @@ export type AppEventList = {
     userId: number;
     joinId: number | null;
   };
+  [APP_EVENT.joinSuccess]: {
+    joinId: number;
+  };
 };
 
 export type SocketOnList = {

@@ -157,7 +157,11 @@ export const isAsync = (func: any) => {
 };
 
 export const canSupplierConfirmBought = (status: number) => {
-  return [JOIN_STATUS.overtime, JOIN_STATUS.consumerConfirmed].includes(status);
+  return [
+    JOIN_STATUS.overtime,
+    JOIN_STATUS.consumerConfirmed,
+    JOIN_STATUS.checkedIn,
+  ].includes(status);
 };
 
 export const checkStatusSchedule = (schedules: TourDetail['schedule']) => {

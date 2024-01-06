@@ -221,8 +221,9 @@ export enum JOIN_STATUS {
   supplierRejected = 7,
   overtime = 3,
   consumerConfirmed = 4,
-  supplierConfirmBought = 5,
   checkedIn = 8,
+  supplierConfirmBought = 5,
+  checkedInAndConfirmedBought = 9,
 }
 
 export enum FONT_FAMILY {
@@ -308,6 +309,7 @@ export enum APP_EVENT {
   suggestLocation = 'suggest-location',
   refreshNotification = 'refresh-notification',
   checkInSuccess = 'check-in-success',
+  joinSuccess = 'join-success',
 }
 
 export enum TYPE_AUTH_REQUEST {

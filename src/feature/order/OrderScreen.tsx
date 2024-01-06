@@ -1,7 +1,7 @@
 import {apiGetListGBJoined} from 'api/profile';
 import {useAppSelector} from 'app-redux/store';
 import {FONT_SIZE} from 'asset';
-import {APP_EVENT} from 'asset/enum';
+import {APP_EVENT, JOIN_STATUS} from 'asset/enum';
 import {IconEmpty, ImageEmpty} from 'asset/icons';
 import {
   horizontalMargin,
@@ -71,10 +71,17 @@ const OrderScreenUser = () => {
   } = useEstimatesAndJoinings();
   const {paddingBottom} = useSafeArea();
 
-  const {list, refreshing, onRefresh, onLoadMore, loadingMore, initLoading} =
-    usePaging<TypeJoinEstimate>({
-      request: apiGetListGBJoined,
-    });
+  const {
+    list,
+    setList,
+    refreshing,
+    onRefresh,
+    onLoadMore,
+    loadingMore,
+    initLoading,
+  } = usePaging<TypeJoinEstimate>({
+    request: apiGetListGBJoined,
+  });
 
   useAppEvent(APP_EVENT.confirmArrived, () => {
     /**
@@ -84,6 +91,25 @@ const OrderScreenUser = () => {
      */
     // mutate();
     onRefresh();
+  });
+
+  useAppEvent(APP_EVENT.joinSuccess, onRefresh);
+
+  useAppEvent(APP_EVENT.checkInSuccess, e => {
+    setList(pre => {
+      return pre.map(item => {
+        if (item.id !== e.joinId) {
+          return item;
+        }
+        return {
+          ...item,
+          status:
+            item.status === JOIN_STATUS.supplierConfirmBought
+              ? JOIN_STATUS.checkedInAndConfirmedBought
+              : JOIN_STATUS.checkedIn,
+        };
+      });
+    });
   });
 
   const renderItemJoin = useCallback((item: TypeJoinEstimate) => {

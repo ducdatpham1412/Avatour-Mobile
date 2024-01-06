@@ -329,6 +329,7 @@ const ButtonConfirmBought = ({estimate}: ButtonConfirmBoughtProps) => {
       JOIN_STATUS.supplierConfirm,
       JOIN_STATUS.overtime,
       JOIN_STATUS.consumerConfirmed,
+      JOIN_STATUS.checkedIn,
     ].includes(data.status)
   ) {
     const canConfirm = canSupplierConfirmBought(estimate.status);
@@ -385,7 +386,26 @@ const BannerCheckIn = ({sale, join, mutate}: BannerCheckInProps) => {
           if (pre) {
             return {
               ...pre,
-              status: JOIN_STATUS.checkedIn,
+              status:
+                pre.status === JOIN_STATUS.supplierConfirmBought
+                  ? JOIN_STATUS.checkedInAndConfirmedBought
+                  : JOIN_STATUS.checkedIn,
+            };
+          }
+        },
+        {revalidate: false},
+      );
+    }
+  });
+
+  useAppEvent(APP_EVENT.joinSuccess, e => {
+    if (e.joinId === join.id) {
+      mutate(
+        pre => {
+          if (pre) {
+            return {
+              ...pre,
+              status: JOIN_STATUS.supplierConfirm,
             };
           }
         },
@@ -452,6 +472,7 @@ const DetailMeJoin = ({
     data?.status === JOIN_STATUS.adminConfirm;
   const isMySale = data?.sale?.creator === myId;
   const canCheckIn =
+    !isMySale &&
     (data?.status === JOIN_STATUS.supplierConfirmBought ||
       data?.status === JOIN_STATUS.consumerConfirmed) &&
     dayjs().diff(data?.time_will_buy, 'minutes') < 3 * 24 * 60 - 10; //10 minutes is time user do actions like select images and check-in
@@ -605,7 +626,10 @@ const DetailMeJoin = ({
       );
     }
 
-    if (data?.status === JOIN_STATUS.consumerConfirmed) {
+    if (
+      data?.status === JOIN_STATUS.consumerConfirmed ||
+      data?.status === JOIN_STATUS.checkedIn
+    ) {
       return (
         <>
           <StyleText
@@ -622,13 +646,26 @@ const DetailMeJoin = ({
           {canCheckIn && !!sale && (
             <BannerCheckIn sale={sale} join={data} mutate={mutate} />
           )}
+          {data?.status === JOIN_STATUS.checkedIn && (
+            <StyleText
+              i18Text="profile.checkedIn"
+              customStyle={[
+                $textAlert,
+                {
+                  marginTop: verticalScale(4),
+                  color: theme.green,
+                  fontWeight: FONT_WEIGHT_MEDIUM,
+                },
+              ]}
+            />
+          )}
         </>
       );
     }
 
     if (
       data?.status === JOIN_STATUS.supplierConfirmBought ||
-      data?.status === JOIN_STATUS.checkedIn
+      data?.status === JOIN_STATUS.checkedInAndConfirmedBought
     ) {
       return (
         <>
@@ -646,7 +683,7 @@ const DetailMeJoin = ({
           {canCheckIn && !!sale && (
             <BannerCheckIn sale={sale} join={data} mutate={mutate} />
           )}
-          {data?.status === JOIN_STATUS.checkedIn && (
+          {data?.status === JOIN_STATUS.checkedInAndConfirmedBought && (
             <StyleText
               i18Text="profile.checkedIn"
               customStyle={[
@@ -877,8 +914,9 @@ const DetailMeJoin = ({
       [
         JOIN_STATUS.overtime,
         JOIN_STATUS.consumerConfirmed,
-        JOIN_STATUS.supplierConfirmBought,
         JOIN_STATUS.checkedIn,
+        JOIN_STATUS.supplierConfirmBought,
+        JOIN_STATUS.checkedInAndConfirmedBought,
       ].includes(data.status)
     ) {
       return (
