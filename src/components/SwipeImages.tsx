@@ -31,6 +31,7 @@ const SwipeImages = ({route}: Props) => {
         initialIndex={initIndex}
         lazy={false}
         listElements={listImages.map(img => renderElement(img))}
+        tabBarType="none"
       />
 
       <ButtonX

@@ -152,7 +152,7 @@ const discovery = {
   deposit: 'Đặt cọc',
   allDeposited: 'Tổng tiền đã cọc',
   numberJoins: '{{value}} lượt tham gia',
-  numberJoinsNow: '{{value}} lượt tham gia hiện tại',
+  numberJoinsNow: 'Đang có {{value}} lượt tham gia trong nhóm',
   seeMembers: 'Xem các thành viên',
   manageJoins: 'Quản lý đơn hàng',
   whenYouComeGroupHave: 'Khi bạn tham gia, nhóm sẽ tăng lên {{value}} lượt',

@@ -1,5 +1,5 @@
-import {Metrics, safePaddingNotZero} from 'asset/metrics';
-import {AppModalize, Separator} from 'components';
+import {Metrics, verticalMargin} from 'asset/metrics';
+import {AppModalize} from 'components';
 import {StyleList} from 'components/base';
 import {useSafeArea, useTheme} from 'hook';
 import React, {
@@ -17,6 +17,7 @@ import ItemPersonalJoin from './ItemPersonalJoin';
 type TypeShow = {
   groupId: number | null;
   initData?: TypeGroupJoin;
+  groupName: string;
 };
 
 interface ListPeopleProps {
@@ -24,7 +25,7 @@ interface ListPeopleProps {
 }
 
 const ListPeople = ({groupId}: ListPeopleProps) => {
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
   const [{data, loading, validating}, {mutate}] = useJoinInGroup(groupId);
 
   return (
@@ -32,8 +33,10 @@ const ListPeople = ({groupId}: ListPeopleProps) => {
       data={data ?? []}
       renderItem={({item}) => <ItemPersonalJoin item={item} />}
       keyExtractor={item => String(item?.id)}
-      ItemSeparatorComponent={Separator}
-      contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
+      contentContainerStyle={{
+        paddingBottom,
+        gap: verticalMargin,
+      }}
       initLoading={loading}
       refreshing={validating}
       onRefresh={mutate}
@@ -46,21 +49,21 @@ const ModalPeopleInGroup = (
   ref: ForwardedRef<TypeShowModalize<TypeShow>>,
 ) => {
   const theme = useTheme();
-  const {bottom} = useSafeArea();
+  const {paddingBottom} = useSafeArea();
 
   const modalRef = useRef<ElementRef<typeof AppModalize>>(null);
+  const groupName = useRef('');
   const [showData, setShowData] = useState<TypeShow>();
-  const [groupName, setGroupName] = useState('');
 
   useImperativeHandle(
     ref,
     () => ({
       show: value => {
-        if (value?.initData?.name) {
-          setGroupName(value.initData?.name);
+        if (value) {
+          groupName.current = value?.groupName;
+          setShowData(value);
+          modalRef.current?.show();
         }
-        setShowData(value);
-        modalRef.current?.show();
       },
       hide: () => {
         modalRef.current?.hide();
@@ -80,8 +83,7 @@ const ModalPeopleInGroup = (
           data={showData.initData.members}
           renderItem={({item}) => <ItemPersonalJoin item={item} />}
           keyExtractor={item => String(item?.id)}
-          ItemSeparatorComponent={Separator}
-          contentContainerStyle={{paddingBottom: bottom || safePaddingNotZero}}
+          contentContainerStyle={{paddingBottom, gap: verticalMargin}}
         />
       );
     }
@@ -96,9 +98,9 @@ const ModalPeopleInGroup = (
       ref={modalRef}
       modalHeight={Metrics.height * 0.8}
       onClosed={() => setShowData(undefined)}
-      title={showData ? 'discovery.groupDay' : 'common.null'}
+      title="discovery.groupDay"
       titleParams={{
-        value: groupName,
+        value: groupName.current,
       }}
       containerStyle={{
         paddingHorizontal: scale(40),

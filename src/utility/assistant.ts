@@ -23,7 +23,7 @@ import ROOT_SCREEN from 'navigation/config/routes';
 import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {ModalAlert, Toast} from 'navigation/screen/modals';
 import {Dispatch, SetStateAction} from 'react';
-import {Platform, ViewStyle} from 'react-native';
+import {ImageRequireSource, Platform, ViewStyle} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {KeyedMutator} from 'swr';
 import {I18Normalize} from './I18Next';
@@ -735,4 +735,74 @@ export const detectOrderProgress = ({
     progress,
     indexFocusing,
   };
+};
+
+const enumAvatars: ImageRequireSource[] = [
+  Images.images.avatar01,
+  Images.images.avatar02,
+  Images.images.avatar03,
+  Images.images.avatar04,
+];
+export const randomAvt = () => {
+  const randomIndex = Math.round(Math.random() * enumAvatars.length);
+  return enumAvatars[randomIndex] ?? enumAvatars[0];
+};
+type RenderListAvtInGroupParams = {
+  join: TypeJoinPersonal;
+  indexInGroup: number;
+  maxMembers: number;
+  isEstimate: boolean;
+};
+export const renderListAvtInGroup = ({
+  join,
+  indexInGroup,
+  maxMembers,
+  isEstimate,
+}: RenderListAvtInGroupParams) => {
+  const maxArray = Array.from({length: maxMembers});
+  const isFist = indexInGroup === 0;
+  let startIndex = 0;
+  let endIndex = 0;
+  let limitIndex = 0;
+  let isNewGroup = false;
+
+  if (isEstimate) {
+    isNewGroup = join.amount === join.group.total_members;
+
+    if (isNewGroup) {
+      startIndex = 0;
+      endIndex = join.amount - 1;
+      limitIndex = join.amount - 1;
+    } else {
+      limitIndex = join.group.total_members - 1;
+      startIndex = join.group.total_members - join.amount;
+      endIndex = startIndex + join.amount - 1;
+    }
+  } else {
+    limitIndex = join.group.total_members - 1;
+    if (isFist) {
+      startIndex = join.group.total_members - join.amount;
+      endIndex = startIndex + join.amount - 1;
+    } else {
+      startIndex = 0;
+      endIndex = startIndex + join.amount - 1;
+    }
+  }
+
+  const listAvatars: Array<'me' | 'other' | null> = maxArray.map((_, i) => {
+    if (i >= startIndex && i <= endIndex) {
+      return 'me';
+    }
+
+    if (i <= limitIndex) {
+      return 'other';
+    }
+
+    return null; // null is the slot not have anyone yet
+  });
+
+  return {
+    listAvatars,
+    isNewGroup,
+  } as const;
 };
