@@ -44,7 +44,11 @@ const ItemJoin = ({
 
   return (
     <StyleTouchable
-      customStyle={[$container, {backgroundColor: theme.white}, containerStyle]}
+      customStyle={[
+        $container,
+        {backgroundColor: theme.gray_100},
+        containerStyle,
+      ]}
       onPress={() => {
         if (onPressMode) {
           push(ROOT_SCREEN.detailMeJoin, {

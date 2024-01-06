@@ -18,6 +18,7 @@ import {Avatar} from 'components/common';
 import {emitAppEvent, useTheme} from 'hook';
 import LottieView from 'lottie-react-native';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
+import {checkAuthenticated} from 'navigation/screen/AppModal';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {memo, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -87,30 +88,35 @@ const CheckIn = ({route}: RouteParams<AppParamsList[ROOT_SCREEN.checkIn]>) => {
 
   const [disable, setDisable] = useState(true);
 
-  const onConfirm = async () => {
+  const onConfirm = () => {
     if (itemNew) {
-      try {
-        await checkIn({
-          content: content.current,
-          images: itemNew?.images,
-          user_id: itemNew?.user.id,
-          feeling,
-          stars: stars || undefined,
-        });
-        await mutate();
-        emitAppEvent(APP_EVENT.checkInSuccess, {
-          userId: itemNew.user.id,
-          joinId: itemNew.joinId,
-        });
-        ModalAlert.success({
-          i18Content: 'profile.post.checkInSuccess',
-          onClose: () => CallBackCheckIn.call(),
-        });
-      } catch (err) {
-        ModalAlert.error({
-          content: err,
-        });
-      }
+      checkAuthenticated({
+        onAuthenticated: async () => {
+          try {
+            await checkIn({
+              content: content.current,
+              images: itemNew?.images,
+              user_id: itemNew?.user.id,
+              join_id: itemNew.joinId,
+              feeling,
+              stars: stars || undefined, // if stars = 0 => Not set stars
+            });
+            await mutate();
+            emitAppEvent(APP_EVENT.checkInSuccess, {
+              userId: itemNew.user.id,
+              joinId: itemNew.joinId,
+            });
+            ModalAlert.success({
+              i18Content: 'profile.post.checkInSuccess',
+              onClose: () => CallBackCheckIn.call(),
+            });
+          } catch (err) {
+            ModalAlert.error({
+              content: err,
+            });
+          }
+        },
+      });
     }
   };
 

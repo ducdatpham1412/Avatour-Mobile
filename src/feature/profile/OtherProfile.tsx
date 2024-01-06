@@ -19,7 +19,7 @@ import {emitAppEvent, useSafeArea, useTheme} from 'hook';
 import {goBack, navigate} from 'navigation/NavigationService';
 import {AppParamsList, ROOT_SCREEN} from 'navigation/config';
 import {ModalActionSheet, ModalAlert} from 'navigation/screen/modals';
-import React, {useState} from 'react';
+import React, {ElementRef, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View, ViewStyle} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -40,8 +40,8 @@ const renderNull = () => {
 };
 
 const renderTabIndex = (
-  profile: TypeGetProfileResponse,
   tab: Props['route']['params']['tab'],
+  profile?: TypeGetProfileResponse,
 ) => {
   if (tab) {
     switch (tab) {
@@ -56,10 +56,10 @@ const renderTabIndex = (
     }
   }
 
-  if (profile.account_type === ACCOUNT.shop) {
+  if (profile?.account_type === ACCOUNT.shop) {
     return 0;
   }
-  if (profile.account_type === ACCOUNT.location) {
+  if (profile?.account_type === ACCOUNT.location) {
     return 2;
   }
   return 1;
@@ -198,11 +198,8 @@ const ButtonSuggest = ({userId}: ButtonSuggestProps) => {
   return null;
 };
 
-const OtherProfile = ({
-  route: {
-    params: {id, initValue, tab},
-  },
-}: Props) => {
+const OtherProfile = ({route: {params}}: Props) => {
+  const {id, initValue, tab} = params ?? {};
   const theme = useTheme();
   const {modeExp} = useAppSelector(state => state.accountSlice);
   const [
@@ -215,10 +212,17 @@ const OtherProfile = ({
   });
   const [{loadingDeleteLocation}, {deleteLocation}] = useMyLocations();
 
+  const tabViewRef = useRef<ElementRef<typeof TabView>>(null);
   const [tabViewHeight, setTabViewHeight] = useState(0);
-
   const isPrivate =
     data?.status && [STATUS.draft, STATUS.suggesting].includes(data?.status);
+
+  useEffect(() => {
+    if (params.tab) {
+      const index = renderTabIndex(params.tab);
+      tabViewRef.current?.navigateToIndex(index);
+    }
+  }, [params]);
 
   /**
    * Functions
@@ -314,13 +318,14 @@ const OtherProfile = ({
               icon={Images.icons.review}
             />,
           ]}
-          initialIndex={renderTabIndex(data, tab)}
+          initialIndex={renderTabIndex(tab, data)}
         />
       );
     }
 
     return (
       <TabView
+        ref={tabViewRef}
         style={[$body, {height: tabViewHeight}]}
         tabBarStyle={$tabBar}
         listElements={[renderShop, renderTour, listReviews]}
@@ -335,7 +340,7 @@ const OtherProfile = ({
             icon={Images.icons.review}
           />,
         ]}
-        initialIndex={renderTabIndex(data, tab)}
+        initialIndex={renderTabIndex(tab, data)}
       />
     );
   };

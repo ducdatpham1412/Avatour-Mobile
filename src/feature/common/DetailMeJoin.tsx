@@ -452,7 +452,8 @@ const DetailMeJoin = ({
     data?.status === JOIN_STATUS.adminConfirm;
   const isMySale = data?.sale?.creator === myId;
   const canCheckIn =
-    data?.status === JOIN_STATUS.supplierConfirmBought &&
+    (data?.status === JOIN_STATUS.supplierConfirmBought ||
+      data?.status === JOIN_STATUS.consumerConfirmed) &&
     dayjs().diff(data?.time_will_buy, 'minutes') < 3 * 24 * 60 - 10; //10 minutes is time user do actions like select images and check-in
 
   /**
@@ -606,17 +607,22 @@ const DetailMeJoin = ({
 
     if (data?.status === JOIN_STATUS.consumerConfirmed) {
       return (
-        <StyleText
-          i18Text="profile.waitingConfirm"
-          customStyle={[
-            $textAlert,
-            {
-              marginTop: verticalScale(12),
-              color: theme.p_800,
-              fontWeight: FONT_WEIGHT_MEDIUM,
-            },
-          ]}
-        />
+        <>
+          <StyleText
+            i18Text="profile.waitingConfirm"
+            customStyle={[
+              $textAlert,
+              {
+                marginTop: verticalScale(12),
+                color: theme.p_800,
+                fontWeight: FONT_WEIGHT_MEDIUM,
+              },
+            ]}
+          />
+          {canCheckIn && !!sale && (
+            <BannerCheckIn sale={sale} join={data} mutate={mutate} />
+          )}
+        </>
       );
     }
 
@@ -638,13 +644,11 @@ const DetailMeJoin = ({
             ]}
           />
           {canCheckIn && !!sale && (
-            <>
-              <BannerCheckIn sale={sale} join={data} mutate={mutate} />
-            </>
+            <BannerCheckIn sale={sale} join={data} mutate={mutate} />
           )}
           {data?.status === JOIN_STATUS.checkedIn && (
             <StyleText
-              i18Text="profile.checkIn"
+              i18Text="profile.checkedIn"
               customStyle={[
                 $textAlert,
                 {

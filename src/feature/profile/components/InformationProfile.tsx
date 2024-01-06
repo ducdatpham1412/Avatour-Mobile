@@ -1,14 +1,9 @@
 import {useAppSelector} from 'app-redux/store';
 import {ACCOUNT, STATUS} from 'asset/enum';
 import {IconClock, IconLocation, IconPrice} from 'asset/icons';
-import {
-  Metrics,
-  horizontalMargin,
-  horizontalPadding,
-  verticalMargin,
-} from 'asset/metrics';
+import {Metrics, horizontalPadding, verticalMargin} from 'asset/metrics';
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM, ratioAvatar} from 'asset/standardValue';
-import {ScrollCropImages, Stars, TextReadMore} from 'components';
+import {ScrollCropImages, TextReadMore} from 'components';
 import {SquareButton, StyleText, StyleTouchable} from 'components/base';
 import dayjs from 'dayjs';
 import {useTheme} from 'hook';
@@ -139,6 +134,7 @@ const ButtonOtherProfile = ({profile}: ComponentProps) => {
               navigate(curRoute.name, {
                 key: curRoute.key,
                 ...curRoute.params,
+                tab: 'check-in',
               });
             });
             navigate(PROFILE_ROUTE.createPostPickImg, {
@@ -335,7 +331,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
         />
       )}
 
-      <View style={$starBox}>
+      {/* <View style={$starBox}>
         <Stars value={profile?.average_stars} />
         {profile?.average_stars ? (
           <StyleText
@@ -348,7 +344,7 @@ const InformationSupplier = ({profile}: ComponentProps) => {
             customStyle={[$textNumberStar, {color: theme.gray_500}]}
           />
         )}
-      </View>
+      </View> */}
 
       <View style={$followBox}>
         <StyleTouchable
@@ -535,7 +531,7 @@ const $textDescription: TextStyle = {
 const $followBox: ViewStyle = {
   width: '100%',
   flexDirection: 'row',
-  marginTop: verticalScale(4),
+  marginTop: verticalMargin,
 };
 const $elementFollow: ViewStyle = {
   flexDirection: 'row',
@@ -548,9 +544,9 @@ const $numberFollow: TextStyle = {
 const $textFollow: TextStyle = {
   fontSize: FONT_SIZE.f2,
 };
-const $textNumberStar: TextStyle = {
-  fontSize: FONT_SIZE.f4,
-};
+// const $textNumberStar: TextStyle = {
+//   fontSize: FONT_SIZE.f4,
+// };
 const $buttonView: ViewStyle = {
   marginTop: verticalMargin,
   flexDirection: 'row',
@@ -574,13 +570,13 @@ const $locationBox: ViewStyle = {
 const $textLocation: TextStyle = {
   marginLeft: scale(4),
 };
-const $starBox: ViewStyle = {
-  width: '100%',
-  flexDirection: 'row',
-  alignItems: 'flex-end',
-  marginTop: verticalMargin,
-  gap: horizontalMargin,
-};
+// const $starBox: ViewStyle = {
+//   width: '100%',
+//   flexDirection: 'row',
+//   alignItems: 'flex-end',
+//   marginTop: verticalMargin,
+//   gap: horizontalMargin,
+// };
 const $openClose: TextStyle = {
   marginTop: verticalMargin,
   fontWeight: 'bold',

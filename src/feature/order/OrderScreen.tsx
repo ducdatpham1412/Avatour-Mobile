@@ -90,7 +90,7 @@ const OrderScreenUser = () => {
     return (
       <ItemJoin
         item={item}
-        containerStyle={[$itemJoinSuccess, {backgroundColor: theme.gray_100}]}
+        containerStyle={$itemJoinSuccess}
         onPressMode="see-detail"
         showDeposited={false}
       />
