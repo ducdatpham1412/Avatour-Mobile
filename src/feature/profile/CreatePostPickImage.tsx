@@ -178,11 +178,12 @@ const CreatePostPickImage = ({
           : [video];
 
       if (results.length) {
-        if (saleMode) {
+        if (route.params.mode === 'sale') {
           navigate(PROFILE_ROUTE.createSale, {
             itemNew: {
               images: listImages,
               isVideo: tabIndex === 1,
+              userId: route.params?.userId,
             },
           });
         } else if (route.params.mode === 'check-in') {

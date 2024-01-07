@@ -61,11 +61,13 @@ export type AppParamsList = {
       }
     | {
         mode: 'sale';
+        userId?: number; // For admin
       };
   [PROFILE_ROUTE.createSale]: {
     itemNew?: {
       images: Array<string>;
       isVideo: boolean;
+      userId: number | undefined;
     };
     itemEdit?: TypeGroupBuying;
     itemDraft?: TypeGroupBuying;

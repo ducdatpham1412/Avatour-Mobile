@@ -71,6 +71,7 @@ const CreateSale = ({route}: Props) => {
     content: itemEdit?.content || itemError?.content || '',
     images: itemEdit?.images || itemError?.images || itemNew?.images || [],
     prices: itemEdit?.prices || itemError?.prices || [],
+    userId: itemNew?.userId,
   });
   const inputDescriptionRef = useRef<TextInput>(null);
 
@@ -230,6 +231,7 @@ const CreateSale = ({route}: Props) => {
         content,
         images,
         prices,
+        userId: initValue.current.userId,
       };
       const disableButtonEdit = isEqual(temp, initValue.current);
 

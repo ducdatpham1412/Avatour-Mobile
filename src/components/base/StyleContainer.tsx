@@ -30,6 +30,7 @@ interface ScrollContainerProps extends KeyboardAwareScrollViewProps {
 }
 
 const StyleContainer = (props: ScrollContainerProps, ref: any) => {
+  const theme = useTheme();
   const {
     children,
     containerStyle,
@@ -38,23 +39,20 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
     headerProps,
     TopComponent,
     BottomComponent,
-    backgroundColor,
+    backgroundColor = theme.white,
     initLoading = false,
     error,
     onPressError,
     layOut = 'scroll',
   } = props;
-  const theme = useTheme();
   const {top, bottom} = useSafeArea();
-
-  const themeBackground = backgroundColor ?? theme.white;
 
   const renderContent = () => {
     if (initLoading) {
       return (
         <LoadingScreen
           containerStyle={{
-            backgroundColor: backgroundColor ?? theme.background,
+            backgroundColor,
           }}
         />
       );
@@ -85,7 +83,7 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
           $styleTopShadow,
           {
             marginBottom: bottom,
-            backgroundColor: themeBackground,
+            backgroundColor,
             shadowColor: theme.black,
           },
         ]}>
@@ -103,17 +101,14 @@ const StyleContainer = (props: ScrollContainerProps, ref: any) => {
         {
           flex: 1,
           paddingTop: top,
-          backgroundColor: themeBackground,
+          backgroundColor,
         },
         containerStyle,
       ]}>
       {headerProps && (
         <StyleHeader
           {...headerProps}
-          containerStyle={[
-            {backgroundColor: themeBackground},
-            headerProps?.containerStyle,
-          ]}
+          containerStyle={[{backgroundColor}, headerProps?.containerStyle]}
         />
       )}
       {TopComponent}

@@ -1,10 +1,12 @@
-import {FONT_WEIGHT_MEDIUM} from 'asset/standardValue';
+import {verticalMargin} from 'asset/metrics';
+import {BORDER_RADIUS, FONT_WEIGHT_MEDIUM} from 'asset/standardValue';
 import {StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React, {ReactNode} from 'react';
-import {View} from 'react-native';
+import {View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {verticalScale} from 'utility/scale';
 
 interface BoxInfoProps {
   icon: ReactNode;
@@ -17,7 +19,7 @@ const ItemInfo = (props: BoxInfoProps) => {
   const theme = useTheme();
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.white}]}>
+    <View style={[$container, {backgroundColor: theme.gray_100}]}>
       <View style={styles.iconModule}>{icon}</View>
       <View style={styles.contentBox}>
         <StyleText
@@ -36,14 +38,15 @@ const ItemInfo = (props: BoxInfoProps) => {
   );
 };
 
+const $container: ViewStyle = {
+  width: '100%',
+  height: verticalScale(48),
+  borderRadius: BORDER_RADIUS.f3,
+  flexDirection: 'row',
+  marginTop: verticalMargin,
+};
+
 const styles = ScaledSheet.create({
-  container: {
-    width: '100%',
-    height: '45@vs',
-    borderRadius: '10@vs',
-    flexDirection: 'row',
-    marginTop: '16@vs',
-  },
   iconModule: {
     flex: 1,
     alignItems: 'center',

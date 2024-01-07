@@ -13,7 +13,7 @@ import {
   TYPE_EVENT_DL,
 } from 'asset/enum';
 import Images from 'asset/img/images';
-import {LIST_POST_TYPES, LIST_TOPICS} from 'asset/standardValue';
+import {LIST_TOPICS} from 'asset/standardValue';
 import Theme, {TypeTheme} from 'asset/theme/Theme';
 import {TypeItemProgress} from 'components';
 import {emitAppEvent} from 'hook';
@@ -192,14 +192,6 @@ export const renderIconFeeling = (feeling: number) => {
 
 export const chooseTextTopic = (topic: number | null): I18Normalize => {
   return LIST_TOPICS.find(item => item.id === topic)?.text || 'common.null';
-};
-
-export const chooseIconTopic = (topic: number) => {
-  return LIST_TOPICS.find(item => item.id === topic)?.icon || null;
-};
-
-export const chooseIconPostType = (postType: number) => {
-  return LIST_POST_TYPES.find(item => item.id === postType)?.icon || null;
 };
 
 type GoToProfileParams = {

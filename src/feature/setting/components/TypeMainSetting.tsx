@@ -23,9 +23,9 @@ const TypeMainSetting = (props: TypeMainSettingProps) => {
   const theme = useTheme();
 
   return (
-    <StyleTouchable customStyle={$container} onPress={onPress}>
-      <View style={[$blur, {backgroundColor: theme.white}]} />
-
+    <StyleTouchable
+      customStyle={[$container, {backgroundColor: theme.gray_100}]}
+      onPress={onPress}>
       <View
         style={[
           $iconBox,
@@ -53,11 +53,6 @@ const $container: ViewStyle = {
   marginTop: verticalScale(16),
   flexDirection: 'row',
   alignItems: 'center',
-};
-const $blur: ViewStyle = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
   borderRadius: 100,
 };
 const $iconBox: ViewStyle = {

@@ -15,6 +15,7 @@ type TypeCreateSale = {
   content: string;
   images: Array<string>;
   prices: Array<TypePrice>;
+  userId?: number;
 };
 
 type TypeEditSale = {

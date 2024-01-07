@@ -39,6 +39,7 @@ import {
 import {LoadingScreen} from 'feature/profile/screens';
 import {
   AboutUs,
+  AdminScreen,
   ConfirmDeleteAccount,
   ConfirmLockAccount,
   EnterPassword,
@@ -274,6 +275,8 @@ const RootScreen = () => {
         name={SETTING_ROUTE.extendSetting}
         component={ExtendSetting}
       />
+      <Stack.Screen name={ROOT_SCREEN.admin} component={AdminScreen} />
+
       <Stack.Screen name={ROOT_SCREEN.goToDeposit} component={GoToDeposit} />
       <Stack.Screen name={ROOT_SCREEN.scanResult} component={ScanResult} />
       <Stack.Screen name={ROOT_SCREEN.joinsHistory} component={JoinHistory} />

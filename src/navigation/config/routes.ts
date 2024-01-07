@@ -33,6 +33,7 @@ enum ROOT_SCREEN {
   createLocation = '@ROOT_SCREEN/createLocation',
   svgIcons = '@ROOT_SCREEN/svgIcon',
   checkIn = '@ROOT_SCREEN/checkIn',
+  admin = '@SETTING_ROUTE/admin',
 }
 /**
  * ||

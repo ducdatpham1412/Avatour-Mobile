@@ -88,30 +88,34 @@ interface TypeHotLocation {
   description: string;
 }
 
-interface TypeResourceResponse {
-  success: boolean;
-  data: {
-    background: string;
-    gradients: TypeGradient;
-    banners: Array<string>;
-    favorite_tours: Array<Tour>;
-    hot_locations: Array<TypeHotLocation>;
-    // TODO: Uncomment when doing in-app-purchase
-    // prices: Array<TypePriceResource>;
-    deposit_bank: {
-      code: string;
-      name: {
-        vi: string;
-        en: string;
-      };
-      account_number: string;
-      account_holder: string;
+interface TypeResource {
+  background: string;
+  gradients: TypeGradient;
+  banners: Array<string>;
+  favorite_tours: Array<Tour>;
+  hot_locations: Array<TypeHotLocation>;
+  // TODO: Uncomment when doing in-app-purchase
+  // prices: Array<TypePriceResource>;
+  deposit_bank: {
+    code: string;
+    name: {
+      vi: string;
+      en: string;
     };
-    version: {
-      ios: string;
-      android: string;
-      download_link: string;
+    account_number: string;
+    account_holder: string;
+  };
+  version: {
+    ios: string;
+    android: string;
+    download_link: string;
+  };
+  config: {
+    admin: {
+      enable_create_sale: boolean;
     };
+    user: {};
+    shop: {};
   };
 }
 

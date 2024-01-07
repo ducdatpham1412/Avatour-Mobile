@@ -18,10 +18,7 @@ const TypeDetailSetting = (props: TypeDetailSettingProps) => {
 
   return (
     <StyleTouchable
-      customStyle={[
-        $container,
-        {borderColor: theme.gray_300, backgroundColor: theme.white},
-      ]}
+      customStyle={[$container, {backgroundColor: theme.gray_100}]}
       onPress={onPress}>
       <StyleText i18Text={title} customStyle={$title} />
       <View style={$icon}>{icon}</View>
