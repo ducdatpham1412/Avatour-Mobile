@@ -155,6 +155,7 @@ const useCreateSale = (initValue: UseCreateSaleParams) => {
       ModalAlert.options({
         i18Content: 'common.wantToDiscard',
         onContinue: goBack,
+        leftTitleButton: 'common.stay',
       });
     } else {
       goBack();

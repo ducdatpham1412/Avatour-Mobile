@@ -298,6 +298,7 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
     ModalAlert.options({
       i18Content: 'common.wantToDiscard',
       onContinue: goBack,
+      leftTitleButton: 'common.stay',
     });
   };
 
