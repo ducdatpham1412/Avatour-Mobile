@@ -1,4 +1,5 @@
 import {useAppSelector} from 'app-redux/store';
+import {ACCOUNT} from 'asset/enum';
 import Images from 'asset/img/images';
 import {StyleContainer} from 'components/base';
 import {useTheme} from 'hook';
@@ -16,13 +17,22 @@ import TypeMainSetting from './components/TypeMainSetting';
 const SettingScreen = () => {
   const theme = useTheme();
   const {mutate} = useSWRConfig();
+
   const {
-    passport: {
-      profile: {gender},
+    accountSlice: {
+      passport: {
+        profile: {gender, account_type},
+      },
+      modeExp,
     },
-    modeExp,
-  } = useAppSelector(state => state.accountSlice);
+    logicSlice: {resource},
+  } = useAppSelector(state => state);
+
   const [loadingLogOut, setLoadingLogOut] = useState(false);
+
+  const enableCreateSale =
+    (account_type === ACCOUNT.admin || account_type === ACCOUNT.holder) &&
+    resource?.config?.admin?.enable_create_sale;
 
   const onSignOrLogout = async () => {
     if (modeExp) {
@@ -45,7 +55,6 @@ const SettingScreen = () => {
   return (
     <StyleContainer
       customStyle={$container}
-      backgroundColor={theme.background}
       headerProps={{
         title: 'setting.title',
       }}>
@@ -90,6 +99,14 @@ const SettingScreen = () => {
           icon={Images.icons.apple}
           title={'(DEV) Svg Icons' as I18Normalize}
           onPress={() => navigate(ROOT_SCREEN.svgIcons)}
+        />
+      )}
+
+      {enableCreateSale && (
+        <TypeMainSetting
+          icon={Images.icons.star}
+          title={'Admin' as I18Normalize}
+          onPress={() => navigate(ROOT_SCREEN.admin)}
         />
       )}
     </StyleContainer>

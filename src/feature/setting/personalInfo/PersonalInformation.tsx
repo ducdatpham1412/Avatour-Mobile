@@ -165,8 +165,7 @@ const PersonalInformation = () => {
     <>
       <StyleContainer
         headerProps={{title: 'setting.personalInfo.headerTitle'}}
-        customStyle={$container}
-        backgroundColor={theme.background}>
+        customStyle={$container}>
         <ItemInfo
           value={email}
           icon={<Entypo name="email" style={[$icon, {color: theme.blue}]} />}

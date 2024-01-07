@@ -17,6 +17,7 @@ export interface UseCreateSaleParams {
   content: string;
   images: string[];
   prices: TypePrice[];
+  userId: number | undefined;
 }
 
 const useCreateSale = (initValue: UseCreateSaleParams) => {
@@ -46,19 +47,23 @@ const useCreateSale = (initValue: UseCreateSaleParams) => {
     //       return base64;
     //     }),
     //   );
+    const trimName = name.trim();
+    const trimContent = content.trim();
+
     const body: TypeCreateSale = {
-      name,
-      content,
+      name: trimName,
+      content: trimContent,
       images,
       prices,
+      userId: initValue.userId,
     };
     try {
       const res = await apiCreateSale(body);
       const newSale: TypeGroupBuying = {
         id: res?.data?.id,
         post_type: POST_TYPE.groupBuying,
-        name,
-        content,
+        name: trimName,
+        content: trimContent,
         images,
         prices,
         total_likes: 0,
@@ -97,10 +102,10 @@ const useCreateSale = (initValue: UseCreateSaleParams) => {
           data: {},
         };
         if (name !== initValue.name) {
-          dataEdit.data.name = name;
+          dataEdit.data.name = name.trim();
         }
         if (content !== initValue.content) {
-          dataEdit.data.content = content;
+          dataEdit.data.content = content.trim();
         }
         // if (!isEqual(images, initValue.images)) {
         //   dataEdit.data.images = images;
@@ -144,6 +149,7 @@ const useCreateSale = (initValue: UseCreateSaleParams) => {
       content,
       images,
       prices,
+      userId: initValue.userId,
     };
     if (!isEqual(temp, initValue)) {
       ModalAlert.options({

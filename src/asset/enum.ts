@@ -206,6 +206,7 @@ export enum POST_TYPE {
 }
 
 export enum ACCOUNT {
+  holder = -1,
   user = 0,
   shop = 1,
   admin = 2,

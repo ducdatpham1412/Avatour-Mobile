@@ -30,6 +30,9 @@ export const apiCreateSale = (
     payload.append('images', formatImage);
   });
   payload.append('prices', JSON.stringify(body.prices));
+  if (body.userId) {
+    payload.append('user_id', body.userId);
+  }
 
   return request.post('profile/sales', payload, {
     timeout: Math.max(body.images.length * 15000, 45000),
@@ -51,7 +54,7 @@ export const apiGetPassport = (): Promise<TypeGetPassportResponse> => {
   return request.get('/common/passport');
 };
 
-export const apiGetResource = (): Promise<TypeResourceResponse> => {
+export const apiGetResource = (): ApiResponse<TypeResource> => {
   return request.get('/common/resource');
 };
 

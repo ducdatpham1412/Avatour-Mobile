@@ -41,7 +41,7 @@ export const initialLogicState = {
 
   searchParams: <TypeSearchParams>{},
 
-  resource: <TypeResourceResponse['data']>{},
+  resource: <TypeResource>{},
 };
 
 const logicSlice = createSlice({

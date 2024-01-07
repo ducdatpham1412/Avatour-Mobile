@@ -1,7 +1,7 @@
 import {ImageSourcePropType} from 'react-native';
 import {I18Normalize} from 'utility/I18Next';
 import {moderateScale, verticalScale} from 'utility/scale';
-import {FEELING, POST_TYPE, TOPIC} from './enum';
+import {FEELING, TOPIC} from './enum';
 import Images from './img/images';
 
 export const standValue = {
@@ -148,23 +148,6 @@ export const LIST_TRANSPORTS: Array<{
   {
     id: TOPIC.transport_car,
     text: 'discovery.car',
-  },
-];
-
-export const LIST_POST_TYPES: Array<{
-  id: number;
-  text: I18Normalize;
-  icon: any;
-}> = [
-  {
-    id: POST_TYPE.review,
-    text: 'profile.createReviewPost',
-    icon: Images.icons.star,
-  },
-  {
-    id: POST_TYPE.groupBuying,
-    text: 'profile.createGroupBuying',
-    icon: Images.icons.house,
   },
 ];
 
