@@ -1,11 +1,7 @@
-import {logicSliceAction, ReduxPostCreatedHandle} from '../account/logicSlice';
+import {logicSliceAction} from '../account/logicSlice';
 import Store, {RootState} from '../store';
 
 type ResourceType = Partial<RootState['logicSlice']['resource']>;
-
-export const setPostCreatedHandling = (value: ReduxPostCreatedHandle) => {
-  Store.dispatch(logicSliceAction.setPostCreatedHandling(value));
-};
 
 export const setNewNotifications = (value: number) => {
   Store.dispatch(logicSliceAction.setNewNotification(value));
@@ -21,17 +17,6 @@ export const updateResource = (update: ResourceType) => {
     ...update,
   };
   Store.dispatch(logicSliceAction.setResource(newResource));
-};
-
-export const setGestureHandle = (
-  key: keyof RootState['logicSlice']['gestureHandle'],
-  value: boolean,
-) => {
-  const newGestureHandle = {
-    ...Store.getState().logicSlice.gestureHandle,
-    [key]: value,
-  };
-  Store.dispatch(logicSliceAction.setGestureHandle(newGestureHandle));
 };
 
 export const setBorderMessRoute = (color: string) => {

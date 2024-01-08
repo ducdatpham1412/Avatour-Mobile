@@ -31,17 +31,45 @@ export const initialLogicState = {
 
   newNotifications: 0,
 
-  postCreatedHandling: <ReduxPostCreatedHandle>{
-    status: 'done',
-  },
-
-  gestureHandle: {
-    searchScreen: true,
-  },
-
   searchParams: <TypeSearchParams>{},
 
-  resource: <TypeResource>{},
+  resource: <TypeResource>{
+    background: '',
+    gradients: {
+      talking: [],
+      movie: [],
+      technology: [],
+      gaming: [],
+      animal: [],
+      travel: [],
+      fashion: [],
+      other: [],
+    },
+    banners: [],
+    favorite_tours: [],
+    hot_locations: [],
+    deposit_bank: {
+      code: '',
+      name: {
+        vi: '',
+        en: '',
+      },
+      account_number: '',
+      account_holder: '',
+    },
+    version: {
+      ios: '',
+      android: '',
+      download_link: '',
+    },
+    config: {
+      admin: {
+        enable_create_sale: false,
+      },
+      user: {},
+      shop: {},
+    },
+  },
 };
 
 const logicSlice = createSlice({
@@ -62,12 +90,6 @@ const logicSlice = createSlice({
     },
     setNewNotification: (state, action) => {
       state.newNotifications = action.payload;
-    },
-    setPostCreatedHandling: (state, action) => {
-      state.postCreatedHandling = action.payload;
-    },
-    setGestureHandle: (state, action) => {
-      state.gestureHandle = action.payload;
     },
     setSearchParams: (state, action) => {
       state.searchParams = action.payload;
