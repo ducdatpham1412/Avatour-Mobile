@@ -1,6 +1,8 @@
 import {apiUnBlockUser} from 'api/setting';
 import {useAppSelector} from 'app-redux/store';
-import {StyleIcon, StyleList, StyleText, StyleTouchable} from 'components/base';
+import {verticalMargin} from 'asset/metrics';
+import {StyleList, StyleText, StyleTouchable} from 'components/base';
+import {Avatar} from 'components/common';
 import {useApi, useTheme} from 'hook';
 import {ModalAlert} from 'navigation/screen/modals';
 import React, {useEffect} from 'react';
@@ -12,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {ScaledSheet, verticalScale} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
+import {impactMedium} from 'utility/haptic';
 import {moderateScale, scale} from 'utility/scale';
 
 interface Props {
@@ -29,18 +32,15 @@ const ModuleUserBlock = (props: ModuleBlock) => {
   const theme = useTheme();
 
   return (
-    <View style={[styles.moduleUserBlock, {backgroundColor: theme.background}]}>
-      <StyleIcon customStyle={styles.avatar} source={{uri: image}} size={30} />
+    <View style={[styles.moduleUserBlock, {backgroundColor: theme.gray_100}]}>
+      <Avatar source={{uri: image}} size={30} />
       <StyleText
         originValue={name}
         customStyle={styles.text}
         numberOfLines={1}
       />
       <StyleTouchable onPress={onUnBlock}>
-        <Feather
-          name="x"
-          style={[styles.iconCancel, {color: theme.gray_500}]}
-        />
+        <Feather name="x" style={[styles.iconCancel, {color: theme.black}]} />
       </StyleTouchable>
     </View>
   );
@@ -76,6 +76,7 @@ const UserBlocked = ({isOpening}: Props) => {
       await mutate(pre => pre?.filter(item => item?.profile?.id !== userId), {
         revalidate: false,
       });
+      impactMedium();
     } catch (err) {
       ModalAlert.error({
         content: err,
@@ -98,6 +99,7 @@ const UserBlocked = ({isOpening}: Props) => {
           initLoading={loading}
           refreshing={validating}
           onRefresh={mutate}
+          contentContainerStyle={styles.content}
         />
       )}
     </Animated.View>
@@ -111,10 +113,13 @@ const styles = ScaledSheet.create({
     overflow: 'hidden',
     alignSelf: 'center',
   },
+  content: {
+    paddingVertical: verticalMargin,
+    gap: verticalScale(8),
+  },
   moduleUserBlock: {
     width: '100%',
     height: moderateScale(45),
-    marginVertical: verticalScale(3),
     borderRadius: moderateScale(20),
     paddingHorizontal: verticalScale(15),
     flexDirection: 'row',
@@ -126,6 +131,7 @@ const styles = ScaledSheet.create({
   },
   text: {
     flex: 1,
+    paddingHorizontal: scale(8),
   },
   iconCancel: {
     fontSize: moderateScale(17),

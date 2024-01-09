@@ -1,8 +1,8 @@
 import {apiSearch} from 'api/discovery';
 import {useAppSelector} from 'app-redux/store';
 import {REACT} from 'asset/enum';
-import {horizontalPadding} from 'asset/metrics';
-import {ItemTour, Separator} from 'components';
+import {horizontalPadding, verticalMargin} from 'asset/metrics';
+import {ItemTour} from 'components';
 import {StyleList} from 'components/base';
 import {usePaging, useSafeArea} from 'hook';
 import React, {useEffect} from 'react';
@@ -53,18 +53,14 @@ const SearchListTour = () => {
             }}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={item => String(item?.id)}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onLoadMore={onLoadMore}
         loadingMore={loadingMore}
         initLoading={initLoading}
-        contentContainerStyle={{
-          paddingBottom,
-          paddingHorizontal: horizontalPadding,
-        }}
+        contentContainerStyle={[$content, {paddingBottom}]}
         ListEmptyComponent={null}
-        ItemSeparatorComponent={Separator}
         ListHeaderComponent={SearchListShops}
       />
     </View>
@@ -73,6 +69,10 @@ const SearchListTour = () => {
 
 const $container: ViewStyle = {
   flex: 1,
+};
+const $content: ViewStyle = {
+  paddingHorizontal: horizontalPadding,
+  gap: verticalMargin,
 };
 
 export default SearchListTour;

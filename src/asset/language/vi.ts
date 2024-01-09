@@ -44,6 +44,8 @@ const common = {
   create: 'Tạo',
   update: 'Cập nhật',
   you: 'Bạn',
+  day: 'ngày',
+  days: 'ngày',
 };
 
 const login = {

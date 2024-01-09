@@ -180,7 +180,6 @@ const UpdateBankAccount = () => {
               ModalInputEdit.show({
                 defaultValue: bankAccount,
                 onSave: value => setBankAccount(value),
-                keyboardType: 'numeric',
                 placeholder: 'profile.accountNumber',
               });
             }}>

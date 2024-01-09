@@ -69,7 +69,7 @@ const MyListJoins = ({
         }}
         layOut="view">
         <InputBox
-          style={[$input, {backgroundColor: theme.background}]}
+          style={[$input, {backgroundColor: theme.gray_100}]}
           i18Placeholder="discovery.searchNameOrTransactionHash"
           onChangeText={text => {
             clearTimeout(timeOut.current);

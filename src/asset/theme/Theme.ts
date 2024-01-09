@@ -55,7 +55,7 @@ const Theme = {
     gray_400: '#b9b9b9',
     gray_300: '#dddddd',
     gray_200: '#ececec',
-    gray_100: '#f4f4f4',
+    gray_100: '#F5F6F8', // old value: f4f4f4
     gray_50: '#f9f9f9',
     // Other colors
     green: '#349529',

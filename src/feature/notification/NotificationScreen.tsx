@@ -6,7 +6,7 @@ import {
   STATUS_NOTIFICATION,
   TYPE_AUTH_REQUEST,
 } from 'asset/enum';
-import {ImageEmptyWithDesk} from 'asset/icons';
+import {ImageEmpty} from 'asset/icons';
 import {verticalMargin} from 'asset/metrics';
 import {StyleContainer, StyleList, StyleText} from 'components/base';
 import {useAppEvent, useSafeArea, useTheme} from 'hook';
@@ -24,7 +24,7 @@ const Empty = () => {
 
   return (
     <View style={$empty}>
-      <ImageEmptyWithDesk size={300} />
+      <ImageEmpty size={300} />
       <StyleText
         i18Text="notification.notHaveNotifications"
         customStyle={{
