@@ -115,6 +115,7 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
         value={currentPassword}
         i18Placeholder="setting.currentPassword"
         containerStyle={$moduleInput}
+        style={{backgroundColor: theme.gray_100}}
         secureTextEntry={securePw.curPw}
         onSubmitEditing={() => newPwRef.current?.focus()}
         onChangeText={text => setCurrentPassword(text)}
@@ -141,6 +142,7 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
         value={newPassword}
         i18Placeholder="setting.newPassword"
         containerStyle={$moduleInput}
+        style={{backgroundColor: theme.gray_100}}
         secureTextEntry={securePw.pw}
         onSubmitEditing={() => cfPwRef.current?.focus()}
         onChangeText={text => setNewPassword(text)}
@@ -167,6 +169,7 @@ const ChangingPassword = ({isOpening, onChangeOpening}: Props) => {
         value={confirmPassword}
         i18Placeholder="setting.confirmPassword"
         containerStyle={$moduleInput}
+        style={{backgroundColor: theme.gray_100}}
         secureTextEntry={securePw.cfPw}
         onChangeText={text => setConfirmPassword(text)}
         rightCpn={

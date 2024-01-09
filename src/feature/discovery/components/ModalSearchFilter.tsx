@@ -191,9 +191,37 @@ const ModalSearchFilter = (
                 style={[$textBtnPeople, {color: theme.black}]}
               />
             </StyleTouchable>
-            <StyleText
-              originValue={searchParams?.number_people}
-              customStyle={$textNumberPeople}
+            <AppInput
+              value={
+                searchParams.number_people
+                  ? String(searchParams.number_people)
+                  : ''
+              }
+              editable={editable}
+              onChangeText={v => {
+                const temp = formatInputNumber(v);
+                if (temp !== null) {
+                  setSearchParams(pre => ({
+                    ...pre,
+                    number_people: temp === '' ? undefined : Number(temp),
+                  }));
+                }
+              }}
+              onBlur={() => {
+                if (!searchParams.number_people) {
+                  setSearchParams(pre => ({
+                    ...pre,
+                    number_people: 1,
+                  }));
+                }
+              }}
+              style={[
+                $inputNumberPeople,
+                {
+                  borderColor: theme.gray_600,
+                },
+              ]}
+              keyboardType="numeric"
             />
             <StyleTouchable
               customStyle={[$btnPeople, {backgroundColor: theme.p_100}]}
@@ -405,9 +433,15 @@ const $textBtnPeople: TextStyle = {
 const $textTitle: TextStyle = {
   fontWeight: 'bold',
 };
-const $textNumberPeople: TextStyle = {
+const $inputNumberPeople: TextStyle = {
   fontWeight: 'bold',
-  marginHorizontal: scale(20),
+  width: scale(60),
+  textAlign: 'center',
+  borderWidth: borderWidthTiny,
+  paddingTop: verticalScale(4),
+  paddingBottom: verticalScale(4),
+  borderRadius: BORDER_RADIUS.f4,
+  marginHorizontal: scale(8),
 };
 const $timeBox: ViewStyle = {
   width: '100%',

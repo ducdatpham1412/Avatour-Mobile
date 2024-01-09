@@ -456,6 +456,7 @@ const DetailTour = ({
               </View>
 
               <ToolSearch
+                numberDays={data?.schedule?.length}
                 numberPeople={data.number_people}
                 startPrice={data.start_price}
                 endPrice={data.end_price}
@@ -466,7 +467,6 @@ const DetailTour = ({
                   searchRef.current?.show();
                   impactLight();
                 }}
-                haveBorder={false}
               />
             </Animated.View>
           </GestureDetector>

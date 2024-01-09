@@ -1,9 +1,9 @@
 import {setSearchParams} from 'app-redux';
 import {useAppSelector} from 'app-redux/store';
 import Images from 'asset/img/images';
-import {TabView} from 'components';
 import {SafeView, StyleIcon, StyleTouchable} from 'components/base';
 import AppInput from 'components/base/AppInput';
+import dayjs from 'dayjs';
 import {useTheme} from 'hook';
 import {goBack} from 'navigation/NavigationService';
 import {AppParamsList} from 'navigation/config';
@@ -14,10 +14,10 @@ import {useTranslation} from 'react-i18next';
 import {TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import {useUpdateEffect} from 'react-use';
+import {useUpdate, useUpdateEffect} from 'react-use';
 import {borderWidthTiny} from 'utility/assistant';
 import {impactLight} from 'utility/haptic';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {moderateScale, verticalScale} from 'utility/scale';
 import {ModalSearchFilter, ToolSearch} from './components';
 import SearchSuggestions from './components/SearchSuggestions';
 import {SearchListTour} from './screens';
@@ -27,6 +27,7 @@ const SearchScreen = ({
 }: RouteParams<AppParamsList[DISCOVERY_ROUTE.searchScreen]>) => {
   const theme = useTheme();
   const {t} = useTranslation();
+  const update = useUpdate();
   const {searchParams} = useAppSelector(state => state.logicSlice);
 
   const servicesRoute = useRef(route.params?.services);
@@ -47,10 +48,9 @@ const SearchScreen = ({
   const inputRef = useRef<TextInput>(null);
   const checkHaveInitSearchParams = useRef(false);
 
+  const textSearch = useRef(searchRoute.current ?? '');
   const [displayHint, setDisplayHint] = useState(isRouteParamsNull.current);
   const [showResult, setShowResult] = useState(!isRouteParamsNull.current);
-
-  const [textSearch, setTextSearch] = useState(searchRoute.current || '');
 
   useEffect(() => {
     if (isRouteParamsNull.current) {
@@ -80,11 +80,18 @@ const SearchScreen = ({
         ref={inputRef}
         style={[$input, {color: theme.black}]}
         placeholder={t('discovery.searchAround')}
-        onChangeText={text => setTextSearch(text)}
+        onChangeText={text => {
+          const before = textSearch.current;
+          textSearch.current = text;
+
+          if (!!before !== !!textSearch.current) {
+            update();
+          }
+        }}
         defaultValue={searchRoute.current}
         returnKeyType="search"
         onSubmitEditing={() => {
-          setSearchParams({...searchParams, text_search: textSearch});
+          setSearchParams({...searchParams, text_search: textSearch.current});
         }}
         placeholderTextColor={theme.gray_500}
         onFocus={() => setDisplayHint(true)}
@@ -94,11 +101,12 @@ const SearchScreen = ({
           }
         }}
       />
-      {!!textSearch && (
+      {!!textSearch.current && (
         <StyleTouchable
           onPress={() => {
-            setTextSearch('');
+            textSearch.current = '';
             inputRef.current?.clear();
+            update();
           }}
           customStyle={$backView}>
           <Feather name="x" style={[$iconClear, {color: theme.black}]} />
@@ -125,6 +133,10 @@ const SearchScreen = ({
     }
     return (
       <ToolSearch
+        numberDays={dayjs(searchParams.end_time).diff(
+          dayjs(searchParams.start_time),
+          'days',
+        )}
         numberPeople={searchParams?.number_people}
         startPrice={searchParams?.start_price}
         endPrice={searchParams?.end_price}
@@ -144,29 +156,17 @@ const SearchScreen = ({
         {SearchBox}
         {renderToolBox()}
         <View style={$resultView}>
-          {showResult && (
-            <TabView
-              //   listElements={[SearchListTour, SearchListGroupBuying]}
-              listElements={[SearchListTour]}
-              tabBarStyle={$tabBarResult}
-              //   listIconTabBar={[
-              //     <IconTabBar icon={Images.icons.tour} title="discovery.tour" />,
-              //     <IconTabBar
-              //       icon={Images.icons.shop}
-              //       title="discovery.groupBuying"
-              //     />,
-              //   ]}
-              style={$resultView}
-              tabBarType="none"
-            />
-          )}
+          {showResult && <SearchListTour />}
 
           {displayHint && (
             <SearchSuggestions
               onTouchBackground={() => inputRef.current?.blur()}
               onSearch={text => {
                 inputRef.current?.blur();
-                setTextSearch(text);
+                textSearch.current = text;
+                inputRef.current?.setNativeProps({
+                  text,
+                });
                 setSearchParams({...searchParams, text_search: text});
               }}
             />
@@ -177,7 +177,7 @@ const SearchScreen = ({
       <ModalSearchFilter
         ref={modalFilterRef}
         onChangeSearch={value =>
-          setSearchParams({...value, text_search: textSearch})
+          setSearchParams({...value, text_search: textSearch.current})
         }
         initSearchParams={initSearchParams.current}
         isGetFromAsync
@@ -215,10 +215,6 @@ const $toolView: ViewStyle = {
 };
 const $resultView: ViewStyle = {
   flex: 1,
-};
-const $tabBarResult: ViewStyle = {
-  paddingHorizontal: scale(50),
-  paddingTop: 0,
 };
 
 export default SearchScreen;

@@ -1,11 +1,6 @@
 import {LoadingIcon} from 'feature/profile/screens';
 import {useTheme} from 'hook';
-import React, {
-  JSXElementConstructor,
-  ReactElement,
-  forwardRef,
-  useRef,
-} from 'react';
+import React, {JSXElementConstructor, ReactElement} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -36,11 +31,9 @@ interface StyleListProps<T = any> extends FlatListProps<T> {
   }) => ReactElement<any, string | JSXElementConstructor<any>> | null;
 }
 
-const StyleList = (props: StyleListProps, ref: any) => {
+const StyleList = <T extends any>(props: StyleListProps<T>) => {
   const {refreshing, onRefresh, onLoadMore, loadingMore, initLoading} = props;
   const theme = useTheme();
-
-  const listRef = useRef<FlatList>(null);
 
   const handleRefresh = () => {
     if (onRefresh) {
@@ -86,7 +79,6 @@ const StyleList = (props: StyleListProps, ref: any) => {
 
   return (
     <FlatList
-      ref={ref || listRef}
       initialNumToRender={20}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
@@ -119,4 +111,4 @@ const $textEmpty: TextStyle = {
   marginTop: verticalScale(40),
 };
 
-export default forwardRef(StyleList);
+export default StyleList;

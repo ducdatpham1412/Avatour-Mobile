@@ -415,7 +415,6 @@ const CreateTourInstance = ({tourId}: CreateTourInstanceProps) => {
                 impactLight();
               }}
               containerStyle={$tool}
-              haveBorder={false}
             />
           </Animated.View>
         </GestureDetector>

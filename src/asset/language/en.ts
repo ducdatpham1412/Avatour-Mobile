@@ -44,6 +44,8 @@ const common = {
   create: 'Create',
   update: 'Update',
   you: 'You',
+  day: 'day',
+  days: 'days',
 };
 
 const login = {

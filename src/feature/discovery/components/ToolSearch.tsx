@@ -4,52 +4,35 @@ import {horizontalPadding} from 'asset/metrics';
 import {StyleIcon, StyleText, StyleTouchable} from 'components/base';
 import {useTheme} from 'hook';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {ScrollView, StyleProp, TextStyle, View, ViewStyle} from 'react-native';
 import {borderWidthTiny, chooseTextTopic} from 'utility/assistant';
 import {formatLocaleNumber} from 'utility/format';
-import {moderateScale, scale, verticalScale} from 'utility/scale';
+import {scale, verticalScale} from 'utility/scale';
 
 interface Props {
   numberPeople?: number;
+  numberDays?: number;
   startPrice?: number;
   endPrice?: number;
   services?: number[];
   onPress?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
   isEditMode?: boolean;
-  haveBorder?: boolean;
 }
 
 const ToolSearch = ({
   numberPeople,
+  numberDays,
   startPrice,
   endPrice,
   services,
   onPress,
   containerStyle,
   isEditMode = false,
-  haveBorder = true,
 }: Props) => {
+  const {t} = useTranslation();
   const theme = useTheme();
-
-  const borderWidth = haveBorder ? borderWidthTiny : 0;
-  const paddingLeft = haveBorder ? scale(8) : 0;
-  const paddingRight = haveBorder ? scale(8) : scale(2);
-
-  const renderIndicator = () => {
-    return (
-      <View
-        style={[
-          $indicator,
-          {
-            borderRightColor: theme.gray_600,
-            borderRightWidth: haveBorder ? 0 : moderateScale(1),
-            marginHorizontal: haveBorder ? scale(4) : scale(8),
-          },
-        ]}
-      />
-    );
-  };
 
   return (
     <View style={[$container, containerStyle]}>
@@ -71,15 +54,35 @@ const ToolSearch = ({
           </StyleTouchable>
         )}
 
+        {!!numberDays && (
+          <StyleTouchable
+            customStyle={[
+              $toolBox,
+              {
+                borderColor: theme.black,
+              },
+            ]}
+            onPress={onPress}>
+            <StyleIcon
+              source={Images.icons.username}
+              size={11}
+              customStyle={{tintColor: theme.gray_600}}
+            />
+            <StyleText
+              originValue={`${numberDays} ${
+                numberDays > 1 ? t('common.days') : t('common.day')
+              }`}
+              customStyle={[$textTool, {color: theme.black}]}
+            />
+          </StyleTouchable>
+        )}
+
         {!!numberPeople && (
           <StyleTouchable
             customStyle={[
               $toolBox,
               {
-                borderColor: theme.gray_600,
-                borderWidth,
-                paddingLeft,
-                paddingRight,
+                borderColor: theme.black,
               },
             ]}
             onPress={onPress}>
@@ -93,22 +96,17 @@ const ToolSearch = ({
               i18Params={{
                 value: numberPeople,
               }}
-              customStyle={[$textTool, {color: theme.gray_600}]}
+              customStyle={[$textTool, {color: theme.black}]}
             />
           </StyleTouchable>
         )}
-
-        {renderIndicator()}
 
         {(!!startPrice || !!endPrice) && (
           <StyleTouchable
             customStyle={[
               $toolBox,
               {
-                borderColor: theme.gray_600,
-                borderWidth,
-                paddingLeft,
-                paddingRight,
+                borderColor: theme.black,
               },
             ]}
             onPress={onPress}>
@@ -121,22 +119,17 @@ const ToolSearch = ({
               originValue={`${formatLocaleNumber(
                 String(startPrice),
               )} - ${formatLocaleNumber(String(endPrice))} vnd`}
-              customStyle={[$textTool, {color: theme.gray_600}]}
+              customStyle={[$textTool, {color: theme.black}]}
             />
           </StyleTouchable>
         )}
-
-        {renderIndicator()}
 
         {!!services?.length && (
           <StyleTouchable
             customStyle={[
               $toolBox,
               {
-                borderColor: theme.gray_600,
-                borderWidth,
-                paddingLeft,
-                paddingRight,
+                borderColor: theme.black,
               },
             ]}
             onPress={onPress}>
@@ -150,7 +143,7 @@ const ToolSearch = ({
                 <StyleText
                   key={index}
                   i18Text={chooseTextTopic(item)}
-                  customStyle={[$textTool, {color: theme.gray_600}]}
+                  customStyle={[$textTool, {color: theme.black}]}
                 />
               );
             })}
@@ -166,12 +159,15 @@ const $container: ViewStyle = {
 };
 const $contentToolView: ViewStyle = {
   paddingHorizontal: horizontalPadding,
+  gap: scale(8),
 };
 const $toolBox: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
-  paddingVertical: verticalScale(2),
+  paddingVertical: verticalScale(4),
   borderRadius: 30,
+  paddingHorizontal: scale(8),
+  borderWidth: borderWidthTiny,
 };
 const $textTool: TextStyle = {
   fontSize: FONT_SIZE.f3,
@@ -181,10 +177,6 @@ const $textEdit: TextStyle = {
   fontWeight: 'bold',
   marginRight: scale(12),
   textDecorationLine: 'underline',
-};
-const $indicator: ViewStyle = {
-  height: verticalScale(16),
-  alignSelf: 'center',
 };
 
 export default ToolSearch;

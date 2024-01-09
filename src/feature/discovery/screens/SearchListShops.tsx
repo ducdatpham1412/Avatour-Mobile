@@ -11,9 +11,9 @@ import {StyleText} from 'components/base';
 import {usePaging, useTheme} from 'hook';
 import React, {useEffect} from 'react';
 import {TextStyle, View, ViewStyle} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import {moderateScale, scale, verticalScale} from 'utility/scale';
 import {ItemShop} from '../components';
-import {ScrollView} from 'react-native-gesture-handler';
 
 const SearchListShops = () => {
   const theme = useTheme();
@@ -76,7 +76,6 @@ const $container: ViewStyle = {
   width: Metrics.width,
   left: -horizontalPadding,
   marginTop: verticalMargin - verticalScale(8),
-  marginBottom: verticalMargin,
 };
 const $headerShop: ViewStyle = {
   width: '100%',

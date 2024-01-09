@@ -2,7 +2,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {useAppSelector} from 'app-redux/store';
 import {TYPE_EVENT_DL} from 'asset/enum';
 import SwipeImages from 'components/SwipeImages';
 import {DetailMeJoin, DetailSale} from 'feature/common';
@@ -100,7 +99,6 @@ const RootScreen = () => {
   const theme = useTheme();
   const [{loading, validating, error}, {mutate}] = useInitApp();
   const {link, resetNotification} = useNotifications();
-  const {gestureHandle} = useAppSelector(state => state.logicSlice);
 
   useEffect(() => {
     if (loading || !link) {
@@ -206,7 +204,6 @@ const RootScreen = () => {
         component={SearchScreen}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          gestureEnabled: gestureHandle.searchScreen,
         }}
       />
       <Stack.Screen
