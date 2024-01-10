@@ -7,8 +7,7 @@ import {
 import Store from 'app-redux/store';
 import {SocketProvider} from 'hook/sockets';
 import {navigationRef} from 'navigation/NavigationService';
-import AppModal from 'navigation/screen/AppModal';
-import RootScreen from 'navigation/screen/RootScreen';
+import {AppModal, BootsTrap, RootScreen} from 'navigation/screen';
 import React from 'react';
 import {I18nextProvider} from 'react-i18next';
 import {
@@ -78,6 +77,7 @@ const App = () => {
 
                 <AppModal />
                 <SocketProvider />
+                <BootsTrap />
                 <StatusBar barStyle="dark-content" />
               </NavigationContainer>
             </ReduxProvider>

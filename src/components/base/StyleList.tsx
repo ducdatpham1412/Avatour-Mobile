@@ -1,6 +1,6 @@
 import {LoadingIcon} from 'feature/profile/screens';
 import {useTheme} from 'hook';
-import React, {JSXElementConstructor, ReactElement} from 'react';
+import React, {ForwardedRef, RefObject, forwardRef} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -14,24 +14,26 @@ import {moderateScale, verticalScale} from 'utility/scale';
 import StyleText from './StyleText';
 
 interface StyleListProps<T = any> extends FlatListProps<T> {
-  data: Array<T>;
-  ListHeaderComponent?: any;
   loadingMore?: boolean;
   disableRefresh?: boolean;
   refreshing?: boolean;
   onRefresh?: () => void;
   onLoadMore?: () => void;
   initLoading?: boolean;
-  renderItem: ({
-    item,
-    index,
-  }: {
-    item: T;
-    index: number;
-  }) => ReactElement<any, string | JSXElementConstructor<any>> | null;
+  //   data: Array<T>;
+  //   renderItem: ({
+  //     item,
+  //     index,
+  //   }: {
+  //     item: T;
+  //     index: number;
+  //   }) => ReactElement<any, string | JSXElementConstructor<any>> | null;
 }
 
-const StyleList = <T extends any>(props: StyleListProps<T>) => {
+const StyleListInner = <T extends any>(
+  props: StyleListProps<T>,
+  ref: ForwardedRef<FlatList>,
+) => {
   const {refreshing, onRefresh, onLoadMore, loadingMore, initLoading} = props;
   const theme = useTheme();
 
@@ -58,7 +60,7 @@ const StyleList = <T extends any>(props: StyleListProps<T>) => {
     if (loadingMore) {
       return (
         <View style={$loadingMore}>
-          {props.data.length ? (
+          {props.data?.length ? (
             <ActivityIndicator size="small" color={theme.p_700} />
           ) : (
             <LoadingIcon />
@@ -79,6 +81,7 @@ const StyleList = <T extends any>(props: StyleListProps<T>) => {
 
   return (
     <FlatList
+      ref={ref}
       initialNumToRender={20}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
@@ -110,5 +113,9 @@ const $textEmpty: TextStyle = {
   alignSelf: 'center',
   marginTop: verticalScale(40),
 };
+
+const StyleList = forwardRef(StyleListInner) as <T>(
+  props: StyleListProps<T> & {ref?: RefObject<FlatList>},
+) => ReturnType<typeof StyleListInner>;
 
 export default StyleList;

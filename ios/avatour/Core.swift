@@ -4,7 +4,8 @@ import Photos
 
 @objc(Core)
 class Core: NSObject {
-  private var images = [[String: Any]]();
+  private var images: [[String: Any]] = [];
+  private var options = PHContentEditingInputRequestOptions();
   
   @objc
   func getPhotos(_
@@ -12,28 +13,41 @@ class Core: NSObject {
                       reject: RCTPromiseRejectBlock
   ) {
     let assets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil);
+    self.options.isNetworkAccessAllowed = false;
+    
+    let group = DispatchGroup();
 
     assets.enumerateObjects {(object, _, _) in
-      let uri = "ph://\(object.localIdentifier)";
+      group.enter();
+      
+      let local_identifier = "ph://\(object.localIdentifier)";
       let fileName = PHAssetResource.assetResources(for: object)[0].originalFilename;
-      self.images.append([
-        "url": "\(uri)/\(fileName)",
-        "width": object.pixelWidth,
-        "height": object.pixelHeight,
-      ]);
-//      object.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (eidtingInput, info) in
-//        if let input = eidtingInput, let imgURL = input.fullSizeImageURL {
-//          print("Img url \(imgURL)");
-//        }
-//      }
+      
+      object.requestContentEditingInput(with: self.options) {(editingInput, info) in
+        let img = editingInput?.fullSizeImageURL;
+        self.images.append([
+          "local_identifier": local_identifier,
+          "file_name": fileName,
+          "url": img?.absoluteString ?? img?.baseURL,
+          "width": object.pixelWidth,
+          "height": object.pixelHeight,
+        ]);
+        
+        group.leave();
+      }
+      
     }
+    
+//    group.notify(queue: .main) {
+//      self.images.reverse();
+//    }
     
     self.images.reverse();
     
     resolve(self.images);
   }
   
-  // Overide method
+  // Override method
   @objc
   func requiresMainQueueSetup() -> Bool {
     return true;
