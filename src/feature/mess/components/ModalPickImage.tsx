@@ -1,5 +1,4 @@
 import {FONT_SIZE, FONT_WEIGHT_MEDIUM} from 'asset';
-import Images from 'asset/img/images';
 import {Metrics} from 'asset/metrics';
 import Theme from 'asset/theme/Theme';
 import {
@@ -59,9 +58,9 @@ const renderImage = (params: RenderImageParams) => {
       onPress={() => onChooseImage(item)}
       customStyle={[$imageBox, {width: size, height: size}]}>
       <StyleImage
-        source={{uri: item.url}}
+        source={{uri: item.url || `${item.local_identifier}/${item.file_name}`}}
         style={$image}
-        defaultSource={Images.images.defaultImage}
+        defaultImageSource="image"
       />
 
       {isChosen && (

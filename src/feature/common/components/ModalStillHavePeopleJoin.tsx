@@ -27,6 +27,7 @@ const ModalStillHavePeopleJoin = (
     content: sale.content,
     images: sale.images,
     prices: sale.prices,
+    userId: undefined,
   });
 
   const onUpdateStatusSale = async () => {

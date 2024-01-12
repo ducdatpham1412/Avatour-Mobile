@@ -114,6 +114,7 @@ const RootScreen = () => {
   if (loading) {
     return <LoadingScreen size={200} />;
   }
+
   if (error) {
     return (
       <ErrorScreen

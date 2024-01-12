@@ -6,7 +6,9 @@ type TypePrice = {
 };
 
 type LibraryImage = {
-  url: string;
+  local_identifier: string;
+  file_name: string;
+  url: string | null;
   width: number;
   height: number;
 };
